@@ -26,10 +26,15 @@ struct BoardEngine: View {
     var body: some View {
         
         ZStack(){
+//            ForEach(viewModel.toolViews, id: \.self) { item in
+//                Text(item)
+//            }
+            DraggableRectangleView()
             
         }
         .frame(width: viewModel.width, height: viewModel.height)
         .position(x: viewModel.startPosX, y: viewModel.startPosY)
+        .zIndex(1)
         .background {
             Image("soccer_one")
                 .resizable() 
@@ -49,11 +54,34 @@ struct BoardEngine: View {
     }
 }
 
-struct MyCustomView: View {
+struct MView: View {
+    
+    @State private var position = CGPoint(x: 50, y: 50)
+    @GestureState private var dragOffset = CGSize.zero
+    
     let data: String = ""
 
     var body: some View {
-        // Define your custom view here
-        Text(data)
+        Rectangle()
+            .fill(Color.black)
+            .frame(width: 300, height: 300)
+            // Use the updated position here, adding the drag offset while dragging
+            .position(x: position.x, y: position.y)
+            .zIndex(15)
+            .contentShape(Rectangle())
+            .gesture(
+                DragGesture()
+                    .updating($dragOffset, body: { (value, state, transaction) in
+                        state = value.translation
+                    })
+                    .onChanged { value in
+                        // Update the position state when the drag ends
+                        self.position = CGPoint(x: self.position.x + value.translation.width, y: self.position.y + value.translation.height)
+                    }
+                    .onEnded { value in
+                        // Update the position state when the drag ends
+                        self.position = CGPoint(x: self.position.x + value.translation.width, y: self.position.y + value.translation.height)
+                    }
+            )
     }
 }

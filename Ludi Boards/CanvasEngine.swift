@@ -34,9 +34,11 @@ struct CanvasEngine: View {
                 DrawGridLines()
                 BoardEngine()
             }
+            .zIndex(0)
             .frame(width: initialWidth, height: initialHeight)
             .scaleEffect(min(totalScale * gestureScale, maxScaleFactor), anchor: UnitPoint(x: self.offset.x, y: self.offset.y))
         }
+        .zIndex(0)
         .gesture(
             MagnificationGesture()
                 .updating($gestureScale) { value, gestureScale, _ in gestureScale = value }

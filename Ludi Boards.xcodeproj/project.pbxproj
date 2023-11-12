@@ -24,6 +24,7 @@
 		FBD9AFD02B008A83005F8620 /* ManagedViewTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFCF2B008A83005F8620 /* ManagedViewTool.swift */; };
 		FBD9AFD22B008CAB005F8620 /* MenuBarProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFD12B008CAB005F8620 /* MenuBarProvider.swift */; };
 		FBD9AFD52B008F6F005F8620 /* Channels.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFD42B008F6F005F8620 /* Channels.swift */; };
+		FBD9AFD72B00BB8F005F8620 /* Draggable.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFD62B00BB8F005F8620 /* Draggable.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,6 +44,7 @@
 		FBD9AFCF2B008A83005F8620 /* ManagedViewTool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedViewTool.swift; sourceTree = "<group>"; };
 		FBD9AFD12B008CAB005F8620 /* MenuBarProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarProvider.swift; sourceTree = "<group>"; };
 		FBD9AFD42B008F6F005F8620 /* Channels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Channels.swift; sourceTree = "<group>"; };
+		FBD9AFD62B00BB8F005F8620 /* Draggable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Draggable.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,6 +90,7 @@
 				FBD9AFB72AFF0253005F8620 /* GridLines.swift */,
 				FBD9AFB92AFF03D7005F8620 /* CanvasEngine.swift */,
 				FBD9AFBB2AFF56C2005F8620 /* BoardEngineVM.swift */,
+				FBD9AFD62B00BB8F005F8620 /* Draggable.swift */,
 			);
 			path = "Ludi Boards";
 			sourceTree = "<group>";
@@ -222,6 +225,7 @@
 				FBD9AFD02B008A83005F8620 /* ManagedViewTool.swift in Sources */,
 				FBD9AFCB2B00843F005F8620 /* BoardSession.swift in Sources */,
 				FBD9AFC22B0081C1005F8620 /* RealmInstance.swift in Sources */,
+				FBD9AFD72B00BB8F005F8620 /* Draggable.swift in Sources */,
 				FBD9AFBC2AFF56C2005F8620 /* BoardEngineVM.swift in Sources */,
 				FBD9AFB82AFF0253005F8620 /* GridLines.swift in Sources */,
 				FBD9AFBA2AFF03D7005F8620 /* CanvasEngine.swift in Sources */,
