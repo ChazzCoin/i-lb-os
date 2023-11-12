@@ -1,0 +1,462 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		FBD9AFA82AFF00BF005F8620 /* Ludi_BoardsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFA72AFF00BF005F8620 /* Ludi_BoardsApp.swift */; };
+		FBD9AFAA2AFF00BF005F8620 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFA92AFF00BF005F8620 /* ContentView.swift */; };
+		FBD9AFAC2AFF00BF005F8620 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FBD9AFAB2AFF00BF005F8620 /* Assets.xcassets */; };
+		FBD9AFAF2AFF00BF005F8620 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FBD9AFAE2AFF00BF005F8620 /* Preview Assets.xcassets */; };
+		FBD9AFB82AFF0253005F8620 /* GridLines.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFB72AFF0253005F8620 /* GridLines.swift */; };
+		FBD9AFBA2AFF03D7005F8620 /* CanvasEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFB92AFF03D7005F8620 /* CanvasEngine.swift */; };
+		FBD9AFBC2AFF56C2005F8620 /* BoardEngineVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFBB2AFF56C2005F8620 /* BoardEngineVM.swift */; };
+		FBD9AFC02B00817A005F8620 /* ManagedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFBF2B00817A005F8620 /* ManagedView.swift */; };
+		FBD9AFC22B0081C1005F8620 /* RealmInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFC12B0081C1005F8620 /* RealmInstance.swift */; };
+		FBD9AFC52B008221005F8620 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = FBD9AFC42B008221005F8620 /* Realm */; };
+		FBD9AFC72B008221005F8620 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = FBD9AFC62B008221005F8620 /* RealmSwift */; };
+		FBD9AFC92B008435005F8620 /* ManagedViewAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFC82B008435005F8620 /* ManagedViewAction.swift */; };
+		FBD9AFCB2B00843F005F8620 /* BoardSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFCA2B00843F005F8620 /* BoardSession.swift */; };
+		FBD9AFCD2B008457005F8620 /* UserToBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFCC2B008457005F8620 /* UserToBoard.swift */; };
+		FBD9AFD02B008A83005F8620 /* ManagedViewTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFCF2B008A83005F8620 /* ManagedViewTool.swift */; };
+		FBD9AFD22B008CAB005F8620 /* MenuBarProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFD12B008CAB005F8620 /* MenuBarProvider.swift */; };
+		FBD9AFD52B008F6F005F8620 /* Channels.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFD42B008F6F005F8620 /* Channels.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		FBD9AFA42AFF00BF005F8620 /* Ludi Boards.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Ludi Boards.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		FBD9AFA72AFF00BF005F8620 /* Ludi_BoardsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ludi_BoardsApp.swift; sourceTree = "<group>"; };
+		FBD9AFA92AFF00BF005F8620 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		FBD9AFAB2AFF00BF005F8620 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		FBD9AFAE2AFF00BF005F8620 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		FBD9AFB72AFF0253005F8620 /* GridLines.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridLines.swift; sourceTree = "<group>"; };
+		FBD9AFB92AFF03D7005F8620 /* CanvasEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasEngine.swift; sourceTree = "<group>"; };
+		FBD9AFBB2AFF56C2005F8620 /* BoardEngineVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardEngineVM.swift; sourceTree = "<group>"; };
+		FBD9AFBF2B00817A005F8620 /* ManagedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedView.swift; sourceTree = "<group>"; };
+		FBD9AFC12B0081C1005F8620 /* RealmInstance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmInstance.swift; sourceTree = "<group>"; };
+		FBD9AFC82B008435005F8620 /* ManagedViewAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedViewAction.swift; sourceTree = "<group>"; };
+		FBD9AFCA2B00843F005F8620 /* BoardSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardSession.swift; sourceTree = "<group>"; };
+		FBD9AFCC2B008457005F8620 /* UserToBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserToBoard.swift; sourceTree = "<group>"; };
+		FBD9AFCF2B008A83005F8620 /* ManagedViewTool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedViewTool.swift; sourceTree = "<group>"; };
+		FBD9AFD12B008CAB005F8620 /* MenuBarProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarProvider.swift; sourceTree = "<group>"; };
+		FBD9AFD42B008F6F005F8620 /* Channels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Channels.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		FBD9AFA12AFF00BF005F8620 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FBD9AFC72B008221005F8620 /* RealmSwift in Frameworks */,
+				FBD9AFC52B008221005F8620 /* Realm in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		FBD9AF9B2AFF00BE005F8620 = {
+			isa = PBXGroup;
+			children = (
+				FBD9AFA62AFF00BF005F8620 /* Ludi Boards */,
+				FBD9AFA52AFF00BF005F8620 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		FBD9AFA52AFF00BF005F8620 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				FBD9AFA42AFF00BF005F8620 /* Ludi Boards.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		FBD9AFA62AFF00BF005F8620 /* Ludi Boards */ = {
+			isa = PBXGroup;
+			children = (
+				FBD9AFD32B008F5C005F8620 /* Providers */,
+				FBD9AFCE2B008A6C005F8620 /* ManagedViews */,
+				FBD9AFBE2B008167005F8620 /* Firebase */,
+				FBD9AFBD2B008159005F8620 /* Realm */,
+				FBD9AFA72AFF00BF005F8620 /* Ludi_BoardsApp.swift */,
+				FBD9AFA92AFF00BF005F8620 /* ContentView.swift */,
+				FBD9AFAB2AFF00BF005F8620 /* Assets.xcassets */,
+				FBD9AFAD2AFF00BF005F8620 /* Preview Content */,
+				FBD9AFB72AFF0253005F8620 /* GridLines.swift */,
+				FBD9AFB92AFF03D7005F8620 /* CanvasEngine.swift */,
+				FBD9AFBB2AFF56C2005F8620 /* BoardEngineVM.swift */,
+			);
+			path = "Ludi Boards";
+			sourceTree = "<group>";
+		};
+		FBD9AFAD2AFF00BF005F8620 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				FBD9AFAE2AFF00BF005F8620 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		FBD9AFBD2B008159005F8620 /* Realm */ = {
+			isa = PBXGroup;
+			children = (
+				FBD9AFBF2B00817A005F8620 /* ManagedView.swift */,
+				FBD9AFC12B0081C1005F8620 /* RealmInstance.swift */,
+				FBD9AFC82B008435005F8620 /* ManagedViewAction.swift */,
+				FBD9AFCA2B00843F005F8620 /* BoardSession.swift */,
+				FBD9AFCC2B008457005F8620 /* UserToBoard.swift */,
+			);
+			path = Realm;
+			sourceTree = "<group>";
+		};
+		FBD9AFBE2B008167005F8620 /* Firebase */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Firebase;
+			sourceTree = "<group>";
+		};
+		FBD9AFCE2B008A6C005F8620 /* ManagedViews */ = {
+			isa = PBXGroup;
+			children = (
+				FBD9AFCF2B008A83005F8620 /* ManagedViewTool.swift */,
+				FBD9AFD12B008CAB005F8620 /* MenuBarProvider.swift */,
+			);
+			path = ManagedViews;
+			sourceTree = "<group>";
+		};
+		FBD9AFD32B008F5C005F8620 /* Providers */ = {
+			isa = PBXGroup;
+			children = (
+				FBD9AFD42B008F6F005F8620 /* Channels.swift */,
+			);
+			path = Providers;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		FBD9AFA32AFF00BF005F8620 /* Ludi Boards */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FBD9AFB22AFF00BF005F8620 /* Build configuration list for PBXNativeTarget "Ludi Boards" */;
+			buildPhases = (
+				FBD9AFA02AFF00BF005F8620 /* Sources */,
+				FBD9AFA12AFF00BF005F8620 /* Frameworks */,
+				FBD9AFA22AFF00BF005F8620 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Ludi Boards";
+			packageProductDependencies = (
+				FBD9AFC42B008221005F8620 /* Realm */,
+				FBD9AFC62B008221005F8620 /* RealmSwift */,
+			);
+			productName = "Ludi Boards";
+			productReference = FBD9AFA42AFF00BF005F8620 /* Ludi Boards.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		FBD9AF9C2AFF00BE005F8620 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					FBD9AFA32AFF00BF005F8620 = {
+						CreatedOnToolsVersion = 15.0.1;
+					};
+				};
+			};
+			buildConfigurationList = FBD9AF9F2AFF00BE005F8620 /* Build configuration list for PBXProject "Ludi Boards" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = FBD9AF9B2AFF00BE005F8620;
+			packageReferences = (
+				FBD9AFC32B008221005F8620 /* XCRemoteSwiftPackageReference "realm-swift" */,
+			);
+			productRefGroup = FBD9AFA52AFF00BF005F8620 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				FBD9AFA32AFF00BF005F8620 /* Ludi Boards */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		FBD9AFA22AFF00BF005F8620 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FBD9AFAF2AFF00BF005F8620 /* Preview Assets.xcassets in Resources */,
+				FBD9AFAC2AFF00BF005F8620 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		FBD9AFA02AFF00BF005F8620 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FBD9AFAA2AFF00BF005F8620 /* ContentView.swift in Sources */,
+				FBD9AFC92B008435005F8620 /* ManagedViewAction.swift in Sources */,
+				FBD9AFC02B00817A005F8620 /* ManagedView.swift in Sources */,
+				FBD9AFCD2B008457005F8620 /* UserToBoard.swift in Sources */,
+				FBD9AFD22B008CAB005F8620 /* MenuBarProvider.swift in Sources */,
+				FBD9AFA82AFF00BF005F8620 /* Ludi_BoardsApp.swift in Sources */,
+				FBD9AFD02B008A83005F8620 /* ManagedViewTool.swift in Sources */,
+				FBD9AFCB2B00843F005F8620 /* BoardSession.swift in Sources */,
+				FBD9AFC22B0081C1005F8620 /* RealmInstance.swift in Sources */,
+				FBD9AFBC2AFF56C2005F8620 /* BoardEngineVM.swift in Sources */,
+				FBD9AFB82AFF0253005F8620 /* GridLines.swift in Sources */,
+				FBD9AFBA2AFF03D7005F8620 /* CanvasEngine.swift in Sources */,
+				FBD9AFD52B008F6F005F8620 /* Channels.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		FBD9AFB02AFF00BF005F8620 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		FBD9AFB12AFF00BF005F8620 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		FBD9AFB32AFF00BF005F8620 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"Ludi Boards/Preview Content\"";
+				DEVELOPMENT_TEAM = 248J2GKL56;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Ludi Boards";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "io.Ludi-Boards";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		FBD9AFB42AFF00BF005F8620 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"Ludi Boards/Preview Content\"";
+				DEVELOPMENT_TEAM = 248J2GKL56;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Ludi Boards";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "io.Ludi-Boards";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		FBD9AF9F2AFF00BE005F8620 /* Build configuration list for PBXProject "Ludi Boards" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FBD9AFB02AFF00BF005F8620 /* Debug */,
+				FBD9AFB12AFF00BF005F8620 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FBD9AFB22AFF00BF005F8620 /* Build configuration list for PBXNativeTarget "Ludi Boards" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FBD9AFB32AFF00BF005F8620 /* Debug */,
+				FBD9AFB42AFF00BF005F8620 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		FBD9AFC32B008221005F8620 /* XCRemoteSwiftPackageReference "realm-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/realm/realm-swift.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		FBD9AFC42B008221005F8620 /* Realm */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FBD9AFC32B008221005F8620 /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = Realm;
+		};
+		FBD9AFC62B008221005F8620 /* RealmSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FBD9AFC32B008221005F8620 /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = RealmSwift;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = FBD9AF9C2AFF00BE005F8620 /* Project object */;
+}
