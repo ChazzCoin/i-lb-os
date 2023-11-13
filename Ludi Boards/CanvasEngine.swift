@@ -30,9 +30,15 @@ struct CanvasEngine: View {
     
     var body: some View {
         ScrollView([.horizontal, .vertical], showsIndicators: true) {
+           
             ZStack() {
                 DrawGridLines()
+                
                 BoardEngine()
+                
+                MenuBarFloatingWindow {
+                    LazyColumnForComps(items: [{MenuButtonIcon(icon: SoccerToolProvider.playerDummy)}])
+                }
             }
             .zIndex(0)
             .frame(width: initialWidth, height: initialHeight)

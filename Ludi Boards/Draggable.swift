@@ -14,8 +14,8 @@ struct DraggableRectangleView: View {
     @State private var isDragging = false
 
     var body: some View {
-        Rectangle()
-            .fill(Color.blue)
+        Image("tool_football")
+            .resizable()
             .frame(width: 100, height: 100)
             // Update position continuously during the drag
             .position(x: position.x + (isDragging ? dragOffset.width : 0),
@@ -49,6 +49,6 @@ struct DraggableRectangleView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        DraggableRectangleView()
     }
 }
