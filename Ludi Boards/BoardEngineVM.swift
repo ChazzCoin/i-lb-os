@@ -19,7 +19,7 @@ class ViewModel: ObservableObject {
     var startPosY: CGFloat = 2000 / 2
     
     let realmInstance = realm()
-    @State var boardId: String = ""
+    @State var boardId: String = "boardEngine-1"
     @State var boardBg = Image("soccer_one")
     // flowData
     
@@ -27,7 +27,9 @@ class ViewModel: ObservableObject {
         "test": ViewWrapper{AnyView(ManagedViewBoardTool(boardId: "", viewId: "", toolType: ""))}
     ]
     
-    init() { initializeFlows() }
+    init() { 
+        initializeFlows()
+    }
     
     func initializeFlows() {
         loadAllBoardSessions()
@@ -37,6 +39,7 @@ class ViewModel: ObservableObject {
         CodiChannel.BOARD_ON_ID_CHANGE.receive(on: RunLoop.main) { bId in
             self.loadBoardSession(boardIdIn: bId as! String)
         }.store(in: &cancellables)
+        
         // CodiChannel.TOOL_ON_DELETE.receive
         CodiChannel.TOOL_ON_DELETE.receive(on: RunLoop.main) { viewId in
             self.deleteToolById(viewId: viewId as! String)
@@ -44,9 +47,17 @@ class ViewModel: ObservableObject {
         
     }
     
-    func deleteToolById(viewId:String) { }
+    func deleteToolById(viewId:String) {
+        realmInstance.safeWrite { r in
+            let temp = r.findByField(ManagedView.self, field: "boardId", value: viewId)
+            guard let t = temp else {return}
+            r.delete(t)
+        }
+        
+    }
+    
     func loadBoardSession(boardIdIn:String) {
-        var tempBoard = realmInstance.object(ofType: BoardSession.self, forPrimaryKey: boardIdIn)
+        let tempBoard = realmInstance.object(ofType: BoardSession.self, forPrimaryKey: boardIdIn)
         if tempBoard == nil { return }
         toolViews.removeAll()
         toolViews = [:]
@@ -56,7 +67,7 @@ class ViewModel: ObservableObject {
         initRealmFlows()
     }
     func loadManagedViewTools() {
-        var all = realmInstance.findAllByField(ManagedView.self, field: "boardId", value: boardId)
+        let all = realmInstance.findAllByField(ManagedView.self, field: "boardId", value: boardId)
         print("Board Tools Size = [ ${all.size} ]")
         all?.forEach { it in safeAddTool(id: it.id, icon: it.toolType) }
     }
@@ -64,26 +75,26 @@ class ViewModel: ObservableObject {
     func initRealmFlows() {}
     
     func loadAllBoardSessions() {
-        var boardList = realmInstance.objects(BoardSession.self)
+        let boardList = realmInstance.objects(BoardSession.self)
         var bId = ""
         if boardList.isEmpty {
             try! realmInstance.write {
-                var newBoard = BoardSession()
+                let newBoard = BoardSession()
                 realmInstance.add(newBoard)
                 bId = newBoard.id
             }
         } else {
-            var temp = boardList.first
+            let temp = boardList.first
             bId = temp?.id ?? "test"
         }
         loadBoardSession(boardIdIn: bId)
         print("BOARDS: initial load -> ${boardList.size}")
     }
     func newTool(id: String, icon: String) -> ViewWrapper {
-        return ViewWrapper{AnyView(ManagedViewBoardTool(boardId: "", viewId: "", toolType: ""))}
+        return ViewWrapper{AnyView(ManagedViewBoardTool(boardId: self.boardId, viewId: id, toolType: icon))}
     }
     func safeAddTool(id: String, icon: String) {
-        guard let i = toolViews[id] else {
+        guard toolViews[id] != nil else {
             toolViews[id] = newTool(id: id, icon: icon)
             return
         }
@@ -131,37 +142,37 @@ struct BoardEngine: View {
     }
 }
 
-struct MView: View {
-    
-    @State private var position = CGPoint(x: 50, y: 50)
-    @GestureState private var dragOffset = CGSize.zero
-    
-    let data: String = ""
-
-    var body: some View {
-        Rectangle()
-            .fill(Color.black)
-            .frame(width: 300, height: 300)
-            // Use the updated position here, adding the drag offset while dragging
-            .position(x: position.x, y: position.y)
-            .zIndex(15)
-            .contentShape(Rectangle())
-            .gesture(
-                DragGesture()
-                    .updating($dragOffset, body: { (value, state, transaction) in
-                        state = value.translation
-                    })
-                    .onChanged { value in
-                        // Update the position state when the drag ends
-                        self.position = CGPoint(x: self.position.x + value.translation.width, y: self.position.y + value.translation.height)
-                    }
-                    .onEnded { value in
-                        // Update the position state when the drag ends
-                        self.position = CGPoint(x: self.position.x + value.translation.width, y: self.position.y + value.translation.height)
-                    }
-            )
-    }
-}
+//struct MView: View {
+//    
+//    @State private var position = CGPoint(x: 50, y: 50)
+//    @GestureState private var dragOffset = CGSize.zero
+//    
+//    let data: String = ""
+//
+//    var body: some View {
+//        Rectangle()
+//            .fill(Color.black)
+//            .frame(width: 300, height: 300)
+//            // Use the updated position here, adding the drag offset while dragging
+//            .position(x: position.x, y: position.y)
+//            .zIndex(15)
+//            .contentShape(Rectangle())
+//            .gesture(
+//                DragGesture()
+//                    .updating($dragOffset, body: { (value, state, transaction) in
+//                        state = value.translation
+//                    })
+//                    .onChanged { value in
+//                        // Update the position state when the drag ends
+//                        self.position = CGPoint(x: self.position.x + value.translation.width, y: self.position.y + value.translation.height)
+//                    }
+//                    .onEnded { value in
+//                        // Update the position state when the drag ends
+//                        self.position = CGPoint(x: self.position.x + value.translation.width, y: self.position.y + value.translation.height)
+//                    }
+//            )
+//    }
+//}
 
 // Define a wrapper for your view closures
 struct ViewWrapper: Identifiable {

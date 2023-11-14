@@ -19,6 +19,8 @@ struct LudiBoardsApp: SwiftUI.App {
         let realmConfiguration = Realm.Configuration(deleteRealmIfMigrationNeeded: true)
         Realm.Configuration.defaultConfiguration = realmConfiguration
         FirebaseApp.configure()
+        
+        fireManagedViewsAsync(boardId: "boardEngine-1", realm: realm())
     }
     
     var body: some Scene {

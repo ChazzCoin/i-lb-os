@@ -28,6 +28,8 @@ enum DatabasePaths: String {
     case reviewTemplates = "review_templates"
     case redzones = "redzones"
     case events = "events"
+    case boardSession = "boardSession"
+    case managedViews = "managedViews"
 }
 
 //func coreFirebaseUser() -> FirebaseAuth.User? {

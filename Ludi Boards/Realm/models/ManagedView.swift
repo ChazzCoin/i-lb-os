@@ -28,3 +28,24 @@ class ManagedView: Object {
         return "id"
     }
 }
+
+extension ManagedView {
+    func toDictionary() -> [String: Any] {
+        return [
+            "id": id,
+            "dateUpdated": dateUpdated,
+            "boardId": boardId,
+            "sport": sport,
+            "toolType": toolType,
+            "toolColor": toolColor,
+            "toolSize": toolSize,
+            "x": x,
+            "y": y,
+            "width": width,
+            "height": height,
+            "rotation": rotation,
+            "translationX": translationX,
+            "translationY": translationY
+        ]
+    }
+}

@@ -14,6 +14,6 @@ extension View {
     }
     
     func enableMVT(viewId: String="") -> some View {
-        self.modifier(enableManagedViewTool(viewId: ""))
+        self.modifier(enableManagedViewTool(viewId: viewId))
     }
 }

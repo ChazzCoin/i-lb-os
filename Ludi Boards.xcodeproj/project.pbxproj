@@ -14,7 +14,7 @@
 		FB58E8802B02B26C00FD9E2E /* DragAndDrop.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58E87F2B02B26C00FD9E2E /* DragAndDrop.swift */; };
 		FB58E8822B030F1D00FD9E2E /* RealmFind.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58E8812B030F1D00FD9E2E /* RealmFind.swift */; };
 		FB58E8842B03169700FD9E2E /* TimeProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58E8832B03169700FD9E2E /* TimeProvider.swift */; };
-		FB58E8862B0319B100FD9E2E /* LiveData.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58E8852B0319B100FD9E2E /* LiveData.swift */; };
+		FB58E8862B0319B100FD9E2E /* BoardSessionLiveData.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58E8852B0319B100FD9E2E /* BoardSessionLiveData.swift */; };
 		FB58E8892B03394700FD9E2E /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = FB58E8882B03394700FD9E2E /* FirebaseAnalytics */; };
 		FB58E88B2B03394700FD9E2E /* FirebaseAnalyticsOnDeviceConversion in Frameworks */ = {isa = PBXBuildFile; productRef = FB58E88A2B03394700FD9E2E /* FirebaseAnalyticsOnDeviceConversion */; };
 		FB58E88D2B03394700FD9E2E /* FirebaseAnalyticsSwift in Frameworks */ = {isa = PBXBuildFile; productRef = FB58E88C2B03394700FD9E2E /* FirebaseAnalyticsSwift */; };
@@ -43,6 +43,8 @@
 		FB58E8BB2B03394700FD9E2E /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = FB58E8BA2B03394700FD9E2E /* FirebaseStorage */; };
 		FB58E8BD2B03394700FD9E2E /* FirebaseStorageCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = FB58E8BC2B03394700FD9E2E /* FirebaseStorageCombine-Community */; };
 		FB93BB172B033E2000864CB2 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FB93BB162B033E2000864CB2 /* GoogleService-Info.plist */; };
+		FB93BB192B03432D00864CB2 /* ManagedViewLiveData.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB93BB182B03432D00864CB2 /* ManagedViewLiveData.swift */; };
+		FB93BB1B2B03471C00864CB2 /* FireData.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB93BB1A2B03471C00864CB2 /* FireData.swift */; };
 		FBD9AFA82AFF00BF005F8620 /* LudiBoardsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFA72AFF00BF005F8620 /* LudiBoardsApp.swift */; };
 		FBD9AFAA2AFF00BF005F8620 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFA92AFF00BF005F8620 /* ContentView.swift */; };
 		FBD9AFAC2AFF00BF005F8620 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FBD9AFAB2AFF00BF005F8620 /* Assets.xcassets */; };
@@ -72,8 +74,10 @@
 		FB58E87F2B02B26C00FD9E2E /* DragAndDrop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragAndDrop.swift; sourceTree = "<group>"; };
 		FB58E8812B030F1D00FD9E2E /* RealmFind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmFind.swift; sourceTree = "<group>"; };
 		FB58E8832B03169700FD9E2E /* TimeProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeProvider.swift; sourceTree = "<group>"; };
-		FB58E8852B0319B100FD9E2E /* LiveData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveData.swift; sourceTree = "<group>"; };
+		FB58E8852B0319B100FD9E2E /* BoardSessionLiveData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardSessionLiveData.swift; sourceTree = "<group>"; };
 		FB93BB162B033E2000864CB2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
+		FB93BB182B03432D00864CB2 /* ManagedViewLiveData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedViewLiveData.swift; sourceTree = "<group>"; };
+		FB93BB1A2B03471C00864CB2 /* FireData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireData.swift; sourceTree = "<group>"; };
 		FBD9AFA42AFF00BF005F8620 /* Ludi Boards.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Ludi Boards.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FBD9AFA72AFF00BF005F8620 /* LudiBoardsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LudiBoardsApp.swift; sourceTree = "<group>"; };
 		FBD9AFA92AFF00BF005F8620 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -134,13 +138,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		D462B7FF276DB723B376CBD6 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Pods;
-			sourceTree = "<group>";
-		};
 		FB58E8792B01F59700FD9E2E /* models */ = {
 			isa = PBXGroup;
 			children = (
@@ -167,7 +164,6 @@
 			children = (
 				FBD9AFA62AFF00BF005F8620 /* Ludi Boards */,
 				FBD9AFA52AFF00BF005F8620 /* Products */,
-				D462B7FF276DB723B376CBD6 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -222,7 +218,9 @@
 			children = (
 				FB58E8752B01F3D200FD9E2E /* FireParser.swift */,
 				FB58E8772B01F40300FD9E2E /* FireCore.swift */,
-				FB58E8852B0319B100FD9E2E /* LiveData.swift */,
+				FB93BB182B03432D00864CB2 /* ManagedViewLiveData.swift */,
+				FB58E8852B0319B100FD9E2E /* BoardSessionLiveData.swift */,
+				FB93BB1A2B03471C00864CB2 /* FireData.swift */,
 			);
 			path = Firebase;
 			sourceTree = "<group>";
@@ -363,11 +361,12 @@
 				FBD9AFD22B008CAB005F8620 /* MenuBarProvider.swift in Sources */,
 				FBD9AFD92B01CB91005F8620 /* SoccerToolProvider.swift in Sources */,
 				FBD9AFA82AFF00BF005F8620 /* LudiBoardsApp.swift in Sources */,
+				FB93BB1B2B03471C00864CB2 /* FireData.swift in Sources */,
 				FBD9AFD02B008A83005F8620 /* ManagedViewTool.swift in Sources */,
 				FBD9AFCB2B00843F005F8620 /* BoardSession.swift in Sources */,
 				FBD9AFC22B0081C1005F8620 /* RealmInstance.swift in Sources */,
 				FB58E8782B01F40300FD9E2E /* FireCore.swift in Sources */,
-				FB58E8862B0319B100FD9E2E /* LiveData.swift in Sources */,
+				FB58E8862B0319B100FD9E2E /* BoardSessionLiveData.swift in Sources */,
 				FBD9AFD72B00BB8F005F8620 /* Draggable.swift in Sources */,
 				FBD9AFBC2AFF56C2005F8620 /* BoardEngineVM.swift in Sources */,
 				FBD9AFB82AFF0253005F8620 /* GridLines.swift in Sources */,
@@ -375,6 +374,7 @@
 				FB58E8762B01F3D200FD9E2E /* FireParser.swift in Sources */,
 				FBD9AFD52B008F6F005F8620 /* Channels.swift in Sources */,
 				FB58E8802B02B26C00FD9E2E /* DragAndDrop.swift in Sources */,
+				FB93BB192B03432D00864CB2 /* ManagedViewLiveData.swift in Sources */,
 				FB58E87E2B02B21700FD9E2E /* CoreMods.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

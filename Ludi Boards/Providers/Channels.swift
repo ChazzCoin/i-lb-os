@@ -20,6 +20,7 @@ enum CodiChannel {
     case TOOL_SUBSCRIPTION
     case TOOL_ON_MENU_RETURN
     case TOOL_ATTRIBUTES
+    case REALM_ON_CHANGE
     // ... (other cases)
 
     private var subject: PassthroughSubject<Any, Never> {
@@ -46,6 +47,8 @@ enum CodiChannel {
             return ToolOnMenuReturnChannel.shared.subject
         case .TOOL_ATTRIBUTES:
             return ToolAttributesChannel.shared.subject
+        case .REALM_ON_CHANGE:
+            return RealmOnChangeChannel.shared.subject
         }
     }
 
@@ -99,5 +102,9 @@ class ToolOnMenuReturnChannel {
 }
 class ToolAttributesChannel {
     static let shared = ToolOnDeleteChannel()
+    let subject = PassthroughSubject<Any, Never>()
+}
+class RealmOnChangeChannel {
+    static let shared = RealmOnChangeChannel()
     let subject = PassthroughSubject<Any, Never>()
 }

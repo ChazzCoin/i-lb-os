@@ -14,7 +14,7 @@ struct enableManagedViewTool : ViewModifier {
     let realmInstance = realm()
     @State private var isDeleted = false
     @State private var isDisabled = false
-    @State private var lifeUpdatedAt = "0" // Using Double for time representation
+    @State private var lifeUpdatedAt: Int = 0 // Using Double for time representation
     @State private var lifeColor = Color.black // SwiftUI color representation
     @State private var lifeOffsetX: Double = 0.0 // CGFloat in SwiftUI
     @State private var lifeOffsetY: Double = 0.0 // CGFloat in SwiftUI
@@ -46,6 +46,9 @@ struct enableManagedViewTool : ViewModifier {
         // set attributes
         lifeOffsetX = umv.x
         lifeOffsetY = umv.y
+        lifeUpdatedAt = umv.dateUpdated
+        self.position = CGPoint(x: lifeOffsetX, y: lifeOffsetY)
+        print("\(viewId) x: [ \(lifeOffsetX) ] y: [ \(lifeOffsetY) ]")
         lifeWidth = Double(umv.width)
         lifeHeight = Double(umv.height)
         lifeRotation = umv.rotation
@@ -56,13 +59,13 @@ struct enableManagedViewTool : ViewModifier {
     func updateRealm() {
         print("!!!! Updating Realm!")
         if isDisabledChecker() {return}
-        lifeUpdatedAt = getTimeStamp()
-        var mv = realmInstance.findByField(ManagedView.self, value: viewId)
+        lifeUpdatedAt = Int(Date().timeIntervalSince1970)
+        let mv = realmInstance.findByField(ManagedView.self, value: viewId)
         if mv == nil { return }
         realmInstance.safeWrite { r in
-            mv?.dateUpdated = Int(lifeUpdatedAt) ?? 0
-            mv?.x = lifeOffsetX
-            mv?.y = lifeOffsetY
+            mv?.dateUpdated = lifeUpdatedAt
+            mv?.x = self.position.x
+            mv?.y = self.position.y
             mv?.toolColor = "lifeColor"
             mv?.rotation = lifeRotation
             mv?.toolType = lifeToolType
@@ -70,10 +73,15 @@ struct enableManagedViewTool : ViewModifier {
             mv?.height = Int(lifeHeight)
             guard let tMV = mv else { return }
             r.create(ManagedView.self, value: tMV, update: .all)
+            firebaseDatabase { fdb in
+                fdb.child(DatabasePaths.managedViews.rawValue)
+                    .child("boardEngine-1")
+                    .child(viewId)
+                    .setValue(mv?.toDictionary())
+            }
         }
         
         // CodiChannel.TOOL_SUBSCRIPTION.send(ViewAttributesPayload(
-        // if (BoardEngineObject.realTimeEnabled.value) {
     }
     func flowRealm() {
         if isDisabledChecker() {return}
@@ -121,7 +129,7 @@ struct enableManagedViewTool : ViewModifier {
                     // CodiChannel -> TOOL_ON_MENU_RETURN
                     // CodiChannel -> TOOL_ATTRIBUTES
                     // CodiChannel -> TOOL_ON_DELETE
-//                    loadFromRealm()
+                    loadFromRealm()
                     flowRealm()
                 }
         }
