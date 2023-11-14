@@ -1,5 +1,5 @@
 //
-//  Draggable.swift
+//  ManagedViewBoardTool.swift
 //  Ludi Boards
 //
 //  Created by Charles Romeo on 11/12/23.
@@ -8,7 +8,15 @@
 import Foundation
 import SwiftUI
 
-struct DraggableRectangleView: View {
+struct ManagedViewBoardTool: View {
+    let boardId: String
+    let viewId: String
+    let toolType: String
+    
+    @State private var color: Color = .black
+    @State private var rotation = 0.0
+    @State private var tool = "parse toolType into Tool"
+    
     @State private var position = CGPoint(x: 100, y: 100)
     @GestureState private var dragOffset = CGSize.zero
     @State private var isDragging = false
@@ -16,39 +24,13 @@ struct DraggableRectangleView: View {
     var body: some View {
         Image("tool_football")
             .resizable()
-            .frame(width: 100, height: 100)
-            // Update position continuously during the drag
-            .position(x: position.x + (isDragging ? dragOffset.width : 0),
-                      y: position.y + (isDragging ? dragOffset.height : 0))
-            .gesture(
-                LongPressGesture(minimumDuration: 0.5)
-                    .onEnded { _ in
-                        self.isDragging = true
-                    }
-                    .sequenced(before: DragGesture())
-                    .updating($dragOffset, body: { (value, state, transaction) in
-                        switch value {
-                        case .second(true, let drag):
-                            state = drag?.translation ?? .zero
-                        default:
-                            break
-                        }
-                    })
-                    .onEnded { value in
-                        if case .second(true, let drag?) = value {
-                            // Update the final position when the drag ends
-                            self.position = CGPoint(x: self.position.x + drag.translation.width, y: self.position.y + drag.translation.height)
-                            self.isDragging = false
-                        }
-                    }
-            )
-            .opacity(isDragging ? 0.5 : 1)
+            .enableMVT(viewId: viewId)
     }
 }
 
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        DraggableRectangleView()
+        ManagedViewBoardTool(boardId: "", viewId: "", toolType: "")
     }
 }

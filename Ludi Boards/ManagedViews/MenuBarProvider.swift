@@ -31,7 +31,7 @@ struct MenuButtonIcon: View {
         VStack {
             icon.soccerTool.image
                 .resizable()
-                .frame(width: 45, height: 45)
+                .frame(width: 35, height: 35)
                 .onTapGesture {
                     print("CodiChannel SendTopic: \(icon.soccerTool.title)")
                     // Implement your channel logic here
@@ -52,7 +52,7 @@ struct MenuBarFloatingWindow<Content>: View where Content: View {
     @State private var overrideColor = false // Replace with your actual condition
     @State private var color: Color = .gray // Replace with your actual color
     
-    @State private var position = CGPoint(x: 500, y: 500)
+    @State private var position = CGPoint(x: 100, y: 100)
     @GestureState private var dragOffset = CGSize.zero
     @State private var isDragging = false
 
@@ -65,21 +65,23 @@ struct MenuBarFloatingWindow<Content>: View where Content: View {
             if isEnabled {
                 content
                     .zIndex(20)
-                    .frame(maxWidth: 200, maxHeight: 500)
+                    .frame(maxWidth: 50, maxHeight: 200)
+//                    .cornerRadius(25)
+                    .shadow(radius: 15)
                     .background(color)
-                    .shadow(radius: 10)
                     .offset(x: offset.width, y: offset.height)
                     .position(x: position.x + (isDragging ? dragOffset.width : 0),
                               y: position.y + (isDragging ? dragOffset.height : 0))
                     .overlay(
                         Rectangle() // The rectangle that acts as the border
-                            .stroke(Color.white, lineWidth: 2) // Red border with a stroke width of 2
-                            .frame(width: 200, height: 500)
+                            .stroke(Color.gray, lineWidth: 5) // Red border with a stroke width of 2
+                            .frame(width: 50, height: 200)
+//                            .background(color)
+                            .cornerRadius(5)
                             .offset(x: offset.width, y: offset.height)
                             .position(x: position.x + (isDragging ? dragOffset.width : 0),
                                       y: position.y + (isDragging ? dragOffset.height : 0))
                     )
-//                    .clipShape(RoundedRectangle(cornerRadius: 10))
                     .gesture(
                         LongPressGesture(minimumDuration: 0.05)
                             .onEnded { _ in

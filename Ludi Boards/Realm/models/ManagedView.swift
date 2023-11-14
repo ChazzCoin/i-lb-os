@@ -16,13 +16,13 @@ class ManagedView: Object {
     @objc dynamic var toolType: String = "8BALL"
     @objc dynamic var toolColor: String = "TOOLCOLOR.BLACK.name"  // Assuming it's a string representation
     @objc dynamic var toolSize: String = "TOOLSIZE.MEDIUM.name"  // Assuming it's a string representation
-    @objc dynamic var x: Float = 0.0
-    @objc dynamic var y: Float = 0.0
+    @objc dynamic var x: Double = 0.0
+    @objc dynamic var y: Double = 0.0
     @objc dynamic var width: Int = 0
     @objc dynamic var height: Int = 0
-    @objc dynamic var rotation: Float = 0.0
-    @objc dynamic var translationX: Float = 0.0
-    @objc dynamic var translationY: Float = 0.0
+    @objc dynamic var rotation: Double = 0.0
+    @objc dynamic var translationX: Double = 0.0
+    @objc dynamic var translationY: Double = 0.0
 
     override static func primaryKey() -> String? {
         return "id"

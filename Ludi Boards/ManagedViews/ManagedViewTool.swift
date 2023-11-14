@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-struct ManagedViewBoardTool: View {
+struct ManagedViewBoardTool2: View {
     let boardId: String
     let viewId: String
     let toolType: String

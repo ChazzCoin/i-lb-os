@@ -7,7 +7,7 @@
 
 import Foundation
 import Combine
-
+//@State var cancellables = Set<AnyCancellable>()
 enum CodiChannel {
     case general
     case central
@@ -15,6 +15,11 @@ enum CodiChannel {
     case broadcast
     case BOARD_ON_ID_CHANGE
     case MENU_TOGGLER
+    case TOOL_ON_CREATE
+    case TOOL_ON_DELETE
+    case TOOL_SUBSCRIPTION
+    case TOOL_ON_MENU_RETURN
+    case TOOL_ATTRIBUTES
     // ... (other cases)
 
     private var subject: PassthroughSubject<Any, Never> {
@@ -31,6 +36,16 @@ enum CodiChannel {
             return BoardOnIdChangeChannel.shared.subject
         case .MENU_TOGGLER:
             return MenuTogglerChangeChannel.shared.subject
+        case .TOOL_ON_CREATE:
+            return ToolOnCreateChannel.shared.subject
+        case .TOOL_ON_DELETE:
+            return ToolOnCreateChannel.shared.subject
+        case .TOOL_SUBSCRIPTION:
+            return ToolSubscriptionChannel.shared.subject
+        case .TOOL_ON_MENU_RETURN:
+            return ToolOnMenuReturnChannel.shared.subject
+        case .TOOL_ATTRIBUTES:
+            return ToolAttributesChannel.shared.subject
         }
     }
 
@@ -64,5 +79,25 @@ class BoardOnIdChangeChannel {
 }
 class MenuTogglerChangeChannel {
     static let shared = MenuTogglerChangeChannel()
+    let subject = PassthroughSubject<Any, Never>()
+}
+class ToolOnCreateChannel {
+    static let shared = ToolOnCreateChannel()
+    let subject = PassthroughSubject<Any, Never>()
+}
+class ToolOnDeleteChannel {
+    static let shared = ToolOnDeleteChannel()
+    let subject = PassthroughSubject<Any, Never>()
+}
+class ToolSubscriptionChannel {
+    static let shared = ToolOnDeleteChannel()
+    let subject = PassthroughSubject<Any, Never>()
+}
+class ToolOnMenuReturnChannel {
+    static let shared = ToolOnDeleteChannel()
+    let subject = PassthroughSubject<Any, Never>()
+}
+class ToolAttributesChannel {
+    static let shared = ToolOnDeleteChannel()
     let subject = PassthroughSubject<Any, Never>()
 }
