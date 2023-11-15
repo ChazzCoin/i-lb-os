@@ -118,6 +118,7 @@ struct MenuBarWindow<Content>: View where Content: View {
             }
             Spacer().frame(height: 16)
         }
+        .zIndex(5.0)
         .frame(maxWidth: 50, maxHeight: 50 * Double(items.count))
         .padding(8)
         .shadow(radius: 15)

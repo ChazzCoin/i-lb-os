@@ -23,24 +23,13 @@ struct LudiBoardsApp: SwiftUI.App {
     
     var body: some Scene {
         WindowGroup {
-            ZStack {
-                
-                CanvasEngine()
-                    .onAppear {
-                        print("Waiting...")
-                        CodiChannel.general.receive(on: RunLoop.main) { message in
-                            print("Received on general channel: \(message)")
-                        }.store(in: &cancellables)
-                }
-                
-                MenuBarWindow(items: [
-                    {MenuButtonIcon(icon: MenuBarProvider.toolbox)},
-                    {MenuButtonIcon(icon: MenuBarProvider.lock)}
-                ])
-
+            CanvasEngine()
+                .onAppear {
+                    print("Waiting...")
+                    CodiChannel.general.receive(on: RunLoop.main) { message in
+                        print("Received on general channel: \(message)")
+                    }.store(in: &cancellables)
             }
-            
-                
         }
     }
 }
