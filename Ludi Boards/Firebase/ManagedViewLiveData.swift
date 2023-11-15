@@ -25,7 +25,7 @@ class ManagedViewLiveData: NSObject {
     init(realmIds: [String], realmInstance: Realm) {
         self.realmIds = realmIds
         self.realmInstance = realmInstance
-        self.reference = Database.database().reference().child(DatabasePaths.teams.rawValue)
+        self.reference = Database.database().reference().child(DatabasePaths.managedViews.rawValue)
         super.init()
         createObservers()
         observeRealmIds()

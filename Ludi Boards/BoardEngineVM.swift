@@ -13,10 +13,10 @@ class ViewModel: ObservableObject {
     
     @State var cancellables = Set<AnyCancellable>()
     
-    var width: CGFloat = 1500
-    var height: CGFloat = 2000
-    var startPosX: CGFloat = 1500 / 2
-    var startPosY: CGFloat = 2000 / 2
+    var width: CGFloat = 2400
+    var height: CGFloat = 3400
+    var startPosX: CGFloat = 2400 / 2
+    var startPosY: CGFloat = 3400 / 2
     
     let realmInstance = realm()
     @State var boardId: String = "boardEngine-1"
@@ -126,7 +126,7 @@ struct BoardEngine: View {
         .background {
             Image("soccer_one")
                 .resizable() 
-                .aspectRatio(contentMode: .fit) // Fill the area, possibly cropping the image
+                .aspectRatio(contentMode: .fill) // Fill the area, possibly cropping the image
                 .frame(width: viewModel.width, height: viewModel.height) // Match the frame size of the ZStack
                 .position(x: viewModel.startPosX, y: viewModel.startPosY)
         }

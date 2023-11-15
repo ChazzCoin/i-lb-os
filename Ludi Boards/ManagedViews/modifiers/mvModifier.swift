@@ -7,9 +7,15 @@
 
 import Foundation
 import SwiftUI
+import Firebase
+import RealmSwift
 
 struct enableManagedViewTool : ViewModifier {
     @State var viewId: String
+    
+    private var notificationTokens: [NotificationToken] = []
+    let reference = Database.database().reference().child(DatabasePaths.managedViews.rawValue)
+    
     
     let realmInstance = realm()
     @State private var isDeleted = false
@@ -87,6 +93,8 @@ struct enableManagedViewTool : ViewModifier {
         if isDisabledChecker() {return}
         if isDeletedChecker() {return}
         // Flow -> codiRealm.onChangeByCondition
+        
+        
     }
     
     func body(content: Content) -> some View {
@@ -95,8 +103,8 @@ struct enableManagedViewTool : ViewModifier {
                 .colorMultiply(lifeColor)
                 .rotationEffect(.degrees(lifeRotation))
                 .border(popUpIsVisible ? Color.red : Color.clear, width: 1) // Border modifier
-                .position(x: position.x + (isDragging ? dragOffset.width : 0),
-                          y: position.y + (isDragging ? dragOffset.height : 0))
+                .position(x: position.x + (isDragging ? dragOffset.width : 0) + self.lifeWidth,
+                          y: position.y + (isDragging ? dragOffset.height : 0) + self.lifeHeight)
                 .gesture(
                     LongPressGesture(minimumDuration: 0.01)
                         .onEnded { _ in
