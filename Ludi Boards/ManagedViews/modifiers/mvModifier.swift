@@ -12,10 +12,7 @@ import RealmSwift
 
 struct enableManagedViewTool : ViewModifier {
     @State var viewId: String
-    
-    private var notificationTokens: [NotificationToken] = []
-    let reference = Database.database().reference().child(DatabasePaths.managedViews.rawValue)
-    
+    @State var boardId: String = "boardEngine-1"
     
     let realmInstance = realm()
     @State private var isDeleted = false
@@ -35,6 +32,9 @@ struct enableManagedViewTool : ViewModifier {
     @State private var position = CGPoint(x: 100, y: 100)
     @GestureState private var dragOffset = CGSize.zero
     @State private var isDragging = false
+    
+    let reference = Database.database().reference().child(DatabasePaths.managedViews.rawValue)
+    @State var notificationTokens: [NotificationToken] = []
     
     // Functions
     func isDisabledChecker() -> Bool { return isDisabled }
@@ -93,8 +93,26 @@ struct enableManagedViewTool : ViewModifier {
         if isDisabledChecker() {return}
         if isDeletedChecker() {return}
         // Flow -> codiRealm.onChangeByCondition
-        
-        
+        observeFirebase()
+    }
+    
+    func observeFirebase() {
+        // TODO: Just parse it straight in...
+        // there is no need to go through ludi parser then onChange token.
+        if boardId.isEmpty || viewId.isEmpty {return}
+        reference.child(boardId).child(viewId).observe(.value, with: { snapshot in
+            let _ = snapshot.toLudiObject(ManagedView.self, realm: realmInstance)
+            let obj = snapshot.value as? [String:Any]
+            lifeOffsetX = obj?["x"] as? Double ?? lifeOffsetX
+            lifeOffsetY = obj?["y"] as? Double ?? lifeOffsetY
+            lifeUpdatedAt = obj?["dateUpdated"] as? Int ?? lifeUpdatedAt
+            self.position = CGPoint(x: lifeOffsetX, y: lifeOffsetY)
+            print("\(viewId) x: [ \(lifeOffsetX) ] y: [ \(lifeOffsetY) ]")
+            lifeWidth = Double(obj?["width"] as? Int ?? Int(lifeWidth))
+            lifeHeight = Double(obj?["height"] as? Int ?? Int(lifeHeight))
+            lifeRotation = Double(obj?["rotation"] as? Double ?? lifeRotation)
+            lifeToolType = obj?["toolType"] as? String ?? lifeToolType
+        })
     }
     
     func body(content: Content) -> some View {

@@ -15,52 +15,31 @@ protocol ValueEventListener {
 }
 
 class ManagedViewLiveData: NSObject {
-    private let realmIds: [String]
+    var viewId: String = ""
     private let realmInstance: Realm
     private var fireReferences: [String: DatabaseReference] = [:]
-    private var notificationTokens: [NotificationToken] = []
     private var reference: DatabaseReference
     private var enabled = false
     
-    init(realmIds: [String], realmInstance: Realm) {
-        self.realmIds = realmIds
+    init(viewId: String, realmInstance: Realm) {
+        self.viewId = viewId
         self.realmInstance = realmInstance
         self.reference = Database.database().reference().child(DatabasePaths.managedViews.rawValue)
         super.init()
         createObservers()
-        observeRealmIds()
     }
     
     // Create Observer Pairs
     private func createObservers() {
-        for realmId in realmIds {
-            let referenceChild = reference.child(realmId)
-            fireReferences[realmId] = referenceChild
-            if enabled {
-                referenceChild.observe(.value, with: { [weak self] snapshot in
-                    self?.onDataChange(snapshot: snapshot)
-                })
-            }
+        let referenceChild = reference.child(self.viewId)
+        if enabled {
+            referenceChild.observe(.value, with: { [weak self] snapshot in
+                self?.onDataChange(snapshot: snapshot)
+            })
         }
     }
     
-    // Realm Observer
-    private func observeRealmIds() {
-        let results = realmInstance.objects(ManagedView.self)
-        for result in results {
-            let token = result.observe { [weak self] _ in
-                guard let self = self else { return }
-                let currentList = self.realmIds.compactMap { id in
-                    self.realmInstance.object(ofType: ManagedView.self, forPrimaryKey: id)
-                }
-                if currentList.contains(result) {
-                    // Handle data update here
-                }
-            }
-            notificationTokens.append(token)
-        }
-    }
-    
+
     // Firebase Observer
     private func onDataChange(snapshot: DataSnapshot) {
         // Handle snapshot data conversion and update here
