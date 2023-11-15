@@ -37,7 +37,6 @@ struct enableManagedViewTool : ViewModifier {
     
     // Firebase
     let reference = Database.database().reference().child(DatabasePaths.managedViews.rawValue)
-    @State var notificationTokens: [NotificationToken] = []
     
     // Functions
     func isDisabledChecker() -> Bool { return isDisabled }
@@ -102,7 +101,7 @@ struct enableManagedViewTool : ViewModifier {
     func observeFirebase() {
         // TODO: make this more rock solid, error handling, retry logic...
         if boardId.isEmpty || viewId.isEmpty {return}
-        reference.child(boardId).child(viewId).observe(.value, with: { snapshot in
+        reference.child(boardId).child(viewId).fireObserver { snapshot in
             let _ = snapshot.toLudiObject(ManagedView.self, realm: realmInstance)
             let obj = snapshot.value as? [String:Any]
             lifeOffsetX = obj?["x"] as? Double ?? lifeOffsetX
@@ -115,7 +114,7 @@ struct enableManagedViewTool : ViewModifier {
             lifeRotation = Double(obj?["rotation"] as? Double ?? lifeRotation)
             lifeToolType = obj?["toolType"] as? String ?? lifeToolType
             lifeColor = ColorProvider.fromColorName(colorName: obj?["toolColor"] as? String ?? lifeColor.rawValue)
-        })
+        }
     }
     
     func body(content: Content) -> some View {
@@ -149,8 +148,13 @@ struct enableManagedViewTool : ViewModifier {
                                 //onMoveComplete()
                                 updateRealm()
                             }
-                        }
+                        }.simultaneously(with: TapGesture()
+                            .onEnded {
+                                print("Tapped")
+                            }
+                        )
                 )
+                
                 .opacity(!isDisabledChecker() && !isDeletedChecker() ? 1 : 0.0)
                 .onAppear {
                     // isDisabled.value = false

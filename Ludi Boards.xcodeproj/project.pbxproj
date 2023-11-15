@@ -44,6 +44,7 @@
 		FB93BB172B033E2000864CB2 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FB93BB162B033E2000864CB2 /* GoogleService-Info.plist */; };
 		FB93BB1B2B03471C00864CB2 /* FireData.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB93BB1A2B03471C00864CB2 /* FireData.swift */; };
 		FBB450002B04B7580096F8EB /* ColorProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBB44FFF2B04B7580096F8EB /* ColorProvider.swift */; };
+		FBB450022B052B180096F8EB /* FireLiveData.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBB450012B052B180096F8EB /* FireLiveData.swift */; };
 		FBD9AFA82AFF00BF005F8620 /* LudiBoardsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFA72AFF00BF005F8620 /* LudiBoardsApp.swift */; };
 		FBD9AFAA2AFF00BF005F8620 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFA92AFF00BF005F8620 /* ContentView.swift */; };
 		FBD9AFAC2AFF00BF005F8620 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FBD9AFAB2AFF00BF005F8620 /* Assets.xcassets */; };
@@ -75,6 +76,7 @@
 		FB93BB162B033E2000864CB2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
 		FB93BB1A2B03471C00864CB2 /* FireData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireData.swift; sourceTree = "<group>"; };
 		FBB44FFF2B04B7580096F8EB /* ColorProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorProvider.swift; sourceTree = "<group>"; };
+		FBB450012B052B180096F8EB /* FireLiveData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireLiveData.swift; sourceTree = "<group>"; };
 		FBD9AFA42AFF00BF005F8620 /* Ludi Boards.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Ludi Boards.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FBD9AFA72AFF00BF005F8620 /* LudiBoardsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LudiBoardsApp.swift; sourceTree = "<group>"; };
 		FBD9AFA92AFF00BF005F8620 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -214,6 +216,7 @@
 				FB58E8752B01F3D200FD9E2E /* FireParser.swift */,
 				FB58E8772B01F40300FD9E2E /* FireCore.swift */,
 				FB93BB1A2B03471C00864CB2 /* FireData.swift */,
+				FBB450012B052B180096F8EB /* FireLiveData.swift */,
 			);
 			path = Firebase;
 			sourceTree = "<group>";
@@ -366,6 +369,7 @@
 				FBD9AFBA2AFF03D7005F8620 /* CanvasEngine.swift in Sources */,
 				FB58E8762B01F3D200FD9E2E /* FireParser.swift in Sources */,
 				FBD9AFD52B008F6F005F8620 /* Channels.swift in Sources */,
+				FBB450022B052B180096F8EB /* FireLiveData.swift in Sources */,
 				FB58E8802B02B26C00FD9E2E /* DragAndDrop.swift in Sources */,
 				FB58E87E2B02B21700FD9E2E /* CoreMods.swift in Sources */,
 			);

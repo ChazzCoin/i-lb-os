@@ -48,4 +48,54 @@ extension ManagedView {
             "translationY": translationY
         ]
     }
+    
+    
+}
+
+func toManagedView(dictionary: [String: Any]) -> ManagedView? {
+    let managedView = ManagedView()
+
+    if let id = dictionary["id"] as? String {
+        managedView.id = id
+    }
+    if let dateUpdated = dictionary["dateUpdated"] as? Int {
+        managedView.dateUpdated = dateUpdated
+    }
+    if let boardId = dictionary["boardId"] as? String {
+        managedView.boardId = boardId
+    }
+    if let sport = dictionary["sport"] as? String {
+        managedView.sport = sport
+    }
+    if let toolType = dictionary["toolType"] as? String {
+        managedView.toolType = toolType
+    }
+    if let toolColor = dictionary["toolColor"] as? String {
+        managedView.toolColor = toolColor
+    }
+    if let toolSize = dictionary["toolSize"] as? String {
+        managedView.toolSize = toolSize
+    }
+    if let x = dictionary["x"] as? Double {
+        managedView.x = x
+    }
+    if let y = dictionary["y"] as? Double {
+        managedView.y = y
+    }
+    if let width = dictionary["width"] as? Int {
+        managedView.width = width
+    }
+    if let height = dictionary["height"] as? Int {
+        managedView.height = height
+    }
+    if let rotation = dictionary["rotation"] as? Double {
+        managedView.rotation = rotation
+    }
+    if let translationX = dictionary["translationX"] as? Double {
+        managedView.translationX = translationX
+    }
+    if let translationY = dictionary["translationY"] as? Double {
+        managedView.translationY = translationY
+    }
+    return managedView
 }

@@ -8,9 +8,12 @@
 import Foundation
 import SwiftUI
 import Combine
+import FirebaseDatabase
+import RealmSwift
 
 class ViewModel: ObservableObject {
     
+    let reference = Database.database().reference().child(DatabasePaths.managedViews.rawValue)
     @State var cancellables = Set<AnyCancellable>()
     
     var width: CGFloat = 2400
@@ -19,6 +22,8 @@ class ViewModel: ObservableObject {
     var startPosY: CGFloat = 3400 / 2
     
     let realmInstance = realm()
+    
+    //TODO: create demo board for sharing.
     @State var boardId: String = "boardEngine-1"
     @State var boardBg = Image("soccer_one")
     // flowData
@@ -62,15 +67,28 @@ class ViewModel: ObservableObject {
         boardId = boardIdIn
 //        boardBg.value = BoardBackgroundProvider.fromString(tempBoard.backgroundImg ?: "Soccer 1").res
         loadManagedViewTools()
+        
         initRealmFlows()
     }
+        
     func loadManagedViewTools() {
-        let all = realmInstance.findAllByField(ManagedView.self, field: "boardId", value: boardId)
-        print("Board Tools Size = [ ${all.size} ]")
-        all?.forEach { it in safeAddTool(id: it.id, icon: it.toolType) }
+        reference.child(self.boardId).fireObserver { snapshot in
+            let mapped = snapshot.toHashMap()
+            if mapped.count < self.toolViews.count { self.toolViews = [:] }
+            for (itId, value) in mapped {
+                if let tempHash = value as? [String: Any] {
+                    let temp: ManagedView? = toManagedView(dictionary: tempHash)
+                    if let itTemp = temp {
+                        self.safeAddTool(id: itId, icon: temp?.toolType ?? SoccerToolProvider.playerDummy.tool.title)
+                    }
+                }
+            }
+        }
     }
     
-    func initRealmFlows() {}
+    func initRealmFlows() {
+        
+    }
     
     func loadAllBoardSessions() {
         let boardList = realmInstance.objects(BoardSession.self)

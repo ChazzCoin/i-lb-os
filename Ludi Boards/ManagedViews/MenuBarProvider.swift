@@ -90,7 +90,7 @@ struct MenuButtonIcon: View {
                     CodiChannel.MENU_TOGGLER.send(value: icon.tool.title)
                 }
                 .foregroundColor(isLocked ? .red : Color.primary)
-            Spacer().frame(height: 16)
+            Spacer().frame(height: 8)
         }
         .onAppear {
             // Update isLocked state based on your conditions
@@ -104,7 +104,7 @@ struct MenuBarWindow<Content>: View where Content: View {
     @State private var offset = CGSize.zero
     @State private var isEnabled = true // Replace with your actual condition
     @State private var overrideColor = false // Replace with your actual condition
-    @State private var color: Color = .gray // Replace with your actual color
+    @State private var color: Color = .white // Replace with your actual color
     
     @State private var position = CGPoint(x: 100, y: 100)
     @GestureState private var dragOffset = CGSize.zero
@@ -112,7 +112,7 @@ struct MenuBarWindow<Content>: View where Content: View {
 
     var body: some View {
         VStack(spacing: 8) {
-            Spacer().frame(height: 16)
+            Spacer().frame(height: 24)
             ForEach(0..<items.count, id: \.self) { index in
                 self.items[index]()
             }
@@ -121,7 +121,7 @@ struct MenuBarWindow<Content>: View where Content: View {
         .frame(maxWidth: 50, maxHeight: 50 * Double(items.count))
         .padding(8)
         .shadow(radius: 15)
-        .background(Color.blue)
+        .background(color)
         .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
         .offset(x: offset.width, y: offset.height)
         .position(x: position.x + (isDragging ? dragOffset.width : 0),

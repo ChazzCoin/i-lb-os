@@ -54,6 +54,7 @@ extension Dictionary where Key == String, Value == Any {
                     try? realm.write {
                         object = realm.create(type, value: self, update: .all)
                         realm.refresh()
+                        CodiChannel.REALM_ON_CHANGE.send(value: self["id"] ?? "nil")
                     }
                     return object
                 } else {
@@ -62,6 +63,7 @@ extension Dictionary where Key == String, Value == Any {
                     try? realm.write {
                         object = realm.create(type, value: self, update: .all)
                         realm.refresh()
+                        CodiChannel.REALM_ON_CHANGE.send(value: self["id"] ?? "nil")
                     }
                     return object
                 }
