@@ -14,6 +14,8 @@ struct enableManagedViewTool : ViewModifier {
     @State var viewId: String
     @State var boardId: String = "boardEngine-1"
     
+    let minSizeWH = 100.0
+    
     let realmInstance = realm()
     @State private var isDeleted = false
     @State private var isDisabled = false
@@ -40,8 +42,8 @@ struct enableManagedViewTool : ViewModifier {
     func isDisabledChecker() -> Bool { return isDisabled }
     func isDeletedChecker() -> Bool { return isDeleted }
     func minSizeCheck() {
-        if lifeWidth < 75 { lifeWidth = 75 }
-        if lifeHeight < 75 { lifeHeight = 75 }
+        if lifeWidth < minSizeWH { lifeWidth = minSizeWH }
+        if lifeHeight < minSizeWH { lifeHeight = minSizeWH }
     }
     
     func loadFromRealm(managedView: ManagedView?=nil) {
@@ -117,12 +119,12 @@ struct enableManagedViewTool : ViewModifier {
     
     func body(content: Content) -> some View {
             content
-                .frame(width: lifeWidth, height: lifeHeight)
+                .frame(width: lifeWidth * 2, height: lifeHeight * 2)
                 .colorMultiply(lifeColor)
                 .rotationEffect(.degrees(lifeRotation))
                 .border(popUpIsVisible ? Color.red : Color.clear, width: 1) // Border modifier
-                .position(x: position.x + (isDragging ? dragOffset.width : 0) + self.lifeWidth,
-                          y: position.y + (isDragging ? dragOffset.height : 0) + self.lifeHeight)
+                .position(x: position.x + (isDragging ? dragOffset.width : 0) + (self.lifeWidth),
+                          y: position.y + (isDragging ? dragOffset.height : 0) + (self.lifeHeight))
                 .gesture(
                     LongPressGesture(minimumDuration: 0.01)
                         .onEnded { _ in

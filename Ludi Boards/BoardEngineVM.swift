@@ -23,9 +23,7 @@ class ViewModel: ObservableObject {
     @State var boardBg = Image("soccer_one")
     // flowData
     
-    @Published var toolViews: [String:ViewWrapper] = [
-        "test": ViewWrapper{AnyView(ManagedViewBoardTool(boardId: "", viewId: "", toolType: ""))}
-    ]
+    @Published var toolViews: [String:ViewWrapper] = [:]
     
     init() { 
         initializeFlows()
@@ -95,7 +93,8 @@ class ViewModel: ObservableObject {
     }
     func safeAddTool(id: String, icon: String) {
         guard toolViews[id] != nil else {
-            toolViews[id] = newTool(id: id, icon: icon)
+            let parsedTool = SoccerToolProvider.parseByTitle(title: icon)?.tool.image ?? SoccerToolProvider.playerDummy.tool.image
+            toolViews[id] = newTool(id: id, icon: parsedTool)
             return
         }
     }
@@ -118,7 +117,7 @@ struct BoardEngine: View {
             ForEach(Array(viewModel.toolViews.values)) { item in
                 item.view()
             }
-            ManagedViewBoardTool(boardId: "", viewId: "", toolType: "")
+//            ManagedViewBoardTool(boardId: "", viewId: "", toolType: "")
         }
         .frame(width: viewModel.width, height: viewModel.height)
         .position(x: viewModel.startPosX, y: viewModel.startPosY)

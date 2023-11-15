@@ -10,31 +10,84 @@ import SwiftUI
 
 struct Tool {
     let title: String
-    let image: Image // Using SwiftUI's Image type for image resources
+    let image: String // Using SwiftUI's Image type for image resources
     let authLevel: Int
     let color: Color
 }
 
 protocol IconProvider {
-    var soccerTool: SoccerTool { get }
+    var tool: Tool { get }
+}
+
+enum MenuBarProvider: IconProvider {
+    case toolbox
+    case lock
+    case canvasGrid
+    case navHome
+    case boardList
+    case boardCreate
+    case boardDetails
+    case reset
+    case trash
+    case boardBackground
+    case profile
+    case share
+    case router
+    case note
+    case chat
+    case paint
+    case image
+    case webBrowser
+
+    var tool: Tool {
+        switch self {
+            case .toolbox: return Tool(title: "Toolbox", image: "toolbox", authLevel: 0, color: .black)
+            case .lock: return Tool(title: "Lock", image: "hand_point_up", authLevel: 0, color: .black)
+            case .canvasGrid: return Tool(title: "Grid", image: "game_board", authLevel: 0, color: .black)
+            case .navHome: return Tool(title: "NavPad", image: "arrows_up_down_left_right", authLevel: 0, color: .black)
+            case .boardList: return Tool(title: "Boards", image: "square_list", authLevel: 0, color: .black)
+            case .boardCreate: return Tool(title: "Create Board", image: "layer_plus", authLevel: 0, color: .black)
+            case .boardDetails: return Tool(title: "Details Board", image: "square_sliders", authLevel: 0, color: .black)
+            case .reset: return Tool(title: "Reset", image: "backward", authLevel: 2, color: .black)
+            case .trash: return Tool(title: "Trash", image: "trash_can", authLevel: 99, color: .black)
+            case .boardBackground: return Tool(title: "BoardBackground", image: "aperture", authLevel: 2, color: .black)
+            case .profile: return Tool(title: "Profile", image: "circle_user", authLevel: 2, color: .black)
+            case .share: return Tool(title: "Share", image: "share_from_square", authLevel: 2, color: .black)
+            case .router: return Tool(title: "Connect", image: "router", authLevel: 99, color: .black)
+            case .note: return Tool(title: "Note", image: "note", authLevel: 2, color: .black)
+            case .chat: return Tool(title: "Chat", image: "comments", authLevel: 2, color: .black)
+            case .paint: return Tool(title: "Paint", image: "file", authLevel: 99, color: .black)
+            case .image: return Tool(title: "Image", image: "camera", authLevel: 2, color: .black)
+            case .webBrowser: return Tool(title: "Web Browser", image: "film", authLevel: 99, color: .black)
+        }
+    }
+
+    static let allCases: [MenuBarProvider] = [
+        .toolbox, .lock, .canvasGrid, .navHome, .boardList, 
+        .boardCreate, .boardDetails, .reset, .trash, .boardBackground,
+        .profile, .share, .router, .note, .chat, .paint, .image, .webBrowser
+    ]
+
+    static func parseByTitle(title: String) -> MenuBarProvider? {
+        return allCases.first { $0.tool.title.lowercased() == title.lowercased() }
+    }
 }
 
 
 struct MenuButtonIcon: View {
     var icon: IconProvider // Assuming IconProvider conforms to SwiftUI's View
-//    var channel: CodiChannel  Define this according to your needs
-//    var codiAction: CodiActions // Enum or other type representing actions
 
     @State private var isLocked = false
 
     var body: some View {
         VStack {
-            icon.soccerTool.image
+            
+            Image(icon.tool.image)
                 .resizable()
                 .frame(width: 35, height: 35)
                 .onTapGesture {
-                    print("CodiChannel SendTopic: \(icon.soccerTool.title)")
-                    // Implement your channel logic here
+                    print("CodiChannel SendTopic: \(icon.tool.title)")
+                    CodiChannel.MENU_TOGGLER.send(value: icon.tool.title)
                 }
                 .foregroundColor(isLocked ? .red : Color.primary)
             Spacer().frame(height: 16)
@@ -45,8 +98,9 @@ struct MenuButtonIcon: View {
     }
 }
 
-struct MenuBarFloatingWindow<Content>: View where Content: View {
-    let content: Content
+struct MenuBarWindow<Content>: View where Content: View {
+    let items: [() -> Content]
+    
     @State private var offset = CGSize.zero
     @State private var isEnabled = true // Replace with your actual condition
     @State private var overrideColor = false // Replace with your actual condition
@@ -56,71 +110,43 @@ struct MenuBarFloatingWindow<Content>: View where Content: View {
     @GestureState private var dragOffset = CGSize.zero
     @State private var isDragging = false
 
-    init(@ViewBuilder content: () -> Content) {
-        self.content = content()
-    }
-
     var body: some View {
-        Group {
-            if isEnabled {
-                content
-                    .zIndex(20)
-                    .frame(maxWidth: 50, maxHeight: 200)
-//                    .cornerRadius(25)
-                    .shadow(radius: 15)
-                    .background(color)
-                    .offset(x: offset.width, y: offset.height)
-                    .position(x: position.x + (isDragging ? dragOffset.width : 0),
-                              y: position.y + (isDragging ? dragOffset.height : 0))
-                    .overlay(
-                        Rectangle() // The rectangle that acts as the border
-                            .stroke(Color.gray, lineWidth: 5) // Red border with a stroke width of 2
-                            .frame(width: 50, height: 200)
-//                            .background(color)
-                            .cornerRadius(5)
-                            .offset(x: offset.width, y: offset.height)
-                            .position(x: position.x + (isDragging ? dragOffset.width : 0),
-                                      y: position.y + (isDragging ? dragOffset.height : 0))
-                    )
-                    .gesture(
-                        LongPressGesture(minimumDuration: 0.05)
-                            .onEnded { _ in
-                                self.isDragging = true
-                            }
-                            .sequenced(before: DragGesture())
-                            .updating($dragOffset, body: { (value, state, transaction) in
-                                switch value {
-                                case .second(true, let drag):
-                                    state = drag?.translation ?? .zero
-                                default:
-                                    break
-                                }
-                            })
-                            .onEnded { value in
-                                if case .second(true, let drag?) = value {
-                                    // Update the final position when the drag ends
-                                    self.position = CGPoint(x: self.position.x + drag.translation.width, y: self.position.y + drag.translation.height)
-                                    self.isDragging = false
-                                }
-                            }
-                    )
+        VStack(spacing: 8) {
+            Spacer().frame(height: 16)
+            ForEach(0..<items.count, id: \.self) { index in
+                self.items[index]()
             }
+            Spacer().frame(height: 16)
         }
-    }
-}
-
-
-struct LazyColumnForComps<Content>: View where Content: View {
-    let items: [() -> Content]
-
-    var body: some View {
-        ScrollView {
-            VStack(spacing: 8) {
-                ForEach(0..<items.count, id: \.self) { index in
-                    self.items[index]()
+        .frame(maxWidth: 50, maxHeight: 50 * Double(items.count))
+        .padding(8)
+        .shadow(radius: 15)
+        .background(Color.blue)
+        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .offset(x: offset.width, y: offset.height)
+        .position(x: position.x + (isDragging ? dragOffset.width : 0),
+                  y: position.y + (isDragging ? dragOffset.height : 0))
+        .gesture(
+            LongPressGesture(minimumDuration: 0.001)
+                .onEnded { _ in
+                    self.isDragging = true
                 }
-            }
-            .padding(8)
-        }
+                .sequenced(before: DragGesture())
+                .updating($dragOffset, body: { (value, state, transaction) in
+                    switch value {
+                    case .second(true, let drag):
+                        state = drag?.translation ?? .zero
+                    default:
+                        break
+                    }
+                })
+                .onEnded { value in
+                    if case .second(true, let drag?) = value {
+                        // Update the final position when the drag ends
+                        self.position = CGPoint(x: self.position.x + drag.translation.width, y: self.position.y + drag.translation.height)
+                        self.isDragging = false
+                    }
+                }
+        )
     }
 }

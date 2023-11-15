@@ -8,20 +8,6 @@
 import Foundation
 import SwiftUI
 
-
-struct SoccerTool {
-    let title: String
-    let image: Image // Using SwiftUI's Image type for image resources
-    let authLevel: Int
-    let color: Color
-}
-
-//// Define a protocol similar to IconProvider in Kotlin
-//protocol IconProvider {
-//    var soccerTool: SoccerTool { get }
-//}
-
-
 enum SoccerToolProvider: IconProvider {
     case playerDummy
     case playerJersey
@@ -37,38 +23,21 @@ enum SoccerToolProvider: IconProvider {
     case curvedLine
     case dottedLine
 
-    // Define your images somewhere
-    // ...
-
-    var soccerTool: SoccerTool {
+    var tool: Tool {
         switch self {
-        case .playerDummy:
-            return SoccerTool(title: "Player Body", image: Image("tool_football"), authLevel: 0, color: .black)
-        // ... repeat for other cases
-        case .playerJersey:
-            return SoccerTool(title: "", image: Image(""), authLevel: 0, color: .black)
-        case .steps:
-            return SoccerTool(title: "", image: Image(""), authLevel: 0, color: .black)
-        case .playerWalking:
-            return SoccerTool(title: "", image: Image(""), authLevel: 0, color: .black)
-        case .playerRunning:
-            return SoccerTool(title: "", image: Image(""), authLevel: 0, color: .black)
-        case .goal:
-            return SoccerTool(title: "", image: Image(""), authLevel: 0, color: .black)
-        case .flagPole:
-            return SoccerTool(title: "", image: Image(""), authLevel: 0, color: .black)
-        case .tallCone:
-            return SoccerTool(title: "", image: Image(""), authLevel: 0, color: .black)
-        case .shortCone:
-            return SoccerTool(title: "", image: Image(""), authLevel: 0, color: .black)
-        case .ladder:
-            return SoccerTool(title: "", image: Image(""), authLevel: 0, color: .black)
-        case .soccerBall:
-            return SoccerTool(title: "", image: Image(""), authLevel: 0, color: .black)
-        case .curvedLine:
-            return SoccerTool(title: "", image: Image(""), authLevel: 0, color: .black)
-        case .dottedLine:
-            return SoccerTool(title: "", image: Image(""), authLevel: 0, color: .black)
+            case .playerDummy: return Tool(title: "Player Body", image: "tools_soccer_dummy", authLevel: 0, color: .black)
+            case .playerJersey: return Tool(title: "Player Jersey", image: "tools_soccer_jersey", authLevel: 0, color: .black)
+            case .steps: return Tool(title: "Steps", image: "tools_soccer_steps", authLevel: 0, color: .black)
+            case .playerWalking: return Tool(title: "Player Walking", image: "tools_soccer_walking", authLevel: 0, color: .black)
+            case .playerRunning: return Tool(title: "Player Running", image: "tools_soccer_running", authLevel: 0, color: .black)
+            case .goal: return Tool(title: "Goal", image: "tools_soccer_goal", authLevel: 0, color: .black)
+            case .flagPole: return Tool(title: "Flat Pole", image: "tools_soccer_flag", authLevel: 0, color: .black)
+            case .tallCone: return Tool(title: "Tall Cone", image: "tools_soccer_tall_cone", authLevel: 0, color: .black)
+            case .shortCone: return Tool(title: "Short Cone", image: "tools_soccer_mat", authLevel: 0, color: .black)
+            case .ladder: return Tool(title: "Ladder", image: "tools_soccer_ladder", authLevel: 0, color: .black)
+            case .soccerBall: return Tool(title: "Soccer Ball", image: "tools_soccer_soccer_ball", authLevel: 0, color: .black)
+            case .curvedLine: return Tool(title: "Curved Line", image: "tools_soccer_curved_line", authLevel: 0, color: .black)
+            case .dottedLine: return Tool(title: "Dotted Line", image: "tools_soccer_dotted_line", authLevel: 0, color: .black)
         }
     }
 
@@ -81,6 +50,6 @@ enum SoccerToolProvider: IconProvider {
     static let sport = "Soccer"
 
     static func parseByTitle(title: String) -> SoccerToolProvider? {
-        return allCases.first { $0.soccerTool.title.lowercased() == title.lowercased() }
+        return allCases.first { $0.tool.title.lowercased() == title.lowercased() }
     }
 }

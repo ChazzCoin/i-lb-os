@@ -35,12 +35,13 @@ struct LudiBoardsApp: SwiftUI.App {
                         }.store(in: &cancellables)
                 }
                 
-                MenuBarFloatingWindow {
-                    LazyColumnForComps(items: [
-                        {MenuButtonIcon(icon: SoccerToolProvider.playerDummy)},
-                        {MenuButtonIcon(icon: SoccerToolProvider.playerDummy)}
-                    ])
-                }
+                MenuBarWindow(items: [
+                    {MenuButtonIcon(icon: MenuBarProvider.toolbox)},
+                    {MenuButtonIcon(icon: MenuBarProvider.lock)}
+                ])
+//                MenuBarFloatingWindow {
+//                    
+//                }
             }
             
                 

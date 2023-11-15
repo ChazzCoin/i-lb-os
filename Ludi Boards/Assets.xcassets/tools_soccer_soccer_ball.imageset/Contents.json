@@ -1,0 +1,23 @@
+{
+  "images" : [
+    {
+      "filename" : "tools_soccer_soccer_ball.svg",
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "filename" : "tools_soccer_soccer_ball 1.svg",
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "filename" : "tools_soccer_soccer_ball 2.svg",
+      "idiom" : "universal",
+      "scale" : "3x"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
