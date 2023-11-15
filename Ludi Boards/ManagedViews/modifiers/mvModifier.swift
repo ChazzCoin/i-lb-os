@@ -20,14 +20,14 @@ struct enableManagedViewTool : ViewModifier {
     @State private var isDeleted = false
     @State private var isDisabled = false
     @State private var lifeUpdatedAt: Int = 0 // Using Double for time representation
-    @State private var lifeColor = Color.black // SwiftUI color representation
+    @State private var lifeColor = ColorProvider.black // SwiftUI color representation
     @State private var lifeOffsetX: Double = 0.0 // CGFloat in SwiftUI
     @State private var lifeOffsetY: Double = 0.0 // CGFloat in SwiftUI
     @State private var lifeWidth = 75.0 // CGFloat in SwiftUI
     @State private var lifeHeight = 75.0 // CGFloat in SwiftUI
     @State private var lifeScale = 1.0 // CGFloat for scale
     @State private var lifeRotation = 0.0 // Angle in degrees, represented by Double in SwiftUI
-    @State private var lifeToolType = "ToolType.someDefaultValue" // Assuming 'toolType' is an enum or similar
+    @State private var lifeToolType = SoccerToolProvider.playerDummy.tool.image // Assuming 'toolType' is an enum or similar
     
     @State private var popUpIsVisible = false
     
@@ -35,6 +35,7 @@ struct enableManagedViewTool : ViewModifier {
     @GestureState private var dragOffset = CGSize.zero
     @State private var isDragging = false
     
+    // Firebase
     let reference = Database.database().reference().child(DatabasePaths.managedViews.rawValue)
     @State var notificationTokens: [NotificationToken] = []
     
@@ -61,7 +62,7 @@ struct enableManagedViewTool : ViewModifier {
         lifeHeight = Double(umv.height)
         lifeRotation = umv.rotation
         lifeToolType = umv.toolType
-        
+        lifeColor = ColorProvider.fromColorName(colorName: umv.toolColor)
         minSizeCheck()
     }
     func updateRealm() {
@@ -74,7 +75,7 @@ struct enableManagedViewTool : ViewModifier {
             mv?.dateUpdated = lifeUpdatedAt
             mv?.x = self.position.x
             mv?.y = self.position.y
-            mv?.toolColor = "lifeColor"
+            mv?.toolColor = lifeColor.rawValue
             mv?.rotation = lifeRotation
             mv?.toolType = lifeToolType
             mv?.width = Int(lifeWidth)
@@ -99,8 +100,7 @@ struct enableManagedViewTool : ViewModifier {
     }
     
     func observeFirebase() {
-        // TODO: Just parse it straight in...
-        // there is no need to go through ludi parser then onChange token.
+        // TODO: make this more rock solid, error handling, retry logic...
         if boardId.isEmpty || viewId.isEmpty {return}
         reference.child(boardId).child(viewId).observe(.value, with: { snapshot in
             let _ = snapshot.toLudiObject(ManagedView.self, realm: realmInstance)
@@ -114,13 +114,14 @@ struct enableManagedViewTool : ViewModifier {
             lifeHeight = Double(obj?["height"] as? Int ?? Int(lifeHeight))
             lifeRotation = Double(obj?["rotation"] as? Double ?? lifeRotation)
             lifeToolType = obj?["toolType"] as? String ?? lifeToolType
+            lifeColor = ColorProvider.fromColorName(colorName: obj?["toolColor"] as? String ?? lifeColor.rawValue)
         })
     }
     
     func body(content: Content) -> some View {
             content
                 .frame(width: lifeWidth * 2, height: lifeHeight * 2)
-                .colorMultiply(lifeColor)
+                .colorMultiply(lifeColor.colorValue)
                 .rotationEffect(.degrees(lifeRotation))
                 .border(popUpIsVisible ? Color.red : Color.clear, width: 1) // Border modifier
                 .position(x: position.x + (isDragging ? dragOffset.width : 0) + (self.lifeWidth),

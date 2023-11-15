@@ -15,7 +15,6 @@ struct ManagedViewBoardTool: View {
     
     @State private var color: Color = .black
     @State private var rotation = 0.0
-//    @State private var tool = SoccerToolProvider.playerDummy.soccerTool.title
     
     @State private var position = CGPoint(x: 100, y: 100)
     @GestureState private var dragOffset = CGSize.zero

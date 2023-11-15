@@ -127,25 +127,17 @@ struct MenuBarWindow<Content>: View where Content: View {
         .position(x: position.x + (isDragging ? dragOffset.width : 0),
                   y: position.y + (isDragging ? dragOffset.height : 0))
         .gesture(
-            LongPressGesture(minimumDuration: 0.001)
-                .onEnded { _ in
+            DragGesture()
+                .updating($dragOffset, body: { (value, state, transaction) in
+                    state = value.translation
+                })
+                .onChanged { _ in
                     self.isDragging = true
                 }
-                .sequenced(before: DragGesture())
-                .updating($dragOffset, body: { (value, state, transaction) in
-                    switch value {
-                    case .second(true, let drag):
-                        state = drag?.translation ?? .zero
-                    default:
-                        break
-                    }
-                })
                 .onEnded { value in
-                    if case .second(true, let drag?) = value {
-                        // Update the final position when the drag ends
-                        self.position = CGPoint(x: self.position.x + drag.translation.width, y: self.position.y + drag.translation.height)
-                        self.isDragging = false
-                    }
+                    // Update the final position when the drag ends
+                    self.position = CGPoint(x: self.position.x + value.translation.width, y: self.position.y + value.translation.height)
+                    self.isDragging = false
                 }
         )
     }

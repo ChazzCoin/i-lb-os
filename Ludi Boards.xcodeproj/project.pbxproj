@@ -14,7 +14,6 @@
 		FB58E8802B02B26C00FD9E2E /* DragAndDrop.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58E87F2B02B26C00FD9E2E /* DragAndDrop.swift */; };
 		FB58E8822B030F1D00FD9E2E /* RealmFind.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58E8812B030F1D00FD9E2E /* RealmFind.swift */; };
 		FB58E8842B03169700FD9E2E /* TimeProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58E8832B03169700FD9E2E /* TimeProvider.swift */; };
-		FB58E8862B0319B100FD9E2E /* BoardSessionLiveData.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58E8852B0319B100FD9E2E /* BoardSessionLiveData.swift */; };
 		FB58E8892B03394700FD9E2E /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = FB58E8882B03394700FD9E2E /* FirebaseAnalytics */; };
 		FB58E88B2B03394700FD9E2E /* FirebaseAnalyticsOnDeviceConversion in Frameworks */ = {isa = PBXBuildFile; productRef = FB58E88A2B03394700FD9E2E /* FirebaseAnalyticsOnDeviceConversion */; };
 		FB58E88D2B03394700FD9E2E /* FirebaseAnalyticsSwift in Frameworks */ = {isa = PBXBuildFile; productRef = FB58E88C2B03394700FD9E2E /* FirebaseAnalyticsSwift */; };
@@ -43,8 +42,8 @@
 		FB58E8BB2B03394700FD9E2E /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = FB58E8BA2B03394700FD9E2E /* FirebaseStorage */; };
 		FB58E8BD2B03394700FD9E2E /* FirebaseStorageCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = FB58E8BC2B03394700FD9E2E /* FirebaseStorageCombine-Community */; };
 		FB93BB172B033E2000864CB2 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FB93BB162B033E2000864CB2 /* GoogleService-Info.plist */; };
-		FB93BB192B03432D00864CB2 /* ManagedViewLiveData.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB93BB182B03432D00864CB2 /* ManagedViewLiveData.swift */; };
 		FB93BB1B2B03471C00864CB2 /* FireData.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB93BB1A2B03471C00864CB2 /* FireData.swift */; };
+		FBB450002B04B7580096F8EB /* ColorProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBB44FFF2B04B7580096F8EB /* ColorProvider.swift */; };
 		FBD9AFA82AFF00BF005F8620 /* LudiBoardsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFA72AFF00BF005F8620 /* LudiBoardsApp.swift */; };
 		FBD9AFAA2AFF00BF005F8620 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFA92AFF00BF005F8620 /* ContentView.swift */; };
 		FBD9AFAC2AFF00BF005F8620 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FBD9AFAB2AFF00BF005F8620 /* Assets.xcassets */; };
@@ -59,10 +58,9 @@
 		FBD9AFC92B008435005F8620 /* ManagedViewAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFC82B008435005F8620 /* ManagedViewAction.swift */; };
 		FBD9AFCB2B00843F005F8620 /* BoardSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFCA2B00843F005F8620 /* BoardSession.swift */; };
 		FBD9AFCD2B008457005F8620 /* UserToBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFCC2B008457005F8620 /* UserToBoard.swift */; };
-		FBD9AFD02B008A83005F8620 /* ManagedViewTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFCF2B008A83005F8620 /* ManagedViewTool.swift */; };
 		FBD9AFD22B008CAB005F8620 /* MenuBarProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFD12B008CAB005F8620 /* MenuBarProvider.swift */; };
 		FBD9AFD52B008F6F005F8620 /* Channels.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFD42B008F6F005F8620 /* Channels.swift */; };
-		FBD9AFD72B00BB8F005F8620 /* Draggable.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFD62B00BB8F005F8620 /* Draggable.swift */; };
+		FBD9AFD72B00BB8F005F8620 /* ManagedViewBoardTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFD62B00BB8F005F8620 /* ManagedViewBoardTool.swift */; };
 		FBD9AFD92B01CB91005F8620 /* SoccerToolProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFD82B01CB91005F8620 /* SoccerToolProvider.swift */; };
 /* End PBXBuildFile section */
 
@@ -74,10 +72,9 @@
 		FB58E87F2B02B26C00FD9E2E /* DragAndDrop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragAndDrop.swift; sourceTree = "<group>"; };
 		FB58E8812B030F1D00FD9E2E /* RealmFind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmFind.swift; sourceTree = "<group>"; };
 		FB58E8832B03169700FD9E2E /* TimeProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeProvider.swift; sourceTree = "<group>"; };
-		FB58E8852B0319B100FD9E2E /* BoardSessionLiveData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardSessionLiveData.swift; sourceTree = "<group>"; };
 		FB93BB162B033E2000864CB2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
-		FB93BB182B03432D00864CB2 /* ManagedViewLiveData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedViewLiveData.swift; sourceTree = "<group>"; };
 		FB93BB1A2B03471C00864CB2 /* FireData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireData.swift; sourceTree = "<group>"; };
+		FBB44FFF2B04B7580096F8EB /* ColorProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorProvider.swift; sourceTree = "<group>"; };
 		FBD9AFA42AFF00BF005F8620 /* Ludi Boards.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Ludi Boards.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FBD9AFA72AFF00BF005F8620 /* LudiBoardsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LudiBoardsApp.swift; sourceTree = "<group>"; };
 		FBD9AFA92AFF00BF005F8620 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -91,10 +88,9 @@
 		FBD9AFC82B008435005F8620 /* ManagedViewAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedViewAction.swift; sourceTree = "<group>"; };
 		FBD9AFCA2B00843F005F8620 /* BoardSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardSession.swift; sourceTree = "<group>"; };
 		FBD9AFCC2B008457005F8620 /* UserToBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserToBoard.swift; sourceTree = "<group>"; };
-		FBD9AFCF2B008A83005F8620 /* ManagedViewTool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedViewTool.swift; sourceTree = "<group>"; };
 		FBD9AFD12B008CAB005F8620 /* MenuBarProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarProvider.swift; sourceTree = "<group>"; };
 		FBD9AFD42B008F6F005F8620 /* Channels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Channels.swift; sourceTree = "<group>"; };
-		FBD9AFD62B00BB8F005F8620 /* Draggable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Draggable.swift; sourceTree = "<group>"; };
+		FBD9AFD62B00BB8F005F8620 /* ManagedViewBoardTool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedViewBoardTool.swift; sourceTree = "<group>"; };
 		FBD9AFD82B01CB91005F8620 /* SoccerToolProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoccerToolProvider.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -190,7 +186,6 @@
 				FBD9AFB72AFF0253005F8620 /* GridLines.swift */,
 				FBD9AFB92AFF03D7005F8620 /* CanvasEngine.swift */,
 				FBD9AFBB2AFF56C2005F8620 /* BoardEngineVM.swift */,
-				FBD9AFD62B00BB8F005F8620 /* Draggable.swift */,
 			);
 			path = "Ludi Boards";
 			sourceTree = "<group>";
@@ -218,8 +213,6 @@
 			children = (
 				FB58E8752B01F3D200FD9E2E /* FireParser.swift */,
 				FB58E8772B01F40300FD9E2E /* FireCore.swift */,
-				FB93BB182B03432D00864CB2 /* ManagedViewLiveData.swift */,
-				FB58E8852B0319B100FD9E2E /* BoardSessionLiveData.swift */,
 				FB93BB1A2B03471C00864CB2 /* FireData.swift */,
 			);
 			path = Firebase;
@@ -229,8 +222,8 @@
 			isa = PBXGroup;
 			children = (
 				FB58E87A2B02B1E200FD9E2E /* modifiers */,
-				FBD9AFCF2B008A83005F8620 /* ManagedViewTool.swift */,
 				FBD9AFD12B008CAB005F8620 /* MenuBarProvider.swift */,
+				FBD9AFD62B00BB8F005F8620 /* ManagedViewBoardTool.swift */,
 			);
 			path = ManagedViews;
 			sourceTree = "<group>";
@@ -241,6 +234,7 @@
 				FBD9AFD42B008F6F005F8620 /* Channels.swift */,
 				FBD9AFD82B01CB91005F8620 /* SoccerToolProvider.swift */,
 				FB58E8832B03169700FD9E2E /* TimeProvider.swift */,
+				FBB44FFF2B04B7580096F8EB /* ColorProvider.swift */,
 			);
 			path = Providers;
 			sourceTree = "<group>";
@@ -362,19 +356,17 @@
 				FBD9AFD92B01CB91005F8620 /* SoccerToolProvider.swift in Sources */,
 				FBD9AFA82AFF00BF005F8620 /* LudiBoardsApp.swift in Sources */,
 				FB93BB1B2B03471C00864CB2 /* FireData.swift in Sources */,
-				FBD9AFD02B008A83005F8620 /* ManagedViewTool.swift in Sources */,
+				FBB450002B04B7580096F8EB /* ColorProvider.swift in Sources */,
 				FBD9AFCB2B00843F005F8620 /* BoardSession.swift in Sources */,
 				FBD9AFC22B0081C1005F8620 /* RealmInstance.swift in Sources */,
 				FB58E8782B01F40300FD9E2E /* FireCore.swift in Sources */,
-				FB58E8862B0319B100FD9E2E /* BoardSessionLiveData.swift in Sources */,
-				FBD9AFD72B00BB8F005F8620 /* Draggable.swift in Sources */,
+				FBD9AFD72B00BB8F005F8620 /* ManagedViewBoardTool.swift in Sources */,
 				FBD9AFBC2AFF56C2005F8620 /* BoardEngineVM.swift in Sources */,
 				FBD9AFB82AFF0253005F8620 /* GridLines.swift in Sources */,
 				FBD9AFBA2AFF03D7005F8620 /* CanvasEngine.swift in Sources */,
 				FB58E8762B01F3D200FD9E2E /* FireParser.swift in Sources */,
 				FBD9AFD52B008F6F005F8620 /* Channels.swift in Sources */,
 				FB58E8802B02B26C00FD9E2E /* DragAndDrop.swift in Sources */,
-				FB93BB192B03432D00864CB2 /* ManagedViewLiveData.swift in Sources */,
 				FB58E87E2B02B21700FD9E2E /* CoreMods.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
