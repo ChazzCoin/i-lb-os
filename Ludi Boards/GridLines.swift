@@ -12,15 +12,15 @@ struct DrawGridLines: View {
     // Access the shared CanvasEngineGlobal instance
 //    @ObservedObject var canvasGlobals = CanvasEngineGlobal.shared
     // Define the maximum allowed dimensions
-    private let maxDimension: CGFloat = 5000
+    private let maxDimension: CGFloat = 10000
     
     var body: some View {
         GeometryReader { geometry in
             Canvas { context, size in
                 
                 // Clamp the canvas width and height to the maximum allowed dimension
-                let clampedCanvasWidth = min(maxDimension, CGFloat(5000))
-                let clampedCanvasHeight = min(maxDimension, CGFloat(5000))
+                let clampedCanvasWidth = min(maxDimension, CGFloat(10000))
+                let clampedCanvasHeight = min(maxDimension, CGFloat(10000))
                 
                 // Use the clamped dimensions for drawing
                 let maxWidth = min(size.width, clampedCanvasWidth)
