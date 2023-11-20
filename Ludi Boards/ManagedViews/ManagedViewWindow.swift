@@ -8,10 +8,10 @@
 import Foundation
 import SwiftUI
 
-class ManagedViewWindow : ObservableObject {
+class ManagedViewWindow {
     
     @Published var id: String
-    @Published var content: ViewWrapper?
+    @Published var content: AnyView?
     @Published var boardId: String = ""
     @Published var title: String = ""
     
@@ -19,22 +19,42 @@ class ManagedViewWindow : ObservableObject {
     @Published var isFullScreen: Bool = true
     @Published var isGlobalWindow: Bool = false
     
-    init(id: String) {
+    init(id: String, content: AnyView) {
         self.id = id
+        self.content = content
+    }
+
+    func setContent<Content: View>(_ newContent: Content) {
+        self.content = AnyView(newContent)
     }
 
     func toggleMinimized() { isMinimized = !isMinimized }
     func toggleFullScreen() { isFullScreen = !isFullScreen }
 }
 
-class ManagedViewWindows {
+//extension ManagedViewWindows {
+//    func safelyAddItem(key: String, item: ViewWrapper) {
+//        DispatchQueue.main.async {
+//            self.managedViewGenerics[key] = item
+//        }
+//    }
+//    func safelyRemoveItem(forKey key: String) {
+//        DispatchQueue.main.async {
+//            self.managedViewGenerics.removeValue(forKey: key)
+//        }
+//    }
+//}
+
+
+class ManagedViewWindows:ObservableObject {
     
     static let shared = ManagedViewWindows()
     
-    @State var managedViewWindows: [ManagedViewWindow] = []
+    @Published var managedViewWindows: [ManagedViewWindow] = []
+    @Published var managedViewGenerics: [String:ViewWrapper] = [:]
     
     func newManagedViewWindow(viewId: String) -> ManagedViewWindow {
-        return ManagedViewWindow(id: viewId)
+        return ManagedViewWindow(id: viewId, content: AnyView(ChatView()))
     }
     
     func toggleManagedViewWindowById(viewId: String) {
@@ -42,95 +62,65 @@ class ManagedViewWindows {
         temp.toggleMinimized()
     }
     
-    func showHideManagedViewWindows() -> some View {
-        ForEach(managedViewWindows, id: \.id) { window in
-            if !window.isMinimized && !window.isFullScreen && !window.isGlobalWindow {
-//                window.content?.view()
+    func toggleItem(key: String, item: ViewWrapper) {
+        DispatchQueue.main.async {
+            if self.managedViewGenerics[key] != nil {
+                self.managedViewGenerics.removeValue(forKey: key)
+            } else {
+                self.managedViewGenerics[key] = item
             }
+        }
+    }
+    
+    func safelyAddItem(key: String, item: ViewWrapper) {
+        DispatchQueue.main.async {
+            self.managedViewGenerics[key] = item
+        }
+    }
+    func safelyRemoveItem(forKey key: String) {
+        DispatchQueue.main.async {
+            self.managedViewGenerics.removeValue(forKey: key)
         }
     }
 
     func globalManagedViewWindows() -> some View {
         ForEach(managedViewWindows, id: \.id) { window in
             if window.isGlobalWindow && !window.isMinimized {
-                ManagedViewWindowView(managedViewWindow: window)
+//                ManagedViewWindowView(managedViewWindow: window)
             }
         }
     }
 
 }
 
-struct ManagedViewWindowView: View {
-    @State private var offset = CGSize.zero
-    @State private var rotation: Double = 0
+struct GenericWindow : View {
+    
     @State var managedViewWindow: ManagedViewWindow
     
-    // Accessing screen dimensions
-    let screenWidth = UIScreen.main.bounds.width
-    let screenHeight = UIScreen.main.bounds.height
-
-    var body: some View {
-        GeometryReader { geometry in
-            VStack {
-                // Your content here
-//                managedViewWindow.content?.view()
-            }
-            .frame(width: managedViewWindow.isFullScreen ? screenWidth : 300,
-                   height: managedViewWindow.isFullScreen ? screenHeight : 300)
-            .background(Color.red)
-            .overlay(
-                Rectangle() // The rectangle that acts as the border
-                    .stroke(Color.red, lineWidth: 2) // Red border with a stroke width of 2
-                    .frame(width: managedViewWindow.isFullScreen ? screenWidth : 300, height: managedViewWindow.isFullScreen ? screenHeight : 300)
-                    .position(x: 0.0, y: 0.0)
-                )
-            .cornerRadius(10)
-            .shadow(radius: 8)
-            .rotationEffect(Angle(degrees: getRotation()))
-            .offset(x: offset.width, y: offset.height)
-
-            .onAppear {
-                rotation = getRotation()
-            }
-        }
-        .zIndex(5)
-    }
-
-    private func getRotation() -> Double {
-        // Implement the logic to determine the rotation
-        return 0.0
-    }
-}
-
-
-struct GenericWindow<Content: View>: View {
-    let content: Content
+    @State private var isHidden = false
     
-    @State private var managedViewWindow: ManagedViewWindow? = nil
+    @State var screen: UIScreen = UIScreen()
     
     @State private var offset = CGSize.zero
     @State private var position = CGPoint(x: 0, y: 0)
     @GestureState private var dragOffset = CGSize.zero
     @State private var isDragging = false
-    
-
-    init(@ViewBuilder content: () -> Content) {
-//        self.managedViewWindow = managedViewWindow
-        self.content = content()
-    }
-
     var body: some View {
         VStack(spacing: 0) {
             // Taskbar
             taskbarView
                 .padding()
-
-            // Content
-            content
+            if let windowContent = managedViewWindow.content {
+                windowContent
+            } else {
+                // Placeholder or fallback view
+                Text("No content available")
+            }
         }
         .background(Color.white)
         .cornerRadius(15)
         .shadow(radius: 10)
+        .opacity(isHidden ? 0:1)
         .offset(x: position.x + (isDragging ? dragOffset.width : 0), y: position.y + (isDragging ? dragOffset.height : 0))
         .gesture(
             DragGesture()
@@ -145,42 +135,44 @@ struct GenericWindow<Content: View>: View {
                     self.isDragging = false
                 }
         )
+        .frame(minWidth: 100, maxWidth: 400, minHeight: 100, maxHeight: 300)
     }
 
     var taskbarView: some View {
         HStack {
-            Text("Window Title")
+            Text("Real-Time Chat")
                 .font(.headline)
-                .foregroundColor(.white)
-
+                .foregroundColor(.black)
             Spacer()
-
             // Add buttons or icons here for minimize, maximize, close, etc.
+            Button(action: {
+                
+            }) {
+                Image(systemName: "arrow.up.circle.fill")
+                    .resizable()
+                    .frame(width: 50, height: 50)
+            }.frame(height: 50)
+            Button(action: {
+                // Minimize:
+                isHidden = true
+//                managedViewWindow?.isMinimized = true
+            }) {
+                Image(systemName: "arrow.down.circle.fill")
+                    .resizable()
+                    .frame(width: 50, height: 50)
+            }.frame(height: 50)
         }
-        .background(Color.black.opacity(0.7))
-        .cornerRadius(10)
+//        .background(Color.black.opacity(0.7))
+//        .cornerRadius(10)
     }
 }
 
-struct GenericWindowPreview: PreviewProvider {
-    static var previews: some View {
-        GenericWindow {
-            // Your custom view here
-            Text("Content goes here")
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-        }
-        .frame(width: 300, height: 200)
-    }
-}
+//struct GenericWindowPreview: PreviewProvider {
+//    static var previews: some View {
+////        GenericWindow {
+////            ChatView()
+////        }
+//    }
+//}
 
-// Example usage
-struct ContentView2: View {
-    var body: some View {
-        GenericWindow {
-            // Your custom view here
-            Text("Content goes here")
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-        }
-        .frame(width: 300, height: 200)
-    }
-}
+

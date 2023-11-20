@@ -35,25 +35,26 @@ struct ChatView: View {
                             .cornerRadius(10)
                         Text(message.timestamp)
                             .font(.caption)
-                    }
+                    }.background(Color.black)
                     if !message.isCurrentUser {
                         Spacer()
                     }
                 }
             }
+            .frame(minHeight: 200, maxHeight: 400)
 
             // Text input
             HStack {
                 TextField("Type a message...", text: $messageText)
+                    .frame(height: 50)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .padding()
 
                 Button(action: sendMessage) {
                     Image(systemName: "arrow.up.circle.fill")
                         .resizable()
-                        .frame(width: 40, height: 40)
-                }
-                .padding()
+                        .frame(width: 50, height: 50)
+                }.frame(height: 50)
+//                .padding()
             }
         }.background(Color.white)
     }

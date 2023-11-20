@@ -17,9 +17,13 @@ class CanvasEngineViewModel: ObservableObject {
     
     let managedWindowsObject = ManagedViewWindows.shared
     
+    init() {
+        menuBarButtonListener()
+    }
+    
     func menuBarButtonListener() {
         
-        CodiChannel.MENU_TOGGLER.receive(on: RunLoop.main) { buttonType in
+        CodiChannel.general.receive(on: RunLoop.main) { buttonType in
             print("Received on MENU_TOGGLER channel: \(buttonType)")
             
             switch MenuBarProvider.parseByTitle(title: buttonType as? String ?? "") {
@@ -51,6 +55,8 @@ class CanvasEngineViewModel: ObservableObject {
             
         }.store(in: &cancellables)
         
-        
     }
+    
+    
+    
 }

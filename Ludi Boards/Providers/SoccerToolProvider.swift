@@ -53,3 +53,21 @@ enum SoccerToolProvider: IconProvider {
         return allCases.first { $0.tool.title.lowercased() == title.lowercased() }
     }
 }
+
+
+struct SoccerToolsView: View {
+    private let columns: [GridItem] = Array(repeating: .init(.flexible()), count: 5)
+    private let soccerTools = SoccerToolProvider.allCases
+
+    var body: some View {
+        // Grid
+        ScrollView {
+            LazyVGrid(columns: columns, spacing: 10) {
+                ForEach(soccerTools, id: \.self) { tool in
+                    MenuButtonIcon(icon: tool)
+                }
+            }
+            .padding()
+        }
+    }
+}

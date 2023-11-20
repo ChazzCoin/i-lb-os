@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FB0AA56A2B0BEBE1001AA316 /* TwoFingerPanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB0AA5692B0BEBE1001AA316 /* TwoFingerPanView.swift */; };
 		FB15DD272B07440700A21290 /* ViewWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB15DD262B07440700A21290 /* ViewWrapper.swift */; };
 		FB15DD2A2B07443600A21290 /* BoardEngineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB15DD292B07443600A21290 /* BoardEngineView.swift */; };
 		FB15DD2D2B0744A500A21290 /* CanvasEngineVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB15DD2C2B0744A500A21290 /* CanvasEngineVM.swift */; };
@@ -76,6 +77,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		FB0AA5692B0BEBE1001AA316 /* TwoFingerPanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwoFingerPanView.swift; sourceTree = "<group>"; };
 		FB15DD262B07440700A21290 /* ViewWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewWrapper.swift; sourceTree = "<group>"; };
 		FB15DD292B07443600A21290 /* BoardEngineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardEngineView.swift; sourceTree = "<group>"; };
 		FB15DD2C2B0744A500A21290 /* CanvasEngineVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasEngineVM.swift; sourceTree = "<group>"; };
@@ -156,6 +158,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		FB0AA5682B0BEBD3001AA316 /* Gestures */ = {
+			isa = PBXGroup;
+			children = (
+				FB0AA5692B0BEBE1001AA316 /* TwoFingerPanView.swift */,
+			);
+			path = Gestures;
+			sourceTree = "<group>";
+		};
 		FB15DD282B07442600A21290 /* BoardEngine */ = {
 			isa = PBXGroup;
 			children = (
@@ -168,6 +178,7 @@
 		FB15DD2B2B07448B00A21290 /* CanvasEngine */ = {
 			isa = PBXGroup;
 			children = (
+				FB0AA5682B0BEBD3001AA316 /* Gestures */,
 				FB15DD2E2B0745C900A21290 /* MenuBar */,
 				FBD9AFB92AFF03D7005F8620 /* CanvasEngine.swift */,
 				FB15DD2C2B0744A500A21290 /* CanvasEngineVM.swift */,
@@ -442,6 +453,7 @@
 				FBD9AFD52B008F6F005F8620 /* Channels.swift in Sources */,
 				FB15DD2A2B07443600A21290 /* BoardEngineView.swift in Sources */,
 				FBB450022B052B180096F8EB /* FireLiveData.swift in Sources */,
+				FB0AA56A2B0BEBE1001AA316 /* TwoFingerPanView.swift in Sources */,
 				FB58E8802B02B26C00FD9E2E /* DragAndDrop.swift in Sources */,
 				FB58E87E2B02B21700FD9E2E /* CoreMods.swift in Sources */,
 			);
@@ -586,6 +598,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -616,6 +629,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

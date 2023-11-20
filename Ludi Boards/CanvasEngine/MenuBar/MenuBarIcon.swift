@@ -22,7 +22,7 @@ struct MenuButtonIcon: View {
                 .frame(width: 35, height: 35)
                 .onTapGesture {
                     print("CodiChannel SendTopic: \(icon.tool.title)")
-                    CodiChannel.MENU_TOGGLER.send(value: icon.tool.title)
+                    CodiChannel.general.send(value: icon.tool.title)
                 }
                 .foregroundColor(isLocked ? .red : Color.primary)
             Spacer().frame(height: 8)
