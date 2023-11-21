@@ -27,7 +27,8 @@ struct CanvasEngine: View {
     @State private var offset = CGPoint.zero
     @State private var lastOffset = CGPoint.zero
     
-    @State private var pointers = CGPoint.zero // Initial position
+    @State private var offsetTwo = CGSize.zero
+    @State private var isDragging = false
     @State private var position = CGPoint(x: 50, y: 50) // Initial position
     @GestureState private var dragOffset = CGSize.zero
     
@@ -85,7 +86,8 @@ struct CanvasEngine: View {
     var rotationGestures: some Gesture {
         RotationGesture()
             .onChanged { value in
-                self.angle = lastAngle + value
+                let scaledAngle = (value - self.lastAngle) * 0.5
+                self.angle = self.lastAngle + scaledAngle
             }
             .onEnded { value in
                 self.lastAngle += value // Update the last angle on gesture end
@@ -112,8 +114,10 @@ struct CanvasEngine: View {
             MenuBarWindow(items: [
                 {MenuButtonIcon(icon: MenuBarProvider.toolbox)},
                 {MenuButtonIcon(icon: MenuBarProvider.lock)},
+                {MenuButtonIcon(icon: MenuBarProvider.profile)},
                 {MenuButtonIcon(icon: MenuBarProvider.buddyList)},
-                {MenuButtonIcon(icon: MenuBarProvider.chat)}
+                {MenuButtonIcon(icon: MenuBarProvider.chat)},
+                {MenuButtonIcon(icon: MenuBarProvider.boardDetails)}
             ]).zIndex(5.0)
             
             // Global Windows
@@ -146,7 +150,8 @@ struct CanvasEngine: View {
         .background(Color.clear)
         .onAppear() {
             menuBarButtonListener()
-            handleBuddyProfile()
+//            handleBuddyProfile()
+            handleToolMenu()
         }
         
     }
@@ -164,7 +169,7 @@ struct CanvasEngine: View {
                 case .buddyList: return self.handleBuddyList()
                 case .boardList: return
                 case .boardCreate: return
-                case .boardDetails: return
+                case .boardDetails: return self.handleSessionPlan()
                 case .reset: return
                 case .trash: return
                 case .boardBackground: return
@@ -195,31 +200,51 @@ struct CanvasEngine: View {
         }
     }
     func handleChat() {
-        let temp = ManagedViewWindow(id: "chat", content: AnyView(ChatView()))
+        let caller = MenuBarProvider.chat.tool.title
+        let temp = ManagedViewWindow(id: caller, content: AnyView(ChatView()))
         temp.title = "Real-Time Chat"
-        temp.windowId = "chat"
-        managedWindowsObject.toggleItem(key: "chat", item: ViewWrapper {AnyView(GenericWindow(managedViewWindow: temp))})
+        temp.windowId = caller
+        managedWindowsObject.toggleItem(key: caller, item: ViewWrapper {AnyView(GenericNavWindow(managedViewWindow: temp))})
     }
     
     func handleTools() {
-        let temp = ManagedViewWindow(id: "soccer_tools", content: AnyView(SoccerToolsView()))
+        let caller = MenuBarProvider.toolbox.tool.title
+        let temp = ManagedViewWindow(id: caller, content: AnyView(SoccerToolsView()))
         temp.title = "Tools"
-        temp.windowId = "soccer_tools"
-        managedWindowsObject.toggleItem(key: "soccer_tools", item: ViewWrapper {AnyView(GenericWindow(managedViewWindow: temp))})
+        temp.windowId = caller
+        managedWindowsObject.toggleItem(key: caller, item: ViewWrapper {AnyView(GenericNavWindow(managedViewWindow: temp))})
     }
     
     func handleBuddyList() {
-        let buddies = ManagedViewWindow(id: "buddies", content: AnyView(BuddyListView()))
+        let caller = MenuBarProvider.buddyList.tool.title
+        let buddies = ManagedViewWindow(id: caller, content: AnyView(BuddyListView()))
         buddies.title = "Buddy List"
-        buddies.windowId = "buddies"
-        managedWindowsObject.toggleItem(key: "buddies", item: ViewWrapper {AnyView(GenericWindow(managedViewWindow: buddies))})
+        buddies.windowId = caller
+        managedWindowsObject.toggleItem(key: caller, item: ViewWrapper {AnyView(GenericNavWindow(managedViewWindow: buddies))})
     }
     
     func handleBuddyProfile() {
-        let buddies = ManagedViewWindow(id: "buddyProfile", content: AnyView(BuddyProfileView()))
+        let caller = MenuBarProvider.profile.tool.title
+        let buddies = ManagedViewWindow(id: caller, content: AnyView(BuddyProfileView()))
         buddies.title = "Buddy Profile"
-        buddies.windowId = "buddyProfile"
-        managedWindowsObject.toggleItem(key: "buddyProfile", item: ViewWrapper {AnyView(GenericWindow(managedViewWindow: buddies))})
+        buddies.windowId = caller
+        managedWindowsObject.toggleItem(key: caller, item: ViewWrapper {AnyView(GenericNavWindow(managedViewWindow: buddies))})
+    }
+    
+    func handleSessionPlan() {
+        let caller = MenuBarProvider.boardDetails.tool.title
+        let buddies = ManagedViewWindow(id: caller, content: AnyView(ActivityPlanView(boardId: "boardEngine-1")))
+        buddies.title = "Session Planner"
+        buddies.windowId = caller
+        managedWindowsObject.toggleItem(key: caller, item: ViewWrapper {AnyView(GenericNavWindow(managedViewWindow: buddies))})
+    }
+    
+    func handleToolMenu() {
+        let caller = MenuBarProvider.webBrowser.tool.title
+        let buddies = ManagedViewWindow(id: caller, content: AnyView(PopupMenu(viewId: "boardEngine-1")))
+        buddies.title = "Tool Menu"
+        buddies.windowId = caller
+        managedWindowsObject.toggleItem(key: caller, item: ViewWrapper {AnyView(GenericNavWindowSMALL(managedViewWindow: buddies))})
     }
 }
 

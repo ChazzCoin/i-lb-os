@@ -12,34 +12,62 @@ struct BuddyProfileView: View {
     @State private var username: String = "User123"
     @State private var status: String = "Online"
     @State private var aboutMe: String = "Just enjoying the world of coding and tech!"
-
+    @State private var showChatButton = true
+    @State private var showAddBuddyButton = true
+    @State private var showShareActivityButton = true
+    
     var body: some View {
-        VStack {
-            Image(systemName: "person.crop.circle.fill")
-                .resizable()
-                .frame(width: 100, height: 100)
-                .padding(.top, 20)
+        ScrollView {
+            VStack(spacing: 20) {
+                Image(systemName: "person.crop.circle.fill")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 120, height: 120)
+                    .padding(.top, 30)
+                
+                Text(username)
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
 
-            Text(username)
-                .font(.title)
-                .padding(.top, 10)
+                Text(status)
+                    .font(.subheadline)
+                    .foregroundColor(status == "Online" ? .green : .gray)
 
-            Text(status)
-                .font(.subheadline)
-                .foregroundColor(.green)
-                .padding(.bottom, 20)
+                Divider()
+                    .padding(.horizontal)
 
-            HStack {
-                Text("About Me:")
-                    .font(.headline)
+                VStack(alignment: .leading) {
+                    Text("About Me:")
+                        .font(.headline)
+                        .padding(.bottom, 5)
+
+                    Text(aboutMe)
+                }
+                .padding(.horizontal)
+                
+                if showAddBuddyButton {
+                    Button("Add Buddy") {
+                        // Add buddy action
+                    }
+                    .buttonStyle(ActionButtonStyle())
+                }
+                
+                if showChatButton {
+                    Button("Chat") {
+                        // Chat action
+                    }
+                    .buttonStyle(ActionButtonStyle())
+                }
+
+                if showShareActivityButton {
+                    Button("Share Activity") {
+                        // Share activity action
+                    }
+                    .buttonStyle(ActionButtonStyle())
+                }
                 Spacer()
             }
-            .padding(.horizontal)
-
-            Text(aboutMe)
-                .padding()
-
-            Spacer()
+            .padding(.bottom, 20)
         }
         .navigationBarTitle("Profile", displayMode: .inline)
         .toolbar {
@@ -49,6 +77,20 @@ struct BuddyProfileView: View {
                 }
             }
         }
+    }
+}
+
+
+struct ActionButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .frame(maxWidth: .infinity)
+            .padding()
+            .background(Color.blue)
+            .foregroundColor(.white)
+            .cornerRadius(10)
+            .padding(.horizontal)
+            .scaleEffect(configuration.isPressed ? 0.95 : 1)
     }
 }
 

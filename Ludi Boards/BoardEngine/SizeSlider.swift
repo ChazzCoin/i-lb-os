@@ -59,12 +59,6 @@ struct WidthHeightSlider: View {
     }
 }
 
-//struct ManagedView {
-//    var width: Double
-//    var height: Double
-//    // Add other properties and methods as needed
-//}
-
 // Dummy structs and classes to compile the example
 struct ViewAttributesPayload {
     var viewId: String

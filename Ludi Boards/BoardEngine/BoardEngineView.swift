@@ -21,7 +21,6 @@ struct BoardEngine: View {
             }
         }
         .frame(width: viewModel.width, height: viewModel.height)
-//        .position(x: viewModel.startPosX, y: viewModel.startPosY)
         .background {
             Image(viewModel.boardBg)
                 .resizable()

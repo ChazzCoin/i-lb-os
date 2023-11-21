@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 struct BoardColorPicker: View {
-    let colors: [Color]
+    let colors: [Color] = [Color.red, Color.blue]
     var callback: (Color) -> Void
 
     var body: some View {

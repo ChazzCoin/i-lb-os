@@ -12,19 +12,39 @@ struct AddBuddyView: View {
     @Binding var isPresented: Bool
     @State private var buddyName: String = ""
     @State private var buddyStatus: String = ""
+    @State private var searchResults: [User] = []
 
     var body: some View {
         NavigationView {
             Form {
                 Section(header: Text("Buddy Details")) {
-                    TextField("Buddy Name", text: $buddyName)
-                    TextField("Status", text: $buddyStatus)
+                    TextField("Buddy UserName", text: $buddyName)
                 }
 
+                // Display search results
+                if !searchResults.isEmpty {
+                    Section(header: Text("Search Results")) {
+                        List(searchResults, id: \.id) { user in
+                            HStack {
+                                Text(user.username)
+                                Spacer()
+                                Text(user.status ?? "Unknown") // Assuming status is an optional property
+                            }
+                            .onTapGesture {
+                                // Handle tap event for each user
+                                print("Tapped on \(user.username)")
+                            }
+                        }
+                    }
+                }
+                
                 Section {
-                    Button("Add Buddy") {
+                    Button("Search Buddy") {
                         // Logic to add buddy
-                        isPresented = false
+                        searchResults = [
+                            User(),
+                            User()
+                        ]
                     }
                 }
             }

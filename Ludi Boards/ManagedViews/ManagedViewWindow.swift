@@ -145,5 +145,119 @@ struct GenericWindow : View {
 }
 
 
+struct GenericNavWindow : View {
+    
+    @State var managedViewWindow: ManagedViewWindow
+    
+    @State private var isHidden = false
+    
+    @State var screen: UIScreen = UIScreen()
+    
+    @State private var offset = CGSize.zero
+    @State private var position = CGPoint(x: 0, y: 0)
+    @GestureState private var dragOffset = CGSize.zero
+    @State private var isDragging = false
+
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 0) {
+                if let windowContent = managedViewWindow.content {
+                    windowContent
+                } else {
+                    // Placeholder or fallback view
+                    Text("No content available")
+                }
+            }.opacity(isHidden ? 0 : 1)
+            .navigationBarItems(trailing: HStack {
+                // Add buttons or icons here for minimize, maximize, close, etc.
+                Button(action: {
+                    // Minimize:
+                    CodiChannel.general.send(value: managedViewWindow.windowId)
+                }) {
+                    Image(systemName: "arrow.down.circle.fill")
+                        .resizable()
+                        .frame(width: 30, height: 30)
+                }
+            })
+        }
+        .frame(minWidth: 100, idealWidth: 400, maxWidth: 500, minHeight: 100, idealHeight: 500, maxHeight: 500)
+        .opacity(isHidden ? 0 : 1)
+        .background(Color.white)
+        .cornerRadius(15)
+        .shadow(radius: 10)
+        .offset(x: position.x + (isDragging ? dragOffset.width : 0), y: position.y + (isDragging ? dragOffset.height : 0))
+        .gesture(
+            DragGesture()
+                .updating($dragOffset, body: { (value, state, transaction) in
+                    state = value.translation
+                })
+                .onChanged { _ in
+                    self.isDragging = true
+                }
+                .onEnded { value in
+                    self.position = CGPoint(x: self.position.x + value.translation.width, y: self.position.y + value.translation.height)
+                    self.isDragging = false
+                }
+        )
+    }
+
+}
 
 
+struct GenericNavWindowSMALL : View {
+    
+    @State var managedViewWindow: ManagedViewWindow
+    
+    @State private var isHidden = false
+    
+    @State var screen: UIScreen = UIScreen()
+    
+    @State private var offset = CGSize.zero
+    @State private var position = CGPoint(x: 0, y: 0)
+    @GestureState private var dragOffset = CGSize.zero
+    @State private var isDragging = false
+
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 0) {
+                if let windowContent = managedViewWindow.content {
+                    windowContent
+                } else {
+                    // Placeholder or fallback view
+                    Text("No content available")
+                }
+            }.opacity(isHidden ? 0 : 1)
+            .navigationBarItems(trailing: HStack {
+                // Add buttons or icons here for minimize, maximize, close, etc.
+                Button(action: {
+                    // Minimize:
+                    CodiChannel.general.send(value: managedViewWindow.windowId)
+                }) {
+                    Image(systemName: "arrow.down.circle.fill")
+                        .resizable()
+                        .frame(width: 30, height: 30)
+                }
+            })
+        }
+        .frame(minWidth: 100, maxWidth: 300, minHeight: 100, maxHeight: 300)
+        .opacity(isHidden ? 0 : 1)
+        .background(Color.white)
+        .cornerRadius(15)
+        .shadow(radius: 10)
+        .offset(x: position.x + (isDragging ? dragOffset.width : 0), y: position.y + (isDragging ? dragOffset.height : 0))
+        .gesture(
+            DragGesture()
+                .updating($dragOffset, body: { (value, state, transaction) in
+                    state = value.translation
+                })
+                .onChanged { _ in
+                    self.isDragging = true
+                }
+                .onEnded { value in
+                    self.position = CGPoint(x: self.position.x + value.translation.width, y: self.position.y + value.translation.height)
+                    self.isDragging = false
+                }
+        )
+    }
+
+}

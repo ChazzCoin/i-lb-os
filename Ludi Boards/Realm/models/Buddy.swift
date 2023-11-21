@@ -23,13 +23,17 @@ import RealmSwift
 }
 
 func getSampleBuddies() -> [Buddy] {
-    var budOne = Buddy()
+    let budOne = Buddy()
     budOne.userName = "CoolKid123"
     budOne.status = "Online"
     
-    var budTwo = Buddy()
+    let budTwo = Buddy()
     budTwo.userName = "RetroFan"
-    budTwo.status = "Away"
+    budTwo.status = "Online"
     
-    return [budOne, budTwo]
+    let budThree = Buddy()
+    budThree.userName = "SkinnyLove"
+    budThree.status = "Away"
+    
+    return [budOne, budTwo, budThree]
 }

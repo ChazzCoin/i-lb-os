@@ -15,23 +15,31 @@ struct InputField: View {
 
     var body: some View {
         HStack {
-            Spacer().frame(width: 25)
             Text(label)
-            Spacer().frame(width: 25)
+                .font(.system(size: 18, weight: .medium, design: .default))
+                .foregroundColor(.secondary)
+
             TextField("", text: $value, onEditingChanged: { _ in }, onCommit: {
                 // Actions to perform when the user presses the return key
                 self.onValueChange(self.value)
                 hideKeyboard()
             })
             .textFieldStyle(RoundedBorderTextFieldStyle())
-            .padding(8)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 8)
+            .frame(height: 44)
+            .background(Color(UIColor.secondarySystemBackground))
+            .cornerRadius(10)
+            .shadow(color: Color.black.opacity(0.1), radius: 1, x: 0, y: 2)
         }
+        .padding(.horizontal, 15)
     }
 
     private func hideKeyboard() {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
 }
+
 
 struct InputField_Previews: PreviewProvider {
     static var previews: some View {

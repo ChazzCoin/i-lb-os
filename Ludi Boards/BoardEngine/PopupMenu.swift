@@ -10,7 +10,6 @@ import SwiftUI
 
 struct PopupMenu: View {
     let viewId: String
-    @Binding var isVisible: Bool
     var callback: (() -> Void)?
 
     // State variables for position offset
@@ -21,71 +20,32 @@ struct PopupMenu: View {
     private let screenWidth = UIScreen.main.bounds.width/2
 
     var body: some View {
-        if isVisible {
-            VStack(alignment: .leading, spacing: 4) {
-                HStack {
-                    Image(systemName: "trash.fill") // Replace with your image
-                        .resizable()
-                        .frame(width: 40, height: 40)
-                        .onTapGesture {
-                            // Handle delete action
-                            callback?()
-                        }
-
-                    Image(systemName: "xmark.circle") // Replace with your image
-                        .resizable()
-                        .frame(width: 40, height: 40)
-                        .onTapGesture {
-                            callback?()
-                        }
-                }
-                .padding(.all, 8)
-
-                // Color Picker Placeholder
-                Spacer().frame(height: 4)
-
-                RotationSlider(viewId: "")
-                Spacer().frame(height: 4)
-
-                WidthHeightSlider(viewId: "")
-                Spacer().frame(height: 4)
-
+        VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                Image(systemName: "trash.fill") // Replace with your image
+                    .resizable()
+                    .frame(width: 40, height: 40)
+                    .onTapGesture {
+                        // Handle delete action
+                        callback?()
+                    }
             }
-            .frame(width: 300, height: 400)
-            .background(Color.black) // Use appropriate background color
-            .cornerRadius(10) // Use appropriate corner radius
-            .offset(x: self.offsetX, y: 0)
-            .zIndex(15)
-            .padding(4)
-//            .animation(.easeOut)÷
-//            .gesture(
-//                DragGesture()
-//                    .onChanged { gesture in
-//                        self.offsetY = gesture.translation.height
-//                    }
-//                    .onEnded { _ in
-//                        if self.offsetY > 100 { // Threshold to hide
-//                            self.hideMenu()
-//                        } else {
-//                            self.offsetY = 0 // Reset position
-//                        }
-//                    }
-//            )
-            .onAppear() {
-                self.showMenu()
-            }
+            .padding(.all, 8)
+            
+            // Color Picker Placeholder
+            BoardColorPicker(){ item in }
+            Spacer().frame(height: 4)
+
+            RotationSlider(viewId: "")
+            Spacer().frame(height: 4)
+
+            WidthHeightSlider(viewId: "")
+            Spacer().frame(height: 4)
+
         }
-    }
-    
-    private func showMenu() {
-        self.offsetX = screenWidth - 200
-//        self.isVisible = true
+        .padding(4)
     }
 
-    private func hideMenu() {
-        self.isVisible = false
-        self.offsetX = screenWidth + 300 // Or any other value that hides the menu
-    }
 }
 
 struct SlideOutMenu: View {
@@ -98,7 +58,7 @@ struct SlideOutMenu: View {
     var body: some View {
         if isVisible {
             VStack {
-                PopupMenu(viewId: "", isVisible: $isVisible)
+                PopupMenu(viewId: "")
             }
             .frame(width: 300, height: screenHeight)
             .background(Color.black)

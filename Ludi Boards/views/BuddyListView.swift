@@ -9,12 +9,12 @@ import Foundation
 import SwiftUI
 
 struct BuddyListView: View {
-    let buddies: [Buddy] = getSampleBuddies()
+    @State private var buddies: [Buddy] = getSampleBuddies()
     @State private var showingAddBuddyView = false
 
     var body: some View {
-        NavigationView {
-            List(buddies) { buddy in
+        NavigationStack {
+            List($buddies) { $buddy in
                 HStack {
                     Circle()
                         .fill(buddy.status == "Online" ? Color.green : Color.gray)
