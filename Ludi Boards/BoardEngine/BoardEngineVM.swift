@@ -28,8 +28,7 @@ class ViewModel: ObservableObject {
     
     //TODO: create demo board for sharing.
     @State var boardId: String = "boardEngine-1"
-    @State var boardBg = Image("soccer_one")
-    // flowData
+    @State var boardBg = BoardBgProvider.soccerTwo.tool.image
     
     @Published var toolViews: [String:ViewWrapper] = [:]
     
@@ -52,7 +51,7 @@ class ViewModel: ObservableObject {
         toolViews.removeAll()
         toolViews = [:]
         boardId = boardIdIn
-//        boardBg.value = BoardBackgroundProvider.fromString(tempBoard.backgroundImg ?: "Soccer 1").res
+        boardBg = BoardBgProvider.parseByTitle(title: tempBoard?.backgroundImg ?? "Soccer 2")?.tool.image ?? "soccer_two"
         loadManagedViewTools()
     }
         

@@ -14,10 +14,14 @@ struct CanvasEngine: View {
     
     @State var cancellables = Set<AnyCancellable>()
     
+    @State var popupIsVisible: Bool = true
     @State var gesturesAreLocked: Bool = false
     var maxScaleFactor: CGFloat = 1.0
     @State private var totalScale: CGFloat = 0.15
     @GestureState private var gestureScale: CGFloat = 1.0
+    
+    @State private var angle: Angle = .zero
+    @State private var lastAngle: Angle = .zero
     
     @State private var translation: CGPoint = .zero
     @State private var offset = CGPoint.zero
@@ -33,16 +37,26 @@ struct CanvasEngine: View {
 
     var temp = ManagedViewWindow(id: "", content: AnyView(ChatView()))
     @ObservedObject var managedWindowsObject = ManagedViewWindows.shared
-
-    var dragGestures: some Gesture {
+    
+    var dragAngleGestures: some Gesture {
         DragGesture()
             .onChanged { gesture in
                 if gesturesAreLocked { return }
+
+                // Simplify calculations and potentially invert them
                 let translation = gesture.translation
-                self.offset = CGPoint(
-                    x: self.lastOffset.x + (translation.width / self.totalScale),
-                    y: self.lastOffset.y + (translation.height / self.totalScale)
-                )
+                let cosAngle = cos(self.angle.radians)
+                let sinAngle = sin(self.angle.radians)
+
+                // Invert the translation adjustments
+                let adjustedX = cosAngle * translation.width + sinAngle * translation.height
+                let adjustedY = -sinAngle * translation.width + cosAngle * translation.height
+                let rotationAdjustedTranslation = CGPoint(x: adjustedX, y: adjustedY)
+
+                let offsetX = self.lastOffset.x + (rotationAdjustedTranslation.x / self.totalScale)
+                let offsetY = self.lastOffset.y + (rotationAdjustedTranslation.y / self.totalScale)
+                self.offset = CGPoint(x: offsetX, y: offsetY)
+
                 print("CanvasEngine -> Offset: X = [ \(self.offset.x) ] Y = [ \(self.offset.y) ]")
             }
             .onEnded { _ in
@@ -65,6 +79,73 @@ struct CanvasEngine: View {
                 if gesturesAreLocked { return }
                 totalScale *= value
             }
+    }
+    
+    var rotationGestures: some Gesture {
+        RotationGesture()
+            .onChanged { value in
+                self.angle = lastAngle + value
+            }
+            .onEnded { value in
+                self.lastAngle += value // Update the last angle on gesture end
+            }
+    }
+    
+    struct FullScreenGestureView: View {
+        var body: some View {
+            GeometryReader { geometry in
+                Color.clear
+                    .frame(width: geometry.size.width, height: geometry.size.height)
+                    .contentShape(Rectangle())
+                    .gesture(TapGesture().onEnded { _ in
+                        print("Tapped anywhere on the screen")
+                    })
+            }
+        }
+    }
+    
+    var body: some View {
+        
+        ZStack() {
+            // Global MenuBar
+            MenuBarWindow(items: [
+                {MenuButtonIcon(icon: MenuBarProvider.toolbox)},
+                {MenuButtonIcon(icon: MenuBarProvider.lock)},
+                {MenuButtonIcon(icon: MenuBarProvider.chat)}
+            ]).zIndex(5.0)
+            
+            // Global Windows
+            ForEach(Array(managedWindowsObject.managedViewGenerics.values)) { managedViewWindow in
+                managedViewWindow.view()
+            }
+            .zIndex(5.0)
+            
+            FullScreenGestureView().zIndex(1.0)
+            
+//            PopupMenu(viewId: "", isVisible: $popupIsVisible)
+//            SlideOutMenu().zIndex(6.0)
+            // Board/Canvas Level
+            ZStack() {
+                DrawGridLines().zIndex(1.0)
+                BoardEngine().zIndex(2.0)
+                
+            }
+            .frame(width: initialWidth, height: initialHeight)
+            .background(Color.clear)
+            .zIndex(1.0)
+            .offset(x: self.offset.x, y: self.offset.y)
+            .scaleEffect(totalScale * gestureScale)
+            .rotationEffect(angle)
+            
+        }
+        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+        .gesture(dragAngleGestures.simultaneously(with: scaleGestures).simultaneously(with: rotationGestures))
+        .zIndex(0.0)
+        .background(Color.clear)
+        .onAppear() {
+            menuBarButtonListener()
+        }
+        
     }
     
     func menuBarButtonListener() {
@@ -117,59 +198,6 @@ struct CanvasEngine: View {
     func handleTools() {
         let temp = ManagedViewWindow(id: "soccer_tools", content: AnyView(SoccerToolsView()))
         managedWindowsObject.toggleItem(key: "soccer_tools", item: ViewWrapper {AnyView(GenericWindow(managedViewWindow: temp))})
-    }
-    
-    struct FullScreenGestureView: View {
-        var body: some View {
-            GeometryReader { geometry in
-                Color.clear
-                    .frame(width: geometry.size.width, height: geometry.size.height)
-                    .contentShape(Rectangle())
-                    .gesture(TapGesture().onEnded { _ in
-                        print("Tapped anywhere on the screen")
-                    })
-            }
-        }
-    }
-    
-    var body: some View {
-        
-        ZStack() {
-            // Global MenuBar
-            MenuBarWindow(items: [
-                {MenuButtonIcon(icon: MenuBarProvider.toolbox)},
-                {MenuButtonIcon(icon: MenuBarProvider.lock)},
-                {MenuButtonIcon(icon: MenuBarProvider.chat)}
-            ]).zIndex(5.0)
-            
-            // Global Windows
-            ForEach(Array(managedWindowsObject.managedViewGenerics.values)) { managedViewWindow in
-                managedViewWindow.view()
-            }
-            .zIndex(5.0)
-            
-            FullScreenGestureView().zIndex(3.0)
-            
-            // Board/Canvas Level
-            ZStack() {
-                DrawGridLines().zIndex(1.0)
-                BoardEngine().zIndex(2.0)
-            }
-            .frame(width: initialWidth, height: initialHeight)
-            .background(Color.clear)
-            .zIndex(1.0)
-            .offset(x: self.offset.x, y: self.offset.y)
-            .scaleEffect(totalScale * gestureScale)
-            
-        }
-        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-        .gesture(dragGestures.simultaneously(with: scaleGestures))
-        .zIndex(0.0)
-        .background(Color.clear)
-        .onAppear() {
-            menuBarButtonListener()
-        }
-        
     }
 }
 

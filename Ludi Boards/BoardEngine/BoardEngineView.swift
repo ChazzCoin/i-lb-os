@@ -23,7 +23,7 @@ struct BoardEngine: View {
         .frame(width: viewModel.width, height: viewModel.height)
 //        .position(x: viewModel.startPosX, y: viewModel.startPosY)
         .background {
-            Image("soccer_one")
+            Image(viewModel.boardBg)
                 .resizable()
                 .aspectRatio(contentMode: .fill) // Fill the area, possibly cropping the image
                 .frame(width: viewModel.width, height: viewModel.height) // Match the frame size of the ZStack
