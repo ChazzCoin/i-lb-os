@@ -24,6 +24,7 @@ enum MenuBarProvider: IconProvider {
     case lock
     case canvasGrid
     case navHome
+    case buddyList
     case boardList
     case boardCreate
     case boardDetails
@@ -45,6 +46,7 @@ enum MenuBarProvider: IconProvider {
             case .lock: return Tool(title: "Lock", image: "hand_point_up", authLevel: 0, color: .white)
             case .canvasGrid: return Tool(title: "Grid", image: "game_board", authLevel: 0, color: .white)
             case .navHome: return Tool(title: "NavPad", image: "arrows_up_down_left_right", authLevel: 0, color: .white)
+            case .buddyList: return Tool(title: "Buddy List", image: "face_plus", authLevel: 0, color: .white)
             case .boardList: return Tool(title: "Boards", image: "square_list", authLevel: 0, color: .white)
             case .boardCreate: return Tool(title: "Create Board", image: "layer_plus", authLevel: 0, color: .white)
             case .boardDetails: return Tool(title: "Details Board", image: "square_sliders", authLevel: 0, color: .white)
@@ -63,7 +65,7 @@ enum MenuBarProvider: IconProvider {
     }
 
     static let allCases: [MenuBarProvider] = [
-        .toolbox, .lock, .canvasGrid, .navHome, .boardList, 
+        .toolbox, .lock, .canvasGrid, .navHome, .buddyList, .boardList, 
         .boardCreate, .boardDetails, .reset, .trash, .boardBackground,
         .profile, .share, .router, .note, .chat, .paint, .image, .webBrowser
     ]

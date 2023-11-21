@@ -36,6 +36,7 @@ struct CanvasEngine: View {
     let initialHeight: CGFloat = 6000
 
     var temp = ManagedViewWindow(id: "", content: AnyView(ChatView()))
+    
     @ObservedObject var managedWindowsObject = ManagedViewWindows.shared
     
     var dragAngleGestures: some Gesture {
@@ -111,6 +112,7 @@ struct CanvasEngine: View {
             MenuBarWindow(items: [
                 {MenuButtonIcon(icon: MenuBarProvider.toolbox)},
                 {MenuButtonIcon(icon: MenuBarProvider.lock)},
+                {MenuButtonIcon(icon: MenuBarProvider.buddyList)},
                 {MenuButtonIcon(icon: MenuBarProvider.chat)}
             ]).zIndex(5.0)
             
@@ -121,7 +123,7 @@ struct CanvasEngine: View {
             .zIndex(5.0)
             
             FullScreenGestureView().zIndex(1.0)
-            
+
 //            PopupMenu(viewId: "", isVisible: $popupIsVisible)
 //            SlideOutMenu().zIndex(6.0)
             // Board/Canvas Level
@@ -144,6 +146,7 @@ struct CanvasEngine: View {
         .background(Color.clear)
         .onAppear() {
             menuBarButtonListener()
+            handleBuddyProfile()
         }
         
     }
@@ -158,13 +161,14 @@ struct CanvasEngine: View {
                 case .lock: return self.handleGestureLock()
                 case .canvasGrid: return
                 case .navHome: return
+                case .buddyList: return self.handleBuddyList()
                 case .boardList: return
                 case .boardCreate: return
                 case .boardDetails: return
                 case .reset: return
                 case .trash: return
                 case .boardBackground: return
-                case .profile: return
+                case .profile: return self.handleBuddyProfile()
                 case .share: return
                 case .router: return
                 case .note: return
@@ -192,12 +196,30 @@ struct CanvasEngine: View {
     }
     func handleChat() {
         let temp = ManagedViewWindow(id: "chat", content: AnyView(ChatView()))
+        temp.title = "Real-Time Chat"
+        temp.windowId = "chat"
         managedWindowsObject.toggleItem(key: "chat", item: ViewWrapper {AnyView(GenericWindow(managedViewWindow: temp))})
     }
     
     func handleTools() {
         let temp = ManagedViewWindow(id: "soccer_tools", content: AnyView(SoccerToolsView()))
+        temp.title = "Tools"
+        temp.windowId = "soccer_tools"
         managedWindowsObject.toggleItem(key: "soccer_tools", item: ViewWrapper {AnyView(GenericWindow(managedViewWindow: temp))})
+    }
+    
+    func handleBuddyList() {
+        let buddies = ManagedViewWindow(id: "buddies", content: AnyView(BuddyListView()))
+        buddies.title = "Buddy List"
+        buddies.windowId = "buddies"
+        managedWindowsObject.toggleItem(key: "buddies", item: ViewWrapper {AnyView(GenericWindow(managedViewWindow: buddies))})
+    }
+    
+    func handleBuddyProfile() {
+        let buddies = ManagedViewWindow(id: "buddyProfile", content: AnyView(BuddyProfileView()))
+        buddies.title = "Buddy Profile"
+        buddies.windowId = "buddyProfile"
+        managedWindowsObject.toggleItem(key: "buddyProfile", item: ViewWrapper {AnyView(GenericWindow(managedViewWindow: buddies))})
     }
 }
 

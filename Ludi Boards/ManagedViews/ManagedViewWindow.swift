@@ -13,7 +13,8 @@ class ManagedViewWindow {
     @Published var id: String
     @Published var content: AnyView?
     @Published var boardId: String = ""
-    @Published var title: String = ""
+    @Published var title: String = "Ludi Window"
+    @Published var windowId: String = "Ludi Window"
     
     @Published var isMinimized: Bool = false
     @Published var isFullScreen: Bool = true
@@ -118,7 +119,7 @@ struct GenericWindow : View {
 
     var taskbarView: some View {
         HStack {
-            Text("Real-Time Chat")
+            Text(managedViewWindow.title)
                 .font(.headline)
                 .foregroundColor(.black)
             Spacer()
@@ -133,7 +134,7 @@ struct GenericWindow : View {
             Button(action: {
                 // Minimize:
                 isHidden = true
-//                managedViewWindow?.isMinimized = true
+                CodiChannel.general.send(value: managedViewWindow.windowId)
             }) {
                 Image(systemName: "arrow.down.circle.fill")
                     .resizable()

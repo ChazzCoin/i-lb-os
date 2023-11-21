@@ -25,6 +25,10 @@
 		FB3E02B52B0C6B6000D8558C /* ActivityPlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02B42B0C6B6000D8558C /* ActivityPlanView.swift */; };
 		FB3E02B72B0C70D100D8558C /* InputField.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02B62B0C70D100D8558C /* InputField.swift */; };
 		FB3E02B92B0C724A00D8558C /* BoardBgProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02B82B0C724A00D8558C /* BoardBgProvider.swift */; };
+		FB3E02BB2B0C90D700D8558C /* Buddy.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02BA2B0C90D700D8558C /* Buddy.swift */; };
+		FB3E02BD2B0C90E600D8558C /* BuddyListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02BC2B0C90E600D8558C /* BuddyListView.swift */; };
+		FB3E02BF2B0C948A00D8558C /* AddBuddyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02BE2B0C948A00D8558C /* AddBuddyView.swift */; };
+		FB3E02C12B0C9A6D00D8558C /* BuddyProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02C02B0C9A6D00D8558C /* BuddyProfileView.swift */; };
 		FB5094262B058215000AEA96 /* LazyRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5094252B058215000AEA96 /* LazyRow.swift */; };
 		FB5094282B0584CA000AEA96 /* ManagedViewWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5094272B0584CA000AEA96 /* ManagedViewWindow.swift */; };
 		FB50942A2B05856D000AEA96 /* ManagedViewToolBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5094292B05856D000AEA96 /* ManagedViewToolBar.swift */; };
@@ -105,6 +109,10 @@
 		FB3E02B42B0C6B6000D8558C /* ActivityPlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityPlanView.swift; sourceTree = "<group>"; };
 		FB3E02B62B0C70D100D8558C /* InputField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputField.swift; sourceTree = "<group>"; };
 		FB3E02B82B0C724A00D8558C /* BoardBgProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardBgProvider.swift; sourceTree = "<group>"; };
+		FB3E02BA2B0C90D700D8558C /* Buddy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Buddy.swift; sourceTree = "<group>"; };
+		FB3E02BC2B0C90E600D8558C /* BuddyListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuddyListView.swift; sourceTree = "<group>"; };
+		FB3E02BE2B0C948A00D8558C /* AddBuddyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddBuddyView.swift; sourceTree = "<group>"; };
+		FB3E02C02B0C9A6D00D8558C /* BuddyProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuddyProfileView.swift; sourceTree = "<group>"; };
 		FB5094252B058215000AEA96 /* LazyRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LazyRow.swift; sourceTree = "<group>"; };
 		FB5094272B0584CA000AEA96 /* ManagedViewWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedViewWindow.swift; sourceTree = "<group>"; };
 		FB5094292B05856D000AEA96 /* ManagedViewToolBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedViewToolBar.swift; sourceTree = "<group>"; };
@@ -229,6 +237,9 @@
 				FB3E02B22B0C6B5100D8558C /* SessionPlanView.swift */,
 				FB3E02B42B0C6B6000D8558C /* ActivityPlanView.swift */,
 				FB3E02B62B0C70D100D8558C /* InputField.swift */,
+				FB3E02BC2B0C90E600D8558C /* BuddyListView.swift */,
+				FB3E02BE2B0C948A00D8558C /* AddBuddyView.swift */,
+				FB3E02C02B0C9A6D00D8558C /* BuddyProfileView.swift */,
 			);
 			path = views;
 			sourceTree = "<group>";
@@ -243,6 +254,7 @@
 				FB15DD352B074F5C00A21290 /* Chat.swift */,
 				FB3E02AE2B0C6B1200D8558C /* SessionPlan.swift */,
 				FB3E02B02B0C6B1D00D8558C /* ActivityPlan.swift */,
+				FB3E02BA2B0C90D700D8558C /* Buddy.swift */,
 			);
 			path = models;
 			sourceTree = "<group>";
@@ -462,6 +474,7 @@
 				FBD9AFCD2B008457005F8620 /* UserToBoard.swift in Sources */,
 				FB3E02B12B0C6B1D00D8558C /* ActivityPlan.swift in Sources */,
 				FB3E02AD2B0C3CAB00D8558C /* PopupMenu.swift in Sources */,
+				FB3E02BD2B0C90E600D8558C /* BuddyListView.swift in Sources */,
 				FBD9AFD22B008CAB005F8620 /* MenuBarProvider.swift in Sources */,
 				FBD9AFD92B01CB91005F8620 /* SoccerToolProvider.swift in Sources */,
 				FBD9AFA82AFF00BF005F8620 /* LudiBoardsApp.swift in Sources */,
@@ -479,8 +492,10 @@
 				FB15DD362B074F5C00A21290 /* Chat.swift in Sources */,
 				FB15DD2D2B0744A500A21290 /* CanvasEngineVM.swift in Sources */,
 				FB5094282B0584CA000AEA96 /* ManagedViewWindow.swift in Sources */,
+				FB3E02C12B0C9A6D00D8558C /* BuddyProfileView.swift in Sources */,
 				FBD9AFBC2AFF56C2005F8620 /* BoardEngineVM.swift in Sources */,
 				FBD9AFB82AFF0253005F8620 /* GridLines.swift in Sources */,
+				FB3E02BB2B0C90D700D8558C /* Buddy.swift in Sources */,
 				FB50942A2B05856D000AEA96 /* ManagedViewToolBar.swift in Sources */,
 				FB3E02AF2B0C6B1200D8558C /* SessionPlan.swift in Sources */,
 				FB3E02A72B0C3A0C00D8558C /* SizeSlider.swift in Sources */,
@@ -490,6 +505,7 @@
 				FB58E8762B01F3D200FD9E2E /* FireParser.swift in Sources */,
 				FB5094262B058215000AEA96 /* LazyRow.swift in Sources */,
 				FBD9AFD52B008F6F005F8620 /* Channels.swift in Sources */,
+				FB3E02BF2B0C948A00D8558C /* AddBuddyView.swift in Sources */,
 				FB15DD2A2B07443600A21290 /* BoardEngineView.swift in Sources */,
 				FB3E02A92B0C3B2C00D8558C /* RotationSlider.swift in Sources */,
 				FBB450022B052B180096F8EB /* FireLiveData.swift in Sources */,
