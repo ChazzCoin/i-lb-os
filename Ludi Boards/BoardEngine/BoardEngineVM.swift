@@ -34,23 +34,7 @@ class ViewModel: ObservableObject {
     @Published var toolViews: [String:ViewWrapper] = [:]
     
     init() { 
-        initializeFlows()
-    }
-    
-    func initializeFlows() {
         loadAllBoardSessions()
-        initRealmFlows()
-        initToolClickFlow()
-        
-        CodiChannel.BOARD_ON_ID_CHANGE.receive(on: RunLoop.main) { bId in
-            self.loadBoardSession(boardIdIn: bId as! String)
-        }.store(in: &cancellables)
-        
-        // CodiChannel.TOOL_ON_DELETE.receive
-        CodiChannel.TOOL_ON_DELETE.receive(on: RunLoop.main) { viewId in
-            self.deleteToolById(viewId: viewId as! String)
-        }.store(in: &cancellables)
-        
     }
     
     func deleteToolById(viewId:String) {
@@ -70,8 +54,6 @@ class ViewModel: ObservableObject {
         boardId = boardIdIn
 //        boardBg.value = BoardBackgroundProvider.fromString(tempBoard.backgroundImg ?: "Soccer 1").res
         loadManagedViewTools()
-        
-        initRealmFlows()
     }
         
     func loadManagedViewTools() {
@@ -87,10 +69,6 @@ class ViewModel: ObservableObject {
                 }
             }
         }
-    }
-    
-    func initRealmFlows() {
-        
     }
     
     func loadAllBoardSessions() {
@@ -119,12 +97,5 @@ class ViewModel: ObservableObject {
             return
         }
     }
-    func initToolClickFlow() {
-        CodiChannel.TOOL_ON_CREATE.receive(on: RunLoop.main) { tool in
-            self.safeAddTool(id: UUID().uuidString, icon: tool as! String)
-        }.store(in: &cancellables)
-        
-    }
-    
 }
 

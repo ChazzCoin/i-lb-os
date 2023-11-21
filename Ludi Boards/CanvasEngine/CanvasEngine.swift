@@ -119,7 +119,21 @@ struct CanvasEngine: View {
         managedWindowsObject.toggleItem(key: "soccer_tools", item: ViewWrapper {AnyView(GenericWindow(managedViewWindow: temp))})
     }
     
+    struct FullScreenGestureView: View {
+        var body: some View {
+            GeometryReader { geometry in
+                Color.clear
+                    .frame(width: geometry.size.width, height: geometry.size.height)
+                    .contentShape(Rectangle())
+                    .gesture(TapGesture().onEnded { _ in
+                        print("Tapped anywhere on the screen")
+                    })
+            }
+        }
+    }
+    
     var body: some View {
+        
         ZStack() {
             // Global MenuBar
             MenuBarWindow(items: [
@@ -134,6 +148,8 @@ struct CanvasEngine: View {
             }
             .zIndex(5.0)
             
+            FullScreenGestureView().zIndex(3.0)
+            
             // Board/Canvas Level
             ZStack() {
                 DrawGridLines().zIndex(1.0)
@@ -144,14 +160,16 @@ struct CanvasEngine: View {
             .zIndex(1.0)
             .offset(x: self.offset.x, y: self.offset.y)
             .scaleEffect(totalScale * gestureScale)
-            .gesture(dragGestures.simultaneously(with: scaleGestures))
+            
         }
-        .zIndex(0)
-        .frame(width: 6000, height: 6000)
+        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+        .gesture(dragGestures.simultaneously(with: scaleGestures))
+        .zIndex(0.0)
         .background(Color.clear)
         .onAppear() {
             menuBarButtonListener()
         }
+        
     }
 }
 
@@ -160,3 +178,5 @@ struct LargeCanvasView2_Previews: PreviewProvider {
         CanvasEngine()
     }
 }
+
+

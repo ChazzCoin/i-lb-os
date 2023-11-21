@@ -32,20 +32,6 @@ class ManagedViewWindow {
     func toggleFullScreen() { isFullScreen = !isFullScreen }
 }
 
-//extension ManagedViewWindows {
-//    func safelyAddItem(key: String, item: ViewWrapper) {
-//        DispatchQueue.main.async {
-//            self.managedViewGenerics[key] = item
-//        }
-//    }
-//    func safelyRemoveItem(forKey key: String) {
-//        DispatchQueue.main.async {
-//            self.managedViewGenerics.removeValue(forKey: key)
-//        }
-//    }
-//}
-
-
 class ManagedViewWindows:ObservableObject {
     
     static let shared = ManagedViewWindows()
@@ -80,14 +66,6 @@ class ManagedViewWindows:ObservableObject {
     func safelyRemoveItem(forKey key: String) {
         DispatchQueue.main.async {
             self.managedViewGenerics.removeValue(forKey: key)
-        }
-    }
-
-    func globalManagedViewWindows() -> some View {
-        ForEach(managedViewWindows, id: \.id) { window in
-            if window.isGlobalWindow && !window.isMinimized {
-//                ManagedViewWindowView(managedViewWindow: window)
-            }
         }
     }
 
@@ -162,17 +140,9 @@ struct GenericWindow : View {
                     .frame(width: 50, height: 50)
             }.frame(height: 50)
         }
-//        .background(Color.black.opacity(0.7))
-//        .cornerRadius(10)
     }
 }
 
-//struct GenericWindowPreview: PreviewProvider {
-//    static var previews: some View {
-////        GenericWindow {
-////            ChatView()
-////        }
-//    }
-//}
+
 
 

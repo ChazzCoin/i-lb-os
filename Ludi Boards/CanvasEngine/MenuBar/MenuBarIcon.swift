@@ -12,23 +12,24 @@ struct MenuButtonIcon: View {
     var icon: IconProvider // Assuming IconProvider conforms to SwiftUI's View
 
     @State private var isLocked = false
+    
+    func handleTap() {
+        if icon.tool.title == MenuBarProvider.lock.tool.title {
+            isLocked = true
+        } else {
+            isLocked = false
+        }
+    }
 
     var body: some View {
-        VStack {
-            
-            Image(icon.tool.image)
-                .resizable()
-                .zIndex(15.0)
-                .frame(width: 35, height: 35)
-                .onTapGesture {
-                    print("CodiChannel SendTopic: \(icon.tool.title)")
-                    CodiChannel.general.send(value: icon.tool.title)
-                }
-                .foregroundColor(isLocked ? .red : Color.primary)
-            Spacer().frame(height: 8)
-        }
-        .onAppear {
-            // Update isLocked state based on your conditions
-        }
+        Image(icon.tool.image)
+            .resizable()
+            .frame(width: 35, height: 35)
+            .foregroundColor(isLocked ? .red : Color.white)
+            .onTapGesture {
+                print("CodiChannel SendTopic: \(icon.tool.title)")
+                handleTap()
+                CodiChannel.general.send(value: icon.tool.title)
+            }
     }
 }

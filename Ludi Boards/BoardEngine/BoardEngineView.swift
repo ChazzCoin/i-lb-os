@@ -7,21 +7,21 @@
 
 import Foundation
 import SwiftUI
+import Combine
 
 struct BoardEngine: View {
     
+    @State var cancellables = Set<AnyCancellable>()
     @StateObject var viewModel = ViewModel()
     
     var body: some View {
-        
         ZStack(){
             ForEach(Array(viewModel.toolViews.values)) { item in
                 item.view()
             }
-//            ManagedViewBoardTool(boardId: "", viewId: "", toolType: "")
         }
         .frame(width: viewModel.width, height: viewModel.height)
-        .position(x: viewModel.startPosX, y: viewModel.startPosY)
+//        .position(x: viewModel.startPosX, y: viewModel.startPosY)
         .background {
             Image("soccer_one")
                 .resizable()
@@ -37,6 +37,19 @@ struct BoardEngine: View {
         ).onAppear {
             print("Sending Hello through General Channel.")
             CodiChannel.general.send(value: "Hello, General Channel!")
+            
+            CodiChannel.BOARD_ON_ID_CHANGE.receive(on: RunLoop.main) { bId in
+                self.viewModel.loadBoardSession(boardIdIn: bId as! String)
+            }.store(in: &cancellables)
+            
+            // CodiChannel.TOOL_ON_DELETE.receive
+            CodiChannel.TOOL_ON_DELETE.receive(on: RunLoop.main) { viewId in
+                self.viewModel.deleteToolById(viewId: viewId as! String)
+            }.store(in: &cancellables)
+            
+            CodiChannel.TOOL_ON_CREATE.receive(on: RunLoop.main) { tool in
+                self.viewModel.safeAddTool(id: UUID().uuidString, icon: tool as! String)
+            }.store(in: &cancellables)
         }
     }
 }
