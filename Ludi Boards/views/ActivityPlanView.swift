@@ -50,6 +50,12 @@ struct ActivityPlanView: View {
                                 .stroke(Color.gray, lineWidth: 1)
                         )
                 }
+                
+                Section(header: Text("Boards")) {
+                    ThumbnailListView() { item in
+                        
+                    }
+                }.clearSectionBackground()
 
                 // Save Button Section
                 Section {

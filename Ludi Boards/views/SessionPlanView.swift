@@ -42,12 +42,10 @@ struct SessionPlanView: View {
                         )
                 }
                 
-            }.padding()
+            }
 
             Section(header: Text("Activities")) {
-                ThumbnailListView() { item in
-                    
-                }
+                ActivityPlanListView(activityPlans: [ActivityPlan(), ActivityPlan()])
             }.clearSectionBackground()
 
             Section {

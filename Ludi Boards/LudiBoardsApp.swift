@@ -15,6 +15,9 @@ struct LudiBoardsApp: SwiftUI.App {
     
     @State var cancellables = Set<AnyCancellable>()
     
+    // Create an instance of your tip.
+//    var landmarkTip = SOLTip(id: UUID())
+    
     init() {
         let realmConfiguration = Realm.Configuration(deleteRealmIfMigrationNeeded: true)
         Realm.Configuration.defaultConfiguration = realmConfiguration

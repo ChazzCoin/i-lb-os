@@ -20,6 +20,7 @@ import RealmSwift
     dynamic var subTitle: String = ""
     dynamic var objectiveDetails: String = ""
     dynamic var activityDetails: String = ""
+    dynamic var background: String = ""
 
     override static func primaryKey() -> String? {
         return "id"

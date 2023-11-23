@@ -22,6 +22,7 @@ enum CodiChannel {
     case TOOL_ATTRIBUTES
     case REALM_ON_CHANGE
     case REALM_ON_DELETE
+    case EMOJI_ON_CREATE
     // ... (other cases)
 
     private var subject: PassthroughSubject<Any, Never> {
@@ -52,6 +53,8 @@ enum CodiChannel {
                 return RealmOnChangeChannel.shared.subject
             case .REALM_ON_DELETE:
                 return RealmOnDeleteChannel.shared.subject
+            case .EMOJI_ON_CREATE:
+                return EmojiOnCreateChannel.shared.subject
         }
     }
 
@@ -113,5 +116,9 @@ class RealmOnChangeChannel {
 }
 class RealmOnDeleteChannel {
     static let shared = RealmOnDeleteChannel()
+    let subject = PassthroughSubject<Any, Never>()
+}
+class EmojiOnCreateChannel {
+    static let shared = EmojiOnCreateChannel()
     let subject = PassthroughSubject<Any, Never>()
 }

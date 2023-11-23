@@ -128,8 +128,13 @@ struct CanvasEngine: View {
             
             FullScreenGestureView().zIndex(1.0)
 
-//            PopupMenu(viewId: "", isVisible: $popupIsVisible)
-//            SlideOutMenu().zIndex(6.0)
+            TipView().zIndex(20.0)
+            FloatingEmojiView()
+                .zIndex(20.0)
+            
+
+//                .position(x: UIScreen.main.bounds.width * 0.5 - 100 * 0.5, y: UIScreen.main.bounds.height * 0.5 - 100 * 0.5)
+
             // Board/Canvas Level
             ZStack() {
                 DrawGridLines().zIndex(1.0)
@@ -145,13 +150,13 @@ struct CanvasEngine: View {
             
         }
         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-        .gesture(dragAngleGestures.simultaneously(with: scaleGestures).simultaneously(with: rotationGestures))
+        .gesture(dragAngleGestures.simultaneously(with: scaleGestures))
         .zIndex(0.0)
         .background(Color.clear)
         .onAppear() {
             menuBarButtonListener()
 //            handleBuddyProfile()
-            handleToolMenu()
+//            handleToolMenu()
         }
         
     }
@@ -233,7 +238,7 @@ struct CanvasEngine: View {
     
     func handleSessionPlan() {
         let caller = MenuBarProvider.boardDetails.tool.title
-        let buddies = ManagedViewWindow(id: caller, content: AnyView(ActivityPlanView(boardId: "boardEngine-1")))
+        let buddies = ManagedViewWindow(id: caller, content: AnyView(SessionPlanView(boardId: "boardEngine-1")))
         buddies.title = "Session Planner"
         buddies.windowId = caller
         managedWindowsObject.toggleItem(key: caller, item: ViewWrapper {AnyView(GenericNavWindow(managedViewWindow: buddies))})

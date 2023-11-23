@@ -210,8 +210,6 @@ struct GenericNavWindowSMALL : View {
     
     @State private var isHidden = false
     
-    @State var screen: UIScreen = UIScreen()
-    
     @State private var offset = CGSize.zero
     @State private var position = CGPoint(x: 0, y: 0)
     @GestureState private var dragOffset = CGSize.zero
