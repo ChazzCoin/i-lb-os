@@ -10,6 +10,17 @@ import Foundation
 import SwiftUI
 import Combine
 
+extension CodiChannel {
+    func onReceive(callbacker: @escaping (Any) -> Void) {
+        @State var cancellables = Set<AnyCancellable>()
+        self.receive(on: RunLoop.main) { item in
+            callbacker(item)
+        }.store(in: &cancellables)
+    }
+}
+
+
+
 struct CanvasEngine: View {
     
     @State var cancellables = Set<AnyCancellable>()
@@ -117,7 +128,8 @@ struct CanvasEngine: View {
                 {MenuButtonIcon(icon: MenuBarProvider.profile)},
                 {MenuButtonIcon(icon: MenuBarProvider.buddyList)},
                 {MenuButtonIcon(icon: MenuBarProvider.chat)},
-                {MenuButtonIcon(icon: MenuBarProvider.boardDetails)}
+                {MenuButtonIcon(icon: MenuBarProvider.boardDetails)},
+                {MenuButtonIcon(icon: MenuBarProvider.share)}
             ]).zIndex(5.0)
             
             // Global Windows
@@ -125,10 +137,9 @@ struct CanvasEngine: View {
                 managedViewWindow.view()
             }
             .zIndex(5.0)
-            
             FullScreenGestureView().zIndex(1.0)
 
-            TipView().zIndex(20.0)
+//            TipView().zIndex(20.0)
             FloatingEmojiView()
                 .zIndex(20.0)
             
@@ -179,7 +190,7 @@ struct CanvasEngine: View {
                 case .trash: return
                 case .boardBackground: return
                 case .profile: return self.handleBuddyProfile()
-                case .share: return
+                case .share: return self.handleShare()
                 case .router: return
                 case .note: return
                 case .chat: return self.handleChat()
@@ -250,6 +261,14 @@ struct CanvasEngine: View {
         buddies.title = "Tool Menu"
         buddies.windowId = caller
         managedWindowsObject.toggleItem(key: caller, item: ViewWrapper {AnyView(GenericNavWindowSMALL(managedViewWindow: buddies))})
+    }
+    
+    func handleShare() {
+        let caller = MenuBarProvider.share.tool.title
+        let buddies = ManagedViewWindow(id: caller, content: AnyView(SignUpView()))
+        buddies.title = "Sign Up"
+        buddies.windowId = caller
+        managedWindowsObject.toggleItem(key: caller, item: ViewWrapper {AnyView(GenericNavWindow(managedViewWindow: buddies))})
     }
 }
 

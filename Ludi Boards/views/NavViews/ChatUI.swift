@@ -8,13 +8,14 @@
 import Foundation
 import SwiftUI
 import FirebaseDatabase
+import Combine
 
-struct Message: Identifiable {
-    let id: Int
-    let text: String
-    let isCurrentUser: Bool
-    let timestamp: String
-}
+//struct Message: Identifiable {
+//    let id: Int
+//    let text: String
+//    let isCurrentUser: Bool
+//    let timestamp: String
+//}
 
 // Define a custom color extension to match the AOL/AIM theme
 extension Color {
@@ -30,11 +31,13 @@ struct ChatView: View {
     
     @State private var isSidebarVisible = false
     
+    private let realmInstance = realm()
+    
+    let delaySeconds = 2.0
+    
+    @State private var isReloading = false
+    @State var cancellables = Set<AnyCancellable>()
     let chatRef = fireGetReference(dbPath: DatabasePaths.chat)
-    let chatty = Database
-        .database()
-        .reference()
-        .child(DatabasePaths.chat.rawValue)
     
     func observeChat() {
         self.chatRef.child(chatId).fireObserver { snapshot in
@@ -47,6 +50,35 @@ struct ChatView: View {
             }
             sortAndResetMessages()
         }
+    }
+    
+    func observeLudiChat() {
+        self.chatRef.child(chatId).fireObserver { snapshot in
+            let _ = snapshot.toLudiObjects(Chat.self)
+        }
+        CodiChannel.REALM_ON_CHANGE.receive(on: RunLoop.main) { realmId in
+            print("Received on ON REALM CHANGE channel: \(realmId)")
+            if self.isReloading { return }
+            self.isReloading = true
+            
+            // Dispatch the task to the main queue after the delay
+            DispatchQueue.executeAfter(seconds: delaySeconds) {
+                //TODO: LOADING VIEW!!
+                reloader()
+            }
+            
+            
+        }.store(in: &cancellables)
+        
+    }
+    
+    func reloader() {
+        let results = realmInstance.findAllByField(Chat.self, field: "chatId", value: "default-1")
+        var temp: [String:Chat] = [:]
+        guard let r = results else {return}
+        for i in r { temp[i.id] = i }
+        messages = temp
+        self.isReloading = false
     }
     
     var mainContentView: some View {
@@ -87,6 +119,7 @@ struct ChatView: View {
             }
             .padding(.horizontal)
         }
+        .loading(isShowing: $isReloading)
         .background(Color.white)
     }
     var sidebarView: some View {
@@ -113,7 +146,7 @@ struct ChatView: View {
             Image(systemName: "line.horizontal.3")
         })
         .onAppear() {
-            observeChat()
+            observeLudiChat()
         }
     }
     
@@ -174,7 +207,7 @@ struct ChatMessageRow: View {
             if isCurrentUser {
                 Spacer()
             }
-            MessageBubbleView(text: chat.messageText ?? "", isCurrentUser: isCurrentUser)
+            MessageBubbleView(text: chat.messageText ?? "", isCurrentUser: isCurrentUser, userName: chat.senderName ?? "Anon", dateTime: chat.timestamp)
             if !isCurrentUser {
                 Spacer()
             }
@@ -182,7 +215,7 @@ struct ChatMessageRow: View {
     }
 }
 
-struct MessageBubbleView: View {
+struct MessageBubbleView1: View {
     var text: String
     var isCurrentUser: Bool
 
@@ -196,9 +229,38 @@ struct MessageBubbleView: View {
     }
 }
 
-//struct ChatView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        ChatView(chatId: "")
-//    }
-//}
+struct MessageBubbleView: View {
+    var text: String
+    var isCurrentUser: Bool
+    var userName: String
+    var dateTime: String
+
+    var body: some View {
+        VStack(alignment: isCurrentUser ? .trailing : .leading, spacing: 4) {
+            if !isCurrentUser {
+                Text(userName)
+                    .font(.caption)
+                    .foregroundColor(.gray)
+            }
+
+            Text(text)
+                .padding(10)
+                .foregroundColor(isCurrentUser ? Color.white : Color.black)
+                .background(isCurrentUser ? Color.blue : Color(UIColor.systemGray5))
+                .cornerRadius(10)
+
+            Text(dateTime)
+                .font(.caption2)
+                .foregroundColor(.gray)
+        }
+        .frame(maxWidth: 250, alignment: isCurrentUser ? .trailing : .leading)
+    }
+}
+
+
+struct ChatView_Previews: PreviewProvider {
+    static var previews: some View {
+        MessageBubbleView(text: "Hey hey", isCurrentUser: false, userName: "Chazz Romeo", dateTime: "3:22pm")
+    }
+}
 

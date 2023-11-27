@@ -54,7 +54,7 @@ enum MenuBarProvider: IconProvider {
             case .trash: return Tool(title: "Trash", image: "trash_can", authLevel: 99, color: .white)
             case .boardBackground: return Tool(title: "BoardBackground", image: "aperture", authLevel: 2, color: .white)
             case .profile: return Tool(title: "Profile", image: "circle_user", authLevel: 2, color: .white)
-            case .share: return Tool(title: "Share", image: "share_from_square", authLevel: 2, color: .white)
+            case .share: return Tool(title: "Share", image: "hand_holding_medical", authLevel: 2, color: .white)
             case .router: return Tool(title: "Connect", image: "router", authLevel: 99, color: .white)
             case .note: return Tool(title: "Note", image: "note", authLevel: 2, color: .white)
             case .chat: return Tool(title: "Chat", image: "comments", authLevel: 0, color: .white)

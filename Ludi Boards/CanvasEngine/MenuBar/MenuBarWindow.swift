@@ -28,7 +28,7 @@ struct MenuBarWindow<Content>: View where Content: View {
             }
             Spacer().frame(height: 16)
         }
-        .frame(maxWidth: 50, maxHeight: 50 * Double(items.count))
+        .frame(maxWidth: 55, maxHeight: 50 * Double(items.count))
         .padding(8)
         .shadow(radius: 15)
         .background(Color(hex: "3E7167"))

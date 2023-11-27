@@ -30,6 +30,7 @@ class ViewModel: ObservableObject {
     @State var boardId: String = "boardEngine-1"
     @State var boardBg = BoardBgProvider.soccerTwo.tool.image
     
+    @State var isLoading = false
     @Published var toolViews: [String:ViewWrapper] = [:]
     
     init() { 
@@ -46,6 +47,7 @@ class ViewModel: ObservableObject {
     }
     
     func loadBoardSession(boardIdIn:String) {
+        isLoading = true
         let tempBoard = realmInstance.object(ofType: BoardSession.self, forPrimaryKey: boardIdIn)
         if tempBoard == nil { return }
         toolViews.removeAll()
@@ -53,10 +55,12 @@ class ViewModel: ObservableObject {
         boardId = boardIdIn
         boardBg = BoardBgProvider.parseByTitle(title: tempBoard?.backgroundImg ?? "Soccer 2")?.tool.image ?? "soccer_two"
         loadManagedViewTools()
+//        isLoading = false
     }
         
     func loadManagedViewTools() {
         reference.child(self.boardId).fireObserver { snapshot in
+            self.isLoading = true
             let mapped = snapshot.toHashMap()
             if mapped.count < self.toolViews.count { self.toolViews = [:] }
             for (itId, value) in mapped {
@@ -67,10 +71,12 @@ class ViewModel: ObservableObject {
                     }
                 }
             }
+//            self.isLoading = false
         }
     }
     
     func loadAllBoardSessions() {
+        isLoading = true
         let boardList = realmInstance.objects(BoardSession.self)
         var bId = ""
         if boardList.isEmpty {

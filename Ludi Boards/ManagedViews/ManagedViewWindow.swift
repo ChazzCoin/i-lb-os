@@ -180,12 +180,12 @@ struct GenericNavWindow : View {
                 }
             })
         }
-        .frame(minWidth: 100, maxWidth: screen.bounds.width/2, minHeight: 100, maxHeight: screen.bounds.height/1.25)
+        .frame(minWidth: 100, maxWidth: screen.bounds.width/2, minHeight: 100, maxHeight: screen.bounds.height)
         .opacity(isHidden ? 0 : 1)
         .background(Color.white)
         .cornerRadius(15)
         .shadow(radius: 10)
-        .offset(x: position.x + (isDragging ? dragOffset.width : 0), y: position.y + (isDragging ? dragOffset.height : 0))
+        .offset(x: position.x + (isDragging ? dragOffset.width : 0) + (screen.bounds.width/2)/2, y: position.y + (isDragging ? dragOffset.height : 0))
         .gesture(
             DragGesture()
                 .updating($dragOffset, body: { (value, state, transaction) in
@@ -237,7 +237,7 @@ struct GenericNavWindowSMALL : View {
                 }
             })
         }
-        .frame(minWidth: 100, maxWidth: 300, minHeight: 100, maxHeight: 300)
+        .frame(minWidth: 100, maxWidth: 400, minHeight: 100, maxHeight: 400)
         .opacity(isHidden ? 0 : 1)
         .background(Color.white)
         .cornerRadius(15)

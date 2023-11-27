@@ -18,3 +18,9 @@ extension Realm {
         return self.objects(type).filter("%K == %@", field, value)
     }
 }
+
+extension Results {
+    func toArray() -> [Element] {
+        return Array(self)
+    }
+}

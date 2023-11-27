@@ -12,6 +12,13 @@ struct BuddyProfileView: View {
     @State private var username: String = "User123"
     @State private var status: String = "Online"
     @State private var aboutMe: String = "Just enjoying the world of coding and tech!"
+    @State private var email: String = "email@example.com"
+    @State private var phoneNumber: String = "123-456-7890"
+    @State private var membershipType: Int = 0
+    @State private var accountCreationDate: String = "Jan 1, 2020"
+    @State private var visibility: String = "closed"
+    @State private var photoUrl: String = "default_image_url"
+    
     @State private var showChatButton = true
     @State private var showAddBuddyButton = true
     @State private var showShareActivityButton = true
@@ -35,13 +42,23 @@ struct BuddyProfileView: View {
 
                 Divider()
                     .padding(.horizontal)
-
+                
                 VStack(alignment: .leading) {
                     Text("About Me:")
                         .font(.headline)
                         .padding(.bottom, 5)
 
                     Text(aboutMe)
+                }
+                .padding(.horizontal)
+                
+                // Additional Info
+                Group {
+                    profileInfoRow(title: "Email", value: email)
+                    profileInfoRow(title: "Phone", value: phoneNumber)
+                    profileInfoRow(title: "Membership Type", value: String(membershipType))
+                    profileInfoRow(title: "Account Created", value: accountCreationDate)
+                    profileInfoRow(title: "Visibility", value: visibility)
                 }
                 .padding(.horizontal)
                 
@@ -78,6 +95,16 @@ struct BuddyProfileView: View {
             }
         }
     }
+    
+    private func profileInfoRow(title: String, value: String) -> some View {
+            VStack(alignment: .leading) {
+                Text(title + ":")
+                    .font(.headline)
+                Text(value)
+                    .font(.body)
+                Divider()
+            }
+        }
 }
 
 
