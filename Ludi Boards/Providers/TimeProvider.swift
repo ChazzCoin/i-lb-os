@@ -23,3 +23,17 @@ func getTimeStamp() -> String {
         return dateFormatter.string(from: Date())
     }
 }
+
+func compareTimestamps(timestamp1: String, timestamp2: String) -> ComparisonResult {
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+    dateFormatter.locale = Locale(identifier: "en_US")
+    dateFormatter.timeZone = TimeZone.current
+
+    guard let date1 = dateFormatter.date(from: timestamp1),
+          let date2 = dateFormatter.date(from: timestamp2) else {
+        return .orderedSame
+    }
+
+    return date1.compare(date2)
+}

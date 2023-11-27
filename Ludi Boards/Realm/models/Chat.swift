@@ -8,7 +8,7 @@
 import Foundation
 import RealmSwift
 
-@objcMembers class Chat: Object, Identifiable {
+@objcMembers class Chat: Object {
     dynamic var id: String = UUID().uuidString
     dynamic var senderId: String?
     dynamic var senderName: String?
@@ -16,11 +16,26 @@ import RealmSwift
     dynamic var chatId: String?
     dynamic var receiverId: String?
     dynamic var messageText: String?
-    dynamic var timestamp: String? = ""
+    dynamic var timestamp: String = getTimeStamp()
 
     override static func primaryKey() -> String? {
         return "id"
     }
+}
+
+extension Chat {
+    func toDictionary() -> [String: Any?] {
+            return [
+                "id": id,
+                "senderId": senderId,
+                "senderName": senderName,
+                "senderImage": senderImage,
+                "chatId": chatId,
+                "receiverId": receiverId,
+                "messageText": messageText,
+                "timestamp": timestamp
+            ]
+        }
 }
 
 func toChat(from dictionary: [String: Any]) -> Chat {

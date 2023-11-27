@@ -36,7 +36,7 @@ struct CanvasEngine: View {
     let initialWidth: CGFloat = 6000
     let initialHeight: CGFloat = 6000
 
-    var temp = ManagedViewWindow(id: "", content: AnyView(ChatView()))
+    var temp = ManagedViewWindow(id: "", content: AnyView(ChatView(chatId: "default-1")))
     
     @ObservedObject var managedWindowsObject = ManagedViewWindows.shared
     
@@ -206,7 +206,7 @@ struct CanvasEngine: View {
     }
     func handleChat() {
         let caller = MenuBarProvider.chat.tool.title
-        let temp = ManagedViewWindow(id: caller, content: AnyView(ChatView()))
+        let temp = ManagedViewWindow(id: caller, content: AnyView(ChatView(chatId: "default-1")))
         temp.title = "Real-Time Chat"
         temp.windowId = caller
         managedWindowsObject.toggleItem(key: caller, item: ViewWrapper {AnyView(GenericNavWindow(managedViewWindow: temp))})

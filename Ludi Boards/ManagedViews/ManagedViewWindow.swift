@@ -41,7 +41,7 @@ class ManagedViewWindows:ObservableObject {
     @Published var managedViewGenerics: [String:ViewWrapper] = [:]
     
     func newManagedViewWindow(viewId: String) -> ManagedViewWindow {
-        return ManagedViewWindow(id: viewId, content: AnyView(ChatView()))
+        return ManagedViewWindow(id: viewId, content: AnyView(ChatView(chatId: "default-1")))
     }
     
     func toggleManagedViewWindowById(viewId: String) {
@@ -151,7 +151,7 @@ struct GenericNavWindow : View {
     
     @State private var isHidden = false
     
-    @State var screen: UIScreen = UIScreen()
+    @State var screen: UIScreen = UIScreen.main
     
     @State private var offset = CGSize.zero
     @State private var position = CGPoint(x: 0, y: 0)
@@ -180,7 +180,7 @@ struct GenericNavWindow : View {
                 }
             })
         }
-        .frame(minWidth: 100, idealWidth: 400, maxWidth: 500, minHeight: 100, idealHeight: 500, maxHeight: 500)
+        .frame(minWidth: 100, maxWidth: screen.bounds.width/2, minHeight: 100, maxHeight: screen.bounds.height/1.25)
         .opacity(isHidden ? 0 : 1)
         .background(Color.white)
         .cornerRadius(15)
