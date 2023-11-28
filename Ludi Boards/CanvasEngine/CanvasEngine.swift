@@ -120,7 +120,7 @@ struct CanvasEngine: View {
     
     var body: some View {
         
-        ZStack() {
+        GlobalPositioningZStack { geo in
             // Global MenuBar
             MenuBarWindow(items: [
                 {MenuButtonIcon(icon: MenuBarProvider.toolbox)},
@@ -130,21 +130,18 @@ struct CanvasEngine: View {
                 {MenuButtonIcon(icon: MenuBarProvider.chat)},
                 {MenuButtonIcon(icon: MenuBarProvider.boardDetails)},
                 {MenuButtonIcon(icon: MenuBarProvider.share)}
-            ]).zIndex(5.0)
-            
+            ])
+//            TipView()
+//            FloatingEmojiView()
+        }.zIndex(10.0)
+        
+        ZStack() {
+        
             // Global Windows
             ForEach(Array(managedWindowsObject.managedViewGenerics.values)) { managedViewWindow in
                 managedViewWindow.view()
             }
             .zIndex(5.0)
-            FullScreenGestureView().zIndex(1.0)
-
-//            TipView().zIndex(20.0)
-            FloatingEmojiView()
-                .zIndex(20.0)
-            
-
-//                .position(x: UIScreen.main.bounds.width * 0.5 - 100 * 0.5, y: UIScreen.main.bounds.height * 0.5 - 100 * 0.5)
 
             // Board/Canvas Level
             ZStack() {
@@ -166,8 +163,11 @@ struct CanvasEngine: View {
         .background(Color.clear)
         .onAppear() {
             menuBarButtonListener()
-//            handleBuddyProfile()
-//            handleToolMenu()
+            handleChat()
+            handleBuddyProfile()
+            handleSessionPlan()
+            handleShare()
+            handleBuddyList()
         }
         
     }
@@ -178,22 +178,22 @@ struct CanvasEngine: View {
             print("Received on MENU_TOGGLER channel: \(buttonType)")
             
             switch MenuBarProvider.parseByTitle(title: buttonType as? String ?? "") {
-                case .toolbox: return self.handleTools()
+                case .toolbox: return CodiChannel.MENU_WINDOW_TOGGLER.send(value: MenuBarProvider.toolbox.tool.title)
                 case .lock: return self.handleGestureLock()
                 case .canvasGrid: return
                 case .navHome: return
-                case .buddyList: return self.handleBuddyList()
+                case .buddyList: return CodiChannel.MENU_WINDOW_TOGGLER.send(value: MenuBarProvider.buddyList.tool.title)
                 case .boardList: return
                 case .boardCreate: return
-                case .boardDetails: return self.handleSessionPlan()
+                case .boardDetails: return CodiChannel.MENU_WINDOW_TOGGLER.send(value: MenuBarProvider.boardDetails.tool.title)
                 case .reset: return
                 case .trash: return
                 case .boardBackground: return
-                case .profile: return self.handleBuddyProfile()
-                case .share: return self.handleShare()
+                case .profile: return CodiChannel.MENU_WINDOW_TOGGLER.send(value: MenuBarProvider.profile.tool.title)
+                case .share: return CodiChannel.MENU_WINDOW_TOGGLER.send(value: MenuBarProvider.share.tool.title)
                 case .router: return
                 case .note: return
-                case .chat: return self.handleChat()
+                case .chat: return CodiChannel.MENU_WINDOW_TOGGLER.send(value: MenuBarProvider.chat.tool.title)
                 
                 case .none:
                     return
@@ -220,7 +220,7 @@ struct CanvasEngine: View {
         let temp = ManagedViewWindow(id: caller, content: AnyView(ChatView(chatId: "default-1")))
         temp.title = "Real-Time Chat"
         temp.windowId = caller
-        managedWindowsObject.toggleItem(key: caller, item: ViewWrapper {AnyView(GenericNavWindow(managedViewWindow: temp))})
+        managedWindowsObject.toggleItem(key: caller, item: ViewWrapper {AnyView(NavStackWindow(managedViewWindow: temp))})
     }
     
     func handleTools() {
@@ -228,7 +228,7 @@ struct CanvasEngine: View {
         let temp = ManagedViewWindow(id: caller, content: AnyView(SoccerToolsView()))
         temp.title = "Tools"
         temp.windowId = caller
-        managedWindowsObject.toggleItem(key: caller, item: ViewWrapper {AnyView(GenericNavWindow(managedViewWindow: temp))})
+        managedWindowsObject.toggleItem(key: caller, item: ViewWrapper {AnyView(NavStackWindow(managedViewWindow: temp))})
     }
     
     func handleBuddyList() {
@@ -236,7 +236,7 @@ struct CanvasEngine: View {
         let buddies = ManagedViewWindow(id: caller, content: AnyView(BuddyListView()))
         buddies.title = "Buddy List"
         buddies.windowId = caller
-        managedWindowsObject.toggleItem(key: caller, item: ViewWrapper {AnyView(GenericNavWindow(managedViewWindow: buddies))})
+        managedWindowsObject.toggleItem(key: caller, item: ViewWrapper {AnyView(NavStackWindow(managedViewWindow: buddies))})
     }
     
     func handleBuddyProfile() {
@@ -244,7 +244,7 @@ struct CanvasEngine: View {
         let buddies = ManagedViewWindow(id: caller, content: AnyView(BuddyProfileView()))
         buddies.title = "Buddy Profile"
         buddies.windowId = caller
-        managedWindowsObject.toggleItem(key: caller, item: ViewWrapper {AnyView(GenericNavWindow(managedViewWindow: buddies))})
+        managedWindowsObject.toggleItem(key: caller, item: ViewWrapper {AnyView(NavStackWindow(managedViewWindow: buddies))})
     }
     
     func handleSessionPlan() {
@@ -252,7 +252,7 @@ struct CanvasEngine: View {
         let buddies = ManagedViewWindow(id: caller, content: AnyView(SessionPlanView(boardId: "boardEngine-1")))
         buddies.title = "Session Planner"
         buddies.windowId = caller
-        managedWindowsObject.toggleItem(key: caller, item: ViewWrapper {AnyView(GenericNavWindow(managedViewWindow: buddies))})
+        managedWindowsObject.toggleItem(key: caller, item: ViewWrapper {AnyView(NavStackWindow(managedViewWindow: buddies))})
     }
     
     func handleToolMenu() {
@@ -268,7 +268,7 @@ struct CanvasEngine: View {
         let buddies = ManagedViewWindow(id: caller, content: AnyView(SignUpView()))
         buddies.title = "Sign Up"
         buddies.windowId = caller
-        managedWindowsObject.toggleItem(key: caller, item: ViewWrapper {AnyView(GenericNavWindow(managedViewWindow: buddies))})
+        managedWindowsObject.toggleItem(key: caller, item: ViewWrapper {AnyView(NavStackWindow(managedViewWindow: buddies))})
     }
 }
 

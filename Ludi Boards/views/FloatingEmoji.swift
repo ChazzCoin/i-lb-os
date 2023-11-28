@@ -15,6 +15,7 @@ struct FloatingEmojiView: View {
     var sWidth = UIScreen.main.bounds.width
     var sHeight = UIScreen.main.bounds.height
     @State var cancellables = Set<AnyCancellable>()
+    @State var gps = GlobalPositioningSystem()
     
     var body: some View {
         ZStack {
@@ -34,7 +35,7 @@ struct FloatingEmojiView: View {
         }
         .frame(width: 400, height: 400)
         .background(Color.clear)
-        .offset(x: -(sWidth/2)+200, y: (sHeight/2)-75)
+        .offset(x: gps.getCoordinate(for: .topLeft).x, y: gps.getCoordinate(for: .topLeft).y + 50)
         .onAppear() {
             CodiChannel.EMOJI_ON_CREATE.receive(on: RunLoop.main) { emoji in
                 print("Received on EMOJI_ON_CREATE channel: \(emoji)")

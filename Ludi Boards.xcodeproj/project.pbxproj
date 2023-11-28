@@ -78,6 +78,8 @@
 		FB9F1E3A2B15393A00FD9078 /* FirebaseInstallations in Frameworks */ = {isa = PBXBuildFile; productRef = FB9F1E392B15393A00FD9078 /* FirebaseInstallations */; };
 		FB9F1E3C2B15393A00FD9078 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = FB9F1E3B2B15393A00FD9078 /* FirebaseStorage */; };
 		FB9F1E3E2B15393A00FD9078 /* FirebaseStorageCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = FB9F1E3D2B15393A00FD9078 /* FirebaseStorageCombine-Community */; };
+		FB9F1E402B159F6A00FD9078 /* OrientationInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9F1E3F2B159F6A00FD9078 /* OrientationInfo.swift */; };
+		FBA4FB572B15AA2700BF409E /* GlobalPositioning.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBA4FB562B15AA2700BF409E /* GlobalPositioning.swift */; };
 		FBB450002B04B7580096F8EB /* ColorProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBB44FFF2B04B7580096F8EB /* ColorProvider.swift */; };
 		FBB450022B052B180096F8EB /* FireLiveData.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBB450012B052B180096F8EB /* FireLiveData.swift */; };
 		FBD9AFA82AFF00BF005F8620 /* LudiBoardsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFA72AFF00BF005F8620 /* LudiBoardsApp.swift */; };
@@ -148,6 +150,8 @@
 		FB9F1DD32B15307E00FD9078 /* UserSignUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSignUp.swift; sourceTree = "<group>"; };
 		FB9F1DD52B1532AB00FD9078 /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		FB9F1DD82B1533C400FD9078 /* FirebaseLogin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseLogin.swift; sourceTree = "<group>"; };
+		FB9F1E3F2B159F6A00FD9078 /* OrientationInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrientationInfo.swift; sourceTree = "<group>"; };
+		FBA4FB562B15AA2700BF409E /* GlobalPositioning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalPositioning.swift; sourceTree = "<group>"; };
 		FBB44FFF2B04B7580096F8EB /* ColorProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorProvider.swift; sourceTree = "<group>"; };
 		FBB450012B052B180096F8EB /* FireLiveData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireLiveData.swift; sourceTree = "<group>"; };
 		FBD9AFA42AFF00BF005F8620 /* Ludi Boards.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Ludi Boards.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -230,6 +234,7 @@
 				FB15DD2E2B0745C900A21290 /* MenuBar */,
 				FBD9AFB92AFF03D7005F8620 /* CanvasEngine.swift */,
 				FB15DD2C2B0744A500A21290 /* CanvasEngineVM.swift */,
+				FB9F1E3F2B159F6A00FD9078 /* OrientationInfo.swift */,
 			);
 			path = CanvasEngine;
 			sourceTree = "<group>";
@@ -408,6 +413,7 @@
 				FBB44FFF2B04B7580096F8EB /* ColorProvider.swift */,
 				FB3E02B82B0C724A00D8558C /* BoardBgProvider.swift */,
 				FB10AE082B0DD76C00295F4B /* EmojiProvider.swift */,
+				FBA4FB562B15AA2700BF409E /* GlobalPositioning.swift */,
 			);
 			path = Providers;
 			sourceTree = "<group>";
@@ -520,6 +526,7 @@
 				FB58E8822B030F1D00FD9E2E /* RealmFind.swift in Sources */,
 				FBD9AFC92B008435005F8620 /* ManagedViewAction.swift in Sources */,
 				FB9F1DD92B1533C400FD9078 /* FirebaseLogin.swift in Sources */,
+				FB9F1E402B159F6A00FD9078 /* OrientationInfo.swift in Sources */,
 				FB58E87C2B02B1F100FD9E2E /* mvModifier.swift in Sources */,
 				FBD9AFC02B00817A005F8620 /* ManagedView.swift in Sources */,
 				FBD9AFCD2B008457005F8620 /* UserToBoard.swift in Sources */,
@@ -570,6 +577,7 @@
 				FB3E02A92B0C3B2C00D8558C /* RotationSlider.swift in Sources */,
 				FB9F1DD22B1529E400FD9078 /* LoadingView.swift in Sources */,
 				FBB450022B052B180096F8EB /* FireLiveData.swift in Sources */,
+				FBA4FB572B15AA2700BF409E /* GlobalPositioning.swift in Sources */,
 				FB9F1DD02B1528FC00FD9078 /* Extensions.swift in Sources */,
 				FB0AA56A2B0BEBE1001AA316 /* TwoFingerPanView.swift in Sources */,
 				FB58E8802B02B26C00FD9E2E /* DragAndDrop.swift in Sources */,

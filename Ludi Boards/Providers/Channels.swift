@@ -15,6 +15,7 @@ enum CodiChannel {
     case broadcast
     case BOARD_ON_ID_CHANGE
     case MENU_TOGGLER
+    case MENU_WINDOW_TOGGLER
     case TOOL_ON_CREATE
     case TOOL_ON_DELETE
     case TOOL_SUBSCRIPTION
@@ -39,6 +40,8 @@ enum CodiChannel {
                 return BoardOnIdChangeChannel.shared.subject
             case .MENU_TOGGLER:
                 return MenuTogglerChangeChannel.shared.subject
+            case .MENU_WINDOW_TOGGLER:
+                return MenuWindowTogglerChangeChannel.shared.subject
             case .TOOL_ON_CREATE:
                 return ToolOnCreateChannel.shared.subject
             case .TOOL_ON_DELETE:
@@ -88,6 +91,10 @@ class BoardOnIdChangeChannel {
 }
 class MenuTogglerChangeChannel {
     static let shared = MenuTogglerChangeChannel()
+    let subject = PassthroughSubject<Any, Never>()
+}
+class MenuWindowTogglerChangeChannel {
+    static let shared = MenuWindowTogglerChangeChannel()
     let subject = PassthroughSubject<Any, Never>()
 }
 class ToolOnCreateChannel {

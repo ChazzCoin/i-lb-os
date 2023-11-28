@@ -13,8 +13,9 @@ struct BuddyListView: View {
     @State private var showingAddBuddyView = false
 
     var body: some View {
-        NavigationStack {
-            List($buddies) { $buddy in
+        List($buddies) { $buddy in
+            
+            NavigationLink(destination: BuddyProfileView()) { // Replace DestinationView with your desired destination view
                 HStack {
                     Circle()
                         .fill(buddy.status == "Online" ? Color.green : Color.gray)
@@ -26,24 +27,20 @@ struct BuddyListView: View {
                         .font(.system(size: 12))
                         .foregroundColor(.gray)
                 }
-                .onTapGesture {
-                    print("Tapped on \(buddy.userName ?? "Unknown")")
-                    CodiChannel.general.send(value: MenuBarProvider.profile.tool.title)
+            }
+        }
+        .navigationBarTitle("Buddy List", displayMode: .inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: {
+                    showingAddBuddyView = true
+                }) {
+                    Image(systemName: "plus")
                 }
             }
-            .navigationBarTitle("Buddy List", displayMode: .inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: {
-                        showingAddBuddyView = true
-                    }) {
-                        Image(systemName: "plus")
-                    }
-                }
-            }
-            .sheet(isPresented: $showingAddBuddyView) {
-                AddBuddyView(isPresented: $showingAddBuddyView)
-            }
+        }
+        .sheet(isPresented: $showingAddBuddyView) {
+            AddBuddyView(isPresented: $showingAddBuddyView)
         }
     }
 }

@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import Combine
 
 class ManagedViewWindow {
     
@@ -72,91 +73,31 @@ class ManagedViewWindows:ObservableObject {
 
 }
 
-struct GenericWindow : View {
+struct NavStackWindow : View {
     
     @State var managedViewWindow: ManagedViewWindow
     
-    @State private var isHidden = false
+    @State private var isHidden = true
+    @State private var isFloatable = false
     
-    @State var screen: UIScreen = UIScreen()
-    
-    @State private var offset = CGSize.zero
-    @State private var position = CGPoint(x: 0, y: 0)
-    @GestureState private var dragOffset = CGSize.zero
-    @State private var isDragging = false
-    var body: some View {
-        VStack(spacing: 0) {
-            // Taskbar
-            taskbarView
-                .padding()
-            if let windowContent = managedViewWindow.content {
-                windowContent
-            } else {
-                // Placeholder or fallback view
-                Text("No content available")
-            }
-        }
-        .background(Color.white)
-        .cornerRadius(15)
-        .shadow(radius: 10)
-        .opacity(isHidden ? 0:1)
-        .offset(x: position.x + (isDragging ? dragOffset.width : 0), y: position.y + (isDragging ? dragOffset.height : 0))
-        .gesture(
-            DragGesture()
-                .updating($dragOffset, body: { (value, state, transaction) in
-                    state = value.translation
-                })
-                .onChanged { _ in
-                    self.isDragging = true
-                }
-                .onEnded { value in
-                    self.position = CGPoint(x: self.position.x + value.translation.width, y: self.position.y + value.translation.height)
-                    self.isDragging = false
-                }
-        )
-        .frame(minWidth: 100, maxWidth: 400, minHeight: 100, maxHeight: 300)
-    }
-
-    var taskbarView: some View {
-        HStack {
-            Text(managedViewWindow.title)
-                .font(.headline)
-                .foregroundColor(.black)
-            Spacer()
-            // Add buttons or icons here for minimize, maximize, close, etc.
-            Button(action: {
-                
-            }) {
-                Image(systemName: "arrow.up.circle.fill")
-                    .resizable()
-                    .frame(width: 50, height: 50)
-            }.frame(height: 50)
-            Button(action: {
-                // Minimize:
-                isHidden = true
-                CodiChannel.general.send(value: managedViewWindow.windowId)
-            }) {
-                Image(systemName: "arrow.down.circle.fill")
-                    .resizable()
-                    .frame(width: 50, height: 50)
-            }.frame(height: 50)
-        }
-    }
-}
-
-
-struct GenericNavWindow : View {
-    
-    @State var managedViewWindow: ManagedViewWindow
-    
-    @State private var isHidden = false
-    
+    @State var cancellables = Set<AnyCancellable>()
     @State var screen: UIScreen = UIScreen.main
-    
+        
     @State private var offset = CGSize.zero
     @State private var position = CGPoint(x: 0, y: 0)
     @GestureState private var dragOffset = CGSize.zero
     @State private var isDragging = false
+    
+    @State private var width = 0.0
+    @State private var height = 0.0
+    
+    func getPositionX() -> Double {return isHidden ? screen.bounds.width : ((screen.bounds.width/2) / 2)}
+    func getFloatableWidth() -> Double { return (screen.bounds.width/2) }
+    func getFloatableHeight() -> Double { return (screen.bounds.height/2) }
+    func resetSize() {
+        self.width = (!isFloatable ? screen.bounds.width/2 : getFloatableWidth()).bound(to: 400...screen.bounds.width)
+        self.height = (!isFloatable ? screen.bounds.height : getFloatableHeight()).bound(to: 400...screen.bounds.height)
+    }
 
     var body: some View {
         NavigationStack {
@@ -169,36 +110,89 @@ struct GenericNavWindow : View {
                 }
             }.opacity(isHidden ? 0 : 1)
             .navigationBarItems(trailing: HStack {
-                // Add buttons or icons here for minimize, maximize, close, etc.
+                
+                if self.isFloatable {
+                    Button(action: {
+                        // Minimize:
+                        self.width = (self.width + 50).bound(to: 400...screen.bounds.width)
+                        self.height = (self.height + 50).bound(to: 400...screen.bounds.height)
+                    }) {
+                        Image(systemName: "plus.circle.fill")
+                            .resizable()
+                            .frame(width: 30, height: 30)
+                    }
+                    Button(action: {
+                        // Minimize:
+                        self.width = (self.width - 50).bound(to: 400...screen.bounds.width)
+                        self.height = (self.height - 50).bound(to: 400...screen.bounds.height)
+                    }) {
+                        Image(systemName: "minus.circle.fill")
+                            .resizable()
+                            .frame(width: 30, height: 30)
+                    }
+                }
+                
+                
                 Button(action: {
-                    // Minimize:
-                    CodiChannel.general.send(value: managedViewWindow.windowId)
+                    self.isFloatable = !self.isFloatable
+                    resetSize()
+                }) {
+                    Image(systemName: "arrow.up.circle.fill")
+                        .resizable()
+                        .frame(width: 30, height: 30)
+                }
+                Button(action: {
+                    self.isHidden = true
+                    self.isFloatable = false
+                    resetSize()
+                    position = CGPoint(x: 0, y: 0)
                 }) {
                     Image(systemName: "arrow.down.circle.fill")
                         .resizable()
                         .frame(width: 30, height: 30)
                 }
+               
             })
         }
-        .frame(minWidth: 100, maxWidth: screen.bounds.width/2, minHeight: 100, maxHeight: screen.bounds.height)
+        .frame(width: self.width, height: self.height)
         .opacity(isHidden ? 0 : 1)
         .background(Color.white)
         .cornerRadius(15)
         .shadow(radius: 10)
-        .offset(x: position.x + (isDragging ? dragOffset.width : 0) + (screen.bounds.width/2)/2, y: position.y + (isDragging ? dragOffset.height : 0))
+        .offset(x: position.x + (isDragging ? dragOffset.width : 0) + (!isFloatable ? getPositionX() : 0), y: position.y + (isDragging ? dragOffset.height : 0))
+        .animation(.easeInOut(duration: 1.0), value: isHidden)
         .gesture(
             DragGesture()
                 .updating($dragOffset, body: { (value, state, transaction) in
+                    if !self.isFloatable {return}
                     state = value.translation
                 })
                 .onChanged { _ in
+                    if !self.isFloatable {return}
                     self.isDragging = true
                 }
                 .onEnded { value in
+                    if !self.isFloatable {return}
                     self.position = CGPoint(x: self.position.x + value.translation.width, y: self.position.y + value.translation.height)
                     self.isDragging = false
                 }
         )
+        .onAppear() {
+            
+            resetSize()
+            
+            CodiChannel.MENU_WINDOW_TOGGLER.receive(on: RunLoop.main) { windowType in
+                print(windowType)
+                if (windowType as! String) != self.managedViewWindow.windowId { return }
+                if self.isHidden {
+                    self.isHidden = false
+                } else {
+                    self.isHidden = true
+                    self.isFloatable = false
+                    position = CGPoint(x: 0, y: 0)
+                }
+            }.store(in: &cancellables)
+        }
     }
 
 }
