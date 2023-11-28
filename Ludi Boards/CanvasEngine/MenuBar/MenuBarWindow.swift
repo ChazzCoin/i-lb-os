@@ -39,14 +39,8 @@ struct MenuBarWindow<Content>: View where Content: View {
         .background(Color(hex: "3BAF6C"))
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
         .shadow(color: Color.black.opacity(0.2), radius: 10, x: 0, y: 4)
-//        .position(position)
-//        .gesture(
-//            DragGesture()
-//                .onChanged { value in
-//                    self.position = value.location
-//                }
-//        )
         .offset(x: offset.width + dragState.width, y: offset.height + dragState.height)
+        .position(position)
         .gesture(
             DragGesture()
                 .updating($dragState) { value, state, _ in
@@ -57,7 +51,7 @@ struct MenuBarWindow<Content>: View where Content: View {
                     self.offset.height += value.translation.height
                 }
         ).onAppear() {
-            self.offset = gps.getOffset(for: .bottomLeft)
+            self.position = gps.getCoordinate(for: .bottomLeft).add(x: 100, y: -(50 * Double(items.count)))
         }
     }
 }

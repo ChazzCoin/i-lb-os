@@ -97,6 +97,11 @@ struct NavStackWindow : View {
     func resetSize() {
         self.width = (!isFloatable ? screen.bounds.width/2 : getFloatableWidth()).bound(to: 400...screen.bounds.width)
         self.height = (!isFloatable ? screen.bounds.height : getFloatableHeight()).bound(to: 400...screen.bounds.height)
+        
+    }
+    func resetPosition() {
+        offset = CGSize.zero
+        position = CGPoint(x: 0, y: 0)
     }
 
     var body: some View {
@@ -136,6 +141,7 @@ struct NavStackWindow : View {
                 Button(action: {
                     self.isFloatable = !self.isFloatable
                     resetSize()
+                    resetPosition()
                 }) {
                     Image(systemName: "arrow.up.circle.fill")
                         .resizable()
@@ -145,7 +151,7 @@ struct NavStackWindow : View {
                     self.isHidden = true
                     self.isFloatable = false
                     resetSize()
-                    position = CGPoint(x: 0, y: 0)
+                    resetPosition()
                 }) {
                     Image(systemName: "arrow.down.circle.fill")
                         .resizable()
@@ -189,7 +195,8 @@ struct NavStackWindow : View {
                 } else {
                     self.isHidden = true
                     self.isFloatable = false
-                    position = CGPoint(x: 0, y: 0)
+                    resetSize()
+                    resetPosition()
                 }
             }.store(in: &cancellables)
         }
