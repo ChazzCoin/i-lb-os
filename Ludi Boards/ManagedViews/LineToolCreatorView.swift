@@ -44,6 +44,26 @@ struct LineDrawingView: View {
     
 }
 
+func rotationAngleOfLine(from startPoint: CGPoint, to endPoint: CGPoint) -> Angle {
+    let deltaY = endPoint.y - startPoint.y
+    let deltaX = endPoint.x - startPoint.x
+
+    let angleInRadians = atan2(deltaY, deltaX)
+    return Angle(radians: Double(angleInRadians))
+}
+
+func getCenterOfLine(start: CGPoint, end: CGPoint) -> CGPoint {
+    let midX = (start.x + end.x) / 2
+    let midY = (start.y + end.y) / 2
+    return CGPoint(x: midX, y: midY)
+}
+
+func getWidthAndHeightOfLine(start: CGPoint, end: CGPoint) -> (width: CGFloat, height: CGFloat) {
+    let width = abs(end.x - start.x)
+    let height = abs(end.y - start.y)
+    return (width, height)
+}
+
 struct LineDrawingManaged: View {
     let viewId: String
     @State var boardId: String = "boardEngine-1"
@@ -53,14 +73,19 @@ struct LineDrawingManaged: View {
     @State private var isDeleted = false
     @State private var isDisabled = false
     
+    @State private var lifeCenterPoint = CGPoint.zero
     @State private var lifeStartX = 0.0
     @State private var lifeStartY = 0.0
     @State private var lifeEndX = 0.0
     @State private var lifeEndY = 0.0
     
+    @State private var lifeLineLength = 0.0
+    @State private var lifeWidthTouch = 300.0
+    @State private var lifeHeightTouch = 300.0
+    
     @State private var lifeWidth = 10.0
     @State private var lifeColor = Color.red
-    @State private var lifeRotation = 0.0
+    @State private var lifeRotation: Angle = Angle.zero
     
     @State private var popUpIsVisible = false
     
@@ -68,6 +93,8 @@ struct LineDrawingManaged: View {
     @State private var position = CGPoint(x: 0, y: 0)
     @GestureState private var dragOffset = CGSize.zero
     @State private var isDragging = false
+    @State var originalLifeStart = CGPoint.zero
+    @State var originalLifeEnd = CGPoint.zero
     
     // Firebase
     let reference = Database.database().reference().child(DatabasePaths.managedViews.rawValue)
@@ -80,9 +107,10 @@ struct LineDrawingManaged: View {
 //    func minSizeCheck() {
 //        if lifeWidth < minSizeWH { lifeWidth = minSizeWH }
 //    }
-    
+    private var lineLength: CGFloat {
+        sqrt(pow(lifeEndX - lifeStartX, 2) + pow(lifeEndY - lifeStartY, 2))-100
+    }
     func loadFromRealm() {
-        
         let mv = realmInstance.object(ofType: ManagedView.self, forPrimaryKey: viewId)
         guard let umv = mv else { return }
         // set attributes
@@ -91,67 +119,65 @@ struct LineDrawingManaged: View {
         lifeEndX = umv.endX
         lifeEndY = umv.endY
         lifeWidth = Double(umv.width)
-        lifeRotation = Double(umv.rotation)
+//        lifeRotation = Double(umv.rotation)
+        loadCenterPoint()
+        loadWidthAndHeight()
+        loadRotationOfLine()
     }
-
+    
+    func loadRotationOfLine() {
+        let lineStart = CGPoint(x: lifeStartX, y: lifeStartY)
+        let lineEnd = CGPoint(x: lifeEndX, y: lifeEndY)
+        lifeRotation = rotationAngleOfLine(from: lineStart, to: lineEnd)
+        print(lifeRotation)
+    }
+    
+    func loadCenterPoint() {
+        let lineStart = CGPoint(x: lifeStartX, y: lifeStartY)
+        let lineEnd = CGPoint(x: lifeEndX, y: lifeEndY)
+        lifeCenterPoint = getCenterOfLine(start: lineStart, end: lineEnd)
+    }
+    func loadWidthAndHeight() {
+        let lineStart = CGPoint(x: lifeStartX, y: lifeStartY)
+        let lineEnd = CGPoint(x: lifeEndX, y: lifeEndY)
+        let (lineWidth, lineHeight) = getWidthAndHeightOfLine(start: lineStart, end: lineEnd)
+        lifeWidthTouch = Double(lineWidth).bound(to: 100...200)
+        lifeHeightTouch = Double(lineHeight).bound(to: 100...200)
+    }
     var body: some View {
         Path { path in
             path.move(to: CGPoint(x: lifeStartX, y: lifeStartY))
             path.addLine(to: CGPoint(x: lifeEndX, y: lifeEndY))
         }
         .stroke(lifeColor, lineWidth: CGFloat(lifeWidth))
-        
         .opacity(!isDisabledChecker() && !isDeletedChecker() ? 1 : 0.0)
-        .offset(x: position.x + (isDragging ? dragOffset.width : 0), y: position.y + (isDragging ? dragOffset.height : 0))
         .overlay(
             Circle()
+                .fill(Color.AIMYellow)
                 .frame(width: 100, height: 100) // Adjust size for easier tapping
-                .border(popUpIsVisible ? Color.yellow : Color.clear, width: 10)
                 .opacity(popUpIsVisible ? 1 : 0) // Invisible
                 .position(x: lifeStartX, y: lifeStartY)
                 .gesture(dragGesture(isStart: true))
-//                .gesture(
-//                    DragGesture()
-//                        .updating($dragOffset, body: { (value, state, transaction) in
-//                            state = value.translation
-//                        })
-//                        .onChanged { _ in
-//                            self.isDragging = true
-//                        }
-//                        .onEnded { value in
-//                            self.position = CGPoint(x: self.position.x + value.translation.width, y: self.position.y + value.translation.height)
-//                            print("!!!! X: [ \(self.position.x) ] Y: [ \(self.position.y) ]")
-//                            self.isDragging = false
-//                            //onMoveComplete()
-//                            updateRealm()
-//                        }.simultaneously(with: TapGesture()
-//                            .onEnded {
-//                                print("Tapped")
-//                                popUpIsVisible = !popUpIsVisible
-//                                CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: "mv_settings", stateAction: popUpIsVisible ? "open" : "close", viewId: viewId))
-//                                if popUpIsVisible {
-//                                    CodiChannel.TOOL_ATTRIBUTES.send(value: ViewAtts(viewId: viewId, size: lifeWidth, rotation: lifeRotation))
-//                                }
-//                            }
-//                        )
-//                )
         )
         .overlay(
             Circle()
+                .fill(Color.AIMYellow)
                 .frame(width: 100, height: 100) // Increase size for finger tapping
-                .border(popUpIsVisible ? Color.yellow : Color.clear, width: 10)
                 .opacity(popUpIsVisible ? 1 : 0) // Invisible
                 .position(x: lifeEndX, y: lifeEndY)
                 .gesture(dragGesture(isStart: false))
         )
-        .onTapGesture {
-            print("Tapped")
-            popUpIsVisible = !popUpIsVisible
-            CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: "mv_settings", stateAction: popUpIsVisible ? "open" : "close", viewId: viewId))
-            if popUpIsVisible {
-                CodiChannel.TOOL_ATTRIBUTES.send(value: ViewAtts(viewId: viewId, size: lifeWidth, rotation: lifeRotation))
-            }
-        }
+        .overlay(
+            Rectangle()
+                .fill(Color.white.opacity(0.001))
+//                .fill(Color.AIMYellow)
+                .frame(width: lineLength, height: 100) // Increase size for finger tapping
+                .rotationEffect(lifeRotation)
+                .opacity(1)
+                .position(x: lifeCenterPoint.x, y: lifeCenterPoint.y)
+                .gesture(dragGestureDuo())
+        )
+        .gesture(dragGestureDuo())
         .onAppear() {
             loadFromRealm()
         }
@@ -169,19 +195,59 @@ struct LineDrawingManaged: View {
                     self.lifeEndX = value.location.x
                     self.lifeEndY = value.location.y
                 }
+                loadCenterPoint()
+                loadWidthAndHeight()
+                loadRotationOfLine()
             }
             .onEnded { _ in
                 if !popUpIsVisible {return}
                 updateRealm()
             }.simultaneously(with: TapGesture()
                  .onEnded {
-                     if !popUpIsVisible {return}
                      print("Tapped")
                      popUpIsVisible = !popUpIsVisible
-                     CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: "mv_settings", stateAction: popUpIsVisible ? "open" : "close", viewId: viewId))
-                     if popUpIsVisible {
-                         CodiChannel.TOOL_ATTRIBUTES.send(value: ViewAtts(viewId: viewId, size: lifeWidth, rotation: lifeRotation))
-                     }
+                 }
+            )
+    }
+    
+    // Drag gesture definition
+    private func dragGestureDuo() -> some Gesture {
+        DragGesture()
+            .updating($dragOffset, body: { (value, state, transaction) in
+                state = value.translation
+            })
+            .onChanged { value in
+                if self.originalLifeStart == .zero {
+                    self.originalLifeStart = CGPoint(x: lifeStartX, y: lifeStartY)
+                    self.originalLifeEnd = CGPoint(x: lifeEndX, y: lifeEndY)
+                }
+
+                let translation = value.translation
+                lifeStartX = self.originalLifeStart.x + translation.width
+                lifeStartY = self.originalLifeStart.y + translation.height
+                lifeEndX = self.originalLifeEnd.x + translation.width
+                lifeEndY = self.originalLifeEnd.y + translation.height
+                loadCenterPoint()
+            }
+            .onEnded { value in
+                let translation = value.translation
+                lifeStartX = self.originalLifeStart.x + translation.width
+                lifeStartY = self.originalLifeStart.y + translation.height
+                lifeEndX = self.originalLifeEnd.x + translation.width
+                lifeEndY = self.originalLifeEnd.y + translation.height
+                loadCenterPoint()
+                updateRealm(start: CGPoint(x: lifeStartX, y: lifeStartY),
+                            end: CGPoint(x: lifeEndX, y: lifeEndY))
+                self.originalLifeStart = .zero
+                self.originalLifeEnd = .zero
+            }.simultaneously(with: TapGesture()
+                 .onEnded {
+                     print("Tapped")
+                     popUpIsVisible = !popUpIsVisible
+//                     CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: "mv_settings", stateAction: popUpIsVisible ? "open" : "close", viewId: viewId))
+//                     if popUpIsVisible {
+//                         CodiChannel.TOOL_ATTRIBUTES.send(value: ViewAtts(viewId: viewId, size: lifeWidth, rotation: lifeRotation))
+//                     }
                  }
             )
     }
@@ -199,7 +265,7 @@ struct LineDrawingManaged: View {
             mv?.endX = Double(end?.x ?? CGFloat(lifeEndX))
             mv?.endY = Double(end?.y ?? CGFloat(lifeEndY))
 //            mv?.toolColor = lifeColor.rawValue
-            mv?.rotation = lifeRotation
+//            mv?.rotation = lifeRotation
 //            mv?.toolType = lifeToolType
             mv?.width = Int(lifeWidth)
             guard let tMV = mv else { return }
@@ -225,28 +291,35 @@ struct LineDrawingManaged: View {
             lifeEndY = obj?["endY"] as? Double ?? lifeEndY
 //            lifeUpdatedAt = obj?["dateUpdated"] as? Int ?? lifeUpdatedAt
             lifeWidth = Double(obj?["width"] as? Int ?? Int(lifeWidth))
-            lifeRotation = Double(obj?["rotation"] as? Double ?? lifeRotation)
+//            lifeRotation = Double(obj?["rotation"] as? Double ?? lifeRotation)
 //            lifeToolType = obj?["toolType"] as? String ?? lifeToolType
 //            lifeColor = ColorProvider.fromColorName(colorName: obj?["toolColor"] as? String ?? lifeColor.rawValue)
         }
     }
 }
 
-struct DragArea: View {
-    var position: CGPoint
-    var onDrag: (CGPoint) -> Void
+struct LineOverlay: View {
+    var startPoint: CGPoint
+    var endPoint: CGPoint
+    let lineThickness: CGFloat = 2 // Adjust as needed
+
+    private var lineLength: CGFloat {
+        sqrt(pow(endPoint.x - startPoint.x, 2) + pow(endPoint.y - startPoint.y, 2))
+    }
+
+    private var centerPoint: CGPoint {
+        CGPoint(x: (startPoint.x + endPoint.x) / 2, y: (startPoint.y + endPoint.y) / 2)
+    }
+
+    private var rotationAngle: Angle {
+        rotationAngleOfLine(from: startPoint, to: endPoint)
+    }
 
     var body: some View {
-        Circle()
-            .frame(width: 44, height: 44) // Adjust size for easier tapping
-            .opacity(0.0) // Invisible
-            .position(position)
-            .gesture(
-                DragGesture()
-                    .onChanged { value in
-                        self.onDrag(value.location)
-                    }
-            )
+        Rectangle()
+            .frame(width: lineLength, height: lineThickness)
+            .rotationEffect(rotationAngle)
+            .position(x: centerPoint.x, y: centerPoint.y)
     }
 }
 
