@@ -136,7 +136,7 @@ struct CanvasEngine: View {
         }.zIndex(10.0)
         
         ZStack() {
-        
+            
             // Global Windows
             ForEach(Array(managedWindowsObject.managedViewGenerics.values)) { managedViewWindow in
                 managedViewWindow.view()
@@ -168,6 +168,9 @@ struct CanvasEngine: View {
             handleSessionPlan()
             handleShare()
             handleBuddyList()
+            handleMVSettings()
+            
+            
         }
         
     }
@@ -178,7 +181,7 @@ struct CanvasEngine: View {
             print("Received on MENU_TOGGLER channel: \(buttonType)")
             
             switch MenuBarProvider.parseByTitle(title: buttonType as? String ?? "") {
-                case .toolbox: return CodiChannel.MENU_WINDOW_TOGGLER.send(value: MenuBarProvider.toolbox.tool.title)
+                case .toolbox: return CodiChannel.MENU_WINDOW_TOGGLER.send(value: "mv_settings") //CodiChannel.MENU_WINDOW_TOGGLER.send(value: MenuBarProvider.toolbox.tool.title)
                 case .lock: return self.handleGestureLock()
                 case .canvasGrid: return
                 case .navHome: return
@@ -267,6 +270,13 @@ struct CanvasEngine: View {
         let caller = MenuBarProvider.share.tool.title
         let buddies = ManagedViewWindow(id: caller, content: AnyView(SignUpView()))
         buddies.title = "Sign Up"
+        buddies.windowId = caller
+        managedWindowsObject.toggleItem(key: caller, item: ViewWrapper {AnyView(NavStackWindow(managedViewWindow: buddies))})
+    }
+    func handleMVSettings() {
+        let caller = "mv_settings"
+        let buddies = ManagedViewWindow(id: caller, content: AnyView(SettingsView(onDelete: {})))
+        buddies.title = "Tool View Settings"
         buddies.windowId = caller
         managedWindowsObject.toggleItem(key: caller, item: ViewWrapper {AnyView(NavStackWindow(managedViewWindow: buddies))})
     }

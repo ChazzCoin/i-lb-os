@@ -7,6 +7,44 @@
 
 import Foundation
 import Combine
+import SwiftUI
+
+class WindowController {
+    var windowId: String = ""
+    var stateAction: String = "open" //close
+    var viewId: String = ""
+    
+    init(windowId: String, stateAction: String, viewId: String="") {
+        self.windowId = windowId
+        self.stateAction = stateAction
+        self.viewId = viewId
+    }
+}
+
+class ViewAtts {
+    var viewId: String = ""
+    var size: Double? = nil
+    var rotation: Double? = nil
+    var color: Color? = nil
+    
+    init(viewId: String, size: Double? = nil, rotation: Double? = nil, color: Color? = nil) {
+        self.viewId = viewId
+        self.size = size
+        self.rotation = rotation
+        self.color = color
+    }
+}
+
+class ViewMenu {
+    var viewId: String = ""
+    var state: String = "close" // "open"
+    
+    init(viewId: String, state: String) {
+        self.viewId = viewId
+        self.state = state
+    }
+}
+
 //@State var cancellables = Set<AnyCancellable>()
 enum CodiChannel {
     case general
@@ -16,6 +54,7 @@ enum CodiChannel {
     case BOARD_ON_ID_CHANGE
     case MENU_TOGGLER
     case MENU_WINDOW_TOGGLER
+    case MENU_WINDOW_CONTROLLER
     case TOOL_ON_CREATE
     case TOOL_ON_DELETE
     case TOOL_SUBSCRIPTION
@@ -42,6 +81,8 @@ enum CodiChannel {
                 return MenuTogglerChangeChannel.shared.subject
             case .MENU_WINDOW_TOGGLER:
                 return MenuWindowTogglerChangeChannel.shared.subject
+            case .MENU_WINDOW_CONTROLLER:
+                return MenuWindowControllerChangeChannel.shared.subject
             case .TOOL_ON_CREATE:
                 return ToolOnCreateChannel.shared.subject
             case .TOOL_ON_DELETE:
@@ -91,6 +132,10 @@ class BoardOnIdChangeChannel {
 }
 class MenuTogglerChangeChannel {
     static let shared = MenuTogglerChangeChannel()
+    let subject = PassthroughSubject<Any, Never>()
+}
+class MenuWindowControllerChangeChannel {
+    static let shared = MenuWindowControllerChangeChannel()
     let subject = PassthroughSubject<Any, Never>()
 }
 class MenuWindowTogglerChangeChannel {

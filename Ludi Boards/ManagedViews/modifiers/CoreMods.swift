@@ -16,6 +16,9 @@ extension View {
     func enableMVT(viewId: String="") -> some View {
         self.modifier(enableManagedViewTool(viewId: viewId, boardId: "boardEngine-1"))
     }
+    func enableLINE(viewId: String="") -> some View {
+        self.modifier(enableManagedViewLine(viewId: viewId, boardId: "boardEngine-1"))
+    }
 }
 
 // Helper view to simulate Box from Compose

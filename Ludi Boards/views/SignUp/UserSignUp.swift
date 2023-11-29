@@ -89,6 +89,16 @@ struct SignUpView: View {
             }
         }
         
+        saveUserToFirebase(user: newUser)
+        
+    }
+    
+    private func saveUserToFirebase(user:User) {
+        firebaseDatabase { fdb in
+            fdb.child(DatabasePaths.users.rawValue)
+                .child(user.id)
+                .setValue(user.toDictionary())
+        }
     }
     
     private func uploadImageToFirebase(image: UIImage, completion: @escaping (URL?) -> Void) {

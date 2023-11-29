@@ -8,17 +8,38 @@
 import Foundation
 import SwiftUI
 import Combine
+import RealmSwift
 
 struct BoardEngine: View {
     
     @State var cancellables = Set<AnyCancellable>()
     @StateObject var viewModel = ViewModel()
+    private let realmIntance = realm()
+    
+    @State var lineTools: [ManagedView] = []
+    
+    @State private var startPoint: CGPoint = .zero
+    @State private var endPoint: CGPoint = .zero
     
     var body: some View {
-        ZStack(){
+         ZStack() {
+             
             ForEach(Array(viewModel.toolViews.values)) { item in
                 item.view()
             }
+             ForEach(lineTools) { item in
+                 LineDrawingManaged(viewId: item.id)
+             }
+             
+             // Temporary line being drawn
+             if self.viewModel.isDrawing {
+                 Path { path in
+                     path.move(to: startPoint)
+                     path.addLine(to: endPoint)
+                 }
+                 .stroke(Color.red, lineWidth: 10)
+             }
+            
         }
         .frame(width: viewModel.width, height: viewModel.height)
         .background {
@@ -33,7 +54,24 @@ struct BoardEngine: View {
                 .stroke(Color.red, lineWidth: 2) // Red border with a stroke width of 2
                 .frame(width: viewModel.width, height: viewModel.height)
                 .position(x: viewModel.startPosX, y: viewModel.startPosY)
+        ).gesture(
+            DragGesture()
+                .onChanged { value in
+                    if !self.viewModel.isDrawing {return}
+                    self.startPoint = value.startLocation
+                    self.endPoint = value.location
+                }
+                .onEnded { value in
+                    if !self.viewModel.isDrawing {return}
+                    self.endPoint = value.location
+                    saveLineData(start: value.startLocation, end: value.location)
+                }
         ).onAppear {
+            
+            for line in realmIntance.objects(ManagedView.self).where({ $0.toolType == "LINE" && $0.boardId == "boardEngine-1" }) {
+                lineTools.append(line)
+            }
+            
             print("Sending Hello through General Channel.")
             CodiChannel.general.send(value: "Hello, General Channel!")
             
@@ -49,6 +87,24 @@ struct BoardEngine: View {
             CodiChannel.TOOL_ON_CREATE.receive(on: RunLoop.main) { tool in
                 self.viewModel.safeAddTool(id: UUID().uuidString, icon: tool as! String)
             }.store(in: &cancellables)
+        }
+    }
+    
+    private func saveLineData(start: CGPoint, end: CGPoint) {
+        realmIntance.safeWrite { r in
+            let line = ManagedView()
+            line.boardId = "boardEngine-1"
+            line.startX = Double(start.x)
+            line.startY = Double(start.y)
+            line.endX = Double(end.x)
+            line.endY = Double(end.y)
+            line.x = Double(start.x)
+            line.y = Double(start.y)
+            line.width = 10
+            line.toolColor = "Black"
+            line.toolType = "LINE"
+            line.dateUpdated = Int(Date().timeIntervalSince1970)
+            r.add(line)
         }
     }
 }

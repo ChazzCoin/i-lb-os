@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FB07B6702B17A5B9009A0962 /* mvModifier copy.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB07B66F2B17A5B9009A0962 /* mvModifier copy.swift */; };
 		FB0AA56A2B0BEBE1001AA316 /* TwoFingerPanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB0AA5692B0BEBE1001AA316 /* TwoFingerPanView.swift */; };
 		FB10AE052B0DC8E600295F4B /* Tips.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB10AE042B0DC8E600295F4B /* Tips.swift */; };
 		FB10AE072B0DCDB500295F4B /* FloatingEmoji.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB10AE062B0DCDB500295F4B /* FloatingEmoji.swift */; };
@@ -41,10 +42,10 @@
 		FB3E02CB2B0D2E4700D8558C /* InputTextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02CA2B0D2E4700D8558C /* InputTextEditor.swift */; };
 		FB5094262B058215000AEA96 /* LazyRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5094252B058215000AEA96 /* LazyRow.swift */; };
 		FB5094282B0584CA000AEA96 /* ManagedViewWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5094272B0584CA000AEA96 /* ManagedViewWindow.swift */; };
-		FB50942A2B05856D000AEA96 /* ManagedViewToolBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5094292B05856D000AEA96 /* ManagedViewToolBar.swift */; };
+		FB50942A2B05856D000AEA96 /* LineToolCreatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5094292B05856D000AEA96 /* LineToolCreatorView.swift */; };
 		FB58E8762B01F3D200FD9E2E /* FireParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58E8752B01F3D200FD9E2E /* FireParser.swift */; };
 		FB58E8782B01F40300FD9E2E /* FireCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58E8772B01F40300FD9E2E /* FireCore.swift */; };
-		FB58E87C2B02B1F100FD9E2E /* mvModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58E87B2B02B1F000FD9E2E /* mvModifier.swift */; };
+		FB58E87C2B02B1F100FD9E2E /* lineModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58E87B2B02B1F000FD9E2E /* lineModifier.swift */; };
 		FB58E87E2B02B21700FD9E2E /* CoreMods.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58E87D2B02B21700FD9E2E /* CoreMods.swift */; };
 		FB58E8802B02B26C00FD9E2E /* DragAndDrop.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58E87F2B02B26C00FD9E2E /* DragAndDrop.swift */; };
 		FB58E8822B030F1D00FD9E2E /* RealmFind.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58E8812B030F1D00FD9E2E /* RealmFind.swift */; };
@@ -79,6 +80,7 @@
 		FB9F1E3C2B15393A00FD9078 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = FB9F1E3B2B15393A00FD9078 /* FirebaseStorage */; };
 		FB9F1E3E2B15393A00FD9078 /* FirebaseStorageCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = FB9F1E3D2B15393A00FD9078 /* FirebaseStorageCombine-Community */; };
 		FB9F1E402B159F6A00FD9078 /* OrientationInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9F1E3F2B159F6A00FD9078 /* OrientationInfo.swift */; };
+		FBA20A2F2B166FCE00045D1C /* MVSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBA20A2E2B166FCE00045D1C /* MVSettingsView.swift */; };
 		FBA4FB572B15AA2700BF409E /* GlobalPositioning.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBA4FB562B15AA2700BF409E /* GlobalPositioning.swift */; };
 		FBB450002B04B7580096F8EB /* ColorProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBB44FFF2B04B7580096F8EB /* ColorProvider.swift */; };
 		FBB450022B052B180096F8EB /* FireLiveData.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBB450012B052B180096F8EB /* FireLiveData.swift */; };
@@ -101,6 +103,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		FB07B66F2B17A5B9009A0962 /* mvModifier copy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "mvModifier copy.swift"; sourceTree = "<group>"; };
 		FB0AA5692B0BEBE1001AA316 /* TwoFingerPanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwoFingerPanView.swift; sourceTree = "<group>"; };
 		FB10AE042B0DC8E600295F4B /* Tips.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tips.swift; sourceTree = "<group>"; };
 		FB10AE062B0DCDB500295F4B /* FloatingEmoji.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingEmoji.swift; sourceTree = "<group>"; };
@@ -135,10 +138,10 @@
 		FB3E02CA2B0D2E4700D8558C /* InputTextEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputTextEditor.swift; sourceTree = "<group>"; };
 		FB5094252B058215000AEA96 /* LazyRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LazyRow.swift; sourceTree = "<group>"; };
 		FB5094272B0584CA000AEA96 /* ManagedViewWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedViewWindow.swift; sourceTree = "<group>"; };
-		FB5094292B05856D000AEA96 /* ManagedViewToolBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedViewToolBar.swift; sourceTree = "<group>"; };
+		FB5094292B05856D000AEA96 /* LineToolCreatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineToolCreatorView.swift; sourceTree = "<group>"; };
 		FB58E8752B01F3D200FD9E2E /* FireParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireParser.swift; sourceTree = "<group>"; };
 		FB58E8772B01F40300FD9E2E /* FireCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireCore.swift; sourceTree = "<group>"; };
-		FB58E87B2B02B1F000FD9E2E /* mvModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mvModifier.swift; sourceTree = "<group>"; };
+		FB58E87B2B02B1F000FD9E2E /* lineModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = lineModifier.swift; sourceTree = "<group>"; };
 		FB58E87D2B02B21700FD9E2E /* CoreMods.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreMods.swift; sourceTree = "<group>"; };
 		FB58E87F2B02B26C00FD9E2E /* DragAndDrop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragAndDrop.swift; sourceTree = "<group>"; };
 		FB58E8812B030F1D00FD9E2E /* RealmFind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmFind.swift; sourceTree = "<group>"; };
@@ -151,6 +154,7 @@
 		FB9F1DD52B1532AB00FD9078 /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		FB9F1DD82B1533C400FD9078 /* FirebaseLogin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseLogin.swift; sourceTree = "<group>"; };
 		FB9F1E3F2B159F6A00FD9078 /* OrientationInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrientationInfo.swift; sourceTree = "<group>"; };
+		FBA20A2E2B166FCE00045D1C /* MVSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MVSettingsView.swift; sourceTree = "<group>"; };
 		FBA4FB562B15AA2700BF409E /* GlobalPositioning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalPositioning.swift; sourceTree = "<group>"; };
 		FBB44FFF2B04B7580096F8EB /* ColorProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorProvider.swift; sourceTree = "<group>"; };
 		FBB450012B052B180096F8EB /* FireLiveData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireLiveData.swift; sourceTree = "<group>"; };
@@ -287,8 +291,8 @@
 				FB10AE0A2B0F162F00295F4B /* ActivityPlanThumbView.swift */,
 				FB10AE0C2B0F16B100295F4B /* ActivityPlanThumbList.swift */,
 				FB9F1DD12B1529E400FD9078 /* LoadingView.swift */,
-				FB9F1DD32B15307E00FD9078 /* UserSignUp.swift */,
 				FB9F1DD52B1532AB00FD9078 /* ImagePicker.swift */,
+				FBA20A2E2B166FCE00045D1C /* MVSettingsView.swift */,
 			);
 			path = views;
 			sourceTree = "<group>";
@@ -312,7 +316,8 @@
 		FB58E87A2B02B1E200FD9E2E /* modifiers */ = {
 			isa = PBXGroup;
 			children = (
-				FB58E87B2B02B1F000FD9E2E /* mvModifier.swift */,
+				FB58E87B2B02B1F000FD9E2E /* lineModifier.swift */,
+				FB07B66F2B17A5B9009A0962 /* mvModifier copy.swift */,
 				FB58E87F2B02B26C00FD9E2E /* DragAndDrop.swift */,
 				FB58E87D2B02B21700FD9E2E /* CoreMods.swift */,
 			);
@@ -323,6 +328,7 @@
 			isa = PBXGroup;
 			children = (
 				FB9F1DD82B1533C400FD9078 /* FirebaseLogin.swift */,
+				FB9F1DD32B15307E00FD9078 /* UserSignUp.swift */,
 			);
 			path = SignUp;
 			sourceTree = "<group>";
@@ -398,7 +404,7 @@
 			children = (
 				FB58E87A2B02B1E200FD9E2E /* modifiers */,
 				FBD9AFD62B00BB8F005F8620 /* ManagedViewBoardTool.swift */,
-				FB5094292B05856D000AEA96 /* ManagedViewToolBar.swift */,
+				FB5094292B05856D000AEA96 /* LineToolCreatorView.swift */,
 				FB5094272B0584CA000AEA96 /* ManagedViewWindow.swift */,
 			);
 			path = ManagedViews;
@@ -527,7 +533,7 @@
 				FBD9AFC92B008435005F8620 /* ManagedViewAction.swift in Sources */,
 				FB9F1DD92B1533C400FD9078 /* FirebaseLogin.swift in Sources */,
 				FB9F1E402B159F6A00FD9078 /* OrientationInfo.swift in Sources */,
-				FB58E87C2B02B1F100FD9E2E /* mvModifier.swift in Sources */,
+				FB58E87C2B02B1F100FD9E2E /* lineModifier.swift in Sources */,
 				FBD9AFC02B00817A005F8620 /* ManagedView.swift in Sources */,
 				FBD9AFCD2B008457005F8620 /* UserToBoard.swift in Sources */,
 				FB3E02B12B0C6B1D00D8558C /* ActivityPlan.swift in Sources */,
@@ -557,8 +563,9 @@
 				FBD9AFB82AFF0253005F8620 /* GridLines.swift in Sources */,
 				FB3E02BB2B0C90D700D8558C /* Buddy.swift in Sources */,
 				FB10AE0B2B0F162F00295F4B /* ActivityPlanThumbView.swift in Sources */,
-				FB50942A2B05856D000AEA96 /* ManagedViewToolBar.swift in Sources */,
+				FB50942A2B05856D000AEA96 /* LineToolCreatorView.swift in Sources */,
 				FB3E02AF2B0C6B1200D8558C /* SessionPlan.swift in Sources */,
+				FBA20A2F2B166FCE00045D1C /* MVSettingsView.swift in Sources */,
 				FB3E02A72B0C3A0C00D8558C /* SizeSlider.swift in Sources */,
 				FB3E02B32B0C6B5100D8558C /* SessionPlanView.swift in Sources */,
 				FB3E02CB2B0D2E4700D8558C /* InputTextEditor.swift in Sources */,
@@ -573,6 +580,7 @@
 				FBD9AFD52B008F6F005F8620 /* Channels.swift in Sources */,
 				FB3E02BF2B0C948A00D8558C /* AddBuddyView.swift in Sources */,
 				FB10AE0D2B0F16B100295F4B /* ActivityPlanThumbList.swift in Sources */,
+				FB07B6702B17A5B9009A0962 /* mvModifier copy.swift in Sources */,
 				FB15DD2A2B07443600A21290 /* BoardEngineView.swift in Sources */,
 				FB3E02A92B0C3B2C00D8558C /* RotationSlider.swift in Sources */,
 				FB9F1DD22B1529E400FD9078 /* LoadingView.swift in Sources */,

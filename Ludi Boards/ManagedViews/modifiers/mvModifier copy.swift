@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import Firebase
 import RealmSwift
+import Combine
 
 struct enableManagedViewTool : ViewModifier {
     @State var viewId: String
@@ -37,6 +38,8 @@ struct enableManagedViewTool : ViewModifier {
     
     // Firebase
     let reference = Database.database().reference().child(DatabasePaths.managedViews.rawValue)
+    
+    @State var cancellables = Set<AnyCancellable>()
     
     // Functions
     func isDisabledChecker() -> Bool { return isDisabled }
@@ -83,13 +86,11 @@ struct enableManagedViewTool : ViewModifier {
             r.create(ManagedView.self, value: tMV, update: .all)
             firebaseDatabase { fdb in
                 fdb.child(DatabasePaths.managedViews.rawValue)
-                    .child("boardEngine-1")
+                    .child(boardId)
                     .child(viewId)
                     .setValue(mv?.toDictionary())
             }
         }
-        
-        // CodiChannel.TOOL_SUBSCRIPTION.send(ViewAttributesPayload(
     }
     func flowRealm() {
         if isDisabledChecker() {return}
@@ -122,7 +123,7 @@ struct enableManagedViewTool : ViewModifier {
                 .frame(width: lifeWidth * 2, height: lifeHeight * 2)
                 .colorMultiply(lifeColor.colorValue)
                 .rotationEffect(.degrees(lifeRotation))
-                .border(popUpIsVisible ? Color.red : Color.clear, width: 1) // Border modifier
+                .border(popUpIsVisible ? lifeColor.colorValue : Color.clear, width: 10) // Border modifier
                 .position(x: position.x + (isDragging ? dragOffset.width : 0) + (self.lifeWidth),
                           y: position.y + (isDragging ? dragOffset.height : 0) + (self.lifeHeight))
                 .gesture(
@@ -151,19 +152,39 @@ struct enableManagedViewTool : ViewModifier {
                         }.simultaneously(with: TapGesture()
                             .onEnded {
                                 print("Tapped")
+                                popUpIsVisible = !popUpIsVisible
+                                CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: "mv_settings", stateAction: popUpIsVisible ? "open" : "close", viewId: viewId))
+                                if popUpIsVisible {
+                                    CodiChannel.TOOL_ATTRIBUTES.send(value: ViewAtts(viewId: viewId, size: lifeWidth, rotation: lifeRotation))
+                                }
                             }
                         )
                 )
-                
                 .opacity(!isDisabledChecker() && !isDeletedChecker() ? 1 : 0.0)
                 .onAppear {
                     // isDisabled.value = false
-                    // CodiChannel -> BOARD_ON_ID_CHANGE
-                    // CodiChannel -> TOOL_ON_MENU_RETURN
-                    // CodiChannel -> TOOL_ATTRIBUTES
-                    // CodiChannel -> TOOL_ON_DELETE
                     loadFromRealm()
                     flowRealm()
+                    
+                    CodiChannel.BOARD_ON_ID_CHANGE.receive(on: RunLoop.main) { bId in
+                        
+                    }.store(in: &cancellables)
+                    
+                    CodiChannel.TOOL_ON_DELETE.receive(on: RunLoop.main) { viewId in
+                        
+                    }.store(in: &cancellables)
+                    
+                    CodiChannel.TOOL_ATTRIBUTES.receive(on: RunLoop.main) { viewAtts in
+                        let inVA = (viewAtts as! ViewAtts)
+                        if viewId != inVA.viewId { return }
+                        if let inColor = inVA.color { lifeColor = ColorProvider.fromColor(inColor) }
+                        if let inRotation = inVA.rotation { lifeRotation = inRotation }
+                        if let inSize = inVA.size {
+                            lifeWidth = inSize
+                            lifeHeight = inSize
+                        }
+                        updateRealm()
+                    }.store(in: &cancellables)
                 }
         }
 }

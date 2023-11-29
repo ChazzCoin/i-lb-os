@@ -32,8 +32,11 @@ class ViewModel: ObservableObject {
     
     @State var isLoading = false
     @Published var toolViews: [String:ViewWrapper] = [:]
+    @Published var lineViews: [String:ViewWrapper] = [:]
     
-    init() { 
+    @State var isDrawing = false
+    
+    init() {
         loadAllBoardSessions()
     }
     
@@ -55,6 +58,10 @@ class ViewModel: ObservableObject {
         boardId = boardIdIn
         boardBg = BoardBgProvider.parseByTitle(title: tempBoard?.backgroundImg ?? "Soccer 2")?.tool.image ?? "soccer_two"
         loadManagedViewTools()
+        for line in realmInstance.objects(ManagedView.self).where({ $0.toolType == "LINE" && $0.boardId == "boardEngine-1" }) {
+            safeAddTool(id: line.id, icon: "LINE")
+        }
+        
 //        isLoading = false
     }
         
@@ -71,7 +78,6 @@ class ViewModel: ObservableObject {
                     }
                 }
             }
-//            self.isLoading = false
         }
     }
     
@@ -97,8 +103,15 @@ class ViewModel: ObservableObject {
     }
     func safeAddTool(id: String, icon: String) {
         guard toolViews[id] != nil else {
-            let parsedTool = SoccerToolProvider.parseByTitle(title: icon)?.tool.image ?? SoccerToolProvider.playerDummy.tool.image
-            toolViews[id] = newTool(id: id, icon: parsedTool)
+            print(icon)
+            if icon == "LINE" {
+                let parsedTool = "LINE"
+                toolViews[id] = newTool(id: id, icon: parsedTool)
+            } else {
+                let parsedTool = SoccerToolProvider.parseByTitle(title: icon)?.tool.image ?? SoccerToolProvider.playerDummy.tool.image
+                toolViews[id] = newTool(id: id, icon: parsedTool)
+            }
+            
             return
         }
     }

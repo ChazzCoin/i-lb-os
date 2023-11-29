@@ -91,12 +91,12 @@ struct NavStackWindow : View {
     @State private var width = 0.0
     @State private var height = 0.0
     
-    func getPositionX() -> Double {return isHidden ? screen.bounds.width : ((screen.bounds.width/2) / 2)}
+    func getPositionX() -> Double {return isHidden ? screen.bounds.width : (((screen.bounds.width + 75.0)/2) / 2)}
     func getFloatableWidth() -> Double { return (screen.bounds.width/2) }
     func getFloatableHeight() -> Double { return (screen.bounds.height/2) }
     func resetSize() {
-        self.width = (!isFloatable ? screen.bounds.width/2 : getFloatableWidth()).bound(to: 400...screen.bounds.width)
-        self.height = (!isFloatable ? screen.bounds.height : getFloatableHeight()).bound(to: 400...screen.bounds.height)
+        self.width = (!isFloatable ? ((screen.bounds.width - 100.0)/2) : getFloatableWidth()).bound(to: 100...screen.bounds.width - 100.0)
+        self.height = (!isFloatable ? screen.bounds.height : getFloatableHeight()).bound(to: 100...screen.bounds.height)
         
     }
     func resetPosition() {
@@ -197,6 +197,23 @@ struct NavStackWindow : View {
                     self.isFloatable = false
                     resetSize()
                     resetPosition()
+                }
+            }.store(in: &cancellables)
+            
+            CodiChannel.MENU_WINDOW_CONTROLLER.receive(on: RunLoop.main) { wc in
+                print(wc)
+                let temp = wc as! WindowController
+                if temp.windowId != self.managedViewWindow.windowId { return }
+
+                if temp.stateAction == "open" {
+                    if self.isHidden { self.isHidden = false }
+                } else {
+                    if !self.isHidden {
+                        self.isHidden = true
+                        self.isFloatable = false
+                        resetSize()
+                        resetPosition()
+                    }
                 }
             }.store(in: &cancellables)
         }
