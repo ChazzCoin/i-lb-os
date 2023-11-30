@@ -80,12 +80,12 @@ struct ToolButtonIcon: View {
     var body: some View {
         Image(icon.tool.image)
             .resizable()
-            .zIndex(15.0)
-            .frame(width: 35, height: 35)
-            .onTapGesture {
+            .frame(width: 40, height: 40)
+            .onTapAnimation {
                 print("CodiChannel SendTopic: \(icon.tool.title)")
                 CodiChannel.TOOL_ON_CREATE.send(value: icon.tool.title)
             }
-            .foregroundColor(isLocked ? .red : Color.primary)
+//            .foregroundColor(isLocked ? .red : Color.primary)
+            .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
     }
 }

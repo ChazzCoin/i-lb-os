@@ -40,6 +40,7 @@ struct CanvasEngine: View {
     
     @State private var offsetTwo = CGSize.zero
     @State private var isDragging = false
+    @State private var toolBarIsEnabled = false
     @State private var position = CGPoint(x: 50, y: 50) // Initial position
     @GestureState private var dragOffset = CGSize.zero
     
@@ -120,7 +121,7 @@ struct CanvasEngine: View {
     
     var body: some View {
         
-        GlobalPositioningZStack { geo in
+        GlobalPositioningZStack { geo, gps in
             // Global MenuBar
             MenuBarWindow(items: [
                 {MenuButtonIcon(icon: MenuBarProvider.toolbox)},
@@ -132,31 +133,45 @@ struct CanvasEngine: View {
                 {MenuButtonIcon(icon: MenuBarProvider.share)}
             ])
             
-            ToolBarPicker {
-                LineIconView()
-                    .frame(width: 50, height: 50)
-                    .foregroundColor(.blue)
-                    .onTap {
-                        self.isDrawing = !self.isDrawing
-                    }.zIndex(2.0)
+            if toolBarIsEnabled {
+                ToolBarPicker {
+                    LineIconView()
+                        .frame(width: 50, height: 50)
+                        .onTapAnimation {
+                            self.isDrawing = !self.isDrawing
+                        }
+                    DottedLineIconView()
+                        .frame(width: 50, height: 50)
+                        .onTapAnimation {
+                            self.isDrawing = !self.isDrawing
+                        }
+                    CurvedLineIconView()
+                        .frame(width: 50, height: 50)
+                        .onTapAnimation {
+                            self.isDrawing = !self.isDrawing
+                        }
+                }
+                .zIndex(2.0)
+                .position(using: gps, at: .bottomCenter, offsetY: 50)
             }
             
             if self.isDrawing {
                 FlashingLightView(isEnabled: $isDrawing)
+                    .position(using: gps, at: .topRight, offsetY: 25)
                 TipViewLocked(tip: "Tap & Drag to Create a Line", isVisible: $isDrawing)
+                    .position(using: gps, at: .topRight, offsetX: 500, offsetY: -50)
             }
             
-            
 //            FloatingEmojiView()
-        }.zIndex(10.0)
+        }.zIndex(2.0)
         
         ZStack() {
             
             // Global Windows
             ForEach(Array(managedWindowsObject.managedViewGenerics.values)) { managedViewWindow in
-                managedViewWindow.view()
+                managedViewWindow.view().zIndex(5.0)
             }
-            .zIndex(5.0)
+            
 
             // Board/Canvas Level
             ZStack() {
@@ -196,7 +211,7 @@ struct CanvasEngine: View {
             print("Received on MENU_TOGGLER channel: \(buttonType)")
             
             switch MenuBarProvider.parseByTitle(title: buttonType as? String ?? "") {
-                case .toolbox: return CodiChannel.MENU_WINDOW_TOGGLER.send(value: "mv_settings") //CodiChannel.MENU_WINDOW_TOGGLER.send(value: MenuBarProvider.toolbox.tool.title)
+                case .toolbox: return self.toolBarIsEnabled = !self.toolBarIsEnabled
                 case .lock: return self.handleGestureLock()
                 case .canvasGrid: return
                 case .navHome: return

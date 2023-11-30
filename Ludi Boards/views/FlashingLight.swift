@@ -24,7 +24,6 @@ struct FlashingLightView: View {
                     isFlashing.toggle()
                 }
             }
-            .position(x: gps.getCoordinate(for: .topRight).x - 50, y: gps.getCoordinate(for: .topRight).y + 50)
     }
 }
 

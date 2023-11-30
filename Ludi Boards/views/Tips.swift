@@ -23,7 +23,7 @@ struct TipView: View {
                     .background(Capsule().fill(Color.blue))
                     .shadow(radius: 10)
             }
-            .position(x: gps.getCoordinate(for: .topRight).x - 250, y: gps.getCoordinate(for: .topRight).y + 200)
+//            .position(x: gps.getCoordinate(for: .topRight).x - 250, y: gps.getCoordinate(for: .topRight).y + 200)
             .onAppear {
                 DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
                     withAnimation {

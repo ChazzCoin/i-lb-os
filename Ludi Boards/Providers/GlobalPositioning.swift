@@ -11,6 +11,8 @@ import Combine
 
 class GlobalPositioningSystem: ObservableObject {
     // Properties to store screen size and safe area insets
+    @State var screenPaddingX: CGFloat = 50
+    @State var screenPaddingY: CGFloat = 25
     @Published var screenSize: CGSize = UIScreen.main.bounds.size
     @Published var safeAreaInsets: EdgeInsets = EdgeInsets()
 
@@ -33,22 +35,43 @@ class GlobalPositioningSystem: ObservableObject {
     // Function to get coordinates for specified area
     func getCoordinate(for area: ScreenArea) -> CGPoint {
         switch area {
-        case .center:
-            return CGPoint(x: screenSize.width / 2, y: screenSize.height / 2)
-        case .topRight:
-            return CGPoint(x: screenSize.width - safeAreaInsets.trailing, y: safeAreaInsets.top)
-        case .topLeft:
-            return CGPoint(x: safeAreaInsets.leading, y: safeAreaInsets.top)
-        case .bottomRight:
-            return CGPoint(x: screenSize.width - safeAreaInsets.trailing, y: screenSize.height - safeAreaInsets.bottom)
-        case .bottomLeft:
-            return CGPoint(x: safeAreaInsets.leading, y: screenSize.height - safeAreaInsets.bottom)
-        case .bottomCenter:
-            return CGPoint(x: screenSize.width / 2, y: screenSize.height - safeAreaInsets.bottom)
-        case .topCenter:
-            return CGPoint(x: screenSize.width / 2, y: safeAreaInsets.top)
+            case .center:
+                return CGPoint(x: screenSize.width / 2, y: screenSize.height / 2)
+            case .topRight:
+                return CGPoint(x: screenSize.width - safeAreaInsets.trailing - screenPaddingX, y: safeAreaInsets.top + screenPaddingY)
+            case .topLeft:
+                return CGPoint(x: safeAreaInsets.leading, y: safeAreaInsets.top + screenPaddingY)
+            case .bottomRight:
+                return CGPoint(x: screenSize.width - safeAreaInsets.trailing - screenPaddingX, y: screenSize.height - safeAreaInsets.bottom - screenPaddingY)
+            case .bottomLeft:
+                return CGPoint(x: safeAreaInsets.leading, y: screenSize.height - safeAreaInsets.bottom)
+            case .bottomCenter:
+                return CGPoint(x: screenSize.width / 2, y: screenSize.height - safeAreaInsets.bottom)
+            case .topCenter:
+                return CGPoint(x: screenSize.width / 2, y: safeAreaInsets.top + screenPaddingY)
         }
     }
+    
+    // Function to get coordinates for specified area with an optional offset
+    func getCoordinate(for area: ScreenArea, offsetX: CGFloat = 0, offsetY: CGFloat = 0) -> CGPoint {
+        switch area {
+            case .center:
+                return CGPoint(x: (screenSize.width / 2) + offsetX, y: (screenSize.height / 2) + offsetY)
+            case .topRight:
+                return CGPoint(x: screenSize.width - safeAreaInsets.trailing - screenPaddingX - offsetX, y: safeAreaInsets.top + screenPaddingY + offsetY)
+            case .topLeft:
+                return CGPoint(x: safeAreaInsets.leading + offsetX, y: safeAreaInsets.top + screenPaddingY + offsetY)
+            case .bottomRight:
+                return CGPoint(x: screenSize.width - safeAreaInsets.trailing - screenPaddingX - offsetX, y: screenSize.height - safeAreaInsets.bottom - screenPaddingY - offsetY)
+            case .bottomLeft:
+                return CGPoint(x: safeAreaInsets.leading + offsetX, y: screenSize.height - safeAreaInsets.bottom - offsetY)
+            case .bottomCenter:
+                return CGPoint(x: (screenSize.width / 2) + offsetX, y: screenSize.height - safeAreaInsets.bottom - offsetY)
+            case .topCenter:
+                return CGPoint(x: (screenSize.width / 2) + offsetX, y: safeAreaInsets.top + screenPaddingY + offsetY)
+        }
+    }
+
     
     // Function to get offsets for specified area as CGSize
     func getOffset(for area: ScreenArea) -> CGSize {
@@ -76,12 +99,14 @@ enum ScreenArea {
 }
 
 struct GlobalPositioningZStack<Content: View>: View {
-    let content: (GeometryProxy) -> Content
+    let content: (GeometryProxy, GlobalPositioningSystem) -> Content
 
-    init(@ViewBuilder content: @escaping (GeometryProxy) -> Content) {
+    init(@ViewBuilder content: @escaping (GeometryProxy, GlobalPositioningSystem) -> Content) {
         self.content = content
     }
 
+    @State var gps = GlobalPositioningSystem()
+    
     var body: some View {
         GeometryReader { geometry in
             Color.clear
@@ -92,7 +117,7 @@ struct GlobalPositioningZStack<Content: View>: View {
                 })
             ZStack {
                 // Injecting the dynamic content
-                content(geometry)
+                content(geometry, gps)
             }
             .frame(width: geometry.size.width, height: geometry.size.height)
             .background(Color.clear) // Making the background clear
@@ -102,8 +127,10 @@ struct GlobalPositioningZStack<Content: View>: View {
 
 struct GlobalPositioningZStack_Previews: PreviewProvider {
     static var previews: some View {
-        GlobalPositioningZStack { geo in
-            
+        GlobalPositioningZStack { geo, gps in
+            Text("Heyyyyy")
+//                .frame(width: 100, height: 100)
+                .position(x: gps.getCoordinate(for: .topRight).x, y: gps.getCoordinate(for: .topRight).y)
         }
     }
 }

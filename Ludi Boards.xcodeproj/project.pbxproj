@@ -102,6 +102,7 @@
 		FBD9AFD52B008F6F005F8620 /* Channels.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFD42B008F6F005F8620 /* Channels.swift */; };
 		FBD9AFD72B00BB8F005F8620 /* ManagedViewBoardTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFD62B00BB8F005F8620 /* ManagedViewBoardTool.swift */; };
 		FBD9AFD92B01CB91005F8620 /* SoccerToolProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFD82B01CB91005F8620 /* SoccerToolProvider.swift */; };
+		FBF404432B19304700FA0545 /* BorderedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF404422B19304700FA0545 /* BorderedView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -179,6 +180,7 @@
 		FBD9AFD42B008F6F005F8620 /* Channels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Channels.swift; sourceTree = "<group>"; };
 		FBD9AFD62B00BB8F005F8620 /* ManagedViewBoardTool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedViewBoardTool.swift; sourceTree = "<group>"; };
 		FBD9AFD82B01CB91005F8620 /* SoccerToolProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoccerToolProvider.swift; sourceTree = "<group>"; };
+		FBF404422B19304700FA0545 /* BorderedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BorderedView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -299,6 +301,7 @@
 				FBA20A2E2B166FCE00045D1C /* MVSettingsView.swift */,
 				FB58A1B32B17D1420024B9A2 /* ToolBarView.swift */,
 				FB58A1B52B1804C80024B9A2 /* FlashingLight.swift */,
+				FBF404422B19304700FA0545 /* BorderedView.swift */,
 			);
 			path = views;
 			sourceTree = "<group>";
@@ -535,6 +538,7 @@
 				FB9F1DD62B1532AB00FD9078 /* ImagePicker.swift in Sources */,
 				FB3E02AB2B0C3BFF00D8558C /* ColorSlider.swift in Sources */,
 				FB58E8842B03169700FD9E2E /* TimeProvider.swift in Sources */,
+				FBF404432B19304700FA0545 /* BorderedView.swift in Sources */,
 				FB58E8822B030F1D00FD9E2E /* RealmFind.swift in Sources */,
 				FBD9AFC92B008435005F8620 /* ManagedViewAction.swift in Sources */,
 				FB9F1DD92B1533C400FD9078 /* FirebaseLogin.swift in Sources */,

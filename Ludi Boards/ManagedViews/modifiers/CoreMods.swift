@@ -27,6 +27,17 @@ extension View {
     func onTapAnimation(perform action: @escaping () -> Void) -> some View {
         self.modifier(TapAnimationModifier(action: action))
     }
+    
+    // Method to set the position of the view based on a specified ScreenArea
+    func position(using gps: GlobalPositioningSystem, at area: ScreenArea, offsetX: CGFloat = 0, offsetY: CGFloat = 0) -> some View {
+        self.position(gps.getCoordinate(for: area, offsetX: offsetX, offsetY: offsetY))
+    }
+
+    // Method to set the offset of the view based on a specified ScreenArea
+    func offset(using gps: GlobalPositioningSystem, for area: ScreenArea) -> some View {
+        let offsetSize = gps.getOffset(for: area)
+        return self.offset(x: offsetSize.width, y: offsetSize.height)
+    }
 }
 
 func backgroundColorForScheme(_ scheme: ColorScheme) -> Color {
