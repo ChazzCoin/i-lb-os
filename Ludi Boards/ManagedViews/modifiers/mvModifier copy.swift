@@ -121,7 +121,7 @@ struct enableManagedViewTool : ViewModifier {
     func body(content: Content) -> some View {
             content
                 .frame(width: lifeWidth * 2, height: lifeHeight * 2)
-                .colorMultiply(lifeColor.colorValue)
+//                .colorMultiply(lifeColor.colorValue)
                 .rotationEffect(.degrees(lifeRotation))
                 .border(popUpIsVisible ? lifeColor.colorValue : Color.clear, width: 10) // Border modifier
                 .position(x: position.x + (isDragging ? dragOffset.width : 0) + (self.lifeWidth),

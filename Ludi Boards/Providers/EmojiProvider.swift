@@ -37,7 +37,6 @@ struct EmojiPicker: View {
                         .font(.largeTitle)
                         .padding(2)
                         .onTapGesture {
-//                            CodiChannel.EMOJI_ON_CREATE.send(value: emoji)
                             onEmojiSelected(emoji)
                         }
                 }
@@ -50,8 +49,6 @@ struct EmojiPicker: View {
                 .shadow(radius: 5)
         )
         .padding(.horizontal)
-//        .offset(x: -(sWidth/2)+200, y: (sHeight/2)-75)
-//        .position(CGPoint(x: 0, y: 0))
         .zIndex(20.0)
     }
 }

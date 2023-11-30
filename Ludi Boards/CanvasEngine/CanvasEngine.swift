@@ -24,7 +24,7 @@ extension CodiChannel {
 struct CanvasEngine: View {
     
     @State var cancellables = Set<AnyCancellable>()
-    
+    @State var isDrawing: Bool = false
     @State var popupIsVisible: Bool = true
     @State var gesturesAreLocked: Bool = false
     var maxScaleFactor: CGFloat = 1.0
@@ -131,7 +131,22 @@ struct CanvasEngine: View {
                 {MenuButtonIcon(icon: MenuBarProvider.boardDetails)},
                 {MenuButtonIcon(icon: MenuBarProvider.share)}
             ])
-//            TipView()
+            
+            ToolBarPicker {
+                LineIconView()
+                    .frame(width: 50, height: 50)
+                    .foregroundColor(.blue)
+                    .onTap {
+                        self.isDrawing = !self.isDrawing
+                    }.zIndex(2.0)
+            }
+            
+            if self.isDrawing {
+                FlashingLightView(isEnabled: $isDrawing)
+                TipViewLocked(tip: "Tap & Drag to Create a Line", isVisible: $isDrawing)
+            }
+            
+            
 //            FloatingEmojiView()
         }.zIndex(10.0)
         
@@ -146,7 +161,7 @@ struct CanvasEngine: View {
             // Board/Canvas Level
             ZStack() {
                 DrawGridLines().zIndex(1.0)
-                BoardEngine().zIndex(2.0)
+                BoardEngine(isDraw: $isDrawing).zIndex(2.0)
                 
             }
             .frame(width: initialWidth, height: initialHeight)

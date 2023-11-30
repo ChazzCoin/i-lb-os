@@ -78,21 +78,14 @@ struct ToolButtonIcon: View {
     @State private var isLocked = false
 
     var body: some View {
-        VStack {
-            
-            Image(icon.tool.image)
-                .resizable()
-                .zIndex(15.0)
-                .frame(width: 35, height: 35)
-                .onTapGesture {
-                    print("CodiChannel SendTopic: \(icon.tool.title)")
-                    CodiChannel.TOOL_ON_CREATE.send(value: icon.tool.title)
-                }
-                .foregroundColor(isLocked ? .red : Color.primary)
-            Spacer().frame(height: 8)
-        }
-        .onAppear {
-            // Update isLocked state based on your conditions
-        }
+        Image(icon.tool.image)
+            .resizable()
+            .zIndex(15.0)
+            .frame(width: 35, height: 35)
+            .onTapGesture {
+                print("CodiChannel SendTopic: \(icon.tool.title)")
+                CodiChannel.TOOL_ON_CREATE.send(value: icon.tool.title)
+            }
+            .foregroundColor(isLocked ? .red : Color.primary)
     }
 }

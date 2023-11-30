@@ -11,15 +11,22 @@ import Combine
 import RealmSwift
 
 struct BoardEngine: View {
-    
+    @Binding var isDraw: Bool
     @State var cancellables = Set<AnyCancellable>()
-    @StateObject var viewModel = ViewModel()
+    @ObservedObject var viewModel = ViewModel()
     private let realmIntance = realm()
     
     @State var lineTools: [ManagedView] = []
     
     @State private var startPoint: CGPoint = .zero
     @State private var endPoint: CGPoint = .zero
+    
+    func reloadLineTools() {
+        lineTools.removeAll()
+        for line in realmIntance.objects(ManagedView.self).where({ $0.toolType == "LINE" && $0.boardId == "boardEngine-1" }) {
+            lineTools.append(line)
+        }
+    }
     
     var body: some View {
          ZStack() {
@@ -32,12 +39,16 @@ struct BoardEngine: View {
              }
              
              // Temporary line being drawn
-             if self.viewModel.isDrawing {
-                 Path { path in
-                     path.move(to: startPoint)
-                     path.addLine(to: endPoint)
+             if self.isDraw {
+                 
+                 if startPoint != .zero {  
+                     Path { path in
+                         path.move(to: startPoint)
+                         path.addLine(to: endPoint)
+                     }
+                     .stroke(Color.red, lineWidth: 10)
                  }
-                 .stroke(Color.red, lineWidth: 10)
+                 
              }
             
         }
@@ -57,20 +68,19 @@ struct BoardEngine: View {
         ).gesture(
             DragGesture()
                 .onChanged { value in
-                    if !self.viewModel.isDrawing {return}
+                    if !self.isDraw {return}
                     self.startPoint = value.startLocation
                     self.endPoint = value.location
                 }
                 .onEnded { value in
-                    if !self.viewModel.isDrawing {return}
+                    if !self.isDraw {return}
                     self.endPoint = value.location
                     saveLineData(start: value.startLocation, end: value.location)
+                    reloadLineTools()
                 }
         ).onAppear {
             
-            for line in realmIntance.objects(ManagedView.self).where({ $0.toolType == "LINE" && $0.boardId == "boardEngine-1" }) {
-                lineTools.append(line)
-            }
+            reloadLineTools()
             
             print("Sending Hello through General Channel.")
             CodiChannel.general.send(value: "Hello, General Channel!")

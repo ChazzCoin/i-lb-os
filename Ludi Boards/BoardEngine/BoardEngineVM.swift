@@ -34,7 +34,7 @@ class ViewModel: ObservableObject {
     @Published var toolViews: [String:ViewWrapper] = [:]
     @Published var lineViews: [String:ViewWrapper] = [:]
     
-    @State var isDrawing = false
+    @Published var isDrawing = false
     
     init() {
         loadAllBoardSessions()
