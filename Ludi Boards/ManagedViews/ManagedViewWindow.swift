@@ -121,6 +121,21 @@ struct NavStackWindow : View {
         .shadow(radius: 10)
         .position(x: position.x + (isDragging ? dragOffset.width : 0) + (!isFloatable ? getPositionX() : 0), y: position.y + (isDragging ? dragOffset.height : 0))
         .animation(.easeInOut(duration: 1.0), value: isHidden)
+//        .navigationBarItems(trailing: HStack {
+//            // Add buttons or icons here for minimize, maximize, close, etc.
+//            Button(action: {
+//                // Delete View
+//                print("Minimize")
+//                self.isHidden = true
+//                self.isFloatable = false
+//                resetSize()
+//                resetPosition()
+//            }) {
+//                Image(systemName: "trash")
+//                    .resizable()
+//                    .frame(width: 30, height: 30)
+//            }
+//        })
 //        .gesture(
 //            DragGesture()
 //                .updating($dragOffset, body: { (value, state, transaction) in
@@ -140,7 +155,7 @@ struct NavStackWindow : View {
         .onAppear() {
             
             resetSize()
-            
+            resetPosition()
             CodiChannel.MENU_WINDOW_TOGGLER.receive(on: RunLoop.main) { windowType in
                 print(windowType)
                 if (windowType as! String) != self.id { return }

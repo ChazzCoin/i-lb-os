@@ -73,14 +73,22 @@ struct SettingsView: View {
         .background(Color.clear)
         .navigationBarTitle("Settings", displayMode: .inline)
         .navigationBarItems(trailing: HStack {
-            // Add buttons or icons here for minimize, maximize, close, etc.
             Button(action: {
                 // Delete View
-                print("No Trasher")
+                print("Trash")
                 let va = ViewAtts(viewId: viewId, isDeleted: true)
                 CodiChannel.TOOL_ATTRIBUTES.send(value: va)
+                CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: "mv_settings", stateAction: "close", viewId: viewId))
             }) {
                 Image(systemName: "trash")
+                    .resizable()
+                    .frame(width: 30, height: 30)
+            }
+            Button(action: {
+                print("Minimize")
+                CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: "mv_settings", stateAction: "close", viewId: viewId))
+            }) {
+                Image(systemName: "minus")
                     .resizable()
                     .frame(width: 30, height: 30)
             }

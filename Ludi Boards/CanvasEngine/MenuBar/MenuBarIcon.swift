@@ -13,7 +13,7 @@ struct MenuButtonIcon: View {
     @Environment(\.colorScheme) var colorScheme
     @State private var isLocked = false
     @State private var lifeColor = Color.black
-    @State private var lifeWindowState = false
+    @State private var lifeWindowState = true
     
     func setColorScheme() { lifeColor = foregroundColorForScheme(colorScheme) }
     

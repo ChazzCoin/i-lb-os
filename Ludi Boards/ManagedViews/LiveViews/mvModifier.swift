@@ -168,7 +168,6 @@ struct enableManagedViewTool : ViewModifier {
                 .onAppear {
                     isDisabled = false
                     loadFromRealm()
-//                    flowRealm()
                     
                     CodiChannel.BOARD_ON_ID_CHANGE.receive(on: RunLoop.main) { bId in
                         if self.boardId == (bId as! String) {
@@ -182,6 +181,14 @@ struct enableManagedViewTool : ViewModifier {
                         if self.viewId == (viewId as! String) {
                             isDeleted = true
                             isDisabled = true
+                        }
+                    }.store(in: &cancellables)
+                    
+                    CodiChannel.MENU_WINDOW_CONTROLLER.receive(on: RunLoop.main) { vId in
+                        let temp = vId as! WindowController
+                        if temp.windowId != "mv_settings" {return}
+                        if temp.stateAction == "close" {
+                            popUpIsVisible = false
                         }
                     }.store(in: &cancellables)
                     

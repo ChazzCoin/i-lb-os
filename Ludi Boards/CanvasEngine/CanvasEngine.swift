@@ -186,7 +186,7 @@ struct CanvasEngine: View {
         .zIndex(-1.0)
         .onAppear() {
             menuBarButtonListener()
-//            handleChat()
+            handleChat()
 //            handleBuddyProfile()
 //            handleSessionPlan()
 //            handleShare()
@@ -204,7 +204,7 @@ struct CanvasEngine: View {
             let buttonType = temp.windowId
             
             switch MenuBarProvider.parseByTitle(title: buttonType) {
-                case .toolbox: return if temp.stateAction == "open" {
+                case .toolbox: return if temp.stateAction != "open" {
                     self.toolBarIsEnabled = true
                 }else {
                     self.toolBarIsEnabled = false
