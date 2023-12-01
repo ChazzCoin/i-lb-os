@@ -110,6 +110,12 @@ struct CanvasEngine: View {
         
         GlobalPositioningZStack { geo, gps in
             
+//            NavStackWindow(id: "mv_settings", viewBuilder: {SettingsView(onDelete: {})})
+//                .position(using: gps, at: .bottomCenter)
+            ForEach(Array(managedWindowsObject.managedViewGenerics.values)) { managedViewWindow in
+                managedViewWindow.viewBuilder()
+            }
+            
             // Global MenuBar
             MenuBarWindow(items: [
                 {MenuButtonIcon(icon: MenuBarProvider.toolbox)},
@@ -149,16 +155,17 @@ struct CanvasEngine: View {
                 TipViewLocked(tip: "Tap & Drag to Create a Line", isVisible: $isDrawing)
                     .position(using: gps, at: .topRight, offsetX: 500, offsetY: -50)
             }
+            // Global Windows
+//            ForEach(Array(managedWindowsObject.managedViewGenerics.values)) { managedViewWindow in
+//                managedViewWindow.viewBuilder()
+//            }
             
-            FloatingEmojiView()
-                .position(using: gps, at: .topLeft, offsetX: 200, offsetY: 0)
-        }.zIndex(3.0)
+//            FloatingEmojiView()
+//                .position(using: gps, at: .topLeft, offsetX: 200, offsetY: 0)
+        }
         
         ZStack() {
-            // Global Windows
-            ForEach(Array(managedWindowsObject.managedViewGenerics.values)) { managedViewWindow in
-                managedViewWindow.viewBuilder().zIndex(15.0)
-            }
+            
             // Board/Canvas Level
             ZStack() {
                 DrawGridLines().zIndex(1.0)
@@ -167,19 +174,19 @@ struct CanvasEngine: View {
             }
             .frame(width: initialWidth, height: initialHeight)
             .background(Color.clear)
-            .zIndex(1.0)
             .offset(x: self.offset.x, y: self.offset.y)
             .scaleEffect(totalScale * gestureScale)
             .rotationEffect(angle)
+            .zIndex(1.0)
             
         }
         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
         .gesture(dragAngleGestures.simultaneously(with: scaleGestures))
-        .zIndex(0.0)
         .background(Color.clear)
+        .zIndex(-1.0)
         .onAppear() {
             menuBarButtonListener()
-            handleChat()
+//            handleChat()
 //            handleBuddyProfile()
 //            handleSessionPlan()
 //            handleShare()

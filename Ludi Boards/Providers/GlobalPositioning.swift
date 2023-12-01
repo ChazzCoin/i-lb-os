@@ -109,13 +109,10 @@ struct GlobalPositioningZStack<Content: View>: View {
     
     var body: some View {
         GeometryReader { geometry in
-            ZStack {
-                content(geometry, gps)
-            }
-            .frame(width: geometry.size.width, height: geometry.size.height)
-            .edgesIgnoringSafeArea(.all)
+            content(geometry, gps)
+        }.frame(maxWidth: gps.screenSize.width, maxHeight: gps.screenSize.height)
+            .ignoresSafeArea(.all)
             .background(Color.clear)
-        }.frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 

@@ -153,7 +153,7 @@ struct enableManagedViewTool : ViewModifier {
                                 //onMoveComplete()
                                 updateRealm()
                             }
-                        }.simultaneously(with: LongPressGesture(minimumDuration: 0.5)
+                        }.simultaneously(with: TapGesture(count: 2)
                             .onEnded { _ in
                                 print("Tapped")
                                 popUpIsVisible = !popUpIsVisible
@@ -166,16 +166,23 @@ struct enableManagedViewTool : ViewModifier {
                 )
                 .opacity(!isDisabledChecker() && !isDeletedChecker() ? 1 : 0.0)
                 .onAppear {
-                    // isDisabled.value = false
+                    isDisabled = false
                     loadFromRealm()
 //                    flowRealm()
                     
                     CodiChannel.BOARD_ON_ID_CHANGE.receive(on: RunLoop.main) { bId in
-                        
+                        if self.boardId == (bId as! String) {
+                            isDisabled = false
+                        } else {
+                            isDisabled = true
+                        }
                     }.store(in: &cancellables)
                     
                     CodiChannel.TOOL_ON_DELETE.receive(on: RunLoop.main) { viewId in
-                        
+                        if self.viewId == (viewId as! String) {
+                            isDeleted = true
+                            isDisabled = true
+                        }
                     }.store(in: &cancellables)
                     
                     CodiChannel.TOOL_ATTRIBUTES.receive(on: RunLoop.main) { viewAtts in
@@ -187,6 +194,18 @@ struct enableManagedViewTool : ViewModifier {
                             lifeWidth = inSize
                             lifeHeight = inSize
                         }
+                        if inVA.isDeleted {
+                            isDeleted = true
+                            isDisabled = true
+                            firebaseDatabase { fdb in
+                                fdb.child(DatabasePaths.managedViews.rawValue)
+                                    .child(self.boardId)
+                                    .child(self.viewId)
+                                    .removeValue()
+                            }
+                            return
+                        }
+                        //TODO : Check if anything changed?
                         updateRealm()
                     }.store(in: &cancellables)
                 }

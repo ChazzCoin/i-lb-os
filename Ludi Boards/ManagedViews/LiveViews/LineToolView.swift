@@ -179,6 +179,13 @@ struct LineDrawingManaged: View {
                 }
                 if temp.isDeleted {
                     isDeleted = true
+                    firebaseDatabase { fdb in
+                        fdb.child(DatabasePaths.managedViews.rawValue)
+                            .child(self.boardId)
+                            .child(self.viewId)
+                            .removeValue()
+                    }
+                    return
                 }
                 updateRealm()
             }.store(in: &cancellables)

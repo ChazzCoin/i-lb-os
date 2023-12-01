@@ -31,17 +31,6 @@ struct SettingsView: View {
             
             Text("MV Tool Settings: \(viewId)")
             
-            // Top row of icons
-            HStack {
-                Button(action: { print("onTrashDelete") }) {
-                    Image(systemName: "trash")
-                        .resizable()
-                        .frame(width: 24, height: 24)
-                }
-                // Add more icons here as needed
-                Spacer()
-            }
-
             // Settings
             Group {
                 
@@ -71,6 +60,7 @@ struct SettingsView: View {
 
                 Text("Color")
                 BoardColorPicker { colorIn in
+                    print("Color Picker Tapper")
                     viewColor = colorIn
                     let va = ViewAtts(viewId: viewId, color: viewColor)
                     CodiChannel.TOOL_ATTRIBUTES.send(value: va)
@@ -80,10 +70,21 @@ struct SettingsView: View {
 
             Spacer()
         }
-//        .onTapGesture {
-//            print("tapper")
-//        }
+        .background(Color.clear)
         .navigationBarTitle("Settings", displayMode: .inline)
+        .navigationBarItems(trailing: HStack {
+            // Add buttons or icons here for minimize, maximize, close, etc.
+            Button(action: {
+                // Delete View
+                print("No Trasher")
+                let va = ViewAtts(viewId: viewId, isDeleted: true)
+                CodiChannel.TOOL_ATTRIBUTES.send(value: va)
+            }) {
+                Image(systemName: "trash")
+                    .resizable()
+                    .frame(width: 30, height: 30)
+            }
+        })
         .onAppear() {
             CodiChannel.TOOL_ATTRIBUTES.receive(on: RunLoop.main) { vId in
                 let temp = vId as! ViewAtts

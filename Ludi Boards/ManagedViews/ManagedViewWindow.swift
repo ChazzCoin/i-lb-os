@@ -85,6 +85,7 @@ struct NavStackWindow : View {
     
     @State var cancellables = Set<AnyCancellable>()
     @State var screen: UIScreen = UIScreen.main
+    @State var gps = GlobalPositioningSystem()
         
     @State private var offset = CGSize.zero
     @State private var position = CGPoint(x: 0, y: 0)
@@ -94,99 +95,48 @@ struct NavStackWindow : View {
     @State private var width = 0.0
     @State private var height = 0.0
     
-    func getPositionX() -> Double {return isHidden ? screen.bounds.width : (((screen.bounds.width + 75.0)/2) / 2)}
+    func getPositionX() -> Double {
+        let coords = gps.getCoordinate(for: .center)
+        return isHidden ? screen.bounds.width : (coords.x - (self.width/2))
+    }
     func getFloatableWidth() -> Double { return (screen.bounds.width/2) }
     func getFloatableHeight() -> Double { return (screen.bounds.height/2) }
     func resetSize() {
         self.width = (!isFloatable ? ((screen.bounds.width - 100.0)/2) : getFloatableWidth()).bound(to: 100...screen.bounds.width - 100.0)
         self.height = (!isFloatable ? screen.bounds.height : getFloatableHeight()).bound(to: 100...screen.bounds.height)
-        
     }
     func resetPosition() {
         offset = CGSize.zero
-        position = CGPoint(x: 0, y: 0)
+        position = gps.getCoordinate(for: .center)
     }
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                viewBuilder()
-//                if let windowContent = managedViewWindow.content {
-//                    windowContent
-//                } else {
-//                    // Placeholder or fallback view
-//                    Text("No content available")
-//                }
-            }.opacity(isHidden ? 0 : 1)
-            .navigationBarItems(trailing: HStack {
-                
-                if self.isFloatable {
-                    Button(action: {
-                        // Minimize:
-                        self.width = (self.width + 50).bound(to: 400...screen.bounds.width)
-                        self.height = (self.height + 50).bound(to: 400...screen.bounds.height)
-                    }) {
-                        Image(systemName: "plus.circle.fill")
-                            .resizable()
-                            .frame(width: 30, height: 30)
-                    }
-                    Button(action: {
-                        // Minimize:
-                        self.width = (self.width - 50).bound(to: 400...screen.bounds.width)
-                        self.height = (self.height - 50).bound(to: 400...screen.bounds.height)
-                    }) {
-                        Image(systemName: "minus.circle.fill")
-                            .resizable()
-                            .frame(width: 30, height: 30)
-                    }
-                }
-                
-                Button(action: {
-                    self.isFloatable = !self.isFloatable
-                    resetSize()
-                    resetPosition()
-                }) {
-                    Image(systemName: "arrow.up.circle.fill")
-                        .resizable()
-                        .frame(width: 30, height: 30)
-                }
-                Button(action: {
-                    self.isHidden = true
-                    self.isFloatable = false
-                    resetSize()
-                    resetPosition()
-                    CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: id, stateAction: "close"))
-                }) {
-                    Image(systemName: "arrow.down.circle.fill")
-                        .resizable()
-                        .frame(width: 30, height: 30)
-                }
-               
-            })
+            viewBuilder()
         }
         .frame(width: self.width, height: self.height)
         .opacity(isHidden ? 0 : 1)
-        .background(Color.white)
+        .background(Color.clear)
         .cornerRadius(15)
         .shadow(radius: 10)
-        .offset(x: position.x + (isDragging ? dragOffset.width : 0) + (!isFloatable ? getPositionX() : 0), y: position.y + (isDragging ? dragOffset.height : 0))
+        .position(x: position.x + (isDragging ? dragOffset.width : 0) + (!isFloatable ? getPositionX() : 0), y: position.y + (isDragging ? dragOffset.height : 0))
         .animation(.easeInOut(duration: 1.0), value: isHidden)
-        .gesture(
-            DragGesture()
-                .updating($dragOffset, body: { (value, state, transaction) in
-                    if !self.isFloatable {return}
-                    state = value.translation
-                })
-                .onChanged { _ in
-                    if !self.isFloatable {return}
-                    self.isDragging = true
-                }
-                .onEnded { value in
-                    if !self.isFloatable {return}
-                    self.position = CGPoint(x: self.position.x + value.translation.width, y: self.position.y + value.translation.height)
-                    self.isDragging = false
-                }
-        )
+//        .gesture(
+//            DragGesture()
+//                .updating($dragOffset, body: { (value, state, transaction) in
+//                    if !self.isFloatable {return}
+//                    state = value.translation
+//                })
+//                .onChanged { _ in
+//                    if !self.isFloatable {return}
+//                    self.isDragging = true
+//                }
+//                .onEnded { value in
+//                    if !self.isFloatable {return}
+//                    self.position = CGPoint(x: self.position.x + value.translation.width, y: self.position.y + value.translation.height)
+//                    self.isDragging = false
+//                }
+//        )
         .onAppear() {
             
             resetSize()
@@ -220,7 +170,7 @@ struct NavStackWindow : View {
                     }
                 }
             }.store(in: &cancellables)
-        }.zIndex(20.0)
+        }
     }
 
 }
