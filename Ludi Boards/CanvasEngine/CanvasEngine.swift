@@ -10,17 +10,6 @@ import Foundation
 import SwiftUI
 import Combine
 
-extension CodiChannel {
-    func onReceive(callbacker: @escaping (Any) -> Void) {
-        @State var cancellables = Set<AnyCancellable>()
-        self.receive(on: RunLoop.main) { item in
-            callbacker(item)
-        }.store(in: &cancellables)
-    }
-}
-
-
-
 struct CanvasEngine: View {
     
     @State var cancellables = Set<AnyCancellable>()
@@ -47,8 +36,6 @@ struct CanvasEngine: View {
     // Initial size of your drawing canvas
     let initialWidth: CGFloat = 6000
     let initialHeight: CGFloat = 6000
-
-//    var temp = ManagedViewWindow(id: "", content: AnyView(ChatView(chatId: "default-1")))
     
     @ObservedObject var managedWindowsObject = ManagedViewWindows.shared
     
@@ -112,9 +99,9 @@ struct CanvasEngine: View {
                 Color.clear
                     .frame(width: geometry.size.width, height: geometry.size.height)
                     .contentShape(Rectangle())
-                    .gesture(TapGesture().onEnded { _ in
-                        print("Tapped anywhere on the screen")
-                    })
+//                    .gesture(TapGesture().onEnded { _ in
+//                        print("Tapped anywhere on the screen")
+//                    })
             }
         }
     }
@@ -122,6 +109,7 @@ struct CanvasEngine: View {
     var body: some View {
         
         GlobalPositioningZStack { geo, gps in
+            
             // Global MenuBar
             MenuBarWindow(items: [
                 {MenuButtonIcon(icon: MenuBarProvider.toolbox)},
@@ -162,16 +150,15 @@ struct CanvasEngine: View {
                     .position(using: gps, at: .topRight, offsetX: 500, offsetY: -50)
             }
             
-//            FloatingEmojiView()
-        }.zIndex(2.0)
+            FloatingEmojiView()
+                .position(using: gps, at: .topLeft, offsetX: 200, offsetY: 0)
+        }.zIndex(3.0)
         
         ZStack() {
-            
             // Global Windows
             ForEach(Array(managedWindowsObject.managedViewGenerics.values)) { managedViewWindow in
-                managedViewWindow.viewBuilder()
+                managedViewWindow.viewBuilder().zIndex(15.0)
             }
-
             // Board/Canvas Level
             ZStack() {
                 DrawGridLines().zIndex(1.0)
@@ -210,11 +197,11 @@ struct CanvasEngine: View {
             let buttonType = temp.windowId
             
             switch MenuBarProvider.parseByTitle(title: buttonType) {
-            case .toolbox: return if temp.stateAction == "open" {
-                self.toolBarIsEnabled = true
-            }else {
-                self.toolBarIsEnabled = false
-            }
+                case .toolbox: return if temp.stateAction == "open" {
+                    self.toolBarIsEnabled = true
+                }else {
+                    self.toolBarIsEnabled = false
+                }
                 case .lock: return self.handleGestureLock()
                 case .canvasGrid: return
                 case .navHome: return

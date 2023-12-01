@@ -29,13 +29,13 @@ struct FloatingEmojiView: View {
             ForEach(emojiInstances, id: \.self) { id in
                 let tempX = CGFloat.random(in: -150...150)
                 FloatingEmoji(emoji: currentEmoji, xCoord: tempX, id: id)
-                    .offset(x: 0, y: -50)
+                    .offset(x: 0, y: 50)
                     .zIndex(20.0)
             }
         }
         .frame(width: 400, height: 400)
         .background(Color.clear)
-        .offset(x: gps.getCoordinate(for: .topLeft).x, y: gps.getCoordinate(for: .topLeft).y + 50)
+//        .offset(x: gps.getCoordinate(for: .topLeft).x, y: gps.getCoordinate(for: .topLeft).y + 50)
         .onAppear() {
             CodiChannel.EMOJI_ON_CREATE.receive(on: RunLoop.main) { emoji in
                 print("Received on EMOJI_ON_CREATE channel: \(emoji)")
@@ -61,6 +61,7 @@ struct FloatingEmoji: View {
     @State var emoji: String
     @State var xCoord: Double
     var id: UUID
+    @State var directionIsUp: Bool = false
     let animationDuration: TimeInterval = 3
 
     @State private var isFloating = false
@@ -70,7 +71,7 @@ struct FloatingEmoji: View {
         Text(emoji)
             .font(.system(size: 40))
             .opacity(isFaded ? 0 : 1)
-            .offset(x: xCoord, y: isFloating ? -200 : 0) // Increased offset for a continuous upward movement
+            .offset(x: xCoord, y: isFloating ? (directionIsUp ? -200 : 200) : 0) // Increased offset for a continuous upward movement
             .animation(.easeInOut(duration: animationDuration), value: isFloating)
             .onAppear {
                 withAnimation {

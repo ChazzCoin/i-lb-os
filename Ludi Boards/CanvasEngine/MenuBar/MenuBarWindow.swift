@@ -52,7 +52,8 @@ struct MenuBarWindow<Content>: View where Content: View {
                     self.offset.height += value.translation.height
                 }
         ).onAppear() {
-            self.position = gps.getCoordinate(for: .bottomLeft).add(x: 100, y: -(50 * Double(items.count)))
+            // Starting Position
+            self.position = gps.getCoordinate(for: .bottomLeft, offsetX: 50, offsetY: ((75 * Double(items.count)) / 2))
         }
     }
     

@@ -28,6 +28,14 @@ extension View {
         self.modifier(TapAnimationModifier(action: action))
     }
     
+    func onDoubleTap(scale: CGFloat = 2.0, duration: Double = 0.5, completion: @escaping () -> Void = {}) -> some View {
+        modifier(DoubleTapExplodeModifier(scale: scale, duration: duration, completion: completion))
+    }
+    
+//    func doubleTapExplode(scale: CGFloat = 2.0, duration: Double = 0.5, completion: @escaping () -> Void = {}) -> some View {
+//       self.modifier(DoubleTapExplodeAnimationModifier(scale: scale, duration: duration, completion: completion))
+//   }
+    
     // Method to set the position of the view based on a specified ScreenArea
     func position(using gps: GlobalPositioningSystem, at area: ScreenArea, offsetX: CGFloat = 0, offsetY: CGFloat = 0) -> some View {
         self.position(gps.getCoordinate(for: area, offsetX: offsetX, offsetY: offsetY))
@@ -96,6 +104,71 @@ struct TapAnimationModifier: ViewModifier {
             }
     }
 }
+
+//struct DoubleTapExplodeGesture: Gesture {
+//    let scale: CGFloat
+//    let duration: Double
+//    let completion: () -> Void
+//    
+//    @GestureState private var isAnimating = false
+//
+//    var body: some Gesture {
+//        TapGesture(count: 2)
+//            .updating($isAnimating) { currentState, gestureState, transaction in
+//                gestureState = true
+//                DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
+//                    gestureState = false
+//                    completion()
+//                }
+//            }
+//    }
+//}
+
+//struct DoubleTapExplodeModifier: ViewModifier {
+//    let scale: CGFloat
+//    let duration: Double
+//    let completion: () -> Void
+//
+//    @GestureState private var isAnimating = false
+//
+//    func body(content: Content) -> some View {
+//        content
+//            .scaleEffect(isAnimating ? scale : 1.0)
+//            .animation(.easeInOut(duration: duration), value: isAnimating)
+//            .gesture(
+//                TapGesture(count: 2)
+//                    .updating($isAnimating) { _, gestureState, _ in
+//                        gestureState = true
+//                        DispatchQueue.main.asyncAfter(deadline: .now() + self.duration) {
+//                            gestureState = false
+//                            self.completion()
+//                        }
+//                    }
+//            )
+//    }
+//}
+
+struct DoubleTapExplodeModifier: ViewModifier {
+    let scale: CGFloat
+    let duration: Double
+    let completion: () -> Void
+
+    @State private var isAnimating = false
+
+    func body(content: Content) -> some View {
+        content
+            .scaleEffect(isAnimating ? scale : 1.0)
+            .animation(.easeInOut(duration: duration), value: isAnimating)
+            .onTapGesture(count: 2) {
+                isAnimating = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
+                    isAnimating = false
+                    completion()
+                }
+            }
+    }
+}
+
 // Helper view to simulate Box from Compose
 struct BoxView<Content: View>: View {
     let content: Content

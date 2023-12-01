@@ -109,19 +109,13 @@ struct GlobalPositioningZStack<Content: View>: View {
     
     var body: some View {
         GeometryReader { geometry in
-            Color.clear
-                .frame(width: geometry.size.width, height: geometry.size.height)
-                .contentShape(Rectangle())
-                .gesture(TapGesture().onEnded { _ in
-                    print("Tapped anywhere on the screen")
-                })
             ZStack {
-                // Injecting the dynamic content
                 content(geometry, gps)
             }
             .frame(width: geometry.size.width, height: geometry.size.height)
-            .background(Color.clear) // Making the background clear
-        }
+            .edgesIgnoringSafeArea(.all)
+            .background(Color.clear)
+        }.frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
@@ -129,7 +123,6 @@ struct GlobalPositioningZStack_Previews: PreviewProvider {
     static var previews: some View {
         GlobalPositioningZStack { geo, gps in
             Text("Heyyyyy")
-//                .frame(width: 100, height: 100)
                 .position(x: gps.getCoordinate(for: .topRight).x, y: gps.getCoordinate(for: .topRight).y)
         }
     }

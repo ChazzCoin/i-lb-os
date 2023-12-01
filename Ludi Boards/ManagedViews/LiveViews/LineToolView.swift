@@ -211,9 +211,10 @@ struct LineDrawingManaged: View {
             .onEnded { _ in
                 if !popUpIsVisible {return}
                 updateRealm()
-            }.simultaneously(with: LongPressGesture(minimumDuration: 0.5)
+            }
+            .simultaneously(with: TapGesture(count: 2)
                  .onEnded { _ in
-                     print("Tapped single")
+                     print("Tapped double")
                      popUpIsVisible = !popUpIsVisible
                      CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: "mv_settings", stateAction: popUpIsVisible ? "open" : "close", viewId: viewId))
                      if popUpIsVisible {
@@ -253,7 +254,7 @@ struct LineDrawingManaged: View {
                             end: CGPoint(x: lifeEndX, y: lifeEndY))
                 self.originalLifeStart = .zero
                 self.originalLifeEnd = .zero
-            }.simultaneously(with: LongPressGesture(minimumDuration: 0.5)
+            }.simultaneously(with: TapGesture(count: 2)
                 .onEnded { _ in
                     print("Tapped duo")
                     popUpIsVisible = !popUpIsVisible
