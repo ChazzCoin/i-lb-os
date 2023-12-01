@@ -34,6 +34,8 @@ class ViewModel: ObservableObject {
     @Published var toolViews: [String:ViewWrapper] = [:]
     @Published var lineViews: [String:ViewWrapper] = [:]
     
+    @Published var lineTools: [ManagedView] = []
+    
     @Published var isDrawing = false
     
     init() {
@@ -61,20 +63,24 @@ class ViewModel: ObservableObject {
         for line in realmInstance.objects(ManagedView.self).where({ $0.toolType == "LINE" && $0.boardId == "boardEngine-1" }) {
             safeAddTool(id: line.id, icon: "LINE")
         }
-        
-//        isLoading = false
     }
         
     func loadManagedViewTools() {
         reference.child(self.boardId).fireObserver { snapshot in
             self.isLoading = true
+            let _ = snapshot.toLudiObjects(ManagedView.self)
             let mapped = snapshot.toHashMap()
             if mapped.count < self.toolViews.count { self.toolViews = [:] }
             for (itId, value) in mapped {
                 if let tempHash = value as? [String: Any] {
                     let temp: ManagedView? = toManagedView(dictionary: tempHash)
                     if let itTemp = temp {
-                        self.safeAddTool(id: itId, icon: temp?.toolType ?? SoccerToolProvider.playerDummy.tool.title)
+                        if itTemp.toolType == "LINE" {
+                            self.lineTools.append(itTemp)
+                        } else {
+                            self.safeAddTool(id: itId, icon: temp?.toolType ?? SoccerToolProvider.playerDummy.tool.title)
+                        }
+                        
                     }
                 }
             }

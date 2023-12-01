@@ -13,6 +13,7 @@ struct SettingsView: View {
     
     var onDelete: () -> Void
     
+    let realmInstance = realm()
     @State var viewSize: CGFloat = 50
     @State var viewRotation: Double = 0
     @State var viewColor: Color = .black
@@ -32,7 +33,7 @@ struct SettingsView: View {
             
             // Top row of icons
             HStack {
-                Button(action: onDelete) {
+                Button(action: { print("onTrashDelete") }) {
                     Image(systemName: "trash")
                         .resizable()
                         .frame(width: 24, height: 24)
@@ -40,13 +41,13 @@ struct SettingsView: View {
                 // Add more icons here as needed
                 Spacer()
             }
-            .padding()
 
             // Settings
             Group {
+                
                 Text("Size: \(Int(viewSize))")
                 Slider(value: $viewSize, 
-                   in: 50...175,
+                   in: 10...175,
                    onEditingChanged: { editing in
                         if !editing {
                             let va = ViewAtts(viewId: viewId, size: viewSize)
@@ -79,9 +80,9 @@ struct SettingsView: View {
 
             Spacer()
         }
-        .onTapGesture {
-            print("tapper")
-        }
+//        .onTapGesture {
+//            print("tapper")
+//        }
         .navigationBarTitle("Settings", displayMode: .inline)
         .onAppear() {
             CodiChannel.TOOL_ATTRIBUTES.receive(on: RunLoop.main) { vId in
@@ -91,6 +92,10 @@ struct SettingsView: View {
                 if let tr = temp.rotation { viewRotation = tr }
                 if let tc = temp.color { viewColor = tc }
             }.store(in: &cancellables)
+        }
+        .onDisappear() {
+            let va = ViewAtts(viewId: viewId, stateAction: "close")
+            CodiChannel.TOOL_ATTRIBUTES.send(value: va)
         }
     }
 }

@@ -16,26 +16,26 @@ struct BoardEngine: View {
     @ObservedObject var viewModel = ViewModel()
     private let realmIntance = realm()
     
-    @State var lineTools: [ManagedView] = []
+//    @State var lineTools: [ManagedView] = []
     
     @State private var startPoint: CGPoint = .zero
     @State private var endPoint: CGPoint = .zero
     
-    func reloadLineTools() {
-        lineTools.removeAll()
-        for line in realmIntance.objects(ManagedView.self).where({ $0.toolType == "LINE" && $0.boardId == "boardEngine-1" }) {
-            lineTools.append(line)
-        }
-    }
+//    func reloadLineTools() {
+//        lineTools.removeAll()
+//        for line in realmIntance.objects(ManagedView.self).where({ $0.toolType == "LINE" && $0.boardId == "boardEngine-1" }) {
+//            lineTools.append(line)
+//        }
+//    }
     
     var body: some View {
          ZStack() {
              
-            ForEach(Array(viewModel.toolViews.values)) { item in
-                item.view()
-            }
-             ForEach(lineTools) { item in
-                 LineDrawingManaged(viewId: item.id)
+             ForEach(Array(viewModel.toolViews.values)) { item in
+                 item.view()
+             }
+             ForEach(viewModel.lineTools) { item in
+                 LineDrawingManaged(viewId: item.id).zIndex(3.0)
              }
              
              // Temporary line being drawn
@@ -76,11 +76,11 @@ struct BoardEngine: View {
                     if !self.isDraw {return}
                     self.endPoint = value.location
                     saveLineData(start: value.startLocation, end: value.location)
-                    reloadLineTools()
+//                    reloadLineTools()
                 }
         ).onAppear {
             
-            reloadLineTools()
+//            reloadLineTools()
             
             print("Sending Hello through General Channel.")
             CodiChannel.general.send(value: "Hello, General Channel!")
@@ -115,6 +115,12 @@ struct BoardEngine: View {
             line.toolType = "LINE"
             line.dateUpdated = Int(Date().timeIntervalSince1970)
             r.add(line)
+            firebaseDatabase { fdb in
+                fdb.child(DatabasePaths.managedViews.rawValue)
+                    .child(viewModel.boardId)
+                    .child(line.id)
+                    .setValue(line.toDictionary())
+            }
         }
     }
 }

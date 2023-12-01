@@ -9,10 +9,10 @@ import Foundation
 import SwiftUI
 import Combine
 
-class ManagedViewWindow {
+class ManagedViewWindow: Identifiable {
     
     @Published var id: String
-    @Published var content: AnyView?
+    var viewBuilder: () -> AnyView
     @Published var boardId: String = ""
     @Published var title: String = "Ludi Window"
     @Published var windowId: String = "Ludi Window"
@@ -21,13 +21,9 @@ class ManagedViewWindow {
     @Published var isFullScreen: Bool = true
     @Published var isGlobalWindow: Bool = false
     
-    init(id: String, content: AnyView) {
+    init<V: View>(id: String, viewBuilder: @escaping () -> V) {
         self.id = id
-        self.content = content
-    }
-
-    func setContent<Content: View>(_ newContent: Content) {
-        self.content = AnyView(newContent)
+        self.viewBuilder = { AnyView(viewBuilder()) }
     }
 
     func toggleMinimized() { isMinimized = !isMinimized }
@@ -39,10 +35,10 @@ class ManagedViewWindows:ObservableObject {
     static let shared = ManagedViewWindows()
     
     @Published var managedViewWindows: [ManagedViewWindow] = []
-    @Published var managedViewGenerics: [String:ViewWrapper] = [:]
+    @Published var managedViewGenerics: [String:ManagedViewWindow] = [:]
     
     func newManagedViewWindow(viewId: String) -> ManagedViewWindow {
-        return ManagedViewWindow(id: viewId, content: AnyView(ChatView(chatId: "default-1")))
+        return ManagedViewWindow(id: viewId, viewBuilder: {ChatView(chatId: "default-1")})
     }
     
     func toggleManagedViewWindowById(viewId: String) {
@@ -50,7 +46,7 @@ class ManagedViewWindows:ObservableObject {
         temp.toggleMinimized()
     }
     
-    func toggleItem(key: String, item: ViewWrapper) {
+    func toggleItem(key: String, item: ManagedViewWindow) {
         DispatchQueue.main.async {
             if self.managedViewGenerics[key] != nil {
                 self.managedViewGenerics.removeValue(forKey: key)
@@ -60,7 +56,7 @@ class ManagedViewWindows:ObservableObject {
         }
     }
     
-    func safelyAddItem(key: String, item: ViewWrapper) {
+    func safelyAddItem(key: String, item: ManagedViewWindow) {
         DispatchQueue.main.async {
             self.managedViewGenerics[key] = item
         }
@@ -74,8 +70,15 @@ class ManagedViewWindows:ObservableObject {
 }
 
 struct NavStackWindow : View {
+    @State var id: String
+    var viewBuilder: () -> AnyView
     
-    @State var managedViewWindow: ManagedViewWindow
+    init<V: View>(id: String, viewBuilder: @escaping () -> V) {
+        self.id = id
+        self.viewBuilder = { AnyView(viewBuilder()) }
+    }
+    
+//    @State var managedViewWindow: ManagedViewWindow
     
     @State private var isHidden = true
     @State private var isFloatable = false
@@ -107,12 +110,13 @@ struct NavStackWindow : View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                if let windowContent = managedViewWindow.content {
-                    windowContent
-                } else {
-                    // Placeholder or fallback view
-                    Text("No content available")
-                }
+                viewBuilder()
+//                if let windowContent = managedViewWindow.content {
+//                    windowContent
+//                } else {
+//                    // Placeholder or fallback view
+//                    Text("No content available")
+//                }
             }.opacity(isHidden ? 0 : 1)
             .navigationBarItems(trailing: HStack {
                 
@@ -137,7 +141,6 @@ struct NavStackWindow : View {
                     }
                 }
                 
-                
                 Button(action: {
                     self.isFloatable = !self.isFloatable
                     resetSize()
@@ -152,6 +155,7 @@ struct NavStackWindow : View {
                     self.isFloatable = false
                     resetSize()
                     resetPosition()
+                    CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: id, stateAction: "close"))
                 }) {
                     Image(systemName: "arrow.down.circle.fill")
                         .resizable()
@@ -189,7 +193,7 @@ struct NavStackWindow : View {
             
             CodiChannel.MENU_WINDOW_TOGGLER.receive(on: RunLoop.main) { windowType in
                 print(windowType)
-                if (windowType as! String) != self.managedViewWindow.windowId { return }
+                if (windowType as! String) != self.id { return }
                 if self.isHidden {
                     self.isHidden = false
                 } else {
@@ -203,7 +207,7 @@ struct NavStackWindow : View {
             CodiChannel.MENU_WINDOW_CONTROLLER.receive(on: RunLoop.main) { wc in
                 print(wc)
                 let temp = wc as! WindowController
-                if temp.windowId != self.managedViewWindow.windowId { return }
+                if temp.windowId != self.id { return }
 
                 if temp.stateAction == "open" {
                     if self.isHidden { self.isHidden = false }
@@ -216,7 +220,7 @@ struct NavStackWindow : View {
                     }
                 }
             }.store(in: &cancellables)
-        }
+        }.zIndex(20.0)
     }
 
 }
@@ -236,18 +240,19 @@ struct GenericNavWindowSMALL : View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                if let windowContent = managedViewWindow.content {
-                    windowContent
-                } else {
-                    // Placeholder or fallback view
-                    Text("No content available")
-                }
+//                if let windowContent = managedViewWindow.content {
+//                    windowContent
+//                } else {
+//                    // Placeholder or fallback view
+//                    Text("No content available")
+//                }
             }.opacity(isHidden ? 0 : 1)
             .navigationBarItems(trailing: HStack {
                 // Add buttons or icons here for minimize, maximize, close, etc.
                 Button(action: {
                     // Minimize:
-                    CodiChannel.general.send(value: managedViewWindow.windowId)
+//                    CodiChannel.general.send(value: managedViewWindow.windowId)
+                    CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: managedViewWindow.windowId, stateAction: "close", viewId: "self"))
                 }) {
                     Image(systemName: "arrow.down.circle.fill")
                         .resizable()

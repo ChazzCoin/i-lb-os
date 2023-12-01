@@ -26,12 +26,16 @@ class ViewAtts {
     var size: Double? = nil
     var rotation: Double? = nil
     var color: Color? = nil
+    var isDeleted: Bool = false
+    var stateAction: String = "open" //close
     
-    init(viewId: String, size: Double? = nil, rotation: Double? = nil, color: Color? = nil) {
+    init(viewId: String, size: Double? = nil, rotation: Double? = nil, color: Color? = nil, isDeleted: Bool = false, stateAction: String="open") {
         self.viewId = viewId
         self.size = size
         self.rotation = rotation
         self.color = color
+        self.isDeleted = isDeleted
+        self.stateAction = stateAction
     }
 }
 

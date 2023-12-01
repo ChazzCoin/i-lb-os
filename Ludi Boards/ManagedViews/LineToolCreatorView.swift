@@ -73,6 +73,8 @@ struct LineDrawingManaged: View {
     @State private var isDeleted = false
     @State private var isDisabled = false
     
+    @State private var lifeDateUpdated = Int(Date().timeIntervalSince1970)
+    
     @State private var lifeCenterPoint = CGPoint.zero
     @State private var lifeStartX = 0.0
     @State private var lifeStartY = 0.0
@@ -99,7 +101,8 @@ struct LineDrawingManaged: View {
     // Firebase
     let reference = Database.database().reference().child(DatabasePaths.managedViews.rawValue)
     
-    @State var cancellables = Set<AnyCancellable>()
+    @State private var objectNotificationToken: NotificationToken? = nil
+    @State private var cancellables = Set<AnyCancellable>()
     
     // Functions
     func isDisabledChecker() -> Bool { return isDisabled }
@@ -110,20 +113,7 @@ struct LineDrawingManaged: View {
     private var lineLength: CGFloat {
         sqrt(pow(lifeEndX - lifeStartX, 2) + pow(lifeEndY - lifeStartY, 2))-100
     }
-    func loadFromRealm() {
-        let mv = realmInstance.object(ofType: ManagedView.self, forPrimaryKey: viewId)
-        guard let umv = mv else { return }
-        // set attributes
-        lifeStartX = umv.startX
-        lifeStartY = umv.startY
-        lifeEndX = umv.endX
-        lifeEndY = umv.endY
-        lifeWidth = Double(umv.width)
-//        lifeRotation = Double(umv.rotation)
-        loadCenterPoint()
-        loadWidthAndHeight()
-        loadRotationOfLine()
-    }
+    
     
     func loadRotationOfLine() {
         let lineStart = CGPoint(x: lifeStartX, y: lifeStartY)
@@ -170,7 +160,6 @@ struct LineDrawingManaged: View {
         .overlay(
             Rectangle()
                 .fill(Color.white.opacity(0.001))
-//                .fill(Color.AIMYellow)
                 .frame(width: lineLength, height: 100) // Increase size for finger tapping
                 .rotationEffect(lifeRotation)
                 .opacity(1)
@@ -180,6 +169,26 @@ struct LineDrawingManaged: View {
         .gesture(dragGestureDuo())
         .onAppear() {
             loadFromRealm()
+            observeFirebase()
+            CodiChannel.TOOL_ATTRIBUTES.receive(on: RunLoop.main) { vId in
+                let temp = vId as! ViewAtts
+                if viewId != temp.viewId {return}
+                if let ts = temp.size { lifeWidth = ts }
+                if temp.stateAction == "close" {
+                    popUpIsVisible = false
+                }
+                if temp.isDeleted {
+                    isDeleted = true
+                }
+                updateRealm()
+            }.store(in: &cancellables)
+            CodiChannel.MENU_WINDOW_CONTROLLER.receive(on: RunLoop.main) { vId in
+                let temp = vId as! WindowController
+                if temp.windowId != "mv_settings" {return}
+                if temp.stateAction == "close" {
+                    popUpIsVisible = false
+                }
+            }.store(in: &cancellables)
         }
     }
     
@@ -202,10 +211,14 @@ struct LineDrawingManaged: View {
             .onEnded { _ in
                 if !popUpIsVisible {return}
                 updateRealm()
-            }.simultaneously(with: TapGesture()
-                 .onEnded {
-                     print("Tapped")
+            }.simultaneously(with: LongPressGesture(minimumDuration: 0.5)
+                 .onEnded { _ in
+                     print("Tapped single")
                      popUpIsVisible = !popUpIsVisible
+                     CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: "mv_settings", stateAction: popUpIsVisible ? "open" : "close", viewId: viewId))
+                     if popUpIsVisible {
+                         CodiChannel.TOOL_ATTRIBUTES.send(value: ViewAtts(viewId: viewId, size: lifeWidth, stateAction: popUpIsVisible ? "open" : "close"))
+                     }
                  }
             )
     }
@@ -240,16 +253,16 @@ struct LineDrawingManaged: View {
                             end: CGPoint(x: lifeEndX, y: lifeEndY))
                 self.originalLifeStart = .zero
                 self.originalLifeEnd = .zero
-            }.simultaneously(with: TapGesture()
-                 .onEnded {
-                     print("Tapped")
-                     popUpIsVisible = !popUpIsVisible
-//                     CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: "mv_settings", stateAction: popUpIsVisible ? "open" : "close", viewId: viewId))
-//                     if popUpIsVisible {
-//                         CodiChannel.TOOL_ATTRIBUTES.send(value: ViewAtts(viewId: viewId, size: lifeWidth, rotation: lifeRotation))
-//                     }
-                 }
-            )
+            }.simultaneously(with: LongPressGesture(minimumDuration: 0.5)
+                .onEnded { _ in
+                    print("Tapped duo")
+                    popUpIsVisible = !popUpIsVisible
+                    CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: "mv_settings", stateAction: popUpIsVisible ? "open" : "close", viewId: viewId))
+                    if popUpIsVisible {
+                        CodiChannel.TOOL_ATTRIBUTES.send(value: ViewAtts(viewId: viewId, size: lifeWidth))
+                    }
+                }
+           )
     }
     
     func updateRealm(start: CGPoint? = nil, end: CGPoint? = nil) {
@@ -259,14 +272,14 @@ struct LineDrawingManaged: View {
         let mv = realmInstance.findByField(ManagedView.self, value: viewId)
         if mv == nil { return }
         realmInstance.safeWrite { r in
-            mv?.dateUpdated = Int(Date().timeIntervalSince1970)
+            lifeDateUpdated = Int(Date().timeIntervalSince1970)
+            mv?.dateUpdated = lifeDateUpdated
             mv?.startX = Double(start?.x ?? CGFloat(lifeStartX))
             mv?.startY = Double(start?.y ?? CGFloat(lifeStartY))
             mv?.endX = Double(end?.x ?? CGFloat(lifeEndX))
             mv?.endY = Double(end?.y ?? CGFloat(lifeEndY))
 //            mv?.toolColor = lifeColor.rawValue
-//            mv?.rotation = lifeRotation
-//            mv?.toolType = lifeToolType
+            mv?.toolType = "LINE"
             mv?.width = Int(lifeWidth)
             guard let tMV = mv else { return }
             r.create(ManagedView.self, value: tMV, update: .all)
@@ -279,21 +292,47 @@ struct LineDrawingManaged: View {
         }
     }
     
+    func loadFromRealm() {
+        let mv = realmInstance.object(ofType: ManagedView.self, forPrimaryKey: viewId)
+        guard let umv = mv else { return }
+        // set attributes
+        lifeStartX = umv.startX
+        lifeStartY = umv.startY
+        lifeEndX = umv.endX
+        lifeEndY = umv.endY
+        lifeWidth = Double(umv.width)
+        loadCenterPoint()
+        loadWidthAndHeight()
+        loadRotationOfLine()
+        
+        objectNotificationToken = umv.observe { change in
+            switch change {
+                case .change(let object, _):
+                    let obj = object as! ManagedView
+                    if obj.dateUpdated <= lifeDateUpdated { return }
+                    lifeStartX = obj.startX
+                    lifeStartY = obj.startY
+                    lifeEndX = obj.endX
+                    lifeEndY = obj.endY
+                    lifeWidth = Double(obj.width)
+                    loadCenterPoint()
+                    loadWidthAndHeight()
+                    loadRotationOfLine()
+                    print("\(object)")
+                case .error(let error):
+                    print("An error occurred: \(error)")
+                case .deleted:
+                    isDeleted = true
+                    isDisabled = true
+            }
+        }
+    }
+    
     func observeFirebase() {
         // TODO: make this more rock solid, error handling, retry logic...
         if boardId.isEmpty || viewId.isEmpty {return}
         reference.child(boardId).child(viewId).fireObserver { snapshot in
             let _ = snapshot.toLudiObject(ManagedView.self, realm: realmInstance)
-            let obj = snapshot.value as? [String:Any]
-            lifeStartX = obj?["startX"] as? Double ?? lifeStartX
-            lifeStartY = obj?["startY"] as? Double ?? lifeStartY
-            lifeEndX = obj?["endX"] as? Double ?? lifeEndX
-            lifeEndY = obj?["endY"] as? Double ?? lifeEndY
-//            lifeUpdatedAt = obj?["dateUpdated"] as? Int ?? lifeUpdatedAt
-            lifeWidth = Double(obj?["width"] as? Int ?? Int(lifeWidth))
-//            lifeRotation = Double(obj?["rotation"] as? Double ?? lifeRotation)
-//            lifeToolType = obj?["toolType"] as? String ?? lifeToolType
-//            lifeColor = ColorProvider.fromColorName(colorName: obj?["toolColor"] as? String ?? lifeColor.rawValue)
         }
     }
 }

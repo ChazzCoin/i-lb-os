@@ -40,7 +40,7 @@ struct CanvasEngine: View {
     
     @State private var offsetTwo = CGSize.zero
     @State private var isDragging = false
-    @State private var toolBarIsEnabled = false
+    @State private var toolBarIsEnabled = true
     @State private var position = CGPoint(x: 50, y: 50) // Initial position
     @GestureState private var dragOffset = CGSize.zero
     
@@ -48,7 +48,7 @@ struct CanvasEngine: View {
     let initialWidth: CGFloat = 6000
     let initialHeight: CGFloat = 6000
 
-    var temp = ManagedViewWindow(id: "", content: AnyView(ChatView(chatId: "default-1")))
+//    var temp = ManagedViewWindow(id: "", content: AnyView(ChatView(chatId: "default-1")))
     
     @ObservedObject var managedWindowsObject = ManagedViewWindows.shared
     
@@ -169,9 +169,8 @@ struct CanvasEngine: View {
             
             // Global Windows
             ForEach(Array(managedWindowsObject.managedViewGenerics.values)) { managedViewWindow in
-                managedViewWindow.view().zIndex(5.0)
+                managedViewWindow.viewBuilder()
             }
-            
 
             // Board/Canvas Level
             ZStack() {
@@ -194,10 +193,10 @@ struct CanvasEngine: View {
         .onAppear() {
             menuBarButtonListener()
             handleChat()
-            handleBuddyProfile()
-            handleSessionPlan()
-            handleShare()
-            handleBuddyList()
+//            handleBuddyProfile()
+//            handleSessionPlan()
+//            handleShare()
+//            handleBuddyList()
             handleMVSettings()
             
             
@@ -207,26 +206,32 @@ struct CanvasEngine: View {
     
     func menuBarButtonListener() {
         
-        CodiChannel.general.receive(on: RunLoop.main) { buttonType in
-            print("Received on MENU_TOGGLER channel: \(buttonType)")
+        CodiChannel.MENU_WINDOW_CONTROLLER.receive(on: RunLoop.main) { controller in
+            print("Received on MENU_TOGGLER channel: \(controller)")
+            let temp = controller as! WindowController
+            let buttonType = temp.windowId
             
-            switch MenuBarProvider.parseByTitle(title: buttonType as? String ?? "") {
-                case .toolbox: return self.toolBarIsEnabled = !self.toolBarIsEnabled
+            switch MenuBarProvider.parseByTitle(title: buttonType) {
+            case .toolbox: return if temp.stateAction == "open" {
+                self.toolBarIsEnabled = true
+            }else {
+                self.toolBarIsEnabled = false
+            }
                 case .lock: return self.handleGestureLock()
                 case .canvasGrid: return
                 case .navHome: return
-                case .buddyList: return CodiChannel.MENU_WINDOW_TOGGLER.send(value: MenuBarProvider.buddyList.tool.title)
+                case .buddyList: return
                 case .boardList: return
                 case .boardCreate: return
-                case .boardDetails: return CodiChannel.MENU_WINDOW_TOGGLER.send(value: MenuBarProvider.boardDetails.tool.title)
+                case .boardDetails: return
                 case .reset: return
                 case .trash: return
                 case .boardBackground: return
-                case .profile: return CodiChannel.MENU_WINDOW_TOGGLER.send(value: MenuBarProvider.profile.tool.title)
-                case .share: return CodiChannel.MENU_WINDOW_TOGGLER.send(value: MenuBarProvider.share.tool.title)
+                case .profile: return
+                case .share: return
                 case .router: return
                 case .note: return
-                case .chat: return CodiChannel.MENU_WINDOW_TOGGLER.send(value: MenuBarProvider.chat.tool.title)
+                case .chat: return
                 
                 case .none:
                     return
@@ -250,65 +255,65 @@ struct CanvasEngine: View {
     }
     func handleChat() {
         let caller = MenuBarProvider.chat.tool.title
-        let temp = ManagedViewWindow(id: caller, content: AnyView(ChatView(chatId: "default-1")))
+        let temp = ManagedViewWindow(id: caller, viewBuilder: {NavStackWindow(id: caller, viewBuilder: {ChatView(chatId: "default-1")})})
         temp.title = "Real-Time Chat"
         temp.windowId = caller
-        managedWindowsObject.toggleItem(key: caller, item: ViewWrapper {AnyView(NavStackWindow(managedViewWindow: temp))})
+        managedWindowsObject.safelyAddItem(key: caller, item: temp)
     }
     
-    func handleTools() {
-        let caller = MenuBarProvider.toolbox.tool.title
-        let temp = ManagedViewWindow(id: caller, content: AnyView(SoccerToolsView()))
-        temp.title = "Tools"
-        temp.windowId = caller
-        managedWindowsObject.toggleItem(key: caller, item: ViewWrapper {AnyView(NavStackWindow(managedViewWindow: temp))})
-    }
-    
-    func handleBuddyList() {
-        let caller = MenuBarProvider.buddyList.tool.title
-        let buddies = ManagedViewWindow(id: caller, content: AnyView(BuddyListView()))
-        buddies.title = "Buddy List"
-        buddies.windowId = caller
-        managedWindowsObject.toggleItem(key: caller, item: ViewWrapper {AnyView(NavStackWindow(managedViewWindow: buddies))})
-    }
-    
-    func handleBuddyProfile() {
-        let caller = MenuBarProvider.profile.tool.title
-        let buddies = ManagedViewWindow(id: caller, content: AnyView(BuddyProfileView()))
-        buddies.title = "Buddy Profile"
-        buddies.windowId = caller
-        managedWindowsObject.toggleItem(key: caller, item: ViewWrapper {AnyView(NavStackWindow(managedViewWindow: buddies))})
-    }
-    
-    func handleSessionPlan() {
-        let caller = MenuBarProvider.boardDetails.tool.title
-        let buddies = ManagedViewWindow(id: caller, content: AnyView(SessionPlanView(boardId: "boardEngine-1")))
-        buddies.title = "Session Planner"
-        buddies.windowId = caller
-        managedWindowsObject.toggleItem(key: caller, item: ViewWrapper {AnyView(NavStackWindow(managedViewWindow: buddies))})
-    }
-    
-    func handleToolMenu() {
-        let caller = MenuBarProvider.webBrowser.tool.title
-        let buddies = ManagedViewWindow(id: caller, content: AnyView(PopupMenu(viewId: "boardEngine-1")))
-        buddies.title = "Tool Menu"
-        buddies.windowId = caller
-        managedWindowsObject.toggleItem(key: caller, item: ViewWrapper {AnyView(GenericNavWindowSMALL(managedViewWindow: buddies))})
-    }
-    
-    func handleShare() {
-        let caller = MenuBarProvider.share.tool.title
-        let buddies = ManagedViewWindow(id: caller, content: AnyView(SignUpView()))
-        buddies.title = "Sign Up"
-        buddies.windowId = caller
-        managedWindowsObject.toggleItem(key: caller, item: ViewWrapper {AnyView(NavStackWindow(managedViewWindow: buddies))})
-    }
+//    func handleTools() {
+//        let caller = MenuBarProvider.toolbox.tool.title
+//        let temp = ManagedViewWindow(id: caller, viewBuilder: AnyView(SoccerToolsView()))
+//        temp.title = "Tools"
+//        temp.windowId = caller
+//        managedWindowsObject.toggleItem(key: caller, item: AnyView(NavStackWindow(managedViewWindow: temp)))
+//    }
+//    
+//    func handleBuddyList() {
+//        let caller = MenuBarProvider.buddyList.tool.title
+//        let buddies = ManagedViewWindow(id: caller, viewBuilder: AnyView(BuddyListView()))
+//        buddies.title = "Buddy List"
+//        buddies.windowId = caller
+//        managedWindowsObject.toggleItem(key: caller, item: AnyView(NavStackWindow(managedViewWindow: buddies)))
+//    }
+//    
+//    func handleBuddyProfile() {
+//        let caller = MenuBarProvider.profile.tool.title
+//        let buddies = ManagedViewWindow(id: caller, viewBuilder: AnyView(BuddyProfileView()))
+//        buddies.title = "Buddy Profile"
+//        buddies.windowId = caller
+//        managedWindowsObject.toggleItem(key: caller, item: AnyView(NavStackWindow(managedViewWindow: buddies)))
+//    }
+//    
+//    func handleSessionPlan() {
+//        let caller = MenuBarProvider.boardDetails.tool.title
+//        let buddies = ManagedViewWindow(id: caller, viewBuilder: AnyView(SessionPlanView(boardId: "boardEngine-1")))
+//        buddies.title = "Session Planner"
+//        buddies.windowId = caller
+//        managedWindowsObject.toggleItem(key: caller, item: AnyView(NavStackWindow(managedViewWindow: buddies)))
+//    }
+//    
+//    func handleToolMenu() {
+//        let caller = MenuBarProvider.webBrowser.tool.title
+//        let buddies = ManagedViewWindow(id: caller, viewBuilder: AnyView(PopupMenu(viewId: "boardEngine-1")))
+//        buddies.title = "Tool Menu"
+//        buddies.windowId = caller
+//        managedWindowsObject.toggleItem(key: caller, item: AnyView(GenericNavWindowSMALL(managedViewWindow: buddies)))
+//    }
+//    
+//    func handleShare() {
+//        let caller = MenuBarProvider.share.tool.title
+//        let buddies = ManagedViewWindow(id: caller, viewBuilder: AnyView(SignUpView()))
+//        buddies.title = "Sign Up"
+//        buddies.windowId = caller
+//        managedWindowsObject.toggleItem(key: caller, item: AnyView(NavStackWindow(managedViewWindow: buddies)))
+//    }
     func handleMVSettings() {
         let caller = "mv_settings"
-        let buddies = ManagedViewWindow(id: caller, content: AnyView(SettingsView(onDelete: {})))
+        let buddies = ManagedViewWindow(id: caller, viewBuilder: {NavStackWindow(id: caller, viewBuilder: {SettingsView(onDelete: {})})})
         buddies.title = "Tool View Settings"
         buddies.windowId = caller
-        managedWindowsObject.toggleItem(key: caller, item: ViewWrapper {AnyView(NavStackWindow(managedViewWindow: buddies))})
+        managedWindowsObject.safelyAddItem(key: caller, item: buddies)
     }
 }
 

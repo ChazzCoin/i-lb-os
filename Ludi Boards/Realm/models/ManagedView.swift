@@ -45,6 +45,10 @@ extension ManagedView {
             "toolSize": toolSize,
             "x": x,
             "y": y,
+            "startX": startX,
+            "startY": startY,
+            "endX": endX,
+            "endY": endY,
             "width": width,
             "height": height,
             "rotation": rotation,
@@ -52,8 +56,6 @@ extension ManagedView {
             "translationY": translationY
         ]
     }
-    
-    
 }
 
 func toManagedView(dictionary: [String: Any]) -> ManagedView? {
@@ -86,6 +88,21 @@ func toManagedView(dictionary: [String: Any]) -> ManagedView? {
     if let y = dictionary["y"] as? Double {
         managedView.y = y
     }
+    
+    if let sx = dictionary["startX"] as? Double {
+        managedView.startX = sx
+    }
+    if let sy = dictionary["startY"] as? Double {
+        managedView.startY = sy
+    }
+    
+    if let ex = dictionary["endX"] as? Double {
+        managedView.endX = ex
+    }
+    if let ey = dictionary["endY"] as? Double {
+        managedView.endY = ey
+    }
+    
     if let width = dictionary["width"] as? Int {
         managedView.width = width
     }
