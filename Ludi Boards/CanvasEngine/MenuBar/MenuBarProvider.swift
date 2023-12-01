@@ -8,6 +8,14 @@
 import Foundation
 import SwiftUI
 
+
+enum ToolTypes {
+    case basic
+    case LINE
+    case LINE_DOTTED
+    case LINE_CURVED
+}
+
 struct Tool {
     let title: String
     let image: String // Using SwiftUI's Image type for image resources

@@ -13,12 +13,16 @@ import RealmSwift
 
 class ViewModel: ObservableObject {
     
-    let reference = Database
+    let firebaseService = FirebaseService(reference: Database
         .database()
         .reference()
-        .child(DatabasePaths.managedViews.rawValue)
+        .child(DatabasePaths.managedViews.rawValue))
+//    let reference = Database
+//        .database()
+//        .reference()
+//        .child(DatabasePaths.managedViews.rawValue)
     @State var cancellables = Set<AnyCancellable>()
-    
+    @State private var isFirstLoad = true
     var width: CGFloat = 2400
     var height: CGFloat = 3400
     var startPosX: CGFloat = 2400 / 2
@@ -26,14 +30,15 @@ class ViewModel: ObservableObject {
     
     let realmInstance = realm()
     
+    var counter = 0
+    
     //TODO: create demo board for sharing.
     @State var boardId: String = "boardEngine-1"
     @State var boardBg = BoardBgProvider.soccerTwo.tool.image
     
     @State var isLoading = false
     @Published var toolViews: [String:ViewWrapper] = [:]
-    @Published var lineViews: [String:ViewWrapper] = [:]
-    
+    @Published var basicTools: [ManagedView] = []
     @Published var lineTools: [ManagedView] = []
     
     @Published var isDrawing = false
@@ -60,29 +65,22 @@ class ViewModel: ObservableObject {
         boardId = boardIdIn
         boardBg = BoardBgProvider.parseByTitle(title: tempBoard?.backgroundImg ?? "Soccer 2")?.tool.image ?? "soccer_two"
         loadManagedViewTools()
-        for line in realmInstance.objects(ManagedView.self).where({ $0.toolType == "LINE" && $0.boardId == "boardEngine-1" }) {
-            safeAddTool(id: line.id, icon: "LINE")
-        }
     }
         
     func loadManagedViewTools() {
-        reference.child(self.boardId).fireObserver { snapshot in
-            self.isLoading = true
-            let _ = snapshot.toLudiObjects(ManagedView.self)
-            let mapped = snapshot.toHashMap()
-            if mapped.count < self.toolViews.count { self.toolViews = [:] }
-            for (itId, value) in mapped {
-                if let tempHash = value as? [String: Any] {
-                    let temp: ManagedView? = toManagedView(dictionary: tempHash)
-                    if let itTemp = temp {
-                        if itTemp.toolType == "LINE" {
-                            self.lineTools.append(itTemp)
-                        } else {
-                            self.safeAddTool(id: itId, icon: temp?.toolType ?? SoccerToolProvider.playerDummy.tool.title)
-                        }
-                        
+        // Dispatch work to a background thread
+        DispatchQueue.global(qos: .background).async {
+            self.firebaseService.startObserving(path: self.firebaseService.reference.child(self.boardId)) { snapshot in
+                print("FIRE OBSERVER CALLING -> \(self.counter)")
+                self.counter += 1
+                let newMapped = snapshot.toHashMap()
+                for (_, value) in newMapped {
+                    if let tempHash = value as? [String: Any], let temp = toManagedView(dictionary: tempHash) {
+//                        let _ = tempHash.toRealmObject(ManagedView.self)
+                        self.basicTools.safeAdd(temp)
                     }
                 }
+                self.firebaseService.stopObserving()
             }
         }
     }
@@ -104,22 +102,20 @@ class ViewModel: ObservableObject {
         loadBoardSession(boardIdIn: bId)
         print("BOARDS: initial load -> ${boardList.size}")
     }
-    func newTool(id: String, icon: String) -> ViewWrapper {
-        return ViewWrapper{AnyView(ManagedViewBoardTool(boardId: self.boardId, viewId: id, toolType: icon))}
+    
+    func newBasicTool(id: String, icon: String) -> ManagedViewBoardTool {
+        return ManagedViewBoardTool(boardId: self.boardId, viewId: id, toolType: icon)
     }
-    func safeAddTool(id: String, icon: String) {
-        guard toolViews[id] != nil else {
-            print(icon)
-            if icon == "LINE" {
-                let parsedTool = "LINE"
-                toolViews[id] = newTool(id: id, icon: parsedTool)
-            } else {
-                let parsedTool = SoccerToolProvider.parseByTitle(title: icon)?.tool.image ?? SoccerToolProvider.playerDummy.tool.image
-                toolViews[id] = newTool(id: id, icon: parsedTool)
-            }
-            
-            return
-        }
-    }
+    
 }
 
+extension Array where Element: ManagedView {
+    mutating func safeAdd(_ item: ManagedView) {
+        if self.firstIndex(where: { $0.id == item.id }) != nil {
+            // Item found, remove it
+            return
+        }
+        // Item not found, add it
+        self.append(item as! Element)
+    }
+}

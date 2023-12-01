@@ -198,8 +198,6 @@ struct CanvasEngine: View {
 //            handleShare()
 //            handleBuddyList()
             handleMVSettings()
-            
-            
         }
         
     }

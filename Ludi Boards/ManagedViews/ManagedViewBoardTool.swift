@@ -21,14 +21,9 @@ struct ManagedViewBoardTool: View {
     @State private var isDragging = false
 
     var body: some View {
-        if toolType != "LINE" {
-            Image(toolType)
-                .resizable()
-                .enableMVT(viewId: viewId)
-        } else {
-//            LineDrawingManaged(viewId: viewId)
-//            LineViewNew(startX: 10, startY: 10, endX: 500, endY: 500).zIndex(5.0)
-        }
+        Image(toolType)
+            .resizable()
+            .enableMVT(viewId: viewId)
         
     }
 }

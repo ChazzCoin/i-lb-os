@@ -85,7 +85,7 @@ struct LineDrawingManaged: View {
     @State private var lifeWidthTouch = 300.0
     @State private var lifeHeightTouch = 300.0
     
-    @State private var lifeWidth = 10.0
+    @State private var lifeWidth: Double = 10.0
     @State private var lifeColor = Color.red
     @State private var lifeRotation: Angle = Angle.zero
     
@@ -160,16 +160,16 @@ struct LineDrawingManaged: View {
         .overlay(
             Rectangle()
                 .fill(Color.white.opacity(0.001))
-                .frame(width: lineLength, height: 100) // Increase size for finger tapping
+                .frame(width: lifeWidth, height: 100)
                 .rotationEffect(lifeRotation)
                 .opacity(1)
-                .position(x: lifeCenterPoint.x, y: lifeCenterPoint.y)
+                .position(x: lifeCenterPoint.x.isFinite ? lifeCenterPoint.x : 0, y: lifeCenterPoint.y.isFinite ? lifeCenterPoint.y : 0)
                 .gesture(dragGestureDuo())
         )
         .gesture(dragGestureDuo())
         .onAppear() {
             loadFromRealm()
-            observeFirebase()
+//            observeFirebase()
             CodiChannel.TOOL_ATTRIBUTES.receive(on: RunLoop.main) { vId in
                 let temp = vId as! ViewAtts
                 if viewId != temp.viewId {return}
@@ -305,34 +305,36 @@ struct LineDrawingManaged: View {
         loadWidthAndHeight()
         loadRotationOfLine()
         
-        objectNotificationToken = umv.observe { change in
-            switch change {
-                case .change(let object, _):
-                    let obj = object as! ManagedView
-                    if obj.dateUpdated <= lifeDateUpdated { return }
-                    lifeStartX = obj.startX
-                    lifeStartY = obj.startY
-                    lifeEndX = obj.endX
-                    lifeEndY = obj.endY
-                    lifeWidth = Double(obj.width)
-                    loadCenterPoint()
-                    loadWidthAndHeight()
-                    loadRotationOfLine()
-                    print("\(object)")
-                case .error(let error):
-                    print("An error occurred: \(error)")
-                case .deleted:
-                    isDeleted = true
-                    isDisabled = true
-            }
-        }
+//        objectNotificationToken = umv.observe { change in
+//            switch change {
+//                case .change(let object, _):
+//                    let obj = object as! ManagedView
+//                    if obj.dateUpdated <= lifeDateUpdated { return }
+//                    lifeStartX = obj.startX
+//                    lifeStartY = obj.startY
+//                    lifeEndX = obj.endX
+//                    lifeEndY = obj.endY
+//                    lifeWidth = Double(obj.width)
+//                    loadCenterPoint()
+//                    loadWidthAndHeight()
+//                    loadRotationOfLine()
+//                    print("\(object)")
+//                case .error(let error):
+//                    print("An error occurred: \(error)")
+//                case .deleted:
+//                    isDeleted = true
+//                    isDisabled = true
+//            }
+//        }
     }
     
     func observeFirebase() {
         // TODO: make this more rock solid, error handling, retry logic...
         if boardId.isEmpty || viewId.isEmpty {return}
-        reference.child(boardId).child(viewId).fireObserver { snapshot in
-            let _ = snapshot.toLudiObject(ManagedView.self, realm: realmInstance)
+        DispatchQueue.global(qos: .userInitiated).async {
+            reference.child(boardId).child(viewId).fireObserver { snapshot in
+                let _ = snapshot.toLudiObject(ManagedView.self, realm: realmInstance)
+            }
         }
     }
 }

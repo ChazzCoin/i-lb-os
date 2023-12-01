@@ -7,7 +7,7 @@
 
 import Foundation
 import SwiftUI
-import Firebase
+import FirebaseDatabase
 import RealmSwift
 import Combine
 
@@ -21,6 +21,7 @@ struct enableManagedViewTool : ViewModifier {
     @State private var isDeleted = false
     @State private var isDisabled = false
     @State private var lifeUpdatedAt: Int = 0 // Using Double for time representation
+    @State private var lifeBorderColor = Color.AIMYellow
     @State private var lifeColor = ColorProvider.black // SwiftUI color representation
     @State private var lifeOffsetX: Double = 0.0 // CGFloat in SwiftUI
     @State private var lifeOffsetY: Double = 0.0 // CGFloat in SwiftUI
@@ -70,10 +71,10 @@ struct enableManagedViewTool : ViewModifier {
     func updateRealm() {
         print("!!!! Updating Realm!")
         if isDisabledChecker() {return}
-        lifeUpdatedAt = Int(Date().timeIntervalSince1970)
         let mv = realmInstance.findByField(ManagedView.self, value: viewId)
         if mv == nil { return }
         realmInstance.safeWrite { r in
+            lifeUpdatedAt = Int(Date().timeIntervalSince1970)
             mv?.dateUpdated = lifeUpdatedAt
             mv?.x = self.position.x
             mv?.y = self.position.y
@@ -102,20 +103,23 @@ struct enableManagedViewTool : ViewModifier {
     func observeFirebase() {
         // TODO: make this more rock solid, error handling, retry logic...
         if boardId.isEmpty || viewId.isEmpty {return}
-        reference.child(boardId).child(viewId).fireObserver { snapshot in
-            let _ = snapshot.toLudiObject(ManagedView.self, realm: realmInstance)
-            let obj = snapshot.value as? [String:Any]
-            lifeOffsetX = obj?["x"] as? Double ?? lifeOffsetX
-            lifeOffsetY = obj?["y"] as? Double ?? lifeOffsetY
-            lifeUpdatedAt = obj?["dateUpdated"] as? Int ?? lifeUpdatedAt
-            self.position = CGPoint(x: lifeOffsetX, y: lifeOffsetY)
-            print("\(viewId) x: [ \(lifeOffsetX) ] y: [ \(lifeOffsetY) ]")
-            lifeWidth = Double(obj?["width"] as? Int ?? Int(lifeWidth))
-            lifeHeight = Double(obj?["height"] as? Int ?? Int(lifeHeight))
-            lifeRotation = Double(obj?["rotation"] as? Double ?? lifeRotation)
-            lifeToolType = obj?["toolType"] as? String ?? lifeToolType
-            lifeColor = ColorProvider.fromColorName(colorName: obj?["toolColor"] as? String ?? lifeColor.rawValue)
+        
+        DispatchQueue.global(qos: .userInitiated).async {
+            reference.child(boardId).child(viewId).fireObserver { snapshot in
+                let obj = snapshot.value as? [String:Any]
+                lifeOffsetX = obj?["x"] as? Double ?? lifeOffsetX
+                lifeOffsetY = obj?["y"] as? Double ?? lifeOffsetY
+                lifeUpdatedAt = obj?["dateUpdated"] as? Int ?? lifeUpdatedAt
+                self.position = CGPoint(x: lifeOffsetX, y: lifeOffsetY)
+                print("\(viewId) x: [ \(lifeOffsetX) ] y: [ \(lifeOffsetY) ]")
+                lifeWidth = Double(obj?["width"] as? Int ?? Int(lifeWidth))
+                lifeHeight = Double(obj?["height"] as? Int ?? Int(lifeHeight))
+                lifeRotation = Double(obj?["rotation"] as? Double ?? lifeRotation)
+                lifeToolType = obj?["toolType"] as? String ?? lifeToolType
+                lifeColor = ColorProvider.fromColorName(colorName: obj?["toolColor"] as? String ?? lifeColor.rawValue)
+            }
         }
+        
     }
     
     func body(content: Content) -> some View {
@@ -123,7 +127,7 @@ struct enableManagedViewTool : ViewModifier {
                 .frame(width: lifeWidth * 2, height: lifeHeight * 2)
 //                .colorMultiply(lifeColor.colorValue)
                 .rotationEffect(.degrees(lifeRotation))
-                .border(popUpIsVisible ? lifeColor.colorValue : Color.clear, width: 10) // Border modifier
+                .border(popUpIsVisible ? lifeBorderColor : Color.clear, width: 10) // Border modifier
                 .position(x: position.x + (isDragging ? dragOffset.width : 0) + (self.lifeWidth),
                           y: position.y + (isDragging ? dragOffset.height : 0) + (self.lifeHeight))
                 .gesture(
@@ -149,8 +153,8 @@ struct enableManagedViewTool : ViewModifier {
                                 //onMoveComplete()
                                 updateRealm()
                             }
-                        }.simultaneously(with: TapGesture()
-                            .onEnded {
+                        }.simultaneously(with: LongPressGesture(minimumDuration: 0.5)
+                            .onEnded { _ in
                                 print("Tapped")
                                 popUpIsVisible = !popUpIsVisible
                                 CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: "mv_settings", stateAction: popUpIsVisible ? "open" : "close", viewId: viewId))
@@ -164,7 +168,7 @@ struct enableManagedViewTool : ViewModifier {
                 .onAppear {
                     // isDisabled.value = false
                     loadFromRealm()
-                    flowRealm()
+//                    flowRealm()
                     
                     CodiChannel.BOARD_ON_ID_CHANGE.receive(on: RunLoop.main) { bId in
                         

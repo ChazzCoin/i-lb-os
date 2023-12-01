@@ -27,6 +27,7 @@ import RealmSwift
     dynamic var rotation: Double = 0.0
     dynamic var translationX: Double = 0.0
     dynamic var translationY: Double = 0.0
+    dynamic var lastUserId: String = "me"
 
     override static func primaryKey() -> String? {
         return "id"
@@ -38,6 +39,7 @@ extension ManagedView {
         return [
             "id": id,
             "dateUpdated": dateUpdated,
+            "lastUserId": lastUserId,
             "boardId": boardId,
             "sport": sport,
             "toolType": toolType,
@@ -66,6 +68,9 @@ func toManagedView(dictionary: [String: Any]) -> ManagedView? {
     }
     if let dateUpdated = dictionary["dateUpdated"] as? Int {
         managedView.dateUpdated = dateUpdated
+    }
+    if let lastUID = dictionary["lastUserId"] as? String {
+        managedView.lastUserId = lastUID
     }
     if let boardId = dictionary["boardId"] as? String {
         managedView.boardId = boardId
