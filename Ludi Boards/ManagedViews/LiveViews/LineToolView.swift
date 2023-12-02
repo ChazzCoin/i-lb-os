@@ -104,7 +104,7 @@ struct LineDrawingManaged: View {
         .overlay(
             Rectangle()
                 .fill(Color.white.opacity(0.001))
-                .frame(width: lifeWidth, height: 100)
+                .frame(width: lifeWidth+100, height: 100)
                 .rotationEffect(lifeRotation)
                 .opacity(1)
                 .position(x: lifeCenterPoint.x.isFinite ? lifeCenterPoint.x : 0, y: lifeCenterPoint.y.isFinite ? lifeCenterPoint.y : 0)
@@ -264,7 +264,7 @@ struct LineDrawingManaged: View {
 struct LineOverlay: View {
     var startPoint: CGPoint
     var endPoint: CGPoint
-    let lineThickness: CGFloat = 3 // Adjust as needed
+    let lineThickness: CGFloat = 10 // Adjust as needed
 
     private var lineLength: CGFloat {
         sqrt(pow(endPoint.x - startPoint.x, 2) + pow(endPoint.y - startPoint.y, 2))

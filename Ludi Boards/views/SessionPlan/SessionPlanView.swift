@@ -16,6 +16,7 @@ struct SessionPlanView: View {
     @State private var objective = ""
     @State private var isOpen = true
     @State private var activities: [ActivityPlan] = []
+    @State private var showNewActivity = false
     
     let realmInstance = realm()
     private func fetchSessionPlan() {
@@ -58,14 +59,19 @@ struct SessionPlanView: View {
 
             Section(header: Text("Activities")) {
                 ActivityPlanListView(activityPlans: $activities)
-                Button("New Activity", action: {
-                    print("New Activity Button")
-                })
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
+                
+                if self.sessionId != "new" {
+                    Button("New Activity", action: {
+                        print("New Activity Button")
+                        showNewActivity = true
+                    })
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                }
+                
             }.clearSectionBackground()
 
             Section {
@@ -74,14 +80,17 @@ struct SessionPlanView: View {
             
             // Save button at the bottom
             Section {
-                Button("Load Session", action: {
-                    CodiChannel.SESSION_ON_ID_CHANGE.send(value: sessionId)
-                })
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
+                if self.sessionId != "new" {
+                    Button("Load Session", action: {
+                        CodiChannel.SESSION_ON_ID_CHANGE.send(value: sessionId)
+                    })
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                }
+                
                 Button("Save", action: {
                     print("save button")
                 })
@@ -93,9 +102,24 @@ struct SessionPlanView: View {
             }.clearSectionBackground()
         }
         .onAppear {
-            fetchSessionPlan()
+            if self.sessionId != "new" {
+                fetchSessionPlan()
+            }
         }
         .navigationBarTitle("Session Plan", displayMode: .inline)
+        .navigationBarItems(trailing: HStack {
+            Button(action: {
+                print("Minimize")
+                CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: MenuBarProvider.boardDetails.tool.title, stateAction: "close"))
+            }) {
+                Image(systemName: "minus")
+                    .resizable()
+                    .frame(width: 30, height: 30)
+            }
+        })
+        .sheet(isPresented: $showNewActivity) {
+            ActivityPlanView(boardId: "new")
+        }
     }
 }
 

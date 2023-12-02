@@ -12,12 +12,17 @@ struct ActivityPlanListView: View {
     @Binding var activityPlans: [ActivityPlan]
 
     var body: some View {
-        List(activityPlans) { activityPlan in
-            NavigationLink(destination: ActivityPlanView(boardId: activityPlan.id)) {
-                ActivityPlanThumbView(activityPlan: activityPlan)
+        
+        if !activityPlans.isEmpty {
+            List(activityPlans) { activityPlan in
+                NavigationLink(destination: ActivityPlanView(boardId: activityPlan.id)) {
+                    ActivityPlanThumbView(activityPlan: activityPlan)
+                }
             }
-            
+        } else {
+            Text("No Activities Yet.")
         }
+        
     }
 }
 

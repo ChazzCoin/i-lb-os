@@ -44,7 +44,7 @@ struct SoccerFieldFullView: View {
                 path.addRect(CGRect(x: 0, y: (height - goalAreaHeight) / 2, width: goalAreaWidth, height: goalAreaHeight))
                 path.addRect(CGRect(x: width - goalAreaWidth, y: (height - goalAreaHeight) / 2, width: goalAreaWidth, height: goalAreaHeight))
             }
-            .stroke(Color.green, lineWidth: 10)
+            .stroke(Color.white, lineWidth: 10)
             .rotationEffect(.degrees(90))
         }.frame(width: width, height: height)
     }

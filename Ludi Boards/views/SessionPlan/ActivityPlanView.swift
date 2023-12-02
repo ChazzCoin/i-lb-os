@@ -61,14 +61,17 @@ struct ActivityPlanView: View {
 
             // Save Button Section
             Section {
-                Button("Load Activity onto Board", action: {
-                    CodiChannel.BOARD_ON_ID_CHANGE.send(value: activityPlan.id)
-                })
-                .frame(maxWidth: .infinity)
-                .padding()
-                .background(Color.blue)
-                .foregroundColor(.white)
-                .cornerRadius(10)
+                if self.boardId != "new" {
+                    Button("Load Activity onto Board", action: {
+                        CodiChannel.BOARD_ON_ID_CHANGE.send(value: activityPlan.id)
+                    })
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+                }
+                
                 Button("Save", action: {
                     // Implement the save action
                 })

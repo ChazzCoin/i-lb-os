@@ -25,10 +25,10 @@ struct BoardEngine: View {
         .child(DatabasePaths.managedViews.rawValue))
     
     //Board
-    var width: CGFloat = 2400
-    var height: CGFloat = 3400
-    var startPosX: CGFloat = 2400 / 2
-    var startPosY: CGFloat = 3400 / 2
+    var width: CGFloat = 3000.0
+    var height: CGFloat = 4000.0
+    var startPosX: CGFloat = 3000.0 / 2
+    var startPosY: CGFloat = 4000.0 / 2
     
     @State private var startPoint: CGPoint = .zero
     @State private var endPoint: CGPoint = .zero
@@ -59,7 +59,6 @@ struct BoardEngine: View {
              
              // Temporary line being drawn
              if self.isDraw {
-                 
                  if startPoint != .zero {
                      Path { path in
                          path.move(to: startPoint)
@@ -67,16 +66,15 @@ struct BoardEngine: View {
                      }
                      .stroke(Color.red, lineWidth: 10)
                  }
-                 
              }
             
         }
         .frame(width: width, height: height)
         .background {
-            FieldOverlayView(width: 3000.0, height: 4000.0, background: {
-                Color.yellow.opacity(1)
+            FieldOverlayView(width: width, height: height, background: {
+                Color.green.opacity(0.75)
             }, overlay: {
-                SoccerFieldHalfView(width: 4000.0, height: 3000.0)
+                SoccerFieldFullView(width: height, height: width)
             }).position(x: startPosX, y: startPosY)
         }
         .gesture(
