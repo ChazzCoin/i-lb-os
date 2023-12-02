@@ -69,18 +69,21 @@ struct BoardEngine: View {
         }
         .frame(width: width, height: height)
         .background {
-            Image(boardBg)
-                .resizable()
-                .aspectRatio(contentMode: .fill) // Fill the area, possibly cropping the image
-                .frame(width: width, height: height) // Match the frame size of the ZStack
+            FieldOverlayView(width: 3000.0, height: 4000.0, background: {
+                Color.yellow.opacity(1)
+            }, overlay: {
+                SoccerFieldHalfView(width: 4000.0, height: 3000.0)
+            })
                 .position(x: startPosX, y: startPosY)
+//            SoccerFieldHalfView()
+//                .frame(width: width, height: height)
+//            Image(boardBg)
+//                .resizable()
+//                .aspectRatio(contentMode: .fill) // Fill the area, possibly cropping the image
+//                .frame(width: width, height: height) // Match the frame size of the ZStack
+//                .position(x: startPosX, y: startPosY)
         }
-        .overlay(
-            Rectangle() // The rectangle that acts as the border
-                .stroke(Color.red, lineWidth: 2) // Red border with a stroke width of 2
-                .frame(width: width, height: height)
-                .position(x: startPosX, y: startPosY)
-        ).gesture(
+        .gesture(
             DragGesture()
                 .onChanged { value in
                     if !self.isDraw {return}

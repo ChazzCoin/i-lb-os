@@ -103,6 +103,10 @@
 		FBD9AFD52B008F6F005F8620 /* Channels.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFD42B008F6F005F8620 /* Channels.swift */; };
 		FBD9AFD72B00BB8F005F8620 /* ManagedViewBoardTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFD62B00BB8F005F8620 /* ManagedViewBoardTool.swift */; };
 		FBD9AFD92B01CB91005F8620 /* SoccerToolProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFD82B01CB91005F8620 /* SoccerToolProvider.swift */; };
+		FBE2C6142B1AC68D004C0116 /* SoccerFieldBG.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C6132B1AC68D004C0116 /* SoccerFieldBG.swift */; };
+		FBE2C6172B1AF595004C0116 /* GrassFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C6162B1AF595004C0116 /* GrassFieldView.swift */; };
+		FBE2C61A2B1AF7D5004C0116 /* FootballFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C6192B1AF7D5004C0116 /* FootballFieldView.swift */; };
+		FBE2C61C2B1AF961004C0116 /* BoardBackgrounder.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C61B2B1AF961004C0116 /* BoardBackgrounder.swift */; };
 		FBF404432B19304700FA0545 /* BorderedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF404422B19304700FA0545 /* BorderedView.swift */; };
 /* End PBXBuildFile section */
 
@@ -182,6 +186,10 @@
 		FBD9AFD42B008F6F005F8620 /* Channels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Channels.swift; sourceTree = "<group>"; };
 		FBD9AFD62B00BB8F005F8620 /* ManagedViewBoardTool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedViewBoardTool.swift; sourceTree = "<group>"; };
 		FBD9AFD82B01CB91005F8620 /* SoccerToolProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoccerToolProvider.swift; sourceTree = "<group>"; };
+		FBE2C6132B1AC68D004C0116 /* SoccerFieldBG.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoccerFieldBG.swift; sourceTree = "<group>"; };
+		FBE2C6162B1AF595004C0116 /* GrassFieldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrassFieldView.swift; sourceTree = "<group>"; };
+		FBE2C6192B1AF7D5004C0116 /* FootballFieldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FootballFieldView.swift; sourceTree = "<group>"; };
+		FBE2C61B2B1AF961004C0116 /* BoardBackgrounder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardBackgrounder.swift; sourceTree = "<group>"; };
 		FBF404422B19304700FA0545 /* BorderedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BorderedView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -285,6 +293,7 @@
 		FB5094242B05820B000AEA96 /* views */ = {
 			isa = PBXGroup;
 			children = (
+				FBE2C6152B1AF584004C0116 /* Backgrounds */,
 				FB9F1DD72B1533B300FD9078 /* SignUp */,
 				FB3E02CD2B0D45FF00D8558C /* Components */,
 				FB3E02CC2B0D45F000D8558C /* NavViews */,
@@ -444,6 +453,25 @@
 			path = Providers;
 			sourceTree = "<group>";
 		};
+		FBE2C6152B1AF584004C0116 /* Backgrounds */ = {
+			isa = PBXGroup;
+			children = (
+				FBE2C6182B1AF764004C0116 /* Soccer */,
+				FBE2C6162B1AF595004C0116 /* GrassFieldView.swift */,
+				FBE2C6192B1AF7D5004C0116 /* FootballFieldView.swift */,
+				FBE2C61B2B1AF961004C0116 /* BoardBackgrounder.swift */,
+			);
+			path = Backgrounds;
+			sourceTree = "<group>";
+		};
+		FBE2C6182B1AF764004C0116 /* Soccer */ = {
+			isa = PBXGroup;
+			children = (
+				FBE2C6132B1AC68D004C0116 /* SoccerFieldBG.swift */,
+			);
+			path = Soccer;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -568,6 +596,7 @@
 				FB58A1B42B17D1420024B9A2 /* ToolBarView.swift in Sources */,
 				FBB450002B04B7580096F8EB /* ColorProvider.swift in Sources */,
 				FBD9AFCB2B00843F005F8620 /* BoardSession.swift in Sources */,
+				FBE2C61C2B1AF961004C0116 /* BoardBackgrounder.swift in Sources */,
 				FB9F1DD42B15307E00FD9078 /* UserSignUp.swift in Sources */,
 				FBD9AFC22B0081C1005F8620 /* RealmInstance.swift in Sources */,
 				FB58E8782B01F40300FD9E2E /* FireCore.swift in Sources */,
@@ -585,6 +614,7 @@
 				FBD9AFB82AFF0253005F8620 /* GridLines.swift in Sources */,
 				FB3E02BB2B0C90D700D8558C /* Buddy.swift in Sources */,
 				FB10AE0B2B0F162F00295F4B /* ActivityPlanThumbView.swift in Sources */,
+				FBE2C6172B1AF595004C0116 /* GrassFieldView.swift in Sources */,
 				FB50942A2B05856D000AEA96 /* LineToolView.swift in Sources */,
 				FB3E02AF2B0C6B1200D8558C /* SessionPlan.swift in Sources */,
 				FBA20A2F2B166FCE00045D1C /* MVSettingsView.swift in Sources */,
@@ -600,6 +630,7 @@
 				FB3E02C72B0D2C3100D8558C /* InputSwitch.swift in Sources */,
 				FB10AE072B0DCDB500295F4B /* FloatingEmoji.swift in Sources */,
 				FB3E02C52B0D2A8500D8558C /* ThumbnailListView.swift in Sources */,
+				FBE2C61A2B1AF7D5004C0116 /* FootballFieldView.swift in Sources */,
 				FBD9AFD52B008F6F005F8620 /* Channels.swift in Sources */,
 				FB982F912B19D1B900C0DA03 /* FirebaseService.swift in Sources */,
 				FB3E02BF2B0C948A00D8558C /* AddBuddyView.swift in Sources */,
@@ -612,6 +643,7 @@
 				FBA4FB572B15AA2700BF409E /* GlobalPositioning.swift in Sources */,
 				FB9F1DD02B1528FC00FD9078 /* Extensions.swift in Sources */,
 				FB0AA56A2B0BEBE1001AA316 /* TwoFingerPanView.swift in Sources */,
+				FBE2C6142B1AC68D004C0116 /* SoccerFieldBG.swift in Sources */,
 				FB58E8802B02B26C00FD9E2E /* DragAndDrop.swift in Sources */,
 				FB58E87E2B02B21700FD9E2E /* CoreMods.swift in Sources */,
 				FB10AE092B0DD76C00295F4B /* EmojiProvider.swift in Sources */,
@@ -751,7 +783,7 @@
 				DEVELOPMENT_TEAM = 248J2GKL56;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "Ludi: SOL";
+				INFOPLIST_KEY_CFBundleDisplayName = SOL;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.sports";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -782,7 +814,7 @@
 				DEVELOPMENT_TEAM = 248J2GKL56;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "Ludi: SOL";
+				INFOPLIST_KEY_CFBundleDisplayName = SOL;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.sports";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

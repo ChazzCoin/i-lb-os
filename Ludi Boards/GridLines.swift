@@ -69,5 +69,6 @@ struct DrawGridLines: View {
             }
             .frame(width: geometry.size.width, height: geometry.size.height)
         }
+//        .frame(width: 10000, height: 10000)
     }
 }

@@ -114,7 +114,7 @@ struct CanvasEngine: View {
 //                .position(using: gps, at: .bottomCenter)
             ForEach(Array(managedWindowsObject.managedViewGenerics.values)) { managedViewWindow in
                 managedViewWindow.viewBuilder()
-            }
+            }.zIndex(5.0)
             
             // Global MenuBar
             MenuBarWindow(items: [
@@ -155,14 +155,10 @@ struct CanvasEngine: View {
                 TipViewLocked(tip: "Tap & Drag to Create a Line", isVisible: $isDrawing)
                     .position(using: gps, at: .topRight, offsetX: 500, offsetY: -50)
             }
-            // Global Windows
-//            ForEach(Array(managedWindowsObject.managedViewGenerics.values)) { managedViewWindow in
-//                managedViewWindow.viewBuilder()
-//            }
             
 //            FloatingEmojiView()
 //                .position(using: gps, at: .topLeft, offsetX: 200, offsetY: 0)
-        }
+        }.zIndex(3.0)
         
         ZStack() {
             
@@ -170,9 +166,8 @@ struct CanvasEngine: View {
             ZStack() {
                 DrawGridLines().zIndex(1.0)
                 BoardEngine(isDraw: $isDrawing).zIndex(2.0)
-                
             }
-            .frame(width: initialWidth, height: initialHeight)
+            .frame(width: 20000, height: 20000)
             .background(Color.clear)
             .offset(x: self.offset.x, y: self.offset.y)
             .scaleEffect(totalScale * gestureScale)
@@ -183,12 +178,12 @@ struct CanvasEngine: View {
         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
         .gesture(dragAngleGestures.simultaneously(with: scaleGestures))
         .background(Color.clear)
-        .zIndex(-1.0)
+        .zIndex(0.0)
         .onAppear() {
             menuBarButtonListener()
             handleChat()
 //            handleBuddyProfile()
-//            handleSessionPlan()
+            handleSessionPlan()
 //            handleShare()
 //            handleBuddyList()
             handleMVSettings()
@@ -252,15 +247,7 @@ struct CanvasEngine: View {
         temp.windowId = caller
         managedWindowsObject.safelyAddItem(key: caller, item: temp)
     }
-    
-//    func handleTools() {
-//        let caller = MenuBarProvider.toolbox.tool.title
-//        let temp = ManagedViewWindow(id: caller, viewBuilder: AnyView(SoccerToolsView()))
-//        temp.title = "Tools"
-//        temp.windowId = caller
-//        managedWindowsObject.toggleItem(key: caller, item: AnyView(NavStackWindow(managedViewWindow: temp)))
-//    }
-//    
+        
 //    func handleBuddyList() {
 //        let caller = MenuBarProvider.buddyList.tool.title
 //        let buddies = ManagedViewWindow(id: caller, viewBuilder: AnyView(BuddyListView()))
@@ -277,13 +264,13 @@ struct CanvasEngine: View {
 //        managedWindowsObject.toggleItem(key: caller, item: AnyView(NavStackWindow(managedViewWindow: buddies)))
 //    }
 //    
-//    func handleSessionPlan() {
-//        let caller = MenuBarProvider.boardDetails.tool.title
-//        let buddies = ManagedViewWindow(id: caller, viewBuilder: AnyView(SessionPlanView(boardId: "boardEngine-1")))
-//        buddies.title = "Session Planner"
-//        buddies.windowId = caller
-//        managedWindowsObject.toggleItem(key: caller, item: AnyView(NavStackWindow(managedViewWindow: buddies)))
-//    }
+    func handleSessionPlan() {
+        let caller = MenuBarProvider.boardDetails.tool.title
+        let buddies = ManagedViewWindow(id: caller, viewBuilder: {NavStackWindow(id: caller, viewBuilder: {SessionPlanView(boardId: "boardEngine-1")})})
+        buddies.title = "Session Planner"
+        buddies.windowId = caller
+        managedWindowsObject.toggleItem(key: caller, item: buddies)
+    }
 //    
 //    func handleToolMenu() {
 //        let caller = MenuBarProvider.webBrowser.tool.title

@@ -36,6 +36,7 @@ extension UIColor {
 extension ColorProvider {
     static func fromColor(_ color: Color) -> ColorProvider {
         let uiColor = color.uiColor
+        Color.AIMYellow
         for case let candidate in ColorProvider.allCases {
             if uiColor.isEqualToColor(candidate.colorValue.uiColor) {
                 return candidate
