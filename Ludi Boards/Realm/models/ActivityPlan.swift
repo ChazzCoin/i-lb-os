@@ -9,17 +9,24 @@ import Foundation
 import RealmSwift
 
 @objcMembers class ActivityPlan: Object, Identifiable {
-    dynamic var id: String = UUID().uuidString
-    dynamic var dateCreated: String = ""
-    dynamic var dateUpdated: String = ""
-    dynamic var dateOf: String = ""
+    dynamic var id: String = "Demo Activity"
+    dynamic var sessionId: String = "SOL"
+    dynamic var dateCreated: String = getTimeStamp()
+    dynamic var dateUpdated: String = getTimeStamp()
+    dynamic var dateOf: String = getTimeStamp()
     dynamic var timePeriod: String = ""
-    dynamic var duration: String = ""
-    dynamic var ageLevel: String = ""
-    dynamic var title: String = ""
-    dynamic var subTitle: String = ""
+    dynamic var duration: String = "24/7"
+    dynamic var ageLevel: String = "ALL"
+    dynamic var title: String = "SOL Activity"
+    dynamic var subTitle: String = "Your First SOL Board!"
     dynamic var objectiveDetails: String = ""
     dynamic var activityDetails: String = ""
+    
+    dynamic var isOpen: Bool = false
+    dynamic var orderIndex: Int = 0
+    
+    dynamic var width: Int = 3000
+    dynamic var height: Int = 4000
     dynamic var background: String = ""
 
     override static func primaryKey() -> String? {

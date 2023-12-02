@@ -107,6 +107,8 @@
 		FBE2C6172B1AF595004C0116 /* GrassFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C6162B1AF595004C0116 /* GrassFieldView.swift */; };
 		FBE2C61A2B1AF7D5004C0116 /* FootballFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C6192B1AF7D5004C0116 /* FootballFieldView.swift */; };
 		FBE2C61C2B1AF961004C0116 /* BoardBackgrounder.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C61B2B1AF961004C0116 /* BoardBackgrounder.swift */; };
+		FBE2C6202B1AFD20004C0116 /* SessionPlanThumbView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C61F2B1AFD20004C0116 /* SessionPlanThumbView.swift */; };
+		FBE2C6222B1B1490004C0116 /* RealmChangeListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C6212B1B1490004C0116 /* RealmChangeListener.swift */; };
 		FBF404432B19304700FA0545 /* BorderedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF404422B19304700FA0545 /* BorderedView.swift */; };
 /* End PBXBuildFile section */
 
@@ -190,6 +192,8 @@
 		FBE2C6162B1AF595004C0116 /* GrassFieldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrassFieldView.swift; sourceTree = "<group>"; };
 		FBE2C6192B1AF7D5004C0116 /* FootballFieldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FootballFieldView.swift; sourceTree = "<group>"; };
 		FBE2C61B2B1AF961004C0116 /* BoardBackgrounder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardBackgrounder.swift; sourceTree = "<group>"; };
+		FBE2C61F2B1AFD20004C0116 /* SessionPlanThumbView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionPlanThumbView.swift; sourceTree = "<group>"; };
+		FBE2C6212B1B1490004C0116 /* RealmChangeListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmChangeListener.swift; sourceTree = "<group>"; };
 		FBF404422B19304700FA0545 /* BorderedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BorderedView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -273,6 +277,8 @@
 			isa = PBXGroup;
 			children = (
 				FB15DD332B074E6E00A21290 /* ChatUI.swift */,
+				FBA20A2E2B166FCE00045D1C /* MVSettingsView.swift */,
+				FB58A1B32B17D1420024B9A2 /* ToolBarView.swift */,
 			);
 			path = NavViews;
 			sourceTree = "<group>";
@@ -280,6 +286,7 @@
 		FB3E02CD2B0D45FF00D8558C /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				FB3E02CA2B0D2E4700D8558C /* InputTextEditor.swift */,
 				FB3E02C82B0D2D8D00D8558C /* ExpandingTextEditor.swift */,
 				FB3E02C62B0D2C3100D8558C /* InputSwitch.swift */,
 				FB3E02C42B0D2A8500D8558C /* ThumbnailListView.swift */,
@@ -293,24 +300,16 @@
 		FB5094242B05820B000AEA96 /* views */ = {
 			isa = PBXGroup;
 			children = (
+				FBE2C61E2B1AFCA2004C0116 /* Social */,
+				FBE2C61D2B1AFC8F004C0116 /* SessionPlan */,
 				FBE2C6152B1AF584004C0116 /* Backgrounds */,
 				FB9F1DD72B1533B300FD9078 /* SignUp */,
 				FB3E02CD2B0D45FF00D8558C /* Components */,
 				FB3E02CC2B0D45F000D8558C /* NavViews */,
-				FB3E02B22B0C6B5100D8558C /* SessionPlanView.swift */,
-				FB3E02B42B0C6B6000D8558C /* ActivityPlanView.swift */,
-				FB3E02BC2B0C90E600D8558C /* BuddyListView.swift */,
-				FB3E02BE2B0C948A00D8558C /* AddBuddyView.swift */,
-				FB3E02C02B0C9A6D00D8558C /* BuddyProfileView.swift */,
-				FB3E02CA2B0D2E4700D8558C /* InputTextEditor.swift */,
 				FB10AE042B0DC8E600295F4B /* Tips.swift */,
 				FB10AE062B0DCDB500295F4B /* FloatingEmoji.swift */,
-				FB10AE0A2B0F162F00295F4B /* ActivityPlanThumbView.swift */,
-				FB10AE0C2B0F16B100295F4B /* ActivityPlanThumbList.swift */,
 				FB9F1DD12B1529E400FD9078 /* LoadingView.swift */,
 				FB9F1DD52B1532AB00FD9078 /* ImagePicker.swift */,
-				FBA20A2E2B166FCE00045D1C /* MVSettingsView.swift */,
-				FB58A1B32B17D1420024B9A2 /* ToolBarView.swift */,
 				FB58A1B52B1804C80024B9A2 /* FlashingLight.swift */,
 				FBF404422B19304700FA0545 /* BorderedView.swift */,
 			);
@@ -412,6 +411,7 @@
 				FB58E8792B01F59700FD9E2E /* models */,
 				FBD9AFC12B0081C1005F8620 /* RealmInstance.swift */,
 				FB58E8812B030F1D00FD9E2E /* RealmFind.swift */,
+				FBE2C6212B1B1490004C0116 /* RealmChangeListener.swift */,
 			);
 			path = Realm;
 			sourceTree = "<group>";
@@ -470,6 +470,28 @@
 				FBE2C6132B1AC68D004C0116 /* SoccerFieldBG.swift */,
 			);
 			path = Soccer;
+			sourceTree = "<group>";
+		};
+		FBE2C61D2B1AFC8F004C0116 /* SessionPlan */ = {
+			isa = PBXGroup;
+			children = (
+				FBE2C61F2B1AFD20004C0116 /* SessionPlanThumbView.swift */,
+				FB3E02B22B0C6B5100D8558C /* SessionPlanView.swift */,
+				FB3E02B42B0C6B6000D8558C /* ActivityPlanView.swift */,
+				FB10AE0A2B0F162F00295F4B /* ActivityPlanThumbView.swift */,
+				FB10AE0C2B0F16B100295F4B /* ActivityPlanThumbList.swift */,
+			);
+			path = SessionPlan;
+			sourceTree = "<group>";
+		};
+		FBE2C61E2B1AFCA2004C0116 /* Social */ = {
+			isa = PBXGroup;
+			children = (
+				FB3E02C02B0C9A6D00D8558C /* BuddyProfileView.swift */,
+				FB3E02BE2B0C948A00D8558C /* AddBuddyView.swift */,
+				FB3E02BC2B0C90E600D8558C /* BuddyListView.swift */,
+			);
+			path = Social;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -592,6 +614,7 @@
 				FBD9AFD92B01CB91005F8620 /* SoccerToolProvider.swift in Sources */,
 				FBD9AFA82AFF00BF005F8620 /* LudiBoardsApp.swift in Sources */,
 				FB15DD302B0745DF00A21290 /* MenuBarIcon.swift in Sources */,
+				FBE2C6202B1AFD20004C0116 /* SessionPlanThumbView.swift in Sources */,
 				FB93BB1B2B03471C00864CB2 /* FireData.swift in Sources */,
 				FB58A1B42B17D1420024B9A2 /* ToolBarView.swift in Sources */,
 				FBB450002B04B7580096F8EB /* ColorProvider.swift in Sources */,
@@ -601,6 +624,7 @@
 				FBD9AFC22B0081C1005F8620 /* RealmInstance.swift in Sources */,
 				FB58E8782B01F40300FD9E2E /* FireCore.swift in Sources */,
 				FB3E02B52B0C6B6000D8558C /* ActivityPlanView.swift in Sources */,
+				FBE2C6222B1B1490004C0116 /* RealmChangeListener.swift in Sources */,
 				FB3E02B92B0C724A00D8558C /* BoardBgProvider.swift in Sources */,
 				FB15DD322B07461500A21290 /* MenuBarWindow.swift in Sources */,
 				FBD9AFD72B00BB8F005F8620 /* ManagedViewBoardTool.swift in Sources */,

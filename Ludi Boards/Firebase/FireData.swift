@@ -19,10 +19,27 @@ func firebaseDatabase(collection: String, block: @escaping (DatabaseReference) -
     block(reference)
 }
 
-func fireManagedViewsAsync(boardId: String, realm: Realm) {
+func fireSessionPlansAsync(sessionId: String, realm: Realm) {
+    firebaseDatabase(collection: DatabasePaths.sessionPlan.rawValue) { ref in
+        ref.child(sessionId).observeSingleEvent(of: .value) { snapshot, _ in
+            var _ = snapshot.toLudiObjects(SessionPlan.self)
+        }
+    }
+}
+
+func fireActivityPlansAsync(activityId: String, realm: Realm) {
+    firebaseDatabase(collection: DatabasePaths.activityPlan.rawValue) { ref in
+        ref.child(activityId).observeSingleEvent(of: .value) { snapshot, _ in
+            var _ = snapshot.toLudiObjects(ActivityPlan.self)
+        }
+    }
+}
+
+func fireManagedViewsAsync(activityId: String, realm: Realm) {
     firebaseDatabase(collection: DatabasePaths.managedViews.rawValue) { ref in
-        ref.child(boardId).observeSingleEvent(of: .value) { snapshot, _ in
+        ref.child(activityId).observeSingleEvent(of: .value) { snapshot, _ in
             var _ = snapshot.toLudiObjects(ManagedView.self)
         }
     }
 }
+

@@ -9,16 +9,28 @@ import Foundation
 import SwiftUI
 
 struct SessionPlanView: View {
-    var boardId: String
+    var sessionId: String
     @State private var sport = "soccer"
-    @State private var title = ""
+    @State private var title = "SOL Session"
     @State private var description = ""
     @State private var objective = ""
     @State private var isOpen = true
-    @State private var activities: [String] = []
+    @State private var activities: [ActivityPlan] = []
     
+    let realmInstance = realm()
     private func fetchSessionPlan() {
-        // Fetch board details and update state variables
+        if let sp = realmInstance.findByField(SessionPlan.self, value: self.sessionId) {
+            title = sp.title
+            description = sp.sessionDetails
+            objective = sp.objectiveDetails
+        }
+        if let acts = realmInstance.findAllByField(ActivityPlan.self, field: "sessionId", value: self.sessionId) {
+            if acts.isEmpty {return}
+            activities.removeAll()
+            for i in acts {
+                activities.append(i)
+            }
+        }
     }
 
     var body: some View {
@@ -45,7 +57,15 @@ struct SessionPlanView: View {
             }
 
             Section(header: Text("Activities")) {
-                ActivityPlanListView(activityPlans: [ActivityPlan(), ActivityPlan()])
+                ActivityPlanListView(activityPlans: $activities)
+                Button("New Activity", action: {
+                    print("New Activity Button")
+                })
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
             }.clearSectionBackground()
 
             Section {
@@ -54,7 +74,17 @@ struct SessionPlanView: View {
             
             // Save button at the bottom
             Section {
-                Button("Save", action: {})
+                Button("Load Session", action: {
+                    CodiChannel.SESSION_ON_ID_CHANGE.send(value: sessionId)
+                })
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+                Button("Save", action: {
+                    print("save button")
+                })
                     .frame(maxWidth: .infinity)
                     .padding()
                     .background(Color.blue)
@@ -126,7 +156,7 @@ struct InputTextEditorA: View {
 
 struct BoardSessionDetailsForm_Previews: PreviewProvider {
     static var previews: some View {
-        SessionPlanView(boardId: "123")
+        SessionPlanView(sessionId: "SOL")
     }
 }
 

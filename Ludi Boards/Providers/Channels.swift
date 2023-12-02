@@ -55,6 +55,7 @@ enum CodiChannel {
     case central
     case message
     case broadcast
+    case SESSION_ON_ID_CHANGE
     case BOARD_ON_ID_CHANGE
     case MENU_TOGGLER
     case MENU_WINDOW_TOGGLER
@@ -79,6 +80,8 @@ enum CodiChannel {
                 return MessageChannel.shared.subject
             case .broadcast:
                 return BroadcastChannel.shared.subject
+            case .SESSION_ON_ID_CHANGE:
+                return SessionOnIdChangeChannel.shared.subject
             case .BOARD_ON_ID_CHANGE:
                 return BoardOnIdChangeChannel.shared.subject
             case .MENU_TOGGLER:
@@ -128,6 +131,10 @@ class MessageChannel {
 }
 class BroadcastChannel {
     static let shared = BroadcastChannel()
+    let subject = PassthroughSubject<Any, Never>()
+}
+class SessionOnIdChangeChannel {
+    static let shared = SessionOnIdChangeChannel()
     let subject = PassthroughSubject<Any, Never>()
 }
 class BoardOnIdChangeChannel {

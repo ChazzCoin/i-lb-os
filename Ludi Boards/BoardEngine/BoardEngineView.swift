@@ -16,7 +16,9 @@ struct BoardEngine: View {
     @State var cancellables = Set<AnyCancellable>()
     
     let realmIntance = realm()
-    
+    @State private var sessionNotificationToken: NotificationToken? = nil
+    @State private var activityNotificationToken: NotificationToken? = nil
+    @State private var managedViewNotificationToken: NotificationToken? = nil
     let firebaseService = FirebaseService(reference: Database
         .database()
         .reference()
@@ -31,11 +33,13 @@ struct BoardEngine: View {
     @State private var startPoint: CGPoint = .zero
     @State private var endPoint: CGPoint = .zero
     
-    @State private var boardId: String = "boardEngine-1"
+    private let sessionDemoId = "SOL"
+    @State private var sessionID: String = "SOL"
+    @State private var activityID: String = "SOLDemo"
     @State private var boardBg = BoardBgProvider.soccerTwo.tool.image
     
-    @State private var isLoading = false
-    @State private var toolViews: [String:ViewWrapper] = [:]
+    @State private var sessions: [SessionPlan] = []
+    @State private var activities: [ActivityPlan] = []
     @State private var basicTools: [ManagedView] = []
     @State private var lineTools: [ManagedView] = []
     
@@ -45,10 +49,10 @@ struct BoardEngine: View {
              
              ForEach(self.basicTools) { item in
                  if item.toolType == "LINE" {
-                     LineDrawingManaged(viewId: item.id).zIndex(3.0)
+                     LineDrawingManaged(viewId: item.id, activityId: self.activityID)
                  } else {
                      if let temp = SoccerToolProvider.parseByTitle(title: item.toolType)?.tool.image {
-                         ManagedViewBoardTool(boardId: item.boardId, viewId: item.id, toolType: temp)
+                         ManagedViewBoardTool(viewId: item.id, activityId: self.activityID, toolType: temp)
                      }
                  }
              }
@@ -56,7 +60,7 @@ struct BoardEngine: View {
              // Temporary line being drawn
              if self.isDraw {
                  
-                 if startPoint != .zero {  
+                 if startPoint != .zero {
                      Path { path in
                          path.move(to: startPoint)
                          path.addLine(to: endPoint)
@@ -73,15 +77,7 @@ struct BoardEngine: View {
                 Color.yellow.opacity(1)
             }, overlay: {
                 SoccerFieldHalfView(width: 4000.0, height: 3000.0)
-            })
-                .position(x: startPosX, y: startPosY)
-//            SoccerFieldHalfView()
-//                .frame(width: width, height: height)
-//            Image(boardBg)
-//                .resizable()
-//                .aspectRatio(contentMode: .fill) // Fill the area, possibly cropping the image
-//                .frame(width: width, height: height) // Match the frame size of the ZStack
-//                .position(x: startPosX, y: startPosY)
+            }).position(x: startPosX, y: startPosY)
         }
         .gesture(
             DragGesture()
@@ -96,14 +92,20 @@ struct BoardEngine: View {
                     saveLineData(start: value.startLocation, end: value.location)
                 }
         ).onAppear {
-            self.loadAllBoardSessions()
+            self.loadAllSessionPlans()
             
-            CodiChannel.BOARD_ON_ID_CHANGE.receive(on: RunLoop.main) { bId in
-                self.boardId = bId as! String
-                self.loadBoardSession()
+            CodiChannel.SESSION_ON_ID_CHANGE.receive(on: RunLoop.main) { sId in
+                if (sId as! String) == self.sessionID {return}
+                self.sessionID = sId as! String
+                self.loadSessionPlan()
             }.store(in: &cancellables)
             
-            // CodiChannel.TOOL_ON_DELETE.receive
+            CodiChannel.BOARD_ON_ID_CHANGE.receive(on: RunLoop.main) { bId in
+                if (bId as! String) == self.activityID {return}
+                self.activityID = bId as! String
+                self.loadActivityPlan()
+            }.store(in: &cancellables)
+            
             CodiChannel.TOOL_ON_DELETE.receive(on: RunLoop.main) { viewId in
                 self.deleteToolById(viewId: viewId as! String)
             }.store(in: &cancellables)
@@ -111,13 +113,15 @@ struct BoardEngine: View {
             CodiChannel.TOOL_ON_CREATE.receive(on: RunLoop.main) { tool in
                 let newTool = ManagedView()
                 newTool.toolType = tool as! String
-                newTool.boardId = self.boardId
+                newTool.boardId = self.activityID
                 realmIntance.safeWrite { r in
                     r.add(newTool)
                 }
+                
+                // TODO: Firebase Users ONLY
                 firebaseDatabase { fdb in
                     fdb.child(DatabasePaths.managedViews.rawValue)
-                        .child(self.boardId)
+                        .child(self.activityID)
                         .child(newTool.id)
                         .setValue(newTool.toDictionary())
                 }
@@ -126,48 +130,116 @@ struct BoardEngine: View {
         }
     }
     
-    func loadAllBoardSessions() {
-        isLoading = true
-        let boardList = self.realmIntance.objects(BoardSession.self)
-        self.boardId = "boardEngine-1"
-        if boardList.isEmpty {
+    func loadAllSessionPlans() {
+        
+        let sessionList = self.realmIntance.objects(SessionPlan.self)
+        if sessionList.isEmpty {
             self.realmIntance.safeWrite { r in
-                let newBoard = BoardSession()
-                newBoard.id = self.boardId
-                r.add(newBoard)
+                let newSession = SessionPlan()
+                newSession.id = self.sessionID
+                r.add(newSession)
             }
         } else {
-            let temp = boardList.first
+            let temp = sessionList.first
             if temp?.id != nil && !temp!.id.isEmpty {
-                self.boardId = temp?.id ?? "boardEngine-1"
+                self.sessionID = temp?.id ?? "SOL"
+            }
+            for i in sessionList {
+                self.sessions.append(i)
             }
         }
-        loadBoardSession()
+        loadSessionPlan()
         print("BOARDS: initial load -> ${boardList.size}")
     }
     
-    func loadBoardSession() {
-        isLoading = true
-        let tempBoard = self.realmIntance.findByField(BoardSession.self, field: "id", value: self.boardId)
+    func loadSessionPlan() {
+        let tempBoard = self.realmIntance.findByField(SessionPlan.self, field: "id", value: self.sessionID)
         if tempBoard == nil { return }
-        toolViews.removeAll()
-        toolViews = [:]
-        boardBg = BoardBgProvider.parseByTitle(title: tempBoard?.backgroundImg ?? "Soccer 2")?.tool.image ?? "soccer_two"
+        basicTools.removeAll()
+        basicTools = []
+        loadActivityPlan()
         loadManagedViewTools()
     }
     
-    func loadManagedViewTools() {
-        // Dispatch work to a background thread
-        self.firebaseService.startObserving(path: self.firebaseService.reference.child(self.boardId)) { snapshot in
-            print("FIRE OBSERVER CALLING")
-            let _ = snapshot.toLudiObjects(ManagedView.self, realm: self.realmIntance)
-            let newMapped = snapshot.toHashMap()
-            for (_, value) in newMapped {
-                if let tempHash = value as? [String: Any], let temp = toManagedView(dictionary: tempHash) {
-                    self.basicTools.safeAdd(temp)
+    func loadActivityPlan() {
+        if let acts = self.realmIntance.findAllByField(ActivityPlan.self, field: "sessionId", value: self.sessionID) {
+            if !acts.isEmpty {
+                var hasBeenSet = false
+                for i in acts {
+                    if !hasBeenSet {
+                        self.activityID = i.id
+                        hasBeenSet = true
+                    }
+                    self.activities.append(i)
                 }
+                return
             }
-//            self.firebaseService.stopObserving()
+        }
+        
+        self.realmIntance.safeWrite { r in
+            let newActivity = ActivityPlan()
+            newActivity.id = self.activityID
+            newActivity.sessionId = self.sessionID
+            r.add(newActivity)
+            self.activities.append(newActivity)
+        }
+    }
+    
+    func loadSessionPlans() {
+        
+        // TODO: Firebase Users ONLY
+        fireSessionPlansAsync(sessionId: self.sessionID, realm: self.realmIntance)
+        
+        // FREE
+        let umvs = realmIntance.objects(SessionPlan.self)
+        sessionNotificationToken = umvs.observe { (changes: RealmCollectionChange) in
+            switch changes {
+                case .initial(let results):
+                    print("Realm Listener: initial")
+                    for i in results {
+                        sessions.append(i)
+                    }
+                case .update(let results, let de, _, _):
+                    print("Realm Listener: update")
+                    for i in results {
+                        sessions.append(i)
+                    }
+                    for d in de {
+                        sessions.remove(at: d)
+                    }
+                case .error(let error):
+                    print("Realm Listener: error")
+                    fatalError("\(error)")  // Handle errors appropriately in production code
+            }
+        }
+    }
+    
+    func loadManagedViewTools() {
+        
+        // TODO: Firebase Users ONLY
+        fireManagedViewsAsync(activityId: self.activityID, realm: self.realmIntance)
+        
+        // FREE
+        let umvs = realmIntance.findAllByField(ManagedView.self, field: "boardId", value: self.activityID)
+        managedViewNotificationToken = umvs?.observe { (changes: RealmCollectionChange) in
+            switch changes {
+                case .initial(let results):
+                    print("Realm Listener: initial")
+                    for i in results {
+                        basicTools.safeAdd(i)
+                    }
+                case .update(let results, let de, _, _):
+                    print("Realm Listener: update")
+                    for i in results {
+                        basicTools.safeAdd(i)
+                    }
+                    for d in de {
+                        basicTools.remove(at: d)
+                    }
+                case .error(let error):
+                    print("Realm Listener: error")
+                    fatalError("\(error)")  // Handle errors appropriately in production code
+            }
         }
     }
     
@@ -184,7 +256,7 @@ struct BoardEngine: View {
     private func saveLineData(start: CGPoint, end: CGPoint) {
         realmIntance.safeWrite { r in
             let line = ManagedView()
-            line.boardId = "boardEngine-1"
+            line.boardId = self.activityID
             line.startX = Double(start.x)
             line.startY = Double(start.y)
             line.endX = Double(end.x)
@@ -196,9 +268,11 @@ struct BoardEngine: View {
             line.toolType = "LINE"
             line.dateUpdated = Int(Date().timeIntervalSince1970)
             r.add(line)
+            
+            // TODO: Firebase Users ONLY
             firebaseDatabase { fdb in
                 fdb.child(DatabasePaths.managedViews.rawValue)
-                    .child(self.boardId)
+                    .child(self.activityID)
                     .child(line.id)
                     .setValue(line.toDictionary())
             }

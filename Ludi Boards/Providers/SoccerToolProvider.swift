@@ -85,7 +85,6 @@ struct ToolButtonIcon: View {
                 print("CodiChannel SendTopic: \(icon.tool.title)")
                 CodiChannel.TOOL_ON_CREATE.send(value: icon.tool.title)
             }
-//            .foregroundColor(isLocked ? .red : Color.primary)
             .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
     }
 }

@@ -65,8 +65,8 @@ func getWidthAndHeightOfLine(start: CGPoint, end: CGPoint) -> (width: CGFloat, h
 }
 
 struct LineDrawingManaged: View {
-    let viewId: String
-    @State var boardId: String = "boardEngine-1"
+    @State var viewId: String
+    @State var activityId: String
     var managedView: ManagedView? = nil
     
     let realmInstance = realm()
@@ -181,7 +181,7 @@ struct LineDrawingManaged: View {
                     isDeleted = true
                     firebaseDatabase { fdb in
                         fdb.child(DatabasePaths.managedViews.rawValue)
-                            .child(self.boardId)
+                            .child(self.activityId)
                             .child(self.viewId)
                             .removeValue()
                     }
@@ -293,7 +293,7 @@ struct LineDrawingManaged: View {
             r.create(ManagedView.self, value: tMV, update: .all)
             firebaseDatabase { fdb in
                 fdb.child(DatabasePaths.managedViews.rawValue)
-                    .child(boardId)
+                    .child(activityId)
                     .child(viewId)
                     .setValue(mv?.toDictionary())
             }
@@ -304,6 +304,7 @@ struct LineDrawingManaged: View {
         let mv = realmInstance.object(ofType: ManagedView.self, forPrimaryKey: viewId)
         guard let umv = mv else { return }
         // set attributes
+        activityId = umv.boardId
         lifeStartX = umv.startX
         lifeStartY = umv.startY
         lifeEndX = umv.endX
@@ -312,38 +313,6 @@ struct LineDrawingManaged: View {
         loadCenterPoint()
         loadWidthAndHeight()
         loadRotationOfLine()
-        
-//        objectNotificationToken = umv.observe { change in
-//            switch change {
-//                case .change(let object, _):
-//                    let obj = object as! ManagedView
-//                    if obj.dateUpdated <= lifeDateUpdated { return }
-//                    lifeStartX = obj.startX
-//                    lifeStartY = obj.startY
-//                    lifeEndX = obj.endX
-//                    lifeEndY = obj.endY
-//                    lifeWidth = Double(obj.width)
-//                    loadCenterPoint()
-//                    loadWidthAndHeight()
-//                    loadRotationOfLine()
-//                    print("\(object)")
-//                case .error(let error):
-//                    print("An error occurred: \(error)")
-//                case .deleted:
-//                    isDeleted = true
-//                    isDisabled = true
-//            }
-//        }
-    }
-    
-    func observeFirebase() {
-        // TODO: make this more rock solid, error handling, retry logic...
-        if boardId.isEmpty || viewId.isEmpty {return}
-        DispatchQueue.global(qos: .userInitiated).async {
-            reference.child(boardId).child(viewId).fireObserver { snapshot in
-                let _ = snapshot.toLudiObject(ManagedView.self, realm: realmInstance)
-            }
-        }
     }
 }
 

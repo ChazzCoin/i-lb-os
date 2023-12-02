@@ -13,8 +13,8 @@ extension View {
         self.modifier(lbDragger())
     }
     
-    func enableMVT(viewId: String="") -> some View {
-        self.modifier(enableManagedViewTool(viewId: viewId, boardId: "boardEngine-1"))
+    func enableMVT(viewId: String, activityId: String) -> some View {
+        self.modifier(enableManagedViewTool(viewId: viewId, activityId: activityId))
     }
     
     func onTap(perform action: @escaping () -> Void) -> some View {

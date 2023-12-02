@@ -93,25 +93,10 @@ struct CanvasEngine: View {
             }
     }
     
-    struct FullScreenGestureView: View {
-        var body: some View {
-            GeometryReader { geometry in
-                Color.clear
-                    .frame(width: geometry.size.width, height: geometry.size.height)
-                    .contentShape(Rectangle())
-//                    .gesture(TapGesture().onEnded { _ in
-//                        print("Tapped anywhere on the screen")
-//                    })
-            }
-        }
-    }
-    
     var body: some View {
         
         GlobalPositioningZStack { geo, gps in
             
-//            NavStackWindow(id: "mv_settings", viewBuilder: {SettingsView(onDelete: {})})
-//                .position(using: gps, at: .bottomCenter)
             ForEach(Array(managedWindowsObject.managedViewGenerics.values)) { managedViewWindow in
                 managedViewWindow.viewBuilder()
             }.zIndex(5.0)
@@ -123,6 +108,7 @@ struct CanvasEngine: View {
                 {MenuButtonIcon(icon: MenuBarProvider.profile)},
                 {MenuButtonIcon(icon: MenuBarProvider.buddyList)},
                 {MenuButtonIcon(icon: MenuBarProvider.chat)},
+                {MenuButtonIcon(icon: MenuBarProvider.boardCreate)},
                 {MenuButtonIcon(icon: MenuBarProvider.boardDetails)},
                 {MenuButtonIcon(icon: MenuBarProvider.share)}
             ])
@@ -187,6 +173,7 @@ struct CanvasEngine: View {
 //            handleShare()
 //            handleBuddyList()
             handleMVSettings()
+            handleSessionPlans()
         }
         
     }
@@ -266,19 +253,19 @@ struct CanvasEngine: View {
 //    
     func handleSessionPlan() {
         let caller = MenuBarProvider.boardDetails.tool.title
-        let buddies = ManagedViewWindow(id: caller, viewBuilder: {NavStackWindow(id: caller, viewBuilder: {SessionPlanView(boardId: "boardEngine-1")})})
+        let buddies = ManagedViewWindow(id: caller, viewBuilder: {NavStackWindow(id: caller, viewBuilder: {SessionPlanView(sessionId: "SOL")})})
         buddies.title = "Session Planner"
         buddies.windowId = caller
         managedWindowsObject.toggleItem(key: caller, item: buddies)
     }
 //    
-//    func handleToolMenu() {
-//        let caller = MenuBarProvider.webBrowser.tool.title
-//        let buddies = ManagedViewWindow(id: caller, viewBuilder: AnyView(PopupMenu(viewId: "boardEngine-1")))
-//        buddies.title = "Tool Menu"
-//        buddies.windowId = caller
-//        managedWindowsObject.toggleItem(key: caller, item: AnyView(GenericNavWindowSMALL(managedViewWindow: buddies)))
-//    }
+    func handleSessionPlans() {
+        let caller = MenuBarProvider.boardCreate.tool.title
+        let buddies = ManagedViewWindow(id: caller, viewBuilder: {NavStackWindow(id: caller, viewBuilder: {SessionPlanListView()})})
+        buddies.title = "SOL Sessions"
+        buddies.windowId = caller
+        managedWindowsObject.toggleItem(key: caller, item: buddies)
+    }
 //    
 //    func handleShare() {
 //        let caller = MenuBarProvider.share.tool.title

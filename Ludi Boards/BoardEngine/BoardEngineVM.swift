@@ -103,10 +103,6 @@ class ViewModel: ObservableObject {
         print("BOARDS: initial load -> ${boardList.size}")
     }
     
-    func newBasicTool(id: String, icon: String) -> ManagedViewBoardTool {
-        return ManagedViewBoardTool(boardId: self.boardId, viewId: id, toolType: icon)
-    }
-    
 }
 
 extension Array where Element: ManagedView {
@@ -117,5 +113,12 @@ extension Array where Element: ManagedView {
         }
         // Item not found, add it
         self.append(item as! Element)
+    }
+    
+    mutating func safeRemove(_ item: ManagedView) {
+        if let index = self.firstIndex(where: { $0.id == item.id }) {
+            // Item found, remove it
+            self.remove(at: index)
+        }
     }
 }

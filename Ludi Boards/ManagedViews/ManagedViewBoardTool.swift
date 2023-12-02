@@ -9,8 +9,8 @@ import Foundation
 import SwiftUI
 
 struct ManagedViewBoardTool: View {
-    let boardId: String
     let viewId: String
+    let activityId: String
     let toolType: String
     
     @State private var color: Color = .black
@@ -23,8 +23,7 @@ struct ManagedViewBoardTool: View {
     var body: some View {
         Image(toolType)
             .resizable()
-            .enableMVT(viewId: viewId)
-        
+            .enableMVT(viewId: viewId, activityId: activityId)
     }
 }
 

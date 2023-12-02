@@ -28,6 +28,8 @@ enum DatabasePaths: String {
     case reviewTemplates = "review_templates"
     case redzones = "redzones"
     case events = "events"
+    case sessionPlan = "sessionPlan"
+    case activityPlan = "activityPlan"
     case boardSession = "boardSession"
     case managedViews = "managedViews"
 }

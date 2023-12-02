@@ -13,7 +13,7 @@ import Combine
 
 struct enableManagedViewTool : ViewModifier {
     @State var viewId: String
-    @State var boardId: String = "boardEngine-1"
+    @State var activityId: String
     
     let minSizeWH = 100.0
     
@@ -56,6 +56,7 @@ struct enableManagedViewTool : ViewModifier {
         if mv == nil {mv = realmInstance.object(ofType: ManagedView.self, forPrimaryKey: viewId)}
         guard let umv = mv else { return }
         // set attributes
+        activityId = umv.boardId
         lifeOffsetX = umv.x
         lifeOffsetY = umv.y
         lifeUpdatedAt = umv.dateUpdated
@@ -85,42 +86,23 @@ struct enableManagedViewTool : ViewModifier {
             mv?.height = Int(lifeHeight)
             guard let tMV = mv else { return }
             r.create(ManagedView.self, value: tMV, update: .all)
+            
+            // TODO: Firebase Users ONLY
+            if self.activityId.isEmpty || self.viewId.isEmpty {return}
             firebaseDatabase { fdb in
                 fdb.child(DatabasePaths.managedViews.rawValue)
-                    .child(boardId)
-                    .child(viewId)
+                    .child(self.activityId)
+                    .child(self.viewId)
                     .setValue(mv?.toDictionary())
             }
         }
     }
-    func flowRealm() {
-        if isDisabledChecker() {return}
-        if isDeletedChecker() {return}
-        // Flow -> codiRealm.onChangeByCondition
-        observeFirebase()
-    }
-    
-    func observeFirebase() {
-        // TODO: make this more rock solid, error handling, retry logic...
-        if boardId.isEmpty || viewId.isEmpty {return}
-        
-        DispatchQueue.global(qos: .userInitiated).async {
-            reference.child(boardId).child(viewId).fireObserver { snapshot in
-                let obj = snapshot.value as? [String:Any]
-                lifeOffsetX = obj?["x"] as? Double ?? lifeOffsetX
-                lifeOffsetY = obj?["y"] as? Double ?? lifeOffsetY
-                lifeUpdatedAt = obj?["dateUpdated"] as? Int ?? lifeUpdatedAt
-                self.position = CGPoint(x: lifeOffsetX, y: lifeOffsetY)
-                print("\(viewId) x: [ \(lifeOffsetX) ] y: [ \(lifeOffsetY) ]")
-                lifeWidth = Double(obj?["width"] as? Int ?? Int(lifeWidth))
-                lifeHeight = Double(obj?["height"] as? Int ?? Int(lifeHeight))
-                lifeRotation = Double(obj?["rotation"] as? Double ?? lifeRotation)
-                lifeToolType = obj?["toolType"] as? String ?? lifeToolType
-                lifeColor = ColorProvider.fromColorName(colorName: obj?["toolColor"] as? String ?? lifeColor.rawValue)
-            }
-        }
-        
-    }
+//    func flowRealm() {
+//        if isDisabledChecker() {return}
+//        if isDeletedChecker() {return}
+//        // Flow -> codiRealm.onChangeByCondition
+//        observeFirebase()
+//    }
     
     func body(content: Content) -> some View {
             content
@@ -170,7 +152,7 @@ struct enableManagedViewTool : ViewModifier {
                     loadFromRealm()
                     
                     CodiChannel.BOARD_ON_ID_CHANGE.receive(on: RunLoop.main) { bId in
-                        if self.boardId == (bId as! String) {
+                        if self.activityId == (bId as! String) {
                             isDisabled = false
                         } else {
                             isDisabled = true
@@ -204,9 +186,11 @@ struct enableManagedViewTool : ViewModifier {
                         if inVA.isDeleted {
                             isDeleted = true
                             isDisabled = true
+                            
+                            // TODO: Firebase Users ONLY
                             firebaseDatabase { fdb in
                                 fdb.child(DatabasePaths.managedViews.rawValue)
-                                    .child(self.boardId)
+                                    .child(self.activityId)
                                     .child(self.viewId)
                                     .removeValue()
                             }
