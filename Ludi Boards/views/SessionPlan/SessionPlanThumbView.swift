@@ -45,9 +45,6 @@ struct SessionPlanThumbView: View {
         .background(Color(UIColor.systemBackground))
         .cornerRadius(12)
         .shadow(radius: 3)
-        .onTapAnimation {
-            CodiChannel.SESSION_ON_ID_CHANGE.send(value: sessionPlan.id)
-        }
         .navigationBarTitle("SOL Sessions", displayMode: .inline)
         .navigationBarItems(trailing: HStack {
             Button(action: {
@@ -74,11 +71,13 @@ struct SessionPlanListView: View {
 
     var body: some View {
         List(sessionPlans) { sessionPlan in
-            NavigationLink(destination: SessionPlanView(sessionId: sessionPlan.id)) {
-                SessionPlanThumbView(sessionPlan: sessionPlan)
-            }
+//            NavigationLink(destination: SessionPlanView(sessionId: sessionPlan.id)) {
+//                SessionPlanThumbView(sessionPlan: sessionPlan)
+//            }
+            SessionPlanThumbView(sessionPlan: sessionPlan)
         }.onAppear() {
             let results = realmInstance.objects(SessionPlan.self)
+            if results.isEmpty {return}
             sessionPlans.removeAll()
             for i in results {
                 sessionPlans.append(i)

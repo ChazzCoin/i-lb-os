@@ -21,10 +21,10 @@ struct ActivityPlanThumbView: View {
                 .clipped()
 
             VStack(alignment: .leading, spacing: 8) {
-                Text("activityPlan.title")
+                Text(activityPlan.title)
                     .font(.headline)
                     .lineLimit(1)
-                Text("activityPlan.subTitle")
+                Text(activityPlan.subTitle)
                     .font(.subheadline)
                     .foregroundColor(.secondary)
                     .lineLimit(2)
