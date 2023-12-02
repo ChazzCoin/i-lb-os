@@ -63,7 +63,7 @@ struct ActivityPlanView: View {
             Section {
                 if self.boardId != "new" {
                     Button("Load Activity onto Board", action: {
-                        CodiChannel.BOARD_ON_ID_CHANGE.send(value: activityPlan.id)
+                        CodiChannel.SESSION_ON_ID_CHANGE.send(value: SessionChange(sessionId: self.activityPlan.sessionId, activityId: self.activityPlan.id))
                     })
                     .frame(maxWidth: .infinity)
                     .padding()

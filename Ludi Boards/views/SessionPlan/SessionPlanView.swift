@@ -7,9 +7,11 @@
 
 import Foundation
 import SwiftUI
+import Combine
 
 struct SessionPlanView: View {
-    var sessionId: String
+    @State var sessionId: String
+    @Binding var isShowing: Bool
     @State private var sport = "soccer"
     @State private var title = "SOL Session"
     @State private var description = ""
@@ -18,21 +20,9 @@ struct SessionPlanView: View {
     @State private var activities: [ActivityPlan] = []
     @State private var showNewActivity = false
     
+    
+    @State var cancellables = Set<AnyCancellable>()
     let realmInstance = realm()
-    private func fetchSessionPlan() {
-        if let sp = realmInstance.findByField(SessionPlan.self, value: self.sessionId) {
-            title = sp.title
-            description = sp.sessionDetails
-            objective = sp.objectiveDetails
-        }
-        if let acts = realmInstance.findAllByField(ActivityPlan.self, field: "sessionId", value: self.sessionId) {
-            if acts.isEmpty {return}
-            activities.removeAll()
-            for i in acts {
-                activities.append(i)
-            }
-        }
-    }
 
     var body: some View {
         Form {
@@ -82,7 +72,7 @@ struct SessionPlanView: View {
             Section {
                 if self.sessionId != "new" {
                     Button("Load Session", action: {
-                        CodiChannel.SESSION_ON_ID_CHANGE.send(value: sessionId)
+                        CodiChannel.SESSION_ON_ID_CHANGE.send(value: SessionChange(sessionId: sessionId))
                     })
                         .frame(maxWidth: .infinity)
                         .padding()
@@ -93,6 +83,12 @@ struct SessionPlanView: View {
                 
                 Button("Save", action: {
                     print("save button")
+                    if self.sessionId == "new" {
+                        saveNewSessionPlan()
+                    } else {
+                        updateSessionPlan()
+                    }
+                    isShowing = false
                 })
                     .frame(maxWidth: .infinity)
                     .padding()
@@ -119,6 +115,66 @@ struct SessionPlanView: View {
         })
         .sheet(isPresented: $showNewActivity) {
             ActivityPlanView(boardId: "new")
+        }.onAppear() {
+            CodiChannel.SESSION_ON_ID_CHANGE.receive(on: RunLoop.main) { sc in
+                let temp = sc as! SessionChange
+                  
+                if let sID = temp.sessionId {
+                    if sID != self.sessionId {
+                        self.sessionId = sID
+                        fetchSessionPlan()
+                    }
+                }
+                
+            }.store(in: &cancellables)
+        }
+    }
+    
+    func saveNewSessionPlan() {
+        // New Plan
+        let newSP = SessionPlan()
+        newSP.id = UUID().uuidString
+        newSP.title = title
+        newSP.sessionDetails = description
+        newSP.objectiveDetails = objective
+        newSP.isOpen = isOpen
+        // New Activity
+        let newAP = ActivityPlan()
+        newAP.sessionId = newSP.id
+        
+        realmInstance.safeWrite { r in
+            r.add(newSP)
+            r.add(newAP)
+        }
+        
+        // TODO: Firebase
+    }
+    
+    func updateSessionPlan() {
+        if let sp = realmInstance.findByField(SessionPlan.self, value: self.sessionId) {
+            sp.title = title
+            sp.sessionDetails = description
+            sp.objectiveDetails = objective
+            sp.isOpen = isOpen
+            realmInstance.safeWrite { r in
+                r.add(sp)
+            }
+        }
+    }
+    
+    private func fetchSessionPlan() {
+        if let sp = realmInstance.findByField(SessionPlan.self, value: self.sessionId) {
+            title = sp.title
+            description = sp.sessionDetails
+            objective = sp.objectiveDetails
+            isOpen = sp.isOpen
+        }
+        if let acts = realmInstance.findAllByField(ActivityPlan.self, field: "sessionId", value: self.sessionId) {
+            if acts.isEmpty {return}
+            activities.removeAll()
+            for i in acts {
+                activities.append(i)
+            }
         }
     }
 }
@@ -180,7 +236,7 @@ struct InputTextEditorA: View {
 
 struct BoardSessionDetailsForm_Previews: PreviewProvider {
     static var previews: some View {
-        SessionPlanView(sessionId: "SOL")
+        SessionPlanView(sessionId: "SOL", isShowing: .constant(true))
     }
 }
 

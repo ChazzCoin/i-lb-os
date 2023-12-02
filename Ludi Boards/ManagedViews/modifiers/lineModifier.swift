@@ -165,13 +165,13 @@ struct enableManagedViewLine : ViewModifier {
                     loadFromRealm()
                     flowRealm()
                     
-                    CodiChannel.BOARD_ON_ID_CHANGE.receive(on: RunLoop.main) { bId in
-                        
-                    }.store(in: &cancellables)
-                    
-                    CodiChannel.TOOL_ON_DELETE.receive(on: RunLoop.main) { viewId in
-                        
-                    }.store(in: &cancellables)
+//                    CodiChannel.BOARD_ON_ID_CHANGE.receive(on: RunLoop.main) { bId in
+//                        
+//                    }.store(in: &cancellables)
+//                    
+//                    CodiChannel.TOOL_ON_DELETE.receive(on: RunLoop.main) { viewId in
+//                        
+//                    }.store(in: &cancellables)
                     
                     CodiChannel.TOOL_ATTRIBUTES.receive(on: RunLoop.main) { viewAtts in
                         let inVA = (viewAtts as! ViewAtts)

@@ -92,16 +92,25 @@ struct BoardEngine: View {
         ).onAppear {
             self.loadAllSessionPlans()
             
-            CodiChannel.SESSION_ON_ID_CHANGE.receive(on: RunLoop.main) { sId in
-                if (sId as! String) == self.sessionID {return}
-                self.sessionID = sId as! String
-                self.loadSessionPlan()
-            }.store(in: &cancellables)
-            
-            CodiChannel.BOARD_ON_ID_CHANGE.receive(on: RunLoop.main) { bId in
-                if (bId as! String) == self.activityID {return}
-                self.activityID = bId as! String
-                self.loadActivityPlan()
+            CodiChannel.SESSION_ON_ID_CHANGE.receive(on: RunLoop.main) { sc in
+                let temp = sc as! SessionChange
+                
+                var sessionDidChange = false
+                if let sID = temp.sessionId {
+                    if sID != self.sessionID {
+                        self.sessionID = sID
+                        sessionDidChange = true
+                    }
+                }
+                
+                if let aID = temp.activityId { self.activityID = aID }
+                
+                if sessionDidChange {
+                    self.loadSessionPlan()
+                } else {
+                    self.loadActivityPlan()
+                }
+                
             }.store(in: &cancellables)
             
             CodiChannel.TOOL_ON_DELETE.receive(on: RunLoop.main) { viewId in
@@ -150,16 +159,20 @@ struct BoardEngine: View {
         print("BOARDS: initial load -> ${boardList.size}")
     }
     
+    func resetTools() {
+        basicTools.removeAll()
+        basicTools = []
+    }
+    
     func loadSessionPlan() {
         let tempBoard = self.realmIntance.findByField(SessionPlan.self, field: "id", value: self.sessionID)
         if tempBoard == nil { return }
-        basicTools.removeAll()
-        basicTools = []
         loadActivityPlan()
         loadManagedViewTools()
     }
     
     func loadActivityPlan() {
+        resetTools()
         if let acts = self.realmIntance.findAllByField(ActivityPlan.self, field: "sessionId", value: self.sessionID) {
             if !acts.isEmpty {
                 var hasBeenSet = false

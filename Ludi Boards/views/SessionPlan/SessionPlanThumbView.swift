@@ -71,9 +71,6 @@ struct SessionPlanListView: View {
 
     var body: some View {
         List(sessionPlans) { sessionPlan in
-//            NavigationLink(destination: SessionPlanView(sessionId: sessionPlan.id)) {
-//                SessionPlanThumbView(sessionPlan: sessionPlan)
-//            }
             SessionPlanThumbView(sessionPlan: sessionPlan)
         }.onAppear() {
             let results = realmInstance.objects(SessionPlan.self)

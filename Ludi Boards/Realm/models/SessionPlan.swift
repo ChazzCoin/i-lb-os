@@ -20,6 +20,8 @@ import RealmSwift
     dynamic var subTitle: String = "A Basic Session"
     dynamic var objectiveDetails: String = "To show off SOL!"
     dynamic var sessionDetails: String = "Add some details here!"
+    dynamic var isOpen: Bool = false
+    
 
     override static func primaryKey() -> String {
         return "id"

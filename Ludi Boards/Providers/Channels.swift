@@ -49,6 +49,16 @@ class ViewMenu {
     }
 }
 
+class SessionChange {
+    var sessionId: String? = nil
+    var activityId: String? = nil
+    
+    init(sessionId: String?=nil, activityId: String?=nil) {
+        self.sessionId = sessionId
+        self.activityId = activityId
+    }
+}
+
 //@State var cancellables = Set<AnyCancellable>()
 enum CodiChannel {
     case general

@@ -253,7 +253,7 @@ struct CanvasEngine: View {
 //    
     func handleSessionPlan() {
         let caller = MenuBarProvider.boardDetails.tool.title
-        let buddies = ManagedViewWindow(id: caller, viewBuilder: {NavStackWindow(id: caller, viewBuilder: {SessionPlanView(sessionId: "SOL")})})
+        let buddies = ManagedViewWindow(id: caller, viewBuilder: {NavStackWindow(id: caller, viewBuilder: {SessionPlanView(sessionId: "SOL", isShowing: .constant(true))})})
         buddies.title = "Session Planner"
         buddies.windowId = caller
         managedWindowsObject.toggleItem(key: caller, item: buddies)

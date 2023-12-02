@@ -151,8 +151,9 @@ struct enableManagedViewTool : ViewModifier {
                     isDisabled = false
                     loadFromRealm()
                     
-                    CodiChannel.BOARD_ON_ID_CHANGE.receive(on: RunLoop.main) { bId in
-                        if self.activityId == (bId as! String) {
+                    CodiChannel.SESSION_ON_ID_CHANGE.receive(on: RunLoop.main) { sc in
+                        let temp = sc as! SessionChange
+                        if self.activityId == temp.activityId {
                             isDisabled = false
                         } else {
                             isDisabled = true
