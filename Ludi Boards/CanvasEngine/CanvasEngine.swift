@@ -136,10 +136,12 @@ struct CanvasEngine: View {
             }
             
             if self.isDrawing {
-                FlashingLightView(isEnabled: $isDrawing)
-                    .position(using: gps, at: .topRight, offsetY: 25)
-                TipViewLocked(tip: "Tap & Drag to Create a Line", isVisible: $isDrawing)
-                    .position(using: gps, at: .topRight, offsetX: 500, offsetY: -50)
+                TipBoxView(tips: [
+                    "Tap the Line Tool again to toggle Line Drawing Mode.",
+                    "Tap anywhere on the field and begin dragging your finger to create a new line.",
+                    "Once you create the line, toggle Line Drawing Mode off and double tap the line for settings.",
+                    "You will be able to modify the line as you please once you turn off Line Drawing Mode."
+                ]).position(using: gps, at: .topRight, offsetX: 200, offsetY: 200)
             }
             
 //            FloatingEmojiView()

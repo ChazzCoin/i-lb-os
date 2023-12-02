@@ -110,6 +110,7 @@
 		FBE2C6202B1AFD20004C0116 /* SessionPlanThumbView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C61F2B1AFD20004C0116 /* SessionPlanThumbView.swift */; };
 		FBE2C6222B1B1490004C0116 /* RealmChangeListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C6212B1B1490004C0116 /* RealmChangeListener.swift */; };
 		FBE2C6242B1B2E01004C0116 /* SessionPlanOverview.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C6232B1B2E01004C0116 /* SessionPlanOverview.swift */; };
+		FBE2C6262B1BD7BA004C0116 /* TipBoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C6252B1BD7BA004C0116 /* TipBoxView.swift */; };
 		FBF404432B19304700FA0545 /* BorderedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF404422B19304700FA0545 /* BorderedView.swift */; };
 /* End PBXBuildFile section */
 
@@ -196,6 +197,7 @@
 		FBE2C61F2B1AFD20004C0116 /* SessionPlanThumbView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionPlanThumbView.swift; sourceTree = "<group>"; };
 		FBE2C6212B1B1490004C0116 /* RealmChangeListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmChangeListener.swift; sourceTree = "<group>"; };
 		FBE2C6232B1B2E01004C0116 /* SessionPlanOverview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionPlanOverview.swift; sourceTree = "<group>"; };
+		FBE2C6252B1BD7BA004C0116 /* TipBoxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TipBoxView.swift; sourceTree = "<group>"; };
 		FBF404422B19304700FA0545 /* BorderedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BorderedView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -314,6 +316,7 @@
 				FB9F1DD52B1532AB00FD9078 /* ImagePicker.swift */,
 				FB58A1B52B1804C80024B9A2 /* FlashingLight.swift */,
 				FBF404422B19304700FA0545 /* BorderedView.swift */,
+				FBE2C6252B1BD7BA004C0116 /* TipBoxView.swift */,
 			);
 			path = views;
 			sourceTree = "<group>";
@@ -640,6 +643,7 @@
 				FB3E02C12B0C9A6D00D8558C /* BuddyProfileView.swift in Sources */,
 				FBD9AFBC2AFF56C2005F8620 /* BoardEngineVM.swift in Sources */,
 				FBD9AFB82AFF0253005F8620 /* GridLines.swift in Sources */,
+				FBE2C6262B1BD7BA004C0116 /* TipBoxView.swift in Sources */,
 				FB3E02BB2B0C90D700D8558C /* Buddy.swift in Sources */,
 				FB10AE0B2B0F162F00295F4B /* ActivityPlanThumbView.swift in Sources */,
 				FBE2C6172B1AF595004C0116 /* GrassFieldView.swift in Sources */,
