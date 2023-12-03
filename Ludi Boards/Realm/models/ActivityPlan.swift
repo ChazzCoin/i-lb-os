@@ -9,7 +9,7 @@ import Foundation
 import RealmSwift
 
 @objcMembers class ActivityPlan: Object, Identifiable {
-    dynamic var id: String = "Demo Activity"
+    dynamic var id: String = UUID().uuidString
     dynamic var sessionId: String = "SOL"
     dynamic var dateCreated: String = getTimeStamp()
     dynamic var dateUpdated: String = getTimeStamp()

@@ -111,6 +111,10 @@
 		FBE2C6222B1B1490004C0116 /* RealmChangeListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C6212B1B1490004C0116 /* RealmChangeListener.swift */; };
 		FBE2C6242B1B2E01004C0116 /* SessionPlanOverview.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C6232B1B2E01004C0116 /* SessionPlanOverview.swift */; };
 		FBE2C6262B1BD7BA004C0116 /* TipBoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C6252B1BD7BA004C0116 /* TipBoxView.swift */; };
+		FBE2C6282B1C26BF004C0116 /* StandardButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C6272B1C26BF004C0116 /* StandardButton.swift */; };
+		FBE2C62A2B1C2B67004C0116 /* SharedPrefs.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C6292B1C2B67004C0116 /* SharedPrefs.swift */; };
+		FBE2C62C2B1C3DBD004C0116 /* LoadingPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C62B2B1C3DBD004C0116 /* LoadingPopup.swift */; };
+		FBE2C62E2B1C3FDE004C0116 /* LoadingForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C62D2B1C3FDE004C0116 /* LoadingForm.swift */; };
 		FBF404432B19304700FA0545 /* BorderedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF404422B19304700FA0545 /* BorderedView.swift */; };
 /* End PBXBuildFile section */
 
@@ -198,6 +202,10 @@
 		FBE2C6212B1B1490004C0116 /* RealmChangeListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmChangeListener.swift; sourceTree = "<group>"; };
 		FBE2C6232B1B2E01004C0116 /* SessionPlanOverview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionPlanOverview.swift; sourceTree = "<group>"; };
 		FBE2C6252B1BD7BA004C0116 /* TipBoxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TipBoxView.swift; sourceTree = "<group>"; };
+		FBE2C6272B1C26BF004C0116 /* StandardButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandardButton.swift; sourceTree = "<group>"; };
+		FBE2C6292B1C2B67004C0116 /* SharedPrefs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedPrefs.swift; sourceTree = "<group>"; };
+		FBE2C62B2B1C3DBD004C0116 /* LoadingPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingPopup.swift; sourceTree = "<group>"; };
+		FBE2C62D2B1C3FDE004C0116 /* LoadingForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingForm.swift; sourceTree = "<group>"; };
 		FBF404422B19304700FA0545 /* BorderedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BorderedView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -297,6 +305,9 @@
 				FB3E02B62B0C70D100D8558C /* InputField.swift */,
 				FB15DD262B07440700A21290 /* ViewWrapper.swift */,
 				FB5094252B058215000AEA96 /* LazyRow.swift */,
+				FBE2C6272B1C26BF004C0116 /* StandardButton.swift */,
+				FBE2C62B2B1C3DBD004C0116 /* LoadingPopup.swift */,
+				FBE2C62D2B1C3FDE004C0116 /* LoadingForm.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -454,6 +465,7 @@
 				FB3E02B82B0C724A00D8558C /* BoardBgProvider.swift */,
 				FB10AE082B0DD76C00295F4B /* EmojiProvider.swift */,
 				FBA4FB562B15AA2700BF409E /* GlobalPositioning.swift */,
+				FBE2C6292B1C2B67004C0116 /* SharedPrefs.swift */,
 			);
 			path = Providers;
 			sourceTree = "<group>";
@@ -620,6 +632,7 @@
 				FBD9AFD22B008CAB005F8620 /* MenuBarProvider.swift in Sources */,
 				FBD9AFD92B01CB91005F8620 /* SoccerToolProvider.swift in Sources */,
 				FBD9AFA82AFF00BF005F8620 /* LudiBoardsApp.swift in Sources */,
+				FBE2C62A2B1C2B67004C0116 /* SharedPrefs.swift in Sources */,
 				FB15DD302B0745DF00A21290 /* MenuBarIcon.swift in Sources */,
 				FBE2C6202B1AFD20004C0116 /* SessionPlanThumbView.swift in Sources */,
 				FB93BB1B2B03471C00864CB2 /* FireData.swift in Sources */,
@@ -628,6 +641,7 @@
 				FBD9AFCB2B00843F005F8620 /* BoardSession.swift in Sources */,
 				FBE2C61C2B1AF961004C0116 /* BoardBackgrounder.swift in Sources */,
 				FB9F1DD42B15307E00FD9078 /* UserSignUp.swift in Sources */,
+				FBE2C6282B1C26BF004C0116 /* StandardButton.swift in Sources */,
 				FBD9AFC22B0081C1005F8620 /* RealmInstance.swift in Sources */,
 				FB58E8782B01F40300FD9E2E /* FireCore.swift in Sources */,
 				FB3E02B52B0C6B6000D8558C /* ActivityPlanView.swift in Sources */,
@@ -662,6 +676,7 @@
 				FB3E02C72B0D2C3100D8558C /* InputSwitch.swift in Sources */,
 				FB10AE072B0DCDB500295F4B /* FloatingEmoji.swift in Sources */,
 				FB3E02C52B0D2A8500D8558C /* ThumbnailListView.swift in Sources */,
+				FBE2C62C2B1C3DBD004C0116 /* LoadingPopup.swift in Sources */,
 				FBE2C61A2B1AF7D5004C0116 /* FootballFieldView.swift in Sources */,
 				FBD9AFD52B008F6F005F8620 /* Channels.swift in Sources */,
 				FB982F912B19D1B900C0DA03 /* FirebaseService.swift in Sources */,
@@ -674,6 +689,7 @@
 				FBB450022B052B180096F8EB /* FireLiveData.swift in Sources */,
 				FBA4FB572B15AA2700BF409E /* GlobalPositioning.swift in Sources */,
 				FB9F1DD02B1528FC00FD9078 /* Extensions.swift in Sources */,
+				FBE2C62E2B1C3FDE004C0116 /* LoadingForm.swift in Sources */,
 				FB0AA56A2B0BEBE1001AA316 /* TwoFingerPanView.swift in Sources */,
 				FBE2C6142B1AC68D004C0116 /* SoccerFieldBG.swift in Sources */,
 				FB58E8802B02B26C00FD9E2E /* DragAndDrop.swift in Sources */,

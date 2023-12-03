@@ -17,6 +17,10 @@ extension View {
         self.modifier(enableManagedViewTool(viewId: viewId, activityId: activityId))
     }
     
+    func solEnabled(isEnabled: Bool) -> some View {
+        self.modifier(SolButtonModifier(isEnabled: isEnabled))
+    }
+    
     func onTap(perform action: @escaping () -> Void) -> some View {
         self.onTapGesture {
             hapticFeedback()
@@ -76,6 +80,16 @@ func foregroundColorForScheme(_ scheme: ColorScheme) -> Color {
         }
 }
 
+struct SolButtonModifier: ViewModifier {
+    var isEnabled: Bool
+
+    func body(content: Content) -> some View {
+        content
+            .opacity(isEnabled ? 1 : 0.5) // Change opacity when disabled
+            .disabled(!isEnabled) // Disable button interaction
+    }
+}
+
 func simpleSuccessHaptic() {
     let generator = UINotificationFeedbackGenerator()
     generator.notificationOccurred(.success)
@@ -104,50 +118,6 @@ struct TapAnimationModifier: ViewModifier {
             }
     }
 }
-
-//struct DoubleTapExplodeGesture: Gesture {
-//    let scale: CGFloat
-//    let duration: Double
-//    let completion: () -> Void
-//    
-//    @GestureState private var isAnimating = false
-//
-//    var body: some Gesture {
-//        TapGesture(count: 2)
-//            .updating($isAnimating) { currentState, gestureState, transaction in
-//                gestureState = true
-//                DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
-//                    gestureState = false
-//                    completion()
-//                }
-//            }
-//    }
-//}
-
-//struct DoubleTapExplodeModifier: ViewModifier {
-//    let scale: CGFloat
-//    let duration: Double
-//    let completion: () -> Void
-//
-//    @GestureState private var isAnimating = false
-//
-//    func body(content: Content) -> some View {
-//        content
-//            .scaleEffect(isAnimating ? scale : 1.0)
-//            .animation(.easeInOut(duration: duration), value: isAnimating)
-//            .gesture(
-//                TapGesture(count: 2)
-//                    .updating($isAnimating) { _, gestureState, _ in
-//                        gestureState = true
-//                        DispatchQueue.main.asyncAfter(deadline: .now() + self.duration) {
-//                            gestureState = false
-//                            self.completion()
-//                        }
-//                    }
-//            )
-//    }
-//}
-
 struct DoubleTapExplodeModifier: ViewModifier {
     let scale: CGFloat
     let duration: Double

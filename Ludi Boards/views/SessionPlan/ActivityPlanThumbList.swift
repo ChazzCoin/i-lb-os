@@ -15,7 +15,7 @@ struct ActivityPlanListView: View {
         
         if !activityPlans.isEmpty {
             List(activityPlans) { activityPlan in
-                NavigationLink(destination: ActivityPlanView(boardId: activityPlan.id)) {
+                NavigationLink(destination: ActivityPlanView(boardId: activityPlan.id, sessionId: activityPlan.sessionId, isShowing: .constant(true))) {
                     ActivityPlanThumbView(activityPlan: activityPlan)
                 }
             }

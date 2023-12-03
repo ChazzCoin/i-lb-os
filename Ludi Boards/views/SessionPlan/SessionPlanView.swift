@@ -20,12 +20,13 @@ struct SessionPlanView: View {
     @State private var activities: [ActivityPlan] = []
     @State private var showNewActivity = false
     
+    @State private var isCurrentPlan = false
     
     @State var cancellables = Set<AnyCancellable>()
     let realmInstance = realm()
 
     var body: some View {
-        Form {
+        LoadingForm() { runLoading in
             Section(header: Text("Details")) {
                 TextField("Title", text: $title)
                 Section(header: Text("Description")) {
@@ -51,17 +52,11 @@ struct SessionPlanView: View {
                 ActivityPlanListView(activityPlans: $activities)
                 
                 if self.sessionId != "new" {
-                    Button("New Activity", action: {
+                    solButton(title: "New Activity", action: {
                         print("New Activity Button")
                         showNewActivity = true
                     })
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(10)
                 }
-                
             }.clearSectionBackground()
 
             Section {
@@ -71,18 +66,15 @@ struct SessionPlanView: View {
             // Save button at the bottom
             Section {
                 if self.sessionId != "new" {
-                    Button("Load Session", action: {
-                        CodiChannel.SESSION_ON_ID_CHANGE.send(value: SessionChange(sessionId: sessionId))
-                    })
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(10)
+                    solButton(title: "Load Session", action: {
+                        runLoading()
+                        CodiChannel.SESSION_ON_ID_CHANGE.send(value: SessionChange(sessionId: sessionId, activityId: nil))
+                    }, isEnabled: !self.isCurrentPlan)
                 }
                 
-                Button("Save", action: {
+                solButton(title: "Save", action: {
                     print("save button")
+                    runLoading()
                     if self.sessionId == "new" {
                         saveNewSessionPlan()
                     } else {
@@ -90,19 +82,23 @@ struct SessionPlanView: View {
                     }
                     isShowing = false
                 })
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
             }.clearSectionBackground()
         }
         .onAppear {
             if self.sessionId != "new" {
                 fetchSessionPlan()
             }
+            CodiChannel.SESSION_ON_ID_CHANGE.receive(on: RunLoop.main) { sc in
+                let temp = sc as! SessionChange
+                if let sID = temp.sessionId {
+                    if sID != self.sessionId {
+                        self.sessionId = sID
+                        fetchSessionPlan()
+                    }
+                }
+            }.store(in: &cancellables)
         }
-        .navigationBarTitle("Session Plan", displayMode: .inline)
+        .navigationBarTitle(isCurrentPlan ? "Current Plan" : "Session Plan", displayMode: .inline)
         .navigationBarItems(trailing: HStack {
             Button(action: {
                 print("Minimize")
@@ -114,19 +110,12 @@ struct SessionPlanView: View {
             }
         })
         .sheet(isPresented: $showNewActivity) {
-            ActivityPlanView(boardId: "new")
-        }.onAppear() {
-            CodiChannel.SESSION_ON_ID_CHANGE.receive(on: RunLoop.main) { sc in
-                let temp = sc as! SessionChange
-                  
-                if let sID = temp.sessionId {
-                    if sID != self.sessionId {
-                        self.sessionId = sID
-                        fetchSessionPlan()
-                    }
-                }
-                
-            }.store(in: &cancellables)
+            ActivityPlanView(boardId: "new", sessionId: sessionId, isShowing: $showNewActivity)
+        }
+        .refreshable {
+            if self.sessionId != "new" {
+                fetchSessionPlan()
+            }
         }
     }
     
@@ -141,6 +130,9 @@ struct SessionPlanView: View {
         // New Activity
         let newAP = ActivityPlan()
         newAP.sessionId = newSP.id
+        newAP.title = "\(title) Activity"
+        newAP.orderIndex = 0
+        newAP.isOpen = isOpen
         
         realmInstance.safeWrite { r in
             r.add(newSP)
@@ -152,11 +144,11 @@ struct SessionPlanView: View {
     
     func updateSessionPlan() {
         if let sp = realmInstance.findByField(SessionPlan.self, value: self.sessionId) {
-            sp.title = title
-            sp.sessionDetails = description
-            sp.objectiveDetails = objective
-            sp.isOpen = isOpen
             realmInstance.safeWrite { r in
+                sp.title = title
+                sp.sessionDetails = description
+                sp.objectiveDetails = objective
+                sp.isOpen = isOpen
                 r.add(sp)
             }
         }
@@ -168,13 +160,18 @@ struct SessionPlanView: View {
             description = sp.sessionDetails
             objective = sp.objectiveDetails
             isOpen = sp.isOpen
+            let sessId = SharedPrefs.shared.retrieve("sessionId")
+            if sessId == sp.id {
+                self.isCurrentPlan = true
+            }
         }
         if let acts = realmInstance.findAllByField(ActivityPlan.self, field: "sessionId", value: self.sessionId) {
             if acts.isEmpty {return}
-            activities.removeAll()
+            var temp: [ActivityPlan] = []
             for i in acts {
-                activities.append(i)
+                temp.append(i)
             }
+            activities = temp
         }
     }
 }

@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 struct ActivityPlanThumbView: View {
-    let activityPlan: ActivityPlan
+    let activityPlan: ActivityPlan?
 
     var body: some View {
         HStack(spacing: 16) {
@@ -21,18 +21,18 @@ struct ActivityPlanThumbView: View {
                 .clipped()
 
             VStack(alignment: .leading, spacing: 8) {
-                Text(activityPlan.title)
+                Text(activityPlan?.title ?? "Unknown")
                     .font(.headline)
                     .lineLimit(1)
-                Text(activityPlan.subTitle)
+                Text(activityPlan?.subTitle ?? "Unknown")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
                     .lineLimit(2)
                 Spacer()
-                Text("Date: \(activityPlan.dateOf)")
+                Text("Date: \(activityPlan?.dateOf ?? "Unknown")")
                     .font(.caption)
                     .foregroundColor(.secondary)
-                Text("Duration: \(activityPlan.duration)")
+                Text("Duration: \(activityPlan?.duration ?? "Unknown")")
                     .font(.caption)
                     .foregroundColor(.secondary)
             }.frame(height: 110)

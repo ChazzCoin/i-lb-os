@@ -35,7 +35,7 @@ struct BoardEngine: View {
     
     private let sessionDemoId = "SOL"
     @State private var sessionID: String = "SOL"
-    @State private var activityID: String = "SOLDemo"
+    @State private var activityID: String = ""
     @State private var boardBg = BoardBgProvider.soccerTwo.tool.image
     
     @State private var sessions: [SessionPlan] = []
@@ -155,6 +155,7 @@ struct BoardEngine: View {
                 self.sessions.append(i)
             }
         }
+        SharedPrefs.shared.save("sessionId", value: self.sessionID)
         loadSessionPlan()
         print("BOARDS: initial load -> ${boardList.size}")
     }
@@ -179,6 +180,7 @@ struct BoardEngine: View {
                 for i in acts {
                     if !hasBeenSet {
                         self.activityID = i.id
+                        SharedPrefs.shared.save("activityId", value: i.id)
                         hasBeenSet = true
                     }
                     self.activities.append(i)
@@ -186,14 +188,15 @@ struct BoardEngine: View {
                 return
             }
         }
-        
+        let newActivity = ActivityPlan()
+        self.activityID = newActivity.id
+        SharedPrefs.shared.save("activityId", value: newActivity.id)
+        newActivity.sessionId = self.sessionID
+        self.activities.append(newActivity)
         self.realmIntance.safeWrite { r in
-            let newActivity = ActivityPlan()
-            newActivity.id = self.activityID
-            newActivity.sessionId = self.sessionID
             r.add(newActivity)
-            self.activities.append(newActivity)
         }
+        
     }
     
     func loadSessionPlans() {

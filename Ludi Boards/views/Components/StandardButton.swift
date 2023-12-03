@@ -1,0 +1,34 @@
+//
+//  StandardButton.swift
+//  Ludi Boards
+//
+//  Created by Charles Romeo on 12/2/23.
+//
+
+import Foundation
+import SwiftUI
+
+struct solButton: View {
+    let title: String
+    let action: () -> Void
+    var isEnabled: Bool = true
+    @State private var isButtonPressed = false
+
+    var body: some View {
+        Button(action: {
+            if isEnabled {
+                action()
+            }
+        }) {
+            Text(title)
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(isEnabled ? Color.blue : Color.gray) // Background color changes when disabled
+                .foregroundColor(.white)
+                .cornerRadius(10)
+                .scaleEffect(isButtonPressed ? 0.95 : 1.0)
+                .animation(.spring(), value: isButtonPressed)
+        }
+        .solEnabled(isEnabled: isEnabled)
+    }
+}
