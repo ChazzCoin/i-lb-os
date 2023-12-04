@@ -310,6 +310,8 @@ struct BoardEngine: View {
         self.activityID = newActivity.id
         newActivity.sessionId = self.sessionID
         self.BEO.currentActivityId = self.activityID
+        self.BEO.setColor(red: newActivity.backgroundRed, green: newActivity.backgroundGreen, blue: newActivity.backgroundBlue, alpha: newActivity.backgroundAlpha)
+        self.BEO.boardBgName = newActivity.backgroundView
         self.activities.append(newActivity)
         self.realmIntance.safeWrite { r in
             r.add(newActivity)

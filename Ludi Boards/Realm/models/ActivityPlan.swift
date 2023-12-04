@@ -27,11 +27,11 @@ import RealmSwift
     
     dynamic var width: Int = 3000
     dynamic var height: Int = 4000
-    dynamic var backgroundRed: Double = 0.0
-    dynamic var backgroundGreen: Double = 0.0
-    dynamic var backgroundBlue: Double = 0.0
-    dynamic var backgroundAlpha: Double = 0.0
-    dynamic var backgroundView: String = ""
+    dynamic var backgroundRed: Double = 48.0
+    dynamic var backgroundGreen: Double = 128.0
+    dynamic var backgroundBlue: Double = 20.0
+    dynamic var backgroundAlpha: Double = 0.75
+    dynamic var backgroundView: String = "SoccerFieldFullView"
 
     override static func primaryKey() -> String? {
         return "id"

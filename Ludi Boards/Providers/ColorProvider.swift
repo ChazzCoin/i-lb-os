@@ -30,7 +30,6 @@ extension UIColor {
 extension ColorProvider {
     static func fromColor(_ color: Color) -> ColorProvider {
         let uiColor = color.uiColor
-        Color.AIMYellow
         for case let candidate in ColorProvider.allCases {
             if uiColor.isEqualToColor(candidate.colorValue.uiColor) {
                 return candidate
@@ -71,6 +70,16 @@ extension Color {
 struct ColorPro {
     let title: String
     let color: Color
+}
+
+func colorDict() -> [String: Color] {
+    var colorDict = [String: Color]()
+
+    for colorCase in ColorProvider.allCases {
+        colorDict[colorCase.rawValue] = colorCase.colorValue
+    }
+
+    return colorDict
 }
 
 enum ColorProvider: String, CaseIterable {

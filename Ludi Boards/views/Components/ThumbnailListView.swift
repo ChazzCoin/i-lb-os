@@ -41,17 +41,15 @@ struct ThumbnailListView: View {
 }
 
 struct ColorListPicker: View {
-    // Assuming you have an array of image names from your assets
     var callback: (Color) -> Void
-    let colorNames: [Color] = [Color.AIMYellow, Color.red, Color.blue, Color.green]
+    @State var colorNamesProvider = Array(colorDict().values)
 
-    // State to track the selected image
     @State private var selectedImage: Color?
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 10) {
-                ForEach(colorNames, id: \.self) { colorName in
+                ForEach(colorNamesProvider, id: \.self) { colorName in
                     RoundedRectangle(cornerRadius: 10)
                         .fill(colorName)
                         .frame(width: 50, height: 50)

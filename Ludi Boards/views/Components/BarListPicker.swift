@@ -32,7 +32,7 @@ struct BarListPicker: View {
                         .padding(5)
                         .overlay(
                             RoundedRectangle(cornerRadius: 10)
-                                .stroke(selectedImage == key ? Color.blue : Color.clear, lineWidth: 3)
+                                .stroke(selectedImage == key ? backgroundColorForScheme(colorScheme) : Color.clear, lineWidth: 3)
                         )
                         .onTapAnimation {
                             self.selectedImage = key
