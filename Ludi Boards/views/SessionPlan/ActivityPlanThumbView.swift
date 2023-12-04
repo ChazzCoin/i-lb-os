@@ -36,9 +36,9 @@ struct ActivityPlanThumbView: View {
                     .foregroundColor(.secondary)
             }
         }
-        .frame(height: 75)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.vertical, 8)
-        .padding(.horizontal, 16)
+        .padding(.horizontal, 8)
         .background(Color(UIColor.systemBackground))
         .cornerRadius(12)
         .shadow(radius: 3)
