@@ -16,7 +16,7 @@ struct SessionPlanThumbView: View {
             Image("soccer_one") // Replace with actual image
                 .resizable()
                 .scaledToFill()
-                .frame(width: 100, height: 100)
+                .frame(width: 75, height: 75)
                 .cornerRadius(10)
                 .clipped()
 
@@ -28,18 +28,12 @@ struct SessionPlanThumbView: View {
                     .font(.subheadline)
                     .foregroundColor(.secondary)
                     .lineLimit(2)
-                Spacer()
                 Text(sessionPlan.sessionDetails)
                     .font(.caption)
                     .foregroundColor(.secondary)
-                Text(sessionPlan.objectiveDetails)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }.frame(height: 110)
-
-            Spacer()
+            }
         }
-        .frame(height: 110)
+        .frame(height: 75)
         .padding(.vertical, 8)
         .padding(.horizontal, 16)
         .background(Color(UIColor.systemBackground))

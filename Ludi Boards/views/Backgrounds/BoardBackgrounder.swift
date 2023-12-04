@@ -40,7 +40,7 @@ struct ContentViewField_Previews: PreviewProvider {
         FieldOverlayView(width: 500, height: 500, background: {
             GrassView()
         }, overlay: {
-            SoccerFieldFullView(width: 500, height: 500)
+            SoccerFieldFullView(width: 500, height: 500, stroke: 2)
         })
     }
 }

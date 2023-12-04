@@ -40,6 +40,37 @@ struct ThumbnailListView: View {
     }
 }
 
+struct ColorListPicker: View {
+    // Assuming you have an array of image names from your assets
+    var callback: (Color) -> Void
+    let colorNames: [Color] = [Color.AIMYellow, Color.red, Color.blue, Color.green]
+
+    // State to track the selected image
+    @State private var selectedImage: Color?
+
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 10) {
+                ForEach(colorNames, id: \.self) { colorName in
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(colorName)
+                        .frame(width: 50, height: 50)
+                        .cornerRadius(10)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(selectedImage == colorName ? Color.white : Color.clear, lineWidth: 3)
+                        )
+                        .onTapAnimation {
+                            self.selectedImage = colorName
+                            callback(colorName)
+                        }
+                }
+            }
+            .padding()
+        }
+    }
+}
+
 struct ThumbnailListView_Previews: PreviewProvider {
     static var previews: some View {
         ThumbnailListView() { item in

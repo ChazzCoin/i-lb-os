@@ -66,7 +66,7 @@ enum CodiChannel {
     case message
     case broadcast
     case SESSION_ON_ID_CHANGE
-    case BOARD_ON_ID_CHANGE
+    case ACTIVITY_ON_ID_CHANGE
     case MENU_TOGGLER
     case MENU_WINDOW_TOGGLER
     case MENU_WINDOW_CONTROLLER
@@ -92,7 +92,7 @@ enum CodiChannel {
                 return BroadcastChannel.shared.subject
             case .SESSION_ON_ID_CHANGE:
                 return SessionOnIdChangeChannel.shared.subject
-            case .BOARD_ON_ID_CHANGE:
+            case .ACTIVITY_ON_ID_CHANGE:
                 return BoardOnIdChangeChannel.shared.subject
             case .MENU_TOGGLER:
                 return MenuTogglerChangeChannel.shared.subject

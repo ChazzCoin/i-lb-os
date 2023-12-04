@@ -27,7 +27,7 @@ struct SessionPlanOverview: View {
             }.clearSectionBackground()
             Section(header: Text("Sessions")) {
                 List(sessionPlans) { sessionPlan in
-                    NavigationLink(destination: SessionPlanView(sessionId: sessionPlan.id, isShowing: .constant(true))) {
+                    NavigationLink(destination: SessionPlanView(sessionId: sessionPlan.id, isShowing: .constant(true), isMasterWindow: false)) {
                         SessionPlanThumbView(sessionPlan: sessionPlan)
                     }
                 }
@@ -40,7 +40,7 @@ struct SessionPlanOverview: View {
         .loading(isShowing: $isLoading)
         .navigationBarTitle("Session Plans", displayMode: .inline)
         .sheet(isPresented: $showNewPlanSheet) {
-            SessionPlanView(sessionId: "new", isShowing: $showNewPlanSheet)
+            SessionPlanView(sessionId: "new", isShowing: $showNewPlanSheet, isMasterWindow: false)
         }
     }
     

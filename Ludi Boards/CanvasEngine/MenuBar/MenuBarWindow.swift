@@ -59,31 +59,3 @@ struct MenuBarWindow<Content>: View where Content: View {
     
 }
 
-//struct MenuBarWindow2<Content>: View where Content: View {
-//    let items: [() -> Content]
-//    
-//    @State private var position = CGPoint(x: 100, y: 300)
-//    private let screenSize = UIScreen.main.bounds
-//
-//    var body: some View {
-//        VStack(spacing: 10) {
-//            ForEach(0..<items.count, id: \.self) { index in
-//                self.items[index]()
-////                    .foregroundColor(Color.primary) // System primary color
-//            }
-//        }
-//        .frame(width: 60, height: CGFloat(60 * items.count)) // Adjust size
-//        .padding(10)
-//        .background(Color(UIColor.systemBackground)) // Use system background color
-//        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-//        .shadow(color: Color.black.opacity(0.2), radius: 10, x: 0, y: 4)
-//        .position(position.clamped(to: screenSize))
-//        .gesture(
-//            DragGesture()
-//                .onChanged { value in
-//                    self.position = value.location.clamped(to: screenSize)
-//                }
-//        )
-//    }
-//}
-

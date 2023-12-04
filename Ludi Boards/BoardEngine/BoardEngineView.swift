@@ -11,8 +11,18 @@ import Combine
 import RealmSwift
 import FirebaseDatabase
 
+class BoardEngineObject : ObservableObject {
+    static let shared = BoardEngineObject()
+    
+    @Published var currentSessionId: String = ""
+    @Published var currentActivityId: String = ""
+
+    private init() {} // Private initialization to ensure singleton instance
+}
+
 struct BoardEngine: View {
     @Binding var isDraw: Bool
+    @EnvironmentObject var BEO: BoardEngineObject
     @State var cancellables = Set<AnyCancellable>()
     
     let realmIntance = realm()
@@ -33,7 +43,9 @@ struct BoardEngine: View {
     @State private var startPoint: CGPoint = .zero
     @State private var endPoint: CGPoint = .zero
     
-    private let sessionDemoId = "SOL"
+    
+    @State private var currentSessionID = "SOL"
+    @State private var currentSessionWasLoaded = false
     @State private var sessionID: String = "SOL"
     @State private var activityID: String = ""
     @State private var boardBg = BoardBgProvider.soccerTwo.tool.image
@@ -74,7 +86,7 @@ struct BoardEngine: View {
             FieldOverlayView(width: width, height: height, background: {
                 Color.green.opacity(0.75)
             }, overlay: {
-                SoccerFieldFullView(width: height, height: width)
+                SoccerFieldFullView(width: height, height: width, stroke: 10)
             }).position(x: startPosX, y: startPosY)
         }
         .gesture(
@@ -90,25 +102,36 @@ struct BoardEngine: View {
                     saveLineData(start: value.startLocation, end: value.location)
                 }
         ).onAppear {
+//            self.loadFromCurrentSession()
             self.loadAllSessionPlans()
-            
             CodiChannel.SESSION_ON_ID_CHANGE.receive(on: RunLoop.main) { sc in
                 let temp = sc as! SessionChange
                 
                 var sessionDidChange = false
-                if let sID = temp.sessionId {
-                    if sID != self.sessionID {
-                        self.sessionID = sID
+                var activityDidChange = false
+                
+                if let newSID = temp.sessionId {
+                    if self.sessionID != newSID {
+                        self.sessionID = newSID
+                        self.BEO.currentSessionId = newSID
                         sessionDidChange = true
                     }
                 }
                 
-                if let aID = temp.activityId { self.activityID = aID }
+                if let newAID = temp.activityId {
+                    if self.activityID != newAID && !newAID.isEmpty {
+                        self.activityID = newAID
+                        self.BEO.currentActivityId = newAID
+                        activityDidChange = true
+                    }
+                }
                 
                 if sessionDidChange {
                     self.loadSessionPlan()
                 } else {
-                    self.loadActivityPlan()
+                    if activityDidChange {
+                        self.loadActivityPlan(planId: self.activityID)
+                    }
                 }
                 
             }.store(in: &cancellables)
@@ -139,11 +162,17 @@ struct BoardEngine: View {
     
     func loadAllSessionPlans() {
         
+        if self.currentSessionWasLoaded {
+            loadSessionPlan()
+            return
+        }
+        
         let sessionList = self.realmIntance.objects(SessionPlan.self)
         if sessionList.isEmpty {
             self.realmIntance.safeWrite { r in
                 let newSession = SessionPlan()
                 newSession.id = self.sessionID
+                self.BEO.currentSessionId = self.sessionID
                 r.add(newSession)
             }
         } else {
@@ -155,9 +184,8 @@ struct BoardEngine: View {
                 self.sessions.append(i)
             }
         }
-        SharedPrefs.shared.save("sessionId", value: self.sessionID)
         loadSessionPlan()
-        print("BOARDS: initial load -> ${boardList.size}")
+        
     }
     
     func resetTools() {
@@ -165,38 +193,72 @@ struct BoardEngine: View {
         basicTools = []
     }
     
+    func loadFromCurrentSession() {
+        if let temp = realmIntance.findByField(CurrentSession.self, value: "SOL") {
+            self.sessionID = temp.sessionId
+            self.activityID = temp.activityId
+            currentSessionWasLoaded = true
+        }
+    }
+    func createUpdateCurrentSession() {
+        if let temp = realmIntance.findByField(CurrentSession.self, value: "SOL") {
+            realmIntance.safeWrite { r in
+                temp.sessionId = self.sessionID
+                temp.activityId = self.activityID
+                r.add(temp, update: .all)
+            }
+        } else {
+            let newCS = CurrentSession()
+            newCS.sessionId = self.sessionID
+            newCS.activityId = self.activityID
+            realmIntance.safeWrite { r in
+                r.add(newCS)
+            }
+        }
+    }
+    
     func loadSessionPlan() {
         let tempBoard = self.realmIntance.findByField(SessionPlan.self, field: "id", value: self.sessionID)
         if tempBoard == nil { return }
+        self.BEO.currentSessionId = self.sessionID
         loadActivityPlan()
-        loadManagedViewTools()
     }
     
-    func loadActivityPlan() {
+    func loadActivityPlan(planId:String?=nil) {
         resetTools()
+        
+        if planId != nil && !self.activityID.isEmpty {
+            if let act = self.realmIntance.findByField(ActivityPlan.self, field: "id", value: self.activityID) {
+                self.activities.append(act)
+            }
+            loadManagedViewTools()
+            return
+        }
+        
         if let acts = self.realmIntance.findAllByField(ActivityPlan.self, field: "sessionId", value: self.sessionID) {
             if !acts.isEmpty {
                 var hasBeenSet = false
                 for i in acts {
                     if !hasBeenSet {
                         self.activityID = i.id
-                        SharedPrefs.shared.save("activityId", value: i.id)
+                        self.BEO.currentActivityId = self.activityID
                         hasBeenSet = true
                     }
                     self.activities.append(i)
                 }
+                loadManagedViewTools()
                 return
             }
         }
         let newActivity = ActivityPlan()
         self.activityID = newActivity.id
-        SharedPrefs.shared.save("activityId", value: newActivity.id)
         newActivity.sessionId = self.sessionID
+        self.BEO.currentActivityId = self.activityID
         self.activities.append(newActivity)
         self.realmIntance.safeWrite { r in
             r.add(newActivity)
         }
-        
+        loadManagedViewTools()
     }
     
     func loadSessionPlans() {
@@ -240,15 +302,19 @@ struct BoardEngine: View {
                 case .initial(let results):
                     print("Realm Listener: initial")
                     for i in results {
+                        if i.isInvalidated {continue}
                         basicTools.safeAdd(i)
                     }
                 case .update(let results, let de, _, _):
                     print("Realm Listener: update")
-                    for i in results {
-                        basicTools.safeAdd(i)
-                    }
+                    
                     for d in de {
                         basicTools.remove(at: d)
+                    }
+                    
+                    for i in results {
+                        if i.isInvalidated {continue}
+                        basicTools.safeAdd(i)
                     }
                 case .error(let error):
                     print("Realm Listener: error")

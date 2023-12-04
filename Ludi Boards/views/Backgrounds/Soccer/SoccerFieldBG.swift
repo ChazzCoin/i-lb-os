@@ -13,6 +13,7 @@ struct SoccerFieldFullView: View {
     
     let width: CGFloat
     let height: CGFloat
+    let stroke: CGFloat
     
     var body: some View {
         GeometryReader { geometry in
@@ -44,7 +45,7 @@ struct SoccerFieldFullView: View {
                 path.addRect(CGRect(x: 0, y: (height - goalAreaHeight) / 2, width: goalAreaWidth, height: goalAreaHeight))
                 path.addRect(CGRect(x: width - goalAreaWidth, y: (height - goalAreaHeight) / 2, width: goalAreaWidth, height: goalAreaHeight))
             }
-            .stroke(Color.white, lineWidth: 10)
+            .stroke(Color.white, lineWidth: stroke)
             .rotationEffect(.degrees(90))
         }.frame(width: width, height: height)
     }
@@ -56,6 +57,7 @@ struct SoccerFieldHalfView: View {
     
     let width: CGFloat
     let height: CGFloat
+    let stroke: CGFloat
     
     var body: some View {
         GeometryReader { geometry in
@@ -83,7 +85,7 @@ struct SoccerFieldHalfView: View {
                 let goalAreaHeight = 18.32 * widthScale
                 path.addRect(CGRect(x: width - goalAreaWidth, y: (height - goalAreaHeight) / 2, width: goalAreaWidth, height: goalAreaHeight))
             }
-            .stroke(Color.green, lineWidth: 10)
+            .stroke(Color.green, lineWidth: stroke)
             .rotationEffect(.degrees(-90))
         }.frame(width: width, height: height)
     }
@@ -108,6 +110,6 @@ struct BasicSquareView: View {
 
 struct SoccerFieldView_Previews: PreviewProvider {
     static var previews: some View {
-        SoccerFieldHalfView(width: 3000.0, height: 4000.0)
+        SoccerFieldHalfView(width: 3000.0, height: 4000.0, stroke: 2)
     }
 }

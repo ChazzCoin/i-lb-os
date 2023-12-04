@@ -7,11 +7,13 @@
 
 import Foundation
 import SwiftUI
+import RealmSwift
 import Combine
 
 struct SessionPlanView: View {
     @State var sessionId: String
     @Binding var isShowing: Bool
+    @State var isMasterWindow: Bool
     @State private var sport = "soccer"
     @State private var title = "SOL Session"
     @State private var description = ""
@@ -19,14 +21,30 @@ struct SessionPlanView: View {
     @State private var isOpen = true
     @State private var activities: [ActivityPlan] = []
     @State private var showNewActivity = false
-    
+
+    @EnvironmentObject var BEO: BoardEngineObject
+    @State private var isLoading = false
+    @State private var showCompletion = false
     @State private var isCurrentPlan = false
-    
+    @State private var sessionNotificationToken: NotificationToken? = nil
     @State var cancellables = Set<AnyCancellable>()
     let realmInstance = realm()
 
+    func runLoadingProcess() {
+        isLoading = true
+        // Simulate a network request or some processing
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            isLoading = false
+            showCompletion = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                showCompletion = false
+            }
+        }
+    }
+
     var body: some View {
-        LoadingForm() { runLoading in
+        
+        LoadingForm(isLoading: $isLoading, showCompletion: $showCompletion) { runLoading in
             Section(header: Text("Details")) {
                 TextField("Title", text: $title)
                 Section(header: Text("Description")) {
@@ -49,7 +67,7 @@ struct SessionPlanView: View {
             }
 
             Section(header: Text("Activities")) {
-                ActivityPlanListView(activityPlans: $activities)
+                ActivityPlanListView(activityPlans: $activities).environmentObject(self.BEO)
                 
                 if self.sessionId != "new" {
                     solButton(title: "New Activity", action: {
@@ -68,7 +86,8 @@ struct SessionPlanView: View {
                 if self.sessionId != "new" {
                     solButton(title: "Load Session", action: {
                         runLoading()
-                        CodiChannel.SESSION_ON_ID_CHANGE.send(value: SessionChange(sessionId: sessionId, activityId: nil))
+                        CodiChannel.SESSION_ON_ID_CHANGE.send(value: SessionChange(sessionId: sessionId, activityId: self.activities.first?.id ?? "nil"))
+                        isCurrentPlan = true
                     }, isEnabled: !self.isCurrentPlan)
                 }
                 
@@ -88,15 +107,6 @@ struct SessionPlanView: View {
             if self.sessionId != "new" {
                 fetchSessionPlan()
             }
-            CodiChannel.SESSION_ON_ID_CHANGE.receive(on: RunLoop.main) { sc in
-                let temp = sc as! SessionChange
-                if let sID = temp.sessionId {
-                    if sID != self.sessionId {
-                        self.sessionId = sID
-                        fetchSessionPlan()
-                    }
-                }
-            }.store(in: &cancellables)
         }
         .navigationBarTitle(isCurrentPlan ? "Current Plan" : "Session Plan", displayMode: .inline)
         .navigationBarItems(trailing: HStack {
@@ -114,6 +124,7 @@ struct SessionPlanView: View {
         }
         .refreshable {
             if self.sessionId != "new" {
+                runLoadingProcess()
                 fetchSessionPlan()
             }
         }
@@ -151,19 +162,35 @@ struct SessionPlanView: View {
                 sp.isOpen = isOpen
                 r.add(sp)
             }
+            
+            if let us = realmInstance.getCurrentUserSession() {
+                if us.membership > 0 {
+                    // TODO
+                    firebaseDatabase { db in
+                        db.child(DatabasePaths.sessionPlan.rawValue)
+                            .child(sessionId)
+                            .setValue(sp.toDict())
+                    }
+                }
+            }
+            
         }
     }
     
-    private func fetchSessionPlan() {
+    func fetchSessionPlan() {
+        print("BEO SessionId: \(self.BEO.currentSessionId)")
+        if self.isMasterWindow {
+            self.sessionId = self.BEO.currentSessionId
+            self.isCurrentPlan = true
+        } else if self.BEO.currentSessionId == self.sessionId {
+            self.isCurrentPlan = true
+        }
+        
         if let sp = realmInstance.findByField(SessionPlan.self, value: self.sessionId) {
             title = sp.title
             description = sp.sessionDetails
             objective = sp.objectiveDetails
             isOpen = sp.isOpen
-            let sessId = SharedPrefs.shared.retrieve("sessionId")
-            if sessId == sp.id {
-                self.isCurrentPlan = true
-            }
         }
         if let acts = realmInstance.findAllByField(ActivityPlan.self, field: "sessionId", value: self.sessionId) {
             if acts.isEmpty {return}
@@ -174,8 +201,52 @@ struct SessionPlanView: View {
             activities = temp
         }
     }
+    
+//    func checkCurrentSessionId() {
+//        if let umvs = realmInstance.findByField(CurrentSession.self, value: "SOL") {
+//            if self.sessionId == umvs.sessionId {
+//                self.isCurrentPlan = true
+//            }
+//        }
+//    }
+//    
+//    func loadFromCurrentSession() {
+//        if let umvs = realmInstance.findByField(CurrentSession.self, value: "SOL") {
+//            self.sessionId = umvs.sessionId
+//            self.isCurrentPlan = true
+//            self.fetchSessionPlan()
+//        }
+//    }
+    
+//    func observeCurrentSession() {
+//        if let umvs = realmInstance.findByField(CurrentSession.self, value: "SOL") {
+//            sessionNotificationToken = umvs.observe { change in
+//                switch change {
+//                    case .change(let obj, _):
+//                        let temp = obj as! CurrentSession
+//                        if self.isMasterWindow {
+//                            self.sessionId = temp.sessionId
+//                            self.isCurrentPlan = true
+//                            self.fetchSessionPlan()
+//                            break
+//                        }
+//                        if temp.sessionId == self.sessionId {
+//                            self.isCurrentPlan = true
+//                            self.fetchSessionPlan()
+//                            break
+//                        }
+//                        break
+//                    case .deleted:
+//                        // Handle deletion
+//                        break
+//                    case .error(let error):
+//                        // Handle error
+//                        print(error)
+//                }
+//            }
+//        } 
+//    }
 }
-
 
 struct ClearBackgroundModifier: ViewModifier {
     func body(content: Content) -> some View {
@@ -233,7 +304,7 @@ struct InputTextEditorA: View {
 
 struct BoardSessionDetailsForm_Previews: PreviewProvider {
     static var previews: some View {
-        SessionPlanView(sessionId: "SOL", isShowing: .constant(true))
+        SessionPlanView(sessionId: "SOL", isShowing: .constant(true), isMasterWindow: true)
     }
 }
 

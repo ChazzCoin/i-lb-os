@@ -46,7 +46,10 @@ struct LineDrawingManaged: View {
     @State var originalLifeEnd = CGPoint.zero
     
     // Firebase
-    let reference = Database.database().reference().child(DatabasePaths.managedViews.rawValue)
+    let reference = Database
+        .database()
+        .reference()
+        .child(DatabasePaths.managedViews.rawValue)
     
     @State private var objectNotificationToken: NotificationToken? = nil
     @State private var cancellables = Set<AnyCancellable>()
@@ -122,13 +125,9 @@ struct LineDrawingManaged: View {
                     popUpIsVisible = false
                 }
                 if temp.isDeleted {
-                    isDeleted = true
-                    firebaseDatabase { fdb in
-                        fdb.child(DatabasePaths.managedViews.rawValue)
-                            .child(self.activityId)
-                            .child(self.viewId)
-                            .removeValue()
-                    }
+                    isDeleted = true  
+                    isDisabled = true
+                    deleteFromRealm()
                     return
                 }
                 updateRealm()
@@ -220,6 +219,7 @@ struct LineDrawingManaged: View {
     func updateRealm(start: CGPoint? = nil, end: CGPoint? = nil) {
         print("!!!! Updating Realm!")
         if isDisabledChecker() {return}
+        if isDeletedChecker() {return}
         let mv = realmInstance.findByField(ManagedView.self, value: viewId)
         if mv == nil { return }
         realmInstance.safeWrite { r in
@@ -246,6 +246,8 @@ struct LineDrawingManaged: View {
     }
     
     func loadFromRealm() {
+        if isDisabledChecker() {return}
+        if isDeletedChecker() {return}
         let mv = realmInstance.object(ofType: ManagedView.self, forPrimaryKey: viewId)
         guard let umv = mv else { return }
         // set attributes
@@ -258,6 +260,22 @@ struct LineDrawingManaged: View {
         loadCenterPoint()
         loadWidthAndHeight()
         loadRotationOfLine()
+    }
+    
+    func deleteFromRealm() {
+        let mv = realmInstance.object(ofType: ManagedView.self, forPrimaryKey: viewId)
+        guard let umv = mv else { return }
+        realmInstance.safeWrite { r in
+            r.delete(umv)
+        }
+        
+        // TODO: Firebase Users ONLY
+        firebaseDatabase { fdb in
+            fdb.child(DatabasePaths.managedViews.rawValue)
+                .child(activityId)
+                .child(viewId)
+                .removeValue()
+        }
     }
 }
 

@@ -7,26 +7,32 @@
 
 import Foundation
 import SwiftUI
+import RealmSwift
+import Combine
 
 // ActivityPlan View
 struct ActivityPlanView: View {
-    var boardId: String
-    var sessionId: String
+    @State var boardId: String
+    @State var sessionId: String
     @Binding var isShowing: Bool
+    @EnvironmentObject var BEO: BoardEngineObject
     @Environment(\.presentationMode) var presentationMode
     @State var isLoading: Bool = false
     @State private var activityPlan: ActivityPlan = ActivityPlan() // Use StateObject for lifecycle management
-    var realmInstance = realm()
+    @State var realmInstance = realm()
     
     @State private var showLoading = false
     @State private var showCompletion = false
     @State private var isCurrentPlan = false
     
+    @State var cancellables = Set<AnyCancellable>()
+    @State private var sessionNotificationToken: NotificationToken? = nil
+    
     private func fetchSessionPlan() {
         if let ap = realmInstance.findByField(ActivityPlan.self, value: self.boardId) {
-            activityPlan = ap
-            let actId = SharedPrefs.shared.retrieve("activityId", defaultValue: "nil")
-            if actId == ap.id {
+            self.activityPlan = ap
+            self.boardId = ap.id
+            if self.BEO.currentActivityId == self.activityPlan.id {
                 self.isCurrentPlan = true
             }
         }
@@ -48,7 +54,7 @@ struct ActivityPlanView: View {
 
             // Description Section
             Section(header: Text("Description")) {
-                TextEditor(text: $activityPlan.objectiveDetails)
+                TextEditor(text:$activityPlan.objectiveDetails)
                     .frame(minHeight: 100)
                     .overlay(
                         RoundedRectangle(cornerRadius: 5)
@@ -58,7 +64,7 @@ struct ActivityPlanView: View {
 
             // Objective Section
             Section(header: Text("Objective")) {
-                TextEditor(text: $activityPlan.activityDetails)
+                TextEditor(text:$activityPlan.activityDetails)
                     .frame(minHeight: 100)
                     .overlay(
                         RoundedRectangle(cornerRadius: 5)
@@ -66,21 +72,41 @@ struct ActivityPlanView: View {
                     )
             }
             
-            Section(header: Text("Boards")) {
-                ThumbnailListView() { item in
-                    
-                }
+            Section(header: Text("Board Settings")) {
+//                ThumbnailListView() { item in
+//                    
+//                }
+                Section(header: Text("Field Color")) {
+                    ColorListPicker() { color in
+                        
+                    }
+                }.padding(.leading)
+                
+                Section(header: Text("Field Lines")) {
+                    BarListPicker(viewBuilder: [
+                        { AnyView(SoccerFieldFullView(width: 100, height: 100, stroke: 2)) },
+                        { AnyView(SoccerFieldHalfView(width: 100, height: 100, stroke: 2)) }
+                    ])
+                }.padding(.leading)
+                
+                
             }.clearSectionBackground()
+            
+            
 
-            // Save Button Section
+            // BUTTONS
             Section {
+                
+                // LOAD BUTTON
                 if self.boardId != "new" {
                     solButton(title: "Load Activity onto Board", action: {
                         runLoading()
-                        CodiChannel.SESSION_ON_ID_CHANGE.send(value: SessionChange(sessionId: self.activityPlan.sessionId, activityId: self.activityPlan.id))
+                        CodiChannel.SESSION_ON_ID_CHANGE.send(value: SessionChange(sessionId: self.sessionId, activityId: self.boardId))
+                        self.isCurrentPlan = true
                     }, isEnabled: !self.isCurrentPlan)
                 }
                 
+                // SAVE BUTTON
                 solButton(title: "Save", action: {
                     // Implement the save action
                     runLoading()
@@ -91,10 +117,23 @@ struct ActivityPlanView: View {
                     }
                     isShowing = false
                 })
+                
             }.clearSectionBackground()
             
         }
-        .onAppear { fetchSessionPlan() }
+        .onAppear {
+            
+            fetchSessionPlan()
+            
+            CodiChannel.SESSION_ON_ID_CHANGE.receive(on: RunLoop.main) { sc in
+                let temp = sc as! SessionChange
+                if temp.activityId == self.boardId {
+                    self.isCurrentPlan = true
+                } else {
+                    self.isCurrentPlan = false
+                }
+            }.store(in: &cancellables)
+        }
         .navigationBarTitle(isCurrentPlan ? "Current Activity" : "Activity Plan", displayMode: .inline)
         .navigationBarItems(trailing: HStack {
             Button(action: {
@@ -130,22 +169,23 @@ struct ActivityPlanView: View {
     
     func saveNewActivityPlan() {
         // New Activity
-        let sessId = SharedPrefs.shared.retrieve("sessionId", defaultValue: "nil")
         let newAP = ActivityPlan()
-        
-        if boardId == "new" {
-            newAP.sessionId = sessionId
-        } else {
-            newAP.sessionId = sessId
-        }
-        
+        newAP.sessionId = sessionId
         newAP.orderIndex = 0
-        
         realmInstance.safeWrite { r in
             r.add(newAP)
         }
-        
         // TODO: Firebase
+        if let us = realmInstance.getCurrentUserSession() {
+            if us.membership > 0 {
+                // TODO
+                firebaseDatabase { db in
+                    db.child(DatabasePaths.activityPlan.rawValue)
+                        .child(newAP.id)
+                        .setValue(newAP.toDict())
+                }
+            }
+        }
         
     }
     
@@ -154,6 +194,35 @@ struct ActivityPlanView: View {
             r.add(self.activityPlan)
         }
     }
+    
+//    func getCurrentActivityId() -> String {
+//        if let umvs = realmInstance.findByField(CurrentSession.self, value: "SOL") {
+//            return umvs.activityId
+//        }
+//        return "nil"
+//    }
+//    func observeCurrentSession() {
+//        if let umvs = realmInstance.findByField(CurrentSession.self, value: "SOL") {
+//            sessionNotificationToken = umvs.observe { change in
+//                switch change {
+//                    case .change(let obj, _):
+//                        let temp = obj as! CurrentSession
+//                        if temp.activityId == self.boardId {
+//                            isCurrentPlan = true
+//                            self.fetchSessionPlan()
+//                            break
+//                        }
+//                        break
+//                    case .deleted:
+//                        // Handle deletion
+//                        break
+//                    case .error(let error):
+//                        // Handle error
+//                        print(error)
+//                }
+//            }
+//        }
+//    }
 }
 
 

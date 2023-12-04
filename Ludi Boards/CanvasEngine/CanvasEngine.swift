@@ -98,7 +98,7 @@ struct CanvasEngine: View {
         GlobalPositioningZStack { geo, gps in
             
             ForEach(Array(managedWindowsObject.managedViewGenerics.values)) { managedViewWindow in
-                managedViewWindow.viewBuilder()
+                managedViewWindow.viewBuilder().environmentObject(BoardEngineObject.shared)
             }.zIndex(5.0)
             
             // Global MenuBar
@@ -120,16 +120,16 @@ struct CanvasEngine: View {
                         .onTapAnimation {
                             self.isDrawing = !self.isDrawing
                         }
-                    DottedLineIconView()
-                        .frame(width: 50, height: 50)
-                        .onTapAnimation {
-                            self.isDrawing = !self.isDrawing
-                        }
-                    CurvedLineIconView()
-                        .frame(width: 50, height: 50)
-                        .onTapAnimation {
-                            self.isDrawing = !self.isDrawing
-                        }
+//                    DottedLineIconView()
+//                        .frame(width: 50, height: 50)
+//                        .onTapAnimation {
+//                            self.isDrawing = !self.isDrawing
+//                        }
+//                    CurvedLineIconView()
+//                        .frame(width: 50, height: 50)
+//                        .onTapAnimation {
+//                            self.isDrawing = !self.isDrawing
+//                        }
                 }
                 .zIndex(2.0)
                 .position(using: gps, at: .bottomCenter, offsetY: 50)
@@ -153,7 +153,9 @@ struct CanvasEngine: View {
             // Board/Canvas Level
             ZStack() {
                 DrawGridLines().zIndex(1.0)
-                BoardEngine(isDraw: $isDrawing).zIndex(2.0)
+                BoardEngine(isDraw: $isDrawing)
+                    .zIndex(2.0)
+                    .environmentObject(BoardEngineObject.shared)
             }
             .frame(width: 20000, height: 20000)
             .background(Color.clear)
@@ -168,6 +170,8 @@ struct CanvasEngine: View {
         .background(Color.clear)
         .zIndex(0.0)
         .onAppear() {
+            
+            
             menuBarButtonListener()
             handleChat()
 //            handleBuddyProfile()
@@ -255,7 +259,7 @@ struct CanvasEngine: View {
 //    
     func handleSessionPlan() {
         let caller = MenuBarProvider.boardDetails.tool.title
-        let buddies = ManagedViewWindow(id: caller, viewBuilder: {NavStackWindow(id: caller, viewBuilder: {SessionPlanView(sessionId: "SOL", isShowing: .constant(true))})})
+        let buddies = ManagedViewWindow(id: caller, viewBuilder: {NavStackWindow(id: caller, viewBuilder: {SessionPlanView(sessionId: "SOL", isShowing: .constant(true), isMasterWindow: true)})})
         buddies.title = "Session Planner"
         buddies.windowId = caller
         managedWindowsObject.toggleItem(key: caller, item: buddies)

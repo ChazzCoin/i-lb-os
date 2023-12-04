@@ -9,6 +9,13 @@ import Foundation
 import SwiftUI
 import Combine
 
+enum ToolLevels: Int {
+    case BASIC = 0
+    case LINE = 10
+    case SMART = 20
+    case PREMIUM = 30
+}
+
 struct SettingsView: View {
     
     var onDelete: () -> Void
@@ -18,23 +25,26 @@ struct SettingsView: View {
     @State var viewRotation: Double = 0
     @State var viewColor: Color = .black
     
+    @State var toolType: Int = ToolLevels.BASIC.rawValue
+    
     @State var viewId: String = ""
     
     let colors: [Color] = [Color.red, Color.blue]
     private let circleSize: CGFloat = 40
     private let spacing: CGFloat = 10
 
+    @State private var isLoading = false
+    @State private var showCompletion = false
     @State var cancellables = Set<AnyCancellable>()
     
     var body: some View {
-        VStack {
+        LoadingForm(isLoading: $isLoading, showCompletion: $showCompletion) { runLoading in
             
             Text("MV Tool Settings: \(viewId)")
             
             // Settings
-            Group {
+            Section(header: Text("Size: \(Int(viewSize))")) {
                 
-                Text("Size: \(Int(viewSize))")
                 Slider(value: $viewSize, 
                    in: 10...175,
                    onEditingChanged: { editing in
@@ -45,7 +55,13 @@ struct SettingsView: View {
                     }
                 ).padding()
 
-                Text("Rotation: \(Int(viewRotation))")
+                
+
+                
+            }
+            .padding(.horizontal)
+
+            Section(header: Text("Rotation: \(Int(viewRotation))")) {
                 Slider(
                     value: $viewRotation,
                     in: 0...360,
@@ -57,33 +73,32 @@ struct SettingsView: View {
                         }
                     }
                 ).padding()
-
-                Text("Color")
-                BoardColorPicker { colorIn in
+                
+            }.padding(.horizontal)
+            
+            Section(header: Text("Color")) {
+            
+                ColorListPicker() { color in
                     print("Color Picker Tapper")
-                    viewColor = colorIn
+                    viewColor = color
                     let va = ViewAtts(viewId: viewId, color: viewColor)
                     CodiChannel.TOOL_ATTRIBUTES.send(value: va)
                 }
-            }
-            .padding(.horizontal)
-
-            Spacer()
-        }
-        .background(Color.clear)
-        .navigationBarTitle("Settings", displayMode: .inline)
-        .navigationBarItems(trailing: HStack {
-            Button(action: {
+                
+            }.padding(.horizontal)
+            
+            solButton(title: "Delete Tool", action: {
                 // Delete View
                 print("Trash")
                 let va = ViewAtts(viewId: viewId, isDeleted: true)
                 CodiChannel.TOOL_ATTRIBUTES.send(value: va)
                 CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: "mv_settings", stateAction: "close", viewId: viewId))
-            }) {
-                Image(systemName: "trash")
-                    .resizable()
-                    .frame(width: 30, height: 30)
-            }
+                viewId = ""
+            })
+        }
+        .background(Color.clear)
+        .navigationBarTitle("Settings", displayMode: .inline)
+        .navigationBarItems(trailing: HStack {
             Button(action: {
                 print("Minimize")
                 CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: "mv_settings", stateAction: "close", viewId: viewId))

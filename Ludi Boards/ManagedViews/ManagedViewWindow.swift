@@ -72,13 +72,12 @@ class ManagedViewWindows:ObservableObject {
 struct NavStackWindow : View {
     @State var id: String
     var viewBuilder: () -> AnyView
+    @EnvironmentObject var BEO: BoardEngineObject
     
     init<V: View>(id: String, viewBuilder: @escaping () -> V) {
         self.id = id
         self.viewBuilder = { AnyView(viewBuilder()) }
     }
-    
-//    @State var managedViewWindow: ManagedViewWindow
     
     @State private var isHidden = true
     @State private var isFloatable = false
@@ -112,7 +111,7 @@ struct NavStackWindow : View {
 
     var body: some View {
         NavigationStack {
-            viewBuilder()
+            viewBuilder().environmentObject(BEO)
         }
         .frame(width: self.width, height: self.height)
         .opacity(isHidden ? 0 : 1)
@@ -160,7 +159,7 @@ struct NavStackWindow : View {
                 if temp.windowId != self.id { return }
 
                 if temp.stateAction == "open" {
-                    if self.isHidden { self.isHidden = false }
+                    self.isHidden = false
                 } else {
                     if !self.isHidden {
                         self.isHidden = true

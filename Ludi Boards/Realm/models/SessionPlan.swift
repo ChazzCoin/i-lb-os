@@ -26,4 +26,14 @@ import RealmSwift
     override static func primaryKey() -> String {
         return "id"
     }
+    
+    func toDict() -> [String: Any] {
+        let properties = self.objectSchema.properties.map { $0.name }
+        var dictionary: [String: Any] = [:]
+        for property in properties {
+            dictionary[property] = self.value(forKey: property)
+        }
+        return dictionary
+    }
 }
+

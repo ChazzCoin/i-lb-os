@@ -27,9 +27,19 @@ import RealmSwift
     
     dynamic var width: Int = 3000
     dynamic var height: Int = 4000
-    dynamic var background: String = ""
+    dynamic var backgroundColor: String = ""
+    dynamic var backgroundLines: String = ""
 
     override static func primaryKey() -> String? {
         return "id"
+    }
+    
+    func toDict() -> [String: Any] {
+        let properties = self.objectSchema.properties.map { $0.name }
+        var dictionary: [String: Any] = [:]
+        for property in properties {
+            dictionary[property] = self.value(forKey: property)
+        }
+        return dictionary
     }
 }
