@@ -13,11 +13,66 @@ import FirebaseDatabase
 
 class BoardEngineObject : ObservableObject {
     static let shared = BoardEngineObject()
-    
+    @Environment(\.colorScheme) var colorScheme
+    // Current Board
     @Published var currentSessionId: String = ""
     @Published var currentActivityId: String = ""
+    // Board Settings
+    @Published var boardWidth: CGFloat = 3000.0
+    @Published var boardHeight: CGFloat = 4000.0
+    @Published var boardStartPosX: CGFloat = 3000.0 / 2
+    @Published var boardStartPosY: CGFloat = 4000.0 / 2
+    @Published var boardBgColor: Color = Color.green.opacity(0.75)
+    
+    @Published private var boardBgRed: Double = 0.0
+    @Published private var boardBgGreen: Double = 0.0
+    @Published private var boardBgBlue: Double = 0.0
+    @Published private var boardBgAlpha: Double = 0.0
+    
+    func getColor() -> Color {
+        return Color(red: CGFloat(boardBgRed), green: CGFloat(boardBgGreen), blue: CGFloat(boardBgBlue), opacity: CGFloat(boardBgAlpha))
+    }
+    
+    func setColor(red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat) {
+        boardBgRed = red
+        boardBgGreen = green
+        boardBgBlue = blue
+        boardBgAlpha = alpha
+        boardBgColor = getColor()
+    }
+    
+    func setColor(colorIn:Color) {
+        if let cIn = colorIn.toRGBA() {
+            boardBgRed = cIn.red
+            boardBgGreen = cIn.green
+            boardBgBlue = cIn.blue
+            boardBgAlpha = cIn.alpha
+            boardBgColor = getColor()
+        }
+    }
+    
+    @Published var boardBgView: () -> AnyView = {
+        AnyView(SoccerFieldFullView(width: 4000.0, height: 3000.0, stroke: 10, color: Color.white))
+    }
+    
+    @Published var boardBgViewItems = [
+        { AnyView(SoccerFieldFullView(width: 4000.0, height: 3000.0, stroke: 10, color: Color.white)) },
+        { AnyView(SoccerFieldHalfView(width: 4000.0, height: 3000.0, stroke: 10, color: Color.white)) }
+    ]
+    
+    @State private var boardBgViewSettingItems = [
+        { AnyView(SoccerFieldFullView(width: 100, height: 100, stroke: 2, color: Color.white)) },
+        { AnyView(SoccerFieldHalfView(width: 100, height: 100, stroke: 2, color: Color.white)) }
+    ]
 
-    private init() {} // Private initialization to ensure singleton instance
+    func boardBgView(width: CGFloat, height: CGFloat, stroke: CGFloat, color: Color) -> AnyView {
+        AnyView(SoccerFieldFullView(width: width, height: height, stroke: stroke, color: color))
+    }
+    
+    func foregroundColor() -> Color { return foregroundColorForScheme(colorScheme) }
+    func backgroundColor() -> Color { return backgroundColorForScheme(colorScheme) }
+
+    private init() {}
 }
 
 struct BoardEngine: View {
@@ -34,21 +89,12 @@ struct BoardEngine: View {
         .reference()
         .child(DatabasePaths.managedViews.rawValue))
     
-    //Board
-    var width: CGFloat = 3000.0
-    var height: CGFloat = 4000.0
-    var startPosX: CGFloat = 3000.0 / 2
-    var startPosY: CGFloat = 4000.0 / 2
+    @State private var drawingStartPoint: CGPoint = .zero
+    @State private var drawingEndPoint: CGPoint = .zero
     
-    @State private var startPoint: CGPoint = .zero
-    @State private var endPoint: CGPoint = .zero
-    
-    
-    @State private var currentSessionID = "SOL"
     @State private var currentSessionWasLoaded = false
     @State private var sessionID: String = "SOL"
     @State private var activityID: String = ""
-    @State private var boardBg = BoardBgProvider.soccerTwo.tool.image
     
     @State private var sessions: [SessionPlan] = []
     @State private var activities: [ActivityPlan] = []
@@ -71,38 +117,37 @@ struct BoardEngine: View {
              
              // Temporary line being drawn
              if self.isDraw {
-                 if startPoint != .zero {
+                 if drawingStartPoint != .zero {
                      Path { path in
-                         path.move(to: startPoint)
-                         path.addLine(to: endPoint)
+                         path.move(to: drawingStartPoint)
+                         path.addLine(to: drawingEndPoint)
                      }
                      .stroke(Color.red, lineWidth: 10)
                  }
              }
             
         }
-        .frame(width: width, height: height)
+        .frame(width: self.BEO.boardWidth, height: self.BEO.boardHeight)
         .background {
-            FieldOverlayView(width: width, height: height, background: {
-                Color.green.opacity(0.75)
+            FieldOverlayView(width: self.BEO.boardWidth, height: self.BEO.boardHeight, background: {
+                self.BEO.boardBgColor
             }, overlay: {
-                SoccerFieldFullView(width: height, height: width, stroke: 10)
-            }).position(x: startPosX, y: startPosY)
+                self.BEO.boardBgView()
+            }).position(x: self.BEO.boardStartPosX, y: self.BEO.boardStartPosY)
         }
         .gesture(
             DragGesture()
                 .onChanged { value in
                     if !self.isDraw {return}
-                    self.startPoint = value.startLocation
-                    self.endPoint = value.location
+                    self.drawingStartPoint = value.startLocation
+                    self.drawingEndPoint = value.location
                 }
                 .onEnded { value in
                     if !self.isDraw {return}
-                    self.endPoint = value.location
+                    self.drawingEndPoint = value.location
                     saveLineData(start: value.startLocation, end: value.location)
                 }
         ).onAppear {
-//            self.loadFromCurrentSession()
             self.loadAllSessionPlans()
             CodiChannel.SESSION_ON_ID_CHANGE.receive(on: RunLoop.main) { sc in
                 let temp = sc as! SessionChange
@@ -229,6 +274,7 @@ struct BoardEngine: View {
         
         if planId != nil || !self.activityID.isEmpty {
             if let act = self.realmIntance.findByField(ActivityPlan.self, field: "id", value: self.activityID) {
+                self.BEO.setColor(red: CGFloat(act.backgroundRed), green: CGFloat(act.backgroundGreen), blue: CGFloat(act.backgroundBlue), alpha: CGFloat(act.backgroundAlpha))
                 self.activities.append(act)
             }
             loadManagedViewTools()
@@ -241,6 +287,7 @@ struct BoardEngine: View {
                 for i in acts {
                     if !hasBeenSet {
                         self.activityID = i.id
+                        self.BEO.setColor(red: i.backgroundRed, green: i.backgroundGreen, blue: i.backgroundBlue, alpha: i.backgroundAlpha)
                         self.BEO.currentActivityId = self.activityID
                         hasBeenSet = true
                     }

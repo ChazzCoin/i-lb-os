@@ -9,12 +9,6 @@ import Foundation
 import SwiftUI
 import UIKit
 
-extension Color {
-    var uiColor: UIColor {
-        UIColor(self)
-    }
-}
-
 extension UIColor {
     func isEqualToColor(_ color: UIColor) -> Bool {
         var red1: CGFloat = 0
@@ -46,7 +40,32 @@ extension ColorProvider {
     }
 }
 
+func colorFromRGBA(red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat) -> Color {
+    return Color(red: red, green: green, blue: blue, opacity: alpha)
+}
 
+
+extension Color {
+    
+    var uiColor: UIColor {
+        UIColor(self)
+    }
+    
+    func toRGBA() -> (red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat)? {
+        // Convert Color to UIColor
+        let uiColor = UIColor(self)
+
+        var red: CGFloat = 0
+        var green: CGFloat = 0
+        var blue: CGFloat = 0
+        var alpha: CGFloat = 0
+
+        // Extract RGBA components
+        guard uiColor.getRed(&red, green: &green, blue: &blue, alpha: &alpha) else { return nil }
+        
+        return (red, green, blue, alpha)
+    }
+}
 
 
 struct ColorPro {

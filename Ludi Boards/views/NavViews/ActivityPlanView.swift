@@ -28,6 +28,11 @@ struct ActivityPlanView: View {
     @State var cancellables = Set<AnyCancellable>()
     @State private var sessionNotificationToken: NotificationToken? = nil
     
+    @State private var bgItems = [
+        { AnyView(SoccerFieldFullView(width: 100, height: 100, stroke: 2, color: Color.blue)) },
+        { AnyView(SoccerFieldHalfView(width: 100, height: 100, stroke: 2, color: Color.blue)) }
+    ]
+    
     private func fetchSessionPlan() {
         if let ap = realmInstance.findByField(ActivityPlan.self, value: self.boardId) {
             self.activityPlan = ap
@@ -78,15 +83,27 @@ struct ActivityPlanView: View {
 //                }
                 Section(header: Text("Field Color")) {
                     ColorListPicker() { color in
-                        
+                        if self.isCurrentPlan {
+                            self.BEO.setColor(colorIn: color)
+                        }
+                        if let c = color.toRGBA() {
+                            realmInstance.safeWrite { r in
+                                self.activityPlan.backgroundRed = c.red
+                                self.activityPlan.backgroundGreen = c.green
+                                self.activityPlan.backgroundBlue = c.blue
+                                self.activityPlan.backgroundAlpha = c.alpha
+                                r.add(self.activityPlan)
+                            }
+                        }
                     }
                 }.padding(.leading)
                 
                 Section(header: Text("Field Lines")) {
-                    BarListPicker(viewBuilder: [
-                        { AnyView(SoccerFieldFullView(width: 100, height: 100, stroke: 2)) },
-                        { AnyView(SoccerFieldHalfView(width: 100, height: 100, stroke: 2)) }
-                    ])
+                    BarListPicker(viewBuilder: self.bgItems) { v in
+                        if self.isCurrentPlan {
+                            self.BEO.boardBgView = self.BEO.boardBgViewItems[v]
+                        }
+                    }
                 }.padding(.leading)
                 
                 

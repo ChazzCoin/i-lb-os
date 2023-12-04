@@ -27,8 +27,11 @@ import RealmSwift
     
     dynamic var width: Int = 3000
     dynamic var height: Int = 4000
-    dynamic var backgroundColor: String = ""
-    dynamic var backgroundLines: String = ""
+    dynamic var backgroundRed: Double = 0.0
+    dynamic var backgroundGreen: Double = 0.0
+    dynamic var backgroundBlue: Double = 0.0
+    dynamic var backgroundAlpha: Double = 0.0
+    dynamic var backgroundView: String = ""
 
     override static func primaryKey() -> String? {
         return "id"

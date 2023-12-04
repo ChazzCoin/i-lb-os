@@ -12,11 +12,13 @@ import SwiftUI
 struct BarListPicker: View {
     var id: String
     var viewBuilder: [() -> AnyView]
+    var callback: (Int) -> Void
     @Environment(\.colorScheme) var colorScheme
     
-    init(_ id: String="", viewBuilder:  [() -> AnyView]) {
+    init(_ id: String="", viewBuilder:  [() -> AnyView], callback: @escaping (Int) -> Void) {
         self.id = id
         self.viewBuilder = viewBuilder
+        self.callback = callback
     }
     
     // State to track the selected image
@@ -34,6 +36,7 @@ struct BarListPicker: View {
                         )
                         .onTapAnimation {
                             self.selectedImage = index
+                            callback(index)
                         }
                 }
                 
