@@ -11,32 +11,32 @@ import SwiftUI
 // SwiftUI View for the Emoji Picker
 struct BarListPicker: View {
     var id: String
-    var viewBuilder: [() -> AnyView]
-    var callback: (Int) -> Void
+    var viewBuilder: [String: () -> AnyView]
+    var callback: (String) -> Void
     @Environment(\.colorScheme) var colorScheme
     
-    init(_ id: String="", viewBuilder:  [() -> AnyView], callback: @escaping (Int) -> Void) {
+    init(_ id: String="", viewBuilder:  [String:() -> AnyView], callback: @escaping (String) -> Void) {
         self.id = id
         self.viewBuilder = viewBuilder
         self.callback = callback
     }
     
     // State to track the selected image
-    @State private var selectedImage: Int = 0
+    @State private var selectedImage: String = ""
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack {
-                ForEach(0..<viewBuilder.count, id: \.self) { index in
-                    self.viewBuilder[index]()
+                ForEach(viewBuilder.keys.sorted(), id: \.self) { key in
+                    viewBuilder[key]?()
                         .padding(5)
                         .overlay(
                             RoundedRectangle(cornerRadius: 10)
-                                .stroke(selectedImage == index ? Color.blue : Color.clear, lineWidth: 3)
+                                .stroke(selectedImage == key ? Color.blue : Color.clear, lineWidth: 3)
                         )
                         .onTapAnimation {
-                            self.selectedImage = index
-                            callback(index)
+                            self.selectedImage = key
+                            callback(key)
                         }
                 }
                 

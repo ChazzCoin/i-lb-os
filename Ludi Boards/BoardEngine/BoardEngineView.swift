@@ -24,6 +24,8 @@ class BoardEngineObject : ObservableObject {
     @Published var boardStartPosY: CGFloat = 4000.0 / 2
     @Published var boardBgColor: Color = Color.green.opacity(0.75)
     
+    
+    @Published var boardBgName: String = "SoccerFieldFullView"
     @Published private var boardBgRed: Double = 0.0
     @Published private var boardBgGreen: Double = 0.0
     @Published private var boardBgBlue: Double = 0.0
@@ -51,19 +53,24 @@ class BoardEngineObject : ObservableObject {
         }
     }
     
-    @Published var boardBgView: () -> AnyView = {
-        AnyView(SoccerFieldFullView(width: 4000.0, height: 3000.0, stroke: 10, color: Color.white))
+    
+    
+    @Published var boardBgViewItems: [String: () -> AnyView] = [
+        "SoccerFieldFullView": { AnyView(SoccerFieldFullView(width: 4000.0, height: 3000.0, stroke: 10, color: Color.white)) },
+        "SoccerFieldHalfView": { AnyView(SoccerFieldHalfView(width: 4000.0, height: 3000.0, stroke: 10, color: Color.white)) }
+    ]
+    
+    @Published var boardBgViewSettingItems: [String: () -> AnyView] = [
+        "SoccerFieldFullView": { AnyView(SoccerFieldFullView(width: 100.0, height: 100.0, stroke: 3, color: Color.white)) },
+        "SoccerFieldHalfView": { AnyView(SoccerFieldHalfView(width: 100.0, height: 100.0, stroke: 3, color: Color.white)) }
+    ]
+    func setBoardBgView(boardName: String) {
+        boardBgName = boardName
     }
-    
-    @Published var boardBgViewItems = [
-        { AnyView(SoccerFieldFullView(width: 4000.0, height: 3000.0, stroke: 10, color: Color.white)) },
-        { AnyView(SoccerFieldHalfView(width: 4000.0, height: 3000.0, stroke: 10, color: Color.white)) }
-    ]
-    
-    @State private var boardBgViewSettingItems = [
-        { AnyView(SoccerFieldFullView(width: 100, height: 100, stroke: 2, color: Color.white)) },
-        { AnyView(SoccerFieldHalfView(width: 100, height: 100, stroke: 2, color: Color.white)) }
-    ]
+//    @State private var boardBgViewSettingItems = [
+//        { AnyView(SoccerFieldFullView(width: 100, height: 100, stroke: 2, color: Color.white)) },
+//        { AnyView(SoccerFieldHalfView(width: 100, height: 100, stroke: 2, color: Color.white)) }
+//    ]
 
     func boardBgView(width: CGFloat, height: CGFloat, stroke: CGFloat, color: Color) -> AnyView {
         AnyView(SoccerFieldFullView(width: width, height: height, stroke: stroke, color: color))
@@ -132,7 +139,7 @@ struct BoardEngine: View {
             FieldOverlayView(width: self.BEO.boardWidth, height: self.BEO.boardHeight, background: {
                 self.BEO.boardBgColor
             }, overlay: {
-                self.BEO.boardBgView()
+                if let temp = self.BEO.boardBgViewItems[self.BEO.boardBgName] { temp() }
             }).position(x: self.BEO.boardStartPosX, y: self.BEO.boardStartPosY)
         }
         .gesture(
@@ -274,7 +281,8 @@ struct BoardEngine: View {
         
         if planId != nil || !self.activityID.isEmpty {
             if let act = self.realmIntance.findByField(ActivityPlan.self, field: "id", value: self.activityID) {
-                self.BEO.setColor(red: CGFloat(act.backgroundRed), green: CGFloat(act.backgroundGreen), blue: CGFloat(act.backgroundBlue), alpha: CGFloat(act.backgroundAlpha))
+                self.BEO.setColor(red: act.backgroundRed, green: act.backgroundGreen, blue: act.backgroundBlue, alpha: act.backgroundAlpha)
+                self.BEO.boardBgName = act.backgroundView
                 self.activities.append(act)
             }
             loadManagedViewTools()
@@ -288,6 +296,7 @@ struct BoardEngine: View {
                     if !hasBeenSet {
                         self.activityID = i.id
                         self.BEO.setColor(red: i.backgroundRed, green: i.backgroundGreen, blue: i.backgroundBlue, alpha: i.backgroundAlpha)
+                        self.BEO.boardBgName = i.backgroundView
                         self.BEO.currentActivityId = self.activityID
                         hasBeenSet = true
                     }
