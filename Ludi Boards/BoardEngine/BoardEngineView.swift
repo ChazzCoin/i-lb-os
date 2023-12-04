@@ -227,7 +227,7 @@ struct BoardEngine: View {
     func loadActivityPlan(planId:String?=nil) {
         resetTools()
         
-        if planId != nil && !self.activityID.isEmpty {
+        if planId != nil || !self.activityID.isEmpty {
             if let act = self.realmIntance.findByField(ActivityPlan.self, field: "id", value: self.activityID) {
                 self.activities.append(act)
             }

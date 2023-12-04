@@ -33,10 +33,10 @@ struct SessionPlanView: View {
     func runLoadingProcess() {
         isLoading = true
         // Simulate a network request or some processing
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             isLoading = false
             showCompletion = true
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 showCompletion = false
             }
         }

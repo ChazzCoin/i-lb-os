@@ -123,7 +123,9 @@ struct ActivityPlanView: View {
         }
         .onAppear {
             
-            fetchSessionPlan()
+            if self.boardId != "new" {
+                fetchSessionPlan()
+            }
             
             CodiChannel.SESSION_ON_ID_CHANGE.receive(on: RunLoop.main) { sc in
                 let temp = sc as! SessionChange
@@ -133,6 +135,12 @@ struct ActivityPlanView: View {
                     self.isCurrentPlan = false
                 }
             }.store(in: &cancellables)
+        }
+        .refreshable {
+            if self.boardId != "new" {
+                startLoadingProcess()
+                fetchSessionPlan()
+            }
         }
         .navigationBarTitle(isCurrentPlan ? "Current Activity" : "Activity Plan", displayMode: .inline)
         .navigationBarItems(trailing: HStack {
@@ -158,10 +166,10 @@ struct ActivityPlanView: View {
     func startLoadingProcess() {
         isLoading = true
         // Simulate a network request or some processing
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             isLoading = false
             showCompletion = true
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 showCompletion = false
             }
         }
