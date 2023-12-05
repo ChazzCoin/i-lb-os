@@ -43,6 +43,7 @@ struct LineDrawingManaged: View {
     @State private var lifeRotation: Angle = Angle.zero
     
     @State private var popUpIsVisible = false
+    @State private var anchorsAreVisible = false
     
     @State private var offset = CGSize.zero
     @State private var position = CGPoint(x: 0, y: 0)
@@ -97,23 +98,23 @@ struct LineDrawingManaged: View {
         .overlay(
             Circle()
                 .fill(Color.AIMYellow)
-                .frame(width: 100, height: 100) // Adjust size for easier tapping
-                .opacity(popUpIsVisible ? 1 : 0) // Invisible
+                .frame(width: 150, height: 150) // Adjust size for easier tapping
+                .opacity(anchorsAreVisible ? 1 : 0) // Invisible
                 .position(x: lifeStartX, y: lifeStartY)
                 .gesture(dragGesture(isStart: true))
         )
         .overlay(
             Circle()
                 .fill(Color.AIMYellow)
-                .frame(width: 100, height: 100) // Increase size for finger tapping
-                .opacity(popUpIsVisible ? 1 : 0) // Invisible
+                .frame(width: 150, height: 150) // Increase size for finger tapping
+                .opacity(anchorsAreVisible ? 1 : 0) // Invisible
                 .position(x: lifeEndX, y: lifeEndY)
                 .gesture(dragGesture(isStart: false))
         )
         .overlay(
             Rectangle()
                 .fill(Color.white.opacity(0.001))
-                .frame(width: lifeWidth+100, height: 100)
+                .frame(width: Double(lifeWidth+300).bound(to: 20...500), height: 200)
                 .rotationEffect(lifeRotation)
                 .opacity(1)
                 .position(x: lifeCenterPoint.x.isFinite ? lifeCenterPoint.x : 0, y: lifeCenterPoint.y.isFinite ? lifeCenterPoint.y : 0)
@@ -153,7 +154,7 @@ struct LineDrawingManaged: View {
     private func dragGesture(isStart: Bool) -> some Gesture {
         DragGesture()
             .onChanged { value in
-                if !popUpIsVisible {return}
+                if !anchorsAreVisible {return}
                 if isStart {
                     self.lifeStartX = value.location.x
                     self.lifeStartY = value.location.y
@@ -166,29 +167,31 @@ struct LineDrawingManaged: View {
                 loadRotationOfLine()
             }
             .onEnded { _ in
-                if !popUpIsVisible {return}
+                if !anchorsAreVisible {return}
                 updateRealm()
             }
-            .simultaneously(with: TapGesture(count: 2)
+            .simultaneously(with: TapGesture(count: 1)
                  .onEnded { _ in
-                     print("Tapped double")
-                     popUpIsVisible = !popUpIsVisible
-                     CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(
-                        windowId: "mv_settings",
-                        stateAction: popUpIsVisible ? "open" : "close",
-                        viewId: viewId
-                     ))
-                     if popUpIsVisible {
-                         CodiChannel.TOOL_ATTRIBUTES.send(value: ViewAtts(
-                            viewId: viewId,
-                            size: lifeWidth,
-                            color: lifeColor,
-                            level: ToolLevels.LINE.rawValue,
-                            stateAction: popUpIsVisible ? "open" : "close")
-                         )
-                     }
+                     anchorsAreVisible = !anchorsAreVisible
                  }
-            )
+            ).simultaneously(with: TapGesture(count: 2).onEnded({ _ in
+                print("Tapped double")
+                popUpIsVisible = !popUpIsVisible
+                CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(
+                   windowId: "mv_settings",
+                   stateAction: popUpIsVisible ? "open" : "close",
+                   viewId: viewId
+                ))
+                if popUpIsVisible {
+                    CodiChannel.TOOL_ATTRIBUTES.send(value: ViewAtts(
+                       viewId: viewId,
+                       size: lifeWidth,
+                       color: lifeColor,
+                       level: ToolLevels.LINE.rawValue,
+                       stateAction: popUpIsVisible ? "open" : "close")
+                    )
+                }
+            }))
     }
     
     // Drag gesture definition
@@ -221,27 +224,28 @@ struct LineDrawingManaged: View {
                             end: CGPoint(x: lifeEndX, y: lifeEndY))
                 self.originalLifeStart = .zero
                 self.originalLifeEnd = .zero
-            }.simultaneously(with: TapGesture(count: 2)
+            }.simultaneously(with: TapGesture(count: 1)
                 .onEnded { _ in
-                    print("Tapped duo")
-                    popUpIsVisible = !popUpIsVisible
-                    CodiChannel.MENU_WINDOW_CONTROLLER.send(
-                        value: WindowController(
-                            windowId: "mv_settings",
-                            stateAction: popUpIsVisible ? "open" : "close",
-                            viewId: viewId
-                        )
-                    )
-                    if popUpIsVisible {
-                        CodiChannel.TOOL_ATTRIBUTES.send(value: ViewAtts(
-                            viewId: viewId,
-                            size: lifeWidth,
-                            color: lifeColor,
-                            level: ToolLevels.LINE.rawValue
-                        ))
-                    }
+                    anchorsAreVisible = !anchorsAreVisible
                 }
-           )
+           ).simultaneously(with: TapGesture(count: 2).onEnded({ _ in
+               print("Tapped double")
+               popUpIsVisible = !popUpIsVisible
+               CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(
+                  windowId: "mv_settings",
+                  stateAction: popUpIsVisible ? "open" : "close",
+                  viewId: viewId
+               ))
+               if popUpIsVisible {
+                   CodiChannel.TOOL_ATTRIBUTES.send(value: ViewAtts(
+                      viewId: viewId,
+                      size: lifeWidth,
+                      color: lifeColor,
+                      level: ToolLevels.LINE.rawValue,
+                      stateAction: popUpIsVisible ? "open" : "close")
+                   )
+               }
+           }))
     }
     
     func updateRealm(start: CGPoint? = nil, end: CGPoint? = nil) {

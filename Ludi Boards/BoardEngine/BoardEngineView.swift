@@ -17,10 +17,14 @@ class BoardEngineObject : ObservableObject {
     // Current Board
     @Published var currentSessionId: String = ""
     @Published var currentActivityId: String = ""
+    
+    @Published var canvasOffset = CGPoint.zero
+    @Published var canvasScale: CGFloat = 0.2
+    @Published var canvasRotation: CGFloat = 0.0
     // Board Settings
     @Published var boardWidth: CGFloat = 3000.0
     @Published var boardHeight: CGFloat = 4000.0
-    @Published var boardStartPosX: CGFloat = 250.0
+    @Published var boardStartPosX: CGFloat = 0.0
     @Published var boardStartPosY: CGFloat = 1000.0
     @Published var boardBgColor: Color = Color.green.opacity(0.75)
     
@@ -37,6 +41,11 @@ class BoardEngineObject : ObservableObject {
     @Published var boardFieldLineAlpha: Double = 0.75
     @Published var boardFeildLineStroke: Double = 10
     @Published var boardFeildRotation: Double = -90
+    
+    func fullScreen() {
+        canvasScale = 0.2
+        canvasOffset = CGPoint.zero
+    }
     
     func getColor() -> Color {
         return Color(red: boardBgRed, green: boardBgGreen, blue: boardBgBlue, opacity: boardBgAlpha)
@@ -130,7 +139,7 @@ struct BoardEngine: View {
              
              ForEach(self.basicTools) { item in
                  if item.toolType == "LINE" {
-                     LineDrawingManaged(viewId: item.id, activityId: self.activityID)
+                     LineDrawingManaged(viewId: item.id, activityId: self.activityID).zIndex(15.0)
                  } else {
                      if let temp = SoccerToolProvider.parseByTitle(title: item.toolType)?.tool.image {
                          ManagedViewBoardTool(viewId: item.id, activityId: self.activityID, toolType: temp)
@@ -156,7 +165,7 @@ struct BoardEngine: View {
                 self.BEO.boardBgColor
             }, overlay: {
                 if let temp = self.BEO.boardBgViewItems[self.BEO.boardBgName] { temp().environmentObject(self.BEO) }
-            }).position(x: self.BEO.boardStartPosX, y: self.BEO.boardStartPosY)
+            }).position(x: self.BEO.boardStartPosX, y: self.BEO.boardStartPosY).zIndex(2.0)
         }
         .simultaneousGesture( self.isDraw ?
             DragGesture()

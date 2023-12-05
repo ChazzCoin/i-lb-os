@@ -19,20 +19,20 @@ struct CanvasEngine: View {
     @State var popupIsVisible: Bool = true
     @State var gesturesAreLocked: Bool = false
     var maxScaleFactor: CGFloat = 1.0
-    @State private var totalScale: CGFloat = 0.15
+//    @State private var totalScale: CGFloat = 0.2
     @GestureState private var gestureScale: CGFloat = 1.0
     
     @State private var angle: Angle = .zero
     @State private var lastAngle: Angle = .zero
     
     @State private var translation: CGPoint = .zero
-    @State private var offset = CGPoint.zero
+//    @State private var offset = CGPoint.zero
     @State private var lastOffset = CGPoint.zero
     
     @State private var offsetTwo = CGSize.zero
     @State private var isDragging = false
     @State private var toolBarIsEnabled = true
-    @State private var position = CGPoint(x: 50, y: 50) // Initial position
+    @State private var position = CGPoint(x: 0, y: 0) // Initial position
     @GestureState private var dragOffset = CGSize.zero
     
     // Initial size of your drawing canvas
@@ -48,23 +48,23 @@ struct CanvasEngine: View {
 
                 // Simplify calculations and potentially invert them
                 let translation = gesture.translation
-                let cosAngle = cos(self.angle.radians)
-                let sinAngle = sin(self.angle.radians)
+                let cosAngle = cos(Angle(degrees: self.BEO.canvasRotation).radians)
+                let sinAngle = sin(Angle(degrees: self.BEO.canvasRotation).radians)
 
                 // Invert the translation adjustments
                 let adjustedX = cosAngle * translation.width + sinAngle * translation.height
                 let adjustedY = -sinAngle * translation.width + cosAngle * translation.height
                 let rotationAdjustedTranslation = CGPoint(x: adjustedX, y: adjustedY)
 
-                let offsetX = self.lastOffset.x + (rotationAdjustedTranslation.x / self.totalScale)
-                let offsetY = self.lastOffset.y + (rotationAdjustedTranslation.y / self.totalScale)
-                self.offset = CGPoint(x: offsetX, y: offsetY)
+                let offsetX = self.lastOffset.x + (rotationAdjustedTranslation.x / self.BEO.canvasScale)
+                let offsetY = self.lastOffset.y + (rotationAdjustedTranslation.y / self.BEO.canvasScale)
+                self.BEO.canvasOffset = CGPoint(x: offsetX, y: offsetY)
 
-                print("CanvasEngine -> Offset: X = [ \(self.offset.x) ] Y = [ \(self.offset.y) ]")
+//                print("CanvasEngine -> Offset: X = [ \(self.BEO.canvasOffset.x) ] Y = [ \(self.BEO.canvasOffset.y) ]")
             }
             .onEnded { _ in
                 if gesturesAreLocked { return }
-                self.lastOffset = self.offset
+                self.lastOffset = self.BEO.canvasOffset
             }
             .updating($dragOffset) { value, state, _ in
                 if gesturesAreLocked { return }
@@ -80,7 +80,7 @@ struct CanvasEngine: View {
             }
             .onEnded { value in
                 if gesturesAreLocked { return }
-                totalScale *= value
+                self.BEO.canvasScale *= value
             }
     }
     
@@ -98,10 +98,6 @@ struct CanvasEngine: View {
     var body: some View {
         
         GlobalPositioningZStack { geo, gps in
-            
-//            GenericNavWindowFloat(id: "stopwatch", viewBuilder: {StopwatchView().position(using: gps, at: .center)}).environmentObject(BoardEngineObject.shared)
-            
-            
             
             ForEach(Array(managedWindowsObject.managedViewGenerics.values)) { managedViewWindow in
                 managedViewWindow.viewBuilder().environmentObject(BoardEngineObject.shared)
@@ -166,15 +162,15 @@ struct CanvasEngine: View {
                     .environmentObject(self.BEO)
             }
             .frame(width: 20000, height: 20000)
-//            .background(Color.clear)
-            .offset(x: self.offset.x, y: self.offset.y)
-            .scaleEffect(totalScale * gestureScale)
-            .rotationEffect(angle)
+            .offset(x: self.BEO.canvasOffset.x, y: self.BEO.canvasOffset.y)
+//            .position(x: 0, y: 0)
+            .scaleEffect(self.BEO.canvasScale * gestureScale)
+            .rotationEffect(Angle(degrees: self.BEO.canvasRotation))
             .zIndex(1.0)
             
         }
         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-        .gesture(dragAngleGestures.simultaneously(with: scaleGestures))
+        .gesture(self.gesturesAreLocked ? nil : dragAngleGestures.simultaneously(with: scaleGestures))
         .background(Color.clear)
         .zIndex(0.0)
         .onAppear() {
@@ -215,8 +211,8 @@ struct CanvasEngine: View {
                 case .reset: return
                 case .trash: return
                 case .boardBackground: return
-                case .profile: return
-                case .share: return
+            case .profile: return self.BEO.fullScreen()
+            case .share: return self.BEO.canvasRotation += 15.0
                 case .router: return
                 case .note: return
                 case .chat: return
