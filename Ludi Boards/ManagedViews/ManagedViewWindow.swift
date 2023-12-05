@@ -175,9 +175,16 @@ struct NavStackWindow : View {
 }
 
 
-struct GenericNavWindowSMALL : View {
+struct GenericNavWindowFloat : View {
+    @State var id: String
+    var viewBuilder: () -> AnyView
+    @EnvironmentObject var BEO: BoardEngineObject
     
-    @State var managedViewWindow: ManagedViewWindow
+    init<V: View>(id: String, viewBuilder: @escaping () -> V) {
+        self.id = id
+        self.viewBuilder = { AnyView(viewBuilder()) }
+    }
+    
     
     @State private var isHidden = false
     
@@ -189,19 +196,14 @@ struct GenericNavWindowSMALL : View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-//                if let windowContent = managedViewWindow.content {
-//                    windowContent
-//                } else {
-//                    // Placeholder or fallback view
-//                    Text("No content available")
-//                }
+                viewBuilder().environmentObject(BEO)
             }.opacity(isHidden ? 0 : 1)
             .navigationBarItems(trailing: HStack {
                 // Add buttons or icons here for minimize, maximize, close, etc.
                 Button(action: {
                     // Minimize:
 //                    CodiChannel.general.send(value: managedViewWindow.windowId)
-                    CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: managedViewWindow.windowId, stateAction: "close", viewId: "self"))
+//                    CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: managedViewWindow.windowId, stateAction: "close", viewId: "self"))
                 }) {
                     Image(systemName: "arrow.down.circle.fill")
                         .resizable()
@@ -209,7 +211,7 @@ struct GenericNavWindowSMALL : View {
                 }
             })
         }
-        .frame(minWidth: 100, maxWidth: 400, minHeight: 100, maxHeight: 400)
+        .frame(width: 500, height: 500)
         .opacity(isHidden ? 0 : 1)
         .background(Color.white)
         .cornerRadius(15)

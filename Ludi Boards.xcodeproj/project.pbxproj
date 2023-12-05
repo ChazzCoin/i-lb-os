@@ -47,6 +47,7 @@
 		FB5094262B058215000AEA96 /* LazyRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5094252B058215000AEA96 /* LazyRow.swift */; };
 		FB5094282B0584CA000AEA96 /* ManagedViewWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5094272B0584CA000AEA96 /* ManagedViewWindow.swift */; };
 		FB50942A2B05856D000AEA96 /* LineToolView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5094292B05856D000AEA96 /* LineToolView.swift */; };
+		FB581BEB2B1EF39C00F5C90F /* Stopwatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB581BEA2B1EF39C00F5C90F /* Stopwatch.swift */; };
 		FB58A1B42B17D1420024B9A2 /* ToolBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58A1B32B17D1420024B9A2 /* ToolBarView.swift */; };
 		FB58A1B62B1804C80024B9A2 /* FlashingLight.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58A1B52B1804C80024B9A2 /* FlashingLight.swift */; };
 		FB58E8762B01F3D200FD9E2E /* FireParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58E8752B01F3D200FD9E2E /* FireParser.swift */; };
@@ -162,6 +163,7 @@
 		FB5094252B058215000AEA96 /* LazyRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LazyRow.swift; sourceTree = "<group>"; };
 		FB5094272B0584CA000AEA96 /* ManagedViewWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedViewWindow.swift; sourceTree = "<group>"; };
 		FB5094292B05856D000AEA96 /* LineToolView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineToolView.swift; sourceTree = "<group>"; };
+		FB581BEA2B1EF39C00F5C90F /* Stopwatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stopwatch.swift; sourceTree = "<group>"; };
 		FB58A1B32B17D1420024B9A2 /* ToolBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolBarView.swift; sourceTree = "<group>"; };
 		FB58A1B52B1804C80024B9A2 /* FlashingLight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlashingLight.swift; sourceTree = "<group>"; };
 		FB58E8752B01F3D200FD9E2E /* FireParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireParser.swift; sourceTree = "<group>"; };
@@ -353,6 +355,7 @@
 				FB3E02B02B0C6B1D00D8558C /* ActivityPlan.swift */,
 				FB3E02BA2B0C90D700D8558C /* Buddy.swift */,
 				FB3E02C22B0D19A300D8558C /* User.swift */,
+				FB581BEA2B1EF39C00F5C90F /* Stopwatch.swift */,
 			);
 			path = models;
 			sourceTree = "<group>";
@@ -635,6 +638,7 @@
 				FB58E87C2B02B1F100FD9E2E /* lineModifier.swift in Sources */,
 				FBD9AFC02B00817A005F8620 /* ManagedView.swift in Sources */,
 				FBD9AFCD2B008457005F8620 /* UserToActivity.swift in Sources */,
+				FB581BEB2B1EF39C00F5C90F /* Stopwatch.swift in Sources */,
 				FB4840962B1D43AD0003377A /* BarListPicker.swift in Sources */,
 				FB3E02B12B0C6B1D00D8558C /* ActivityPlan.swift in Sources */,
 				FB3E02AD2B0C3CAB00D8558C /* PopupMenu.swift in Sources */,

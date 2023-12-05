@@ -32,6 +32,7 @@ enum DatabasePaths: String {
     case activityPlan = "activityPlan"
     case boardSession = "boardSession"
     case managedViews = "managedViews"
+    case stopWatch = "stopWatch"
 }
 
 //func coreFirebaseUser() -> FirebaseAuth.User? {

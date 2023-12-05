@@ -27,6 +27,10 @@ struct ActivityPlanView: View {
     @State private var colorOpacity = 1.0
     @State private var lineOpacity = 1.0
     @State private var lineStroke = 1.0
+    @State private var lineColor = Color.clear
+    @State private var bgColor = Color.clear
+    @State private var fieldName = ""
+    
     @State private var fieldRotation = 0.0
     
     @State var cancellables = Set<AnyCancellable>()
@@ -67,8 +71,11 @@ struct ActivityPlanView: View {
             }
             
             Section(header: Text("Board Settings")) {
-                Section(header: Text("Field Color")) {
+                
+                
+                Section(header: Text("Field Color: \(bgColor.uiColor.accessibilityName)")) {
                     ColorListPicker() { color in
+                        bgColor = color
                         if self.isCurrentPlan {
                             self.BEO.setColor(colorIn: color)
                         }
@@ -82,7 +89,7 @@ struct ActivityPlanView: View {
                             }
                         }
                     }
-                    Text("Background Field Color Transparency")
+                    Text("Background Color Transparency: \(colorOpacity)")
                     Slider(
                         value: $colorOpacity,
                         in: 0.0...1.0,
@@ -103,18 +110,22 @@ struct ActivityPlanView: View {
                 }.padding(.leading)
                 
                 Section(header: Text("Field Lines")) {
+                    
+                    Text("Field Type: \(fieldName)")
                     BarListPicker(initialSelected: self.isCurrentPlan ? self.BEO.boardBgName : self.activityPlan.backgroundView, viewBuilder: self.BEO.boardBgViewSettingItems) { v in
+                        fieldName = v
                         if self.isCurrentPlan {
                             self.BEO.setBoardBgView(boardName: v)
                         }
-                        
                         realmInstance.safeWrite { r in
                             self.activityPlan.backgroundView = v
                             r.add(self.activityPlan)
                         }
                     }
                     
+                    Text("Line Color: \(lineColor.uiColor.accessibilityName)")
                     ColorListPicker() { color in
+                        lineColor = color
                         if self.isCurrentPlan {
                             self.BEO.setFieldLineColor(colorIn: color)
                         }
@@ -129,7 +140,7 @@ struct ActivityPlanView: View {
                         }
                     }
                     
-                    Text("Field Line Color Transparency")
+                    Text("Line Transparency: \(lineOpacity)")
                     Slider(
                         value: $lineOpacity,
                         in: 0.0...1.0,
@@ -148,7 +159,7 @@ struct ActivityPlanView: View {
                         }
                     ).padding()
                     
-                    Text("Field Line Stroke Width")
+                    Text("Line Width: \(Int(lineStroke))")
                     Slider(
                         value: $lineStroke,
                         in: 1.0...50.0,
@@ -165,7 +176,7 @@ struct ActivityPlanView: View {
                     ).padding()
                     
                     Section() {
-                        Text("Rotate Field")
+                        Text("Rotate Field: \(Int(fieldRotation))")
                         Slider(
                             value: $fieldRotation,
                             in: 0...360,
@@ -265,6 +276,7 @@ struct ActivityPlanView: View {
             self.lineOpacity = ap.backgroundLineAlpha
             self.colorOpacity = ap.backgroundAlpha
             self.fieldRotation = ap.backgroundRotation
+            self.fieldName = ap.backgroundView
             if self.BEO.currentActivityId == self.activityPlan.id {
                 self.isCurrentPlan = true
             }

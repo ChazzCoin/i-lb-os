@@ -97,6 +97,10 @@ struct CanvasEngine: View {
         
         GlobalPositioningZStack { geo, gps in
             
+//            GenericNavWindowFloat(id: "stopwatch", viewBuilder: {StopwatchView().position(using: gps, at: .center)}).environmentObject(BoardEngineObject.shared)
+            
+            
+            
             ForEach(Array(managedWindowsObject.managedViewGenerics.values)) { managedViewWindow in
                 managedViewWindow.viewBuilder().environmentObject(BoardEngineObject.shared)
             }.zIndex(5.0)
@@ -233,14 +237,20 @@ struct CanvasEngine: View {
             gesturesAreLocked = true
         }
     }
+//    func handleChat() {
+//        let caller = MenuBarProvider.chat.tool.title
+//        let temp = ManagedViewWindow(id: caller, viewBuilder: {NavStackWindow(id: caller, viewBuilder: {ChatView(chatId: "default-1")})})
+//        temp.title = "Real-Time Chat"
+//        temp.windowId = caller
+//        managedWindowsObject.safelyAddItem(key: caller, item: temp)
+//    }
     func handleChat() {
         let caller = MenuBarProvider.chat.tool.title
-        let temp = ManagedViewWindow(id: caller, viewBuilder: {NavStackWindow(id: caller, viewBuilder: {ChatView(chatId: "default-1")})})
-        temp.title = "Real-Time Chat"
+        let temp = ManagedViewWindow(id: caller, viewBuilder: {NavStackWindow(id: caller, viewBuilder: {StopwatchView()})})
+        temp.title = "Stop-Watch"
         temp.windowId = caller
         managedWindowsObject.safelyAddItem(key: caller, item: temp)
     }
-        
 //    func handleBuddyList() {
 //        let caller = MenuBarProvider.buddyList.tool.title
 //        let buddies = ManagedViewWindow(id: caller, viewBuilder: AnyView(BuddyListView()))

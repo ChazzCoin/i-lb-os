@@ -45,17 +45,7 @@ import RealmSwift
         }
         return dictionary
     }
-    // Add a convenience initializer to initialize from a dictionary
-//    convenience init(dictionary: [String: Any]) {
-//        self.init()
-//        let properties = self.objectSchema.properties.map { $0.name }
-//        
-//        for property in properties {
-//            if let value = dictionary[property] {
-//                self.setValue(value, forKey: property)
-//            }
-//        }
-//    }
+
     
 }
 
