@@ -10,7 +10,7 @@ import SwiftUI
 
 // YES
 struct SoccerFieldFullView: View {
-    
+    @EnvironmentObject var BEO: BoardEngineObject
     let width: CGFloat
     let height: CGFloat
     let stroke: CGFloat
@@ -55,7 +55,7 @@ struct SoccerFieldFullView: View {
 
 
 struct SoccerFieldHalfView: View {
-    
+    @EnvironmentObject var BEO: BoardEngineObject
     let width: CGFloat
     let height: CGFloat
     let stroke: CGFloat
@@ -94,21 +94,38 @@ struct SoccerFieldHalfView: View {
 }
 
 struct BasicSquareView: View {
+    @EnvironmentObject var BEO: BoardEngineObject
+    let isMini: Bool
     var body: some View {
         GeometryReader { geometry in
             Path { path in
-                let width: CGFloat = 4000 * 0.8
-                let height: CGFloat = 3000
-
+        
                 // Outer boundary of half field
-                path.addRect(CGRect(x: 0, y: 0, width: width, height: height))
+                path.addRect(CGRect(x: 0, y: 0, width: isMini ? 100.0 : self.BEO.boardWidth, height: isMini ? 100.0 : self.BEO.boardHeight))
+            }
+            .stroke(isMini ? foregroundColorForScheme(self.BEO.colorScheme) : self.BEO.boardFieldLineColor, lineWidth: isMini ? 3.0 : self.BEO.boardFeildLineStroke)
+            .rotationEffect(.degrees(self.BEO.boardFeildRotation))
+        }.frame(width: isMini ? 100.0 : self.BEO.boardWidth, height: isMini ? 100.0 : self.BEO.boardHeight)
+    }
+}
+
+struct BasicCircleView: View {
+    let width: CGFloat = 4000 * 0.8
+    let height: CGFloat = 3000
+    var body: some View {
+        GeometryReader { geometry in
+            Path { path in
+                
+                let lengthScale = width / (105 / 2) // Half of the field length
+                let widthScale = height / 68
+                
+                path.addArc(center: CGPoint(x: 0, y: height / 2), radius: 9.15 * widthScale, startAngle: Angle(degrees: -90), endAngle: Angle(degrees: 90), clockwise: false)
             }
             .stroke(Color.green, lineWidth: 10)
             .rotationEffect(.degrees(-90))
         }.frame(width: 4000 * 0.8, height: 3000)
     }
 }
-
 
 struct SoccerFieldView_Previews: PreviewProvider {
     static var previews: some View {

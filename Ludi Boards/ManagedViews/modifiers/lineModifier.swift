@@ -90,7 +90,7 @@ struct enableManagedViewLine : ViewModifier {
                 fdb.child(DatabasePaths.managedViews.rawValue)
                     .child(boardId)
                     .child(viewId)
-                    .setValue(mv?.toDictionary())
+                    .setValue(mv?.toDict())
             }
         }
     }

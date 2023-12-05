@@ -34,6 +34,12 @@ struct LineDrawingManaged: View {
     
     @State private var lifeWidth: Double = 10.0
     @State private var lifeColor = Color.red
+    
+    @State private var lifeColorRed = 0.0
+    @State private var lifeColorGreen = 0.0
+    @State private var lifeColorBlue = 0.0
+    @State private var lifeColorAlpha = 1.0
+    
     @State private var lifeRotation: Angle = Angle.zero
     
     @State private var popUpIsVisible = false
@@ -121,6 +127,7 @@ struct LineDrawingManaged: View {
                 let temp = vId as! ViewAtts
                 if viewId != temp.viewId {return}
                 if let ts = temp.size { lifeWidth = ts }
+                if let tc = temp.color { lifeColor = tc }
                 if temp.stateAction == "close" {
                     popUpIsVisible = false
                 }
@@ -166,9 +173,19 @@ struct LineDrawingManaged: View {
                  .onEnded { _ in
                      print("Tapped double")
                      popUpIsVisible = !popUpIsVisible
-                     CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: "mv_settings", stateAction: popUpIsVisible ? "open" : "close", viewId: viewId))
+                     CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(
+                        windowId: "mv_settings",
+                        stateAction: popUpIsVisible ? "open" : "close",
+                        viewId: viewId
+                     ))
                      if popUpIsVisible {
-                         CodiChannel.TOOL_ATTRIBUTES.send(value: ViewAtts(viewId: viewId, size: lifeWidth, stateAction: popUpIsVisible ? "open" : "close"))
+                         CodiChannel.TOOL_ATTRIBUTES.send(value: ViewAtts(
+                            viewId: viewId,
+                            size: lifeWidth,
+                            color: lifeColor,
+                            level: ToolLevels.LINE.rawValue,
+                            stateAction: popUpIsVisible ? "open" : "close")
+                         )
                      }
                  }
             )
@@ -208,9 +225,20 @@ struct LineDrawingManaged: View {
                 .onEnded { _ in
                     print("Tapped duo")
                     popUpIsVisible = !popUpIsVisible
-                    CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: "mv_settings", stateAction: popUpIsVisible ? "open" : "close", viewId: viewId))
+                    CodiChannel.MENU_WINDOW_CONTROLLER.send(
+                        value: WindowController(
+                            windowId: "mv_settings",
+                            stateAction: popUpIsVisible ? "open" : "close",
+                            viewId: viewId
+                        )
+                    )
                     if popUpIsVisible {
-                        CodiChannel.TOOL_ATTRIBUTES.send(value: ViewAtts(viewId: viewId, size: lifeWidth))
+                        CodiChannel.TOOL_ATTRIBUTES.send(value: ViewAtts(
+                            viewId: viewId,
+                            size: lifeWidth,
+                            color: lifeColor,
+                            level: ToolLevels.LINE.rawValue
+                        ))
                     }
                 }
            )
@@ -229,7 +257,14 @@ struct LineDrawingManaged: View {
             mv?.startY = Double(start?.y ?? CGFloat(lifeStartY))
             mv?.endX = Double(end?.x ?? CGFloat(lifeEndX))
             mv?.endY = Double(end?.y ?? CGFloat(lifeEndY))
-//            mv?.toolColor = lifeColor.rawValue
+            
+            if let lc = lifeColor.toRGBA() {
+                mv?.colorRed = lc.red
+                mv?.colorGreen = lc.green
+                mv?.colorBlue = lc.blue
+                mv?.colorAlpha = lc.alpha
+            }
+            
             mv?.toolType = "LINE"
             mv?.width = Int(lifeWidth)
             guard let tMV = mv else { return }
@@ -240,7 +275,7 @@ struct LineDrawingManaged: View {
                 fdb.child(DatabasePaths.managedViews.rawValue)
                     .child(activityId)
                     .child(viewId)
-                    .setValue(mv?.toDictionary())
+                    .setValue(mv?.toDict())
             }
         }
     }
@@ -257,6 +292,13 @@ struct LineDrawingManaged: View {
         lifeEndX = umv.endX
         lifeEndY = umv.endY
         lifeWidth = Double(umv.width)
+        
+        lifeColorRed = umv.colorRed
+        lifeColorGreen = umv.colorGreen
+        lifeColorBlue = umv.colorBlue
+        lifeColorAlpha = umv.colorAlpha
+        lifeColor = colorFromRGBA(red: lifeColorRed, green: lifeColorGreen, blue: lifeColorBlue, alpha: lifeColorAlpha)
+        
         loadCenterPoint()
         loadWidthAndHeight()
         loadRotationOfLine()

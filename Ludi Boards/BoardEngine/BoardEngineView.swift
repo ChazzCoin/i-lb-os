@@ -24,12 +24,15 @@ class BoardEngineObject : ObservableObject {
     @Published var boardStartPosY: CGFloat = 4000.0 / 2
     @Published var boardBgColor: Color = Color.green.opacity(0.75)
     
-    
     @Published var boardBgName: String = "SoccerFieldFullView"
-    @Published private var boardBgRed: Double = 0.0
-    @Published private var boardBgGreen: Double = 0.0
-    @Published private var boardBgBlue: Double = 0.0
-    @Published private var boardBgAlpha: Double = 0.0
+    @Published private var boardBgRed: Double = 48.0
+    @Published private var boardBgGreen: Double = 128.0
+    @Published private var boardBgBlue: Double = 20.0
+    @Published private var boardBgAlpha: Double = 0.75
+    
+    @Published var boardFieldLineColor: Color = Color.white
+    @Published var boardFeildLineStroke: Double = 10
+    @Published var boardFeildRotation: Double = -90
     
     func getColor() -> Color {
         return Color(red: CGFloat(boardBgRed), green: CGFloat(boardBgGreen), blue: CGFloat(boardBgBlue), opacity: CGFloat(boardBgAlpha))
@@ -54,23 +57,20 @@ class BoardEngineObject : ObservableObject {
     }
     
     
-    
     @Published var boardBgViewItems: [String: () -> AnyView] = [
         "SoccerFieldFullView": { AnyView(SoccerFieldFullView(width: 4000.0, height: 3000.0, stroke: 10, color: Color.white)) },
-        "SoccerFieldHalfView": { AnyView(SoccerFieldHalfView(width: 4000.0, height: 3000.0, stroke: 10, color: Color.white)) }
+        "SoccerFieldHalfView": { AnyView(SoccerFieldHalfView(width: 4000.0, height: 3000.0, stroke: 10, color: Color.white)) },
+        "BasicSquareView": {AnyView(BasicSquareView(isMini: false))}
     ]
     
     @Published var boardBgViewSettingItems: [String: () -> AnyView] = [
         "SoccerFieldFullView": { AnyView(SoccerFieldFullView(width: 100.0, height: 100.0, stroke: 3, color: Color.white)) },
-        "SoccerFieldHalfView": { AnyView(SoccerFieldHalfView(width: 100.0, height: 100.0, stroke: 3, color: Color.white)) }
+        "SoccerFieldHalfView": { AnyView(SoccerFieldHalfView(width: 100.0, height: 100.0, stroke: 3, color: Color.white)) },
+        "BasicSquareView": {AnyView(BasicSquareView(isMini: true))}
     ]
     func setBoardBgView(boardName: String) {
         boardBgName = boardName
     }
-//    @State private var boardBgViewSettingItems = [
-//        { AnyView(SoccerFieldFullView(width: 100, height: 100, stroke: 2, color: Color.white)) },
-//        { AnyView(SoccerFieldHalfView(width: 100, height: 100, stroke: 2, color: Color.white)) }
-//    ]
 
     func boardBgView(width: CGFloat, height: CGFloat, stroke: CGFloat, color: Color) -> AnyView {
         AnyView(SoccerFieldFullView(width: width, height: height, stroke: stroke, color: color))
@@ -139,7 +139,7 @@ struct BoardEngine: View {
             FieldOverlayView(width: self.BEO.boardWidth, height: self.BEO.boardHeight, background: {
                 self.BEO.boardBgColor
             }, overlay: {
-                if let temp = self.BEO.boardBgViewItems[self.BEO.boardBgName] { temp() }
+                if let temp = self.BEO.boardBgViewItems[self.BEO.boardBgName] { temp().environmentObject(self.BEO) }
             }).position(x: self.BEO.boardStartPosX, y: self.BEO.boardStartPosY)
         }
         .gesture(
@@ -205,7 +205,7 @@ struct BoardEngine: View {
                     fdb.child(DatabasePaths.managedViews.rawValue)
                         .child(self.activityID)
                         .child(newTool.id)
-                        .setValue(newTool.toDictionary())
+                        .setValue(newTool.toDict())
                 }
                 
             }.store(in: &cancellables)
@@ -311,7 +311,6 @@ struct BoardEngine: View {
         newActivity.sessionId = self.sessionID
         self.BEO.currentActivityId = self.activityID
         self.BEO.setColor(red: newActivity.backgroundRed, green: newActivity.backgroundGreen, blue: newActivity.backgroundBlue, alpha: newActivity.backgroundAlpha)
-        self.BEO.boardBgName = newActivity.backgroundView
         self.activities.append(newActivity)
         self.realmIntance.safeWrite { r in
             r.add(newActivity)
@@ -412,7 +411,7 @@ struct BoardEngine: View {
                 fdb.child(DatabasePaths.managedViews.rawValue)
                     .child(self.activityID)
                     .child(line.id)
-                    .setValue(line.toDictionary())
+                    .setValue(line.toDict())
             }
         }
     }

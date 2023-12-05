@@ -25,7 +25,7 @@ struct SettingsView: View {
     @State var viewRotation: Double = 0
     @State var viewColor: Color = .black
     
-    @State var toolType: Int = ToolLevels.BASIC.rawValue
+    @State var toolLevel: Int = ToolLevels.BASIC.rawValue
     
     @State var viewId: String = ""
     
@@ -54,30 +54,30 @@ struct SettingsView: View {
                         }
                     }
                 ).padding()
-
-                
-
                 
             }
             .padding(.horizontal)
 
-            Section(header: Text("Rotation: \(Int(viewRotation))")) {
-                Slider(
-                    value: $viewRotation,
-                    in: 0...360,
-                    step: 1,
-                    onEditingChanged: { editing in
-                        if !editing {
-                            let va = ViewAtts(viewId: viewId, rotation: viewRotation)
-                            CodiChannel.TOOL_ATTRIBUTES.send(value: va)
+            if self.toolLevel != ToolLevels.LINE.rawValue {
+                Section(header: Text("Rotation: \(Int(viewRotation))")) {
+                    Slider(
+                        value: $viewRotation,
+                        in: 0...360,
+                        step: 1,
+                        onEditingChanged: { editing in
+                            if !editing {
+                                let va = ViewAtts(viewId: viewId, rotation: viewRotation)
+                                CodiChannel.TOOL_ATTRIBUTES.send(value: va)
+                            }
                         }
-                    }
-                ).padding()
-                
-            }.padding(.horizontal)
+                    ).padding()
+                    
+                }.padding(.horizontal)
+            }
+            
             
             Section(header: Text("Color")) {
-            
+                
                 ColorListPicker() { color in
                     print("Color Picker Tapper")
                     viewColor = color
@@ -112,6 +112,7 @@ struct SettingsView: View {
             CodiChannel.TOOL_ATTRIBUTES.receive(on: RunLoop.main) { vId in
                 let temp = vId as! ViewAtts
                 viewId = temp.viewId
+                toolLevel = temp.level
                 if let ts = temp.size { viewSize = ts }
                 if let tr = temp.rotation { viewRotation = tr }
                 if let tc = temp.color { viewColor = tc }

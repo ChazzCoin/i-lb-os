@@ -221,41 +221,6 @@ struct ActivityPlanView: View {
         }
     }
     
-//    func getCurrentActivityId() -> String {
-//        if let umvs = realmInstance.findByField(CurrentSession.self, value: "SOL") {
-//            return umvs.activityId
-//        }
-//        return "nil"
-//    }
-//    func observeCurrentSession() {
-//        if let umvs = realmInstance.findByField(CurrentSession.self, value: "SOL") {
-//            sessionNotificationToken = umvs.observe { change in
-//                switch change {
-//                    case .change(let obj, _):
-//                        let temp = obj as! CurrentSession
-//                        if temp.activityId == self.boardId {
-//                            isCurrentPlan = true
-//                            self.fetchSessionPlan()
-//                            break
-//                        }
-//                        break
-//                    case .deleted:
-//                        // Handle deletion
-//                        break
-//                    case .error(let error):
-//                        // Handle error
-//                        print(error)
-//                }
-//            }
-//        }
-//    }
+
 }
 
-
-
-
-//struct ActivityDetailsForm_Previews: PreviewProvider {
-//    static var previews: some View {
-////        ActivityPlanView(boardId: "123", isShowing: .constant(true))
-//    }
-//}

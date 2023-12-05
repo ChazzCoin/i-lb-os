@@ -28,35 +28,57 @@ import RealmSwift
     dynamic var translationX: Double = 0.0
     dynamic var translationY: Double = 0.0
     dynamic var lastUserId: String = "me"
+    
+    dynamic var colorRed: Double = 48.0
+    dynamic var colorGreen: Double = 128.0
+    dynamic var colorBlue: Double = 20.0
+    dynamic var colorAlpha: Double = 0.75
 
     override static func primaryKey() -> String? {
         return "id"
     }
+    func toDictionary() -> [String: Any] {
+        let properties = self.objectSchema.properties.map { $0.name }
+        var dictionary: [String: Any] = [:]
+        for property in properties {
+            dictionary[property] = self.value(forKey: property)
+        }
+        return dictionary
+    }
+    // Add a convenience initializer to initialize from a dictionary
+//    convenience init(dictionary: [String: Any]) {
+//        self.init()
+//        let properties = self.objectSchema.properties.map { $0.name }
+//        
+//        for property in properties {
+//            if let value = dictionary[property] {
+//                self.setValue(value, forKey: property)
+//            }
+//        }
+//    }
+    
 }
 
 extension ManagedView {
-    func toDictionary() -> [String: Any] {
-        return [
-            "id": id,
-            "dateUpdated": dateUpdated,
-            "lastUserId": lastUserId,
-            "boardId": boardId,
-            "sport": sport,
-            "toolType": toolType,
-            "toolColor": toolColor,
-            "toolSize": toolSize,
-            "x": x,
-            "y": y,
-            "startX": startX,
-            "startY": startY,
-            "endX": endX,
-            "endY": endY,
-            "width": width,
-            "height": height,
-            "rotation": rotation,
-            "translationX": translationX,
-            "translationY": translationY
-        ]
+    
+    convenience init(dictionary: [String: Any]) {
+        self.init()
+        let properties = self.objectSchema.properties.map { $0.name }
+        
+        for property in properties {
+            if let value = dictionary[property] {
+                self.setValue(value, forKey: property)
+            }
+        }
+    }
+    
+    func toDict() -> [String: Any] {
+        let properties = self.objectSchema.properties.map { $0.name }
+        var dictionary: [String: Any] = [:]
+        for property in properties {
+            dictionary[property] = self.value(forKey: property)
+        }
+        return dictionary
     }
 }
 

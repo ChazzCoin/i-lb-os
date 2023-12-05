@@ -31,6 +31,11 @@ struct enableManagedViewTool : ViewModifier {
     @State private var lifeRotation = 0.0 // Angle in degrees, represented by Double in SwiftUI
     @State private var lifeToolType = SoccerToolProvider.playerDummy.tool.image // Assuming 'toolType' is an enum or similar
     
+    @State private var lifeColorRed = 0.0
+    @State private var lifeColorGreen = 0.0
+    @State private var lifeColorBlue = 0.0
+    @State private var lifeColorAlpha = 1.0
+    
     @State private var popUpIsVisible = false
     
     @State private var position = CGPoint(x: 100, y: 100)
@@ -66,7 +71,10 @@ struct enableManagedViewTool : ViewModifier {
         lifeHeight = Double(umv.height)
         lifeRotation = umv.rotation
         lifeToolType = umv.toolType
-        lifeColor = ColorProvider.fromColorName(colorName: umv.toolColor)
+        lifeColorRed = umv.colorRed
+        lifeColorGreen = umv.colorGreen
+        lifeColorBlue = umv.colorBlue
+        lifeColorAlpha = umv.colorAlpha
         minSizeCheck()
     }
     func updateRealm() {
@@ -79,11 +87,14 @@ struct enableManagedViewTool : ViewModifier {
             mv?.dateUpdated = lifeUpdatedAt
             mv?.x = self.position.x
             mv?.y = self.position.y
-            mv?.toolColor = lifeColor.rawValue
             mv?.rotation = lifeRotation
             mv?.toolType = lifeToolType
             mv?.width = Int(lifeWidth)
             mv?.height = Int(lifeHeight)
+            mv?.colorRed = lifeColorRed
+            mv?.colorGreen = lifeColorGreen
+            mv?.colorBlue = lifeColorBlue
+            mv?.colorAlpha = lifeColorAlpha
             guard let tMV = mv else { return }
             r.create(ManagedView.self, value: tMV, update: .all)
             
@@ -93,16 +104,10 @@ struct enableManagedViewTool : ViewModifier {
                 fdb.child(DatabasePaths.managedViews.rawValue)
                     .child(self.activityId)
                     .child(self.viewId)
-                    .setValue(mv?.toDictionary())
+                    .setValue(mv?.toDict())
             }
         }
     }
-//    func flowRealm() {
-//        if isDisabledChecker() {return}
-//        if isDeletedChecker() {return}
-//        // Flow -> codiRealm.onChangeByCondition
-//        observeFirebase()
-//    }
     
     func body(content: Content) -> some View {
             content
@@ -141,7 +146,12 @@ struct enableManagedViewTool : ViewModifier {
                                 popUpIsVisible = !popUpIsVisible
                                 CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: "mv_settings", stateAction: popUpIsVisible ? "open" : "close", viewId: viewId))
                                 if popUpIsVisible {
-                                    CodiChannel.TOOL_ATTRIBUTES.send(value: ViewAtts(viewId: viewId, size: lifeWidth, rotation: lifeRotation))
+                                    CodiChannel.TOOL_ATTRIBUTES.send(value: ViewAtts(
+                                        viewId: viewId,
+                                        size: lifeWidth,
+                                        rotation: lifeRotation,
+                                        level: ToolLevels.LINE.rawValue
+                                    ))
                                 }
                             }
                         )

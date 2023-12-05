@@ -42,6 +42,8 @@
 		FB3E02CB2B0D2E4700D8558C /* InputTextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02CA2B0D2E4700D8558C /* InputTextEditor.swift */; };
 		FB4840962B1D43AD0003377A /* BarListPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB4840952B1D43AD0003377A /* BarListPicker.swift */; };
 		FB4840982B1D66380003377A /* CurrentSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB4840972B1D66380003377A /* CurrentSession.swift */; };
+		FB48409A2B1EBC940003377A /* Fields.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB4840992B1EBC940003377A /* Fields.swift */; };
+		FB48409C2B1EBE8B0003377A /* StopWatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB48409B2B1EBE8B0003377A /* StopWatch.swift */; };
 		FB5094262B058215000AEA96 /* LazyRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5094252B058215000AEA96 /* LazyRow.swift */; };
 		FB5094282B0584CA000AEA96 /* ManagedViewWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5094272B0584CA000AEA96 /* ManagedViewWindow.swift */; };
 		FB50942A2B05856D000AEA96 /* LineToolView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5094292B05856D000AEA96 /* LineToolView.swift */; };
@@ -155,6 +157,8 @@
 		FB3E02CA2B0D2E4700D8558C /* InputTextEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputTextEditor.swift; sourceTree = "<group>"; };
 		FB4840952B1D43AD0003377A /* BarListPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarListPicker.swift; sourceTree = "<group>"; };
 		FB4840972B1D66380003377A /* CurrentSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentSession.swift; sourceTree = "<group>"; };
+		FB4840992B1EBC940003377A /* Fields.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fields.swift; sourceTree = "<group>"; };
+		FB48409B2B1EBE8B0003377A /* StopWatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopWatch.swift; sourceTree = "<group>"; };
 		FB5094252B058215000AEA96 /* LazyRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LazyRow.swift; sourceTree = "<group>"; };
 		FB5094272B0584CA000AEA96 /* ManagedViewWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedViewWindow.swift; sourceTree = "<group>"; };
 		FB5094292B05856D000AEA96 /* LineToolView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineToolView.swift; sourceTree = "<group>"; };
@@ -482,6 +486,7 @@
 				FBE2C6162B1AF595004C0116 /* GrassFieldView.swift */,
 				FBE2C6192B1AF7D5004C0116 /* FootballFieldView.swift */,
 				FBE2C61B2B1AF961004C0116 /* BoardBackgrounder.swift */,
+				FB4840992B1EBC940003377A /* Fields.swift */,
 			);
 			path = Backgrounds;
 			sourceTree = "<group>";
@@ -501,6 +506,7 @@
 				FB10AE0A2B0F162F00295F4B /* ActivityPlanThumbView.swift */,
 				FB10AE0C2B0F16B100295F4B /* ActivityPlanThumbList.swift */,
 				FBE2C6232B1B2E01004C0116 /* SessionPlanOverview.swift */,
+				FB48409B2B1EBE8B0003377A /* StopWatch.swift */,
 			);
 			path = SessionPlan;
 			sourceTree = "<group>";
@@ -647,6 +653,7 @@
 				FB9F1DD42B15307E00FD9078 /* UserSignUp.swift in Sources */,
 				FBE2C6282B1C26BF004C0116 /* StandardButton.swift in Sources */,
 				FBD9AFC22B0081C1005F8620 /* RealmInstance.swift in Sources */,
+				FB48409C2B1EBE8B0003377A /* StopWatch.swift in Sources */,
 				FB58E8782B01F40300FD9E2E /* FireCore.swift in Sources */,
 				FB3E02B52B0C6B6000D8558C /* ActivityPlanView.swift in Sources */,
 				FBE2C6222B1B1490004C0116 /* RealmChangeListener.swift in Sources */,
@@ -684,6 +691,7 @@
 				FBD9AFD52B008F6F005F8620 /* Channels.swift in Sources */,
 				FB982F912B19D1B900C0DA03 /* FirebaseService.swift in Sources */,
 				FB3E02BF2B0C948A00D8558C /* AddBuddyView.swift in Sources */,
+				FB48409A2B1EBC940003377A /* Fields.swift in Sources */,
 				FB10AE0D2B0F16B100295F4B /* ActivityPlanThumbList.swift in Sources */,
 				FB07B6702B17A5B9009A0962 /* mvModifier.swift in Sources */,
 				FB15DD2A2B07443600A21290 /* BoardEngineView.swift in Sources */,
