@@ -28,6 +28,7 @@ protocol IconProvider {
 }
 
 enum MenuBarProvider: IconProvider {
+    case menuBar
     case toolbox
     case lock
     case canvasGrid
@@ -50,7 +51,8 @@ enum MenuBarProvider: IconProvider {
 
     var tool: Tool {
         switch self {
-            case .toolbox: return Tool(title: "Toolbox", image: "hammer.fill", authLevel: 0, color: .white)
+            case .menuBar: return Tool(title: "Menubar", image: "hammer.fill", authLevel: 0, color: .white)
+            case .toolbox: return Tool(title: "Toolbox", image: "paintbrush", authLevel: 0, color: .white)
             case .lock: return Tool(title: "Lock", image: "lock.fill", authLevel: 0, color: .white)
             case .canvasGrid: return Tool(title: "Grid", image: "square.grid.3x3.fill", authLevel: 0, color: .white)
             case .navHome: return Tool(title: "NavPad", image: "cursorarrow.rays", authLevel: 0, color: .white)
@@ -74,7 +76,7 @@ enum MenuBarProvider: IconProvider {
 
 
     static let allCases: [MenuBarProvider] = [
-        .toolbox, .lock, .canvasGrid, .navHome, .buddyList, .boardList, 
+        .menuBar, .toolbox, .lock, .canvasGrid, .navHome, .buddyList, .boardList,
         .boardCreate, .boardDetails, .reset, .trash, .boardBackground,
         .profile, .share, .router, .note, .chat, .paint, .image, .webBrowser
     ]

@@ -150,16 +150,23 @@ struct NavStackWindow : View {
                 print(wc)
                 let temp = wc as! WindowController
                 if temp.windowId != self.id { return }
-
-                if temp.stateAction == "open" {
-                    self.isHidden = false
-                } else {
-                    if !self.isHidden {
+                
+                if temp.stateAction == "toggle" {
+                    if self.isHidden {
+                        self.isHidden = false
+                    } else {
                         self.isHidden = true
                         self.isFloatable = false
                         resetSize()
                         resetPosition()
                     }
+                } else if temp.stateAction == "open" {
+                    self.isHidden = false
+                } else if temp.stateAction == "close" {
+                    self.isHidden = true
+                    self.isFloatable = false
+                    resetSize()
+                    resetPosition()
                 }
             }.store(in: &cancellables)
         }

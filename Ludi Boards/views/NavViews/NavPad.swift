@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import Combine
 
 struct NavPadView: View {
     @EnvironmentObject var BEO: BoardEngineObject
@@ -16,6 +17,8 @@ struct NavPadView: View {
     @GestureState private var dragOffset = CGSize.zero
     @State private var isDragging = false
     
+    @State private var isHidden = false
+    @State var cancellables = Set<AnyCancellable>()
     var body: some View {
         HStack(spacing: 15) {
             NavButton(label: "arrow.up", action: { self.BEO.navUp() })
@@ -34,6 +37,7 @@ struct NavPadView: View {
                 .foregroundColor(backgroundColorForScheme(colorScheme))
                 .shadow(radius: 5)
         )
+        .opacity(isHidden ? 0 : 1)
         .offset(x: position.x + (isDragging ? dragOffset.width : 0), y: position.y + (isDragging ? dragOffset.height : 0))
         .gesture(
             DragGesture()
@@ -47,7 +51,21 @@ struct NavPadView: View {
                     self.position = CGPoint(x: self.position.x + value.translation.width, y: self.position.y + value.translation.height)
                     self.isDragging = false
                 }
-        )
+        ).onAppear() {
+            CodiChannel.MENU_WINDOW_CONTROLLER.receive(on: RunLoop.main) { wc in
+                print(wc)
+                let temp = wc as! WindowController
+                if temp.windowId != MenuBarProvider.navHome.tool.title { return }
+                
+                if temp.stateAction == "toggle" {
+                    self.isHidden = !self.isHidden
+                } else if temp.stateAction == "open" {
+                    self.isHidden = false
+                } else if temp.stateAction == "close" {
+                    self.isHidden = true
+                }
+            }.store(in: &cancellables)
+        }
     }
 }
 
@@ -70,7 +88,7 @@ struct NavButton2: View {
 
 struct NavButton: View {
     @State var label: String
-    var action: () -> Void
+    @State var action: () -> Void
     @Environment(\.colorScheme) var colorScheme
     @State private var isLocked = false
     @State private var lifeColor = Color.black

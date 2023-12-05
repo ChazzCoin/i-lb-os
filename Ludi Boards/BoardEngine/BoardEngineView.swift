@@ -42,21 +42,10 @@ class BoardEngineObject : ObservableObject {
     @Published var boardFeildLineStroke: Double = 10
     @Published var boardFeildRotation: Double = 0
     
-    func navRight() {
-        self.canvasOffset.x = self.canvasOffset.x + 100
-    }
-    
-    func navLeft() {
-        self.canvasOffset.x = self.canvasOffset.x - 100
-    }
-    
-    func navDown() {
-        self.canvasOffset.y = self.canvasOffset.y + 100
-    }
-    
-    func navUp() {
-        self.canvasOffset.y = self.canvasOffset.y - 100
-    }
+    func navRight() { self.canvasOffset.x = self.canvasOffset.x + 100 }
+    func navLeft() { self.canvasOffset.x = self.canvasOffset.x - 100 }
+    func navDown() { self.canvasOffset.y = self.canvasOffset.y + 100 }
+    func navUp() { self.canvasOffset.y  = self.canvasOffset.y - 100 }
     
     func fullScreen() {
         canvasScale = 0.2

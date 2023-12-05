@@ -15,18 +15,17 @@ struct CanvasEngine: View {
     @StateObject var BEO = BoardEngineObject.shared
     
     @State var cancellables = Set<AnyCancellable>()
+    @State var showMenuBar: Bool = true
     @State var isDrawing: Bool = false
     @State var popupIsVisible: Bool = true
     @State var gesturesAreLocked: Bool = false
     var maxScaleFactor: CGFloat = 1.0
-//    @State private var totalScale: CGFloat = 0.2
     @GestureState private var gestureScale: CGFloat = 1.0
     
     @State private var angle: Angle = .zero
     @State private var lastAngle: Angle = .zero
     
     @State private var translation: CGPoint = .zero
-//    @State private var offset = CGPoint.zero
     @State private var lastOffset = CGPoint.zero
     
     @State private var offsetTwo = CGSize.zero
@@ -99,27 +98,41 @@ struct CanvasEngine: View {
         
         GlobalPositioningZStack { geo, gps in
             
-            NavPadView().environmentObject(self.BEO)
             
-//            GenericNavWindowFloat(id: "caller", viewBuilder: {StopwatchView()})
-//                .environmentObject(self.BEO)
-//                .position(using: gps, at: .center)
+            VStack {
+                MenuButtonIcon(icon: MenuBarProvider.menuBar)
+            }
+            .frame(width: 60, height: 60)
+            .background(
+                RoundedRectangle(cornerRadius: 15)
+                    .foregroundColor(foregroundColorForScheme(self.BEO.colorScheme))
+                    .shadow(radius: 5)
+            )
+           .position(using: gps, at: .topLeft, offsetX: 100)
+            
+            NavPadView()
+                .environmentObject(self.BEO)
+                .position(using: gps, at: .bottomCenter, offsetX: 0, offsetY: 150)
             
             ForEach(Array(managedWindowsObject.managedViewGenerics.values)) { managedViewWindow in
                 managedViewWindow.viewBuilder().environmentObject(self.BEO)
             }.zIndex(5.0)
             
-            // Global MenuBar
-            MenuBarWindow(items: [
-                {MenuButtonIcon(icon: MenuBarProvider.toolbox)},
-                {MenuButtonIcon(icon: MenuBarProvider.lock)},
-                {MenuButtonIcon(icon: MenuBarProvider.profile)},
-                {MenuButtonIcon(icon: MenuBarProvider.buddyList)},
-                {MenuButtonIcon(icon: MenuBarProvider.chat)},
-                {MenuButtonIcon(icon: MenuBarProvider.boardCreate)},
-                {MenuButtonIcon(icon: MenuBarProvider.boardDetails)},
-                {MenuButtonIcon(icon: MenuBarProvider.share)}
-            ])
+            if self.showMenuBar {
+                // Global MenuBar
+                MenuBarWindow(items: [
+                    {MenuButtonIcon(icon: MenuBarProvider.toolbox)},
+                    {MenuButtonIcon(icon: MenuBarProvider.lock)},
+                    {MenuButtonIcon(icon: MenuBarProvider.navHome)},
+//                    {MenuButtonIcon(icon: MenuBarProvider.profile)},
+//                    {MenuButtonIcon(icon: MenuBarProvider.buddyList)},
+                    {MenuButtonIcon(icon: MenuBarProvider.chat)},
+                    {MenuButtonIcon(icon: MenuBarProvider.boardCreate)},
+                    {MenuButtonIcon(icon: MenuBarProvider.boardDetails)},
+//                    {MenuButtonIcon(icon: MenuBarProvider.share)}
+                ])
+            }
+            
             
             if toolBarIsEnabled {
                 ToolBarPicker {
@@ -188,6 +201,7 @@ struct CanvasEngine: View {
             handleSessionPlan()
 //            handleShare()
 //            handleBuddyList()
+//            handleNavPad()
             handleMVSettings()
             handleSessionPlans()
         }
@@ -202,14 +216,11 @@ struct CanvasEngine: View {
             let buttonType = temp.windowId
             
             switch MenuBarProvider.parseByTitle(title: buttonType) {
-                case .toolbox: return if temp.stateAction != "open" {
-                    self.toolBarIsEnabled = true
-                }else {
-                    self.toolBarIsEnabled = false
-                }
+                case .menuBar: return self.showMenuBar = !self.showMenuBar
+                case .toolbox: return self.toolBarIsEnabled = !self.toolBarIsEnabled
                 case .lock: return self.handleGestureLock()
                 case .canvasGrid: return
-                case .navHome: return
+                case .navHome: return 
                 case .buddyList: return
                 case .boardList: return
                 case .boardCreate: return
@@ -217,8 +228,8 @@ struct CanvasEngine: View {
                 case .reset: return
                 case .trash: return
                 case .boardBackground: return
-            case .profile: return self.BEO.fullScreen()
-            case .share: return self.BEO.canvasRotation += 15.0
+            case .profile: return
+            case .share: return
                 case .router: return
                 case .note: return
                 case .chat: return
@@ -243,20 +254,29 @@ struct CanvasEngine: View {
             gesturesAreLocked = true
         }
     }
-//    func handleChat() {
-//        let caller = MenuBarProvider.chat.tool.title
-//        let temp = ManagedViewWindow(id: caller, viewBuilder: {NavStackWindow(id: caller, viewBuilder: {ChatView(chatId: "default-1")})})
-//        temp.title = "Real-Time Chat"
-//        temp.windowId = caller
-//        managedWindowsObject.safelyAddItem(key: caller, item: temp)
-//    }
     func handleChat() {
+        let caller = MenuBarProvider.chat.tool.title
+        let temp = ManagedViewWindow(id: caller, viewBuilder: {NavStackWindow(id: caller, viewBuilder: {ChatView(chatId: "default-1")})})
+        temp.title = "Real-Time Chat"
+        temp.windowId = caller
+        managedWindowsObject.safelyAddItem(key: caller, item: temp)
+    }
+    func handleTimeManagement() {
         let caller = MenuBarProvider.chat.tool.title
         let temp = ManagedViewWindow(id: caller, viewBuilder: {NavStackWindow(id: caller, viewBuilder: {StopwatchView()})})
         temp.title = "Stop-Watch"
         temp.windowId = caller
         managedWindowsObject.safelyAddItem(key: caller, item: temp)
     }
+    
+    func handleNavPad() {
+        let caller = MenuBarProvider.navHome.tool.title
+        let temp = ManagedViewWindow(id: caller, viewBuilder: {NavPadView()})
+        temp.title = "NavPad"
+        temp.windowId = caller
+        managedWindowsObject.safelyAddItem(key: caller, item: temp)
+    }
+    
 //    func handleBuddyList() {
 //        let caller = MenuBarProvider.buddyList.tool.title
 //        let buddies = ManagedViewWindow(id: caller, viewBuilder: AnyView(BuddyListView()))
