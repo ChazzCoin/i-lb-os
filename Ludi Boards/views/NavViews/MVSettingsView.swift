@@ -57,24 +57,6 @@ struct SettingsView: View {
                 
             }
             .padding(.horizontal)
-
-            if self.toolLevel != ToolLevels.LINE.rawValue {
-                Section(header: Text("Rotation: \(Int(viewRotation))")) {
-                    Slider(
-                        value: $viewRotation,
-                        in: 0...360,
-                        step: 1,
-                        onEditingChanged: { editing in
-                            if !editing {
-                                let va = ViewAtts(viewId: viewId, rotation: viewRotation)
-                                CodiChannel.TOOL_ATTRIBUTES.send(value: va)
-                            }
-                        }
-                    ).padding()
-                    
-                }.padding(.horizontal)
-            }
-            
             
             Section(header: Text("Color")) {
                 
@@ -84,6 +66,21 @@ struct SettingsView: View {
                     let va = ViewAtts(viewId: viewId, color: viewColor)
                     CodiChannel.TOOL_ATTRIBUTES.send(value: va)
                 }
+                
+            }.padding(.horizontal)
+            
+            Section(header: Text("Rotation: \(Int(viewRotation))")) {
+                Slider(
+                    value: $viewRotation,
+                    in: 0...360,
+                    step: 45,
+                    onEditingChanged: { editing in
+                        if !editing {
+                            let va = ViewAtts(viewId: viewId, rotation: viewRotation)
+                            CodiChannel.TOOL_ATTRIBUTES.send(value: va)
+                        }
+                    }
+                ).padding()
                 
             }.padding(.horizontal)
             

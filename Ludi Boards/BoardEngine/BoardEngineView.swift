@@ -28,14 +28,22 @@ class BoardEngineObject : ObservableObject {
     @Published private var boardBgRed: Double = 48.0
     @Published private var boardBgGreen: Double = 128.0
     @Published private var boardBgBlue: Double = 20.0
-    @Published private var boardBgAlpha: Double = 0.75
+    @Published var boardBgAlpha: Double = 0.75
     
     @Published var boardFieldLineColor: Color = Color.white
+    @Published var boardFieldLineRed: Double = 48.0
+    @Published var boardFieldLineGreen: Double = 128.0
+    @Published var boardFieldLineBlue: Double = 20.0
+    @Published var boardFieldLineAlpha: Double = 0.75
     @Published var boardFeildLineStroke: Double = 10
     @Published var boardFeildRotation: Double = -90
     
     func getColor() -> Color {
-        return Color(red: CGFloat(boardBgRed), green: CGFloat(boardBgGreen), blue: CGFloat(boardBgBlue), opacity: CGFloat(boardBgAlpha))
+        return Color(red: boardBgRed, green: boardBgGreen, blue: boardBgBlue, opacity: boardBgAlpha)
+    }
+    
+    func getFieldLineColor() -> Color {
+        return Color(red: boardFieldLineRed, green: boardFieldLineGreen, blue: boardFieldLineBlue, opacity: boardFieldLineAlpha)
     }
     
     func setColor(red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat) {
@@ -56,24 +64,32 @@ class BoardEngineObject : ObservableObject {
         }
     }
     
-    
+    func setFieldLineColor(colorIn:Color) {
+        if let cIn = colorIn.toRGBA() {
+            boardFieldLineRed = cIn.red
+            boardFieldLineGreen = cIn.green
+            boardFieldLineBlue = cIn.blue
+            boardFieldLineAlpha = cIn.alpha
+            boardFieldLineColor = getFieldLineColor()
+        }
+    }
     @Published var boardBgViewItems: [String: () -> AnyView] = [
-        "SoccerFieldFullView": { AnyView(SoccerFieldFullView(width: 4000.0, height: 3000.0, stroke: 10, color: Color.white)) },
-        "SoccerFieldHalfView": { AnyView(SoccerFieldHalfView(width: 4000.0, height: 3000.0, stroke: 10, color: Color.white)) },
+        "SoccerFieldFullView": { AnyView(SoccerFieldFullView(isMini: false)) },
+        "SoccerFieldHalfView": { AnyView(SoccerFieldHalfView(isMini: false)) },
         "BasicSquareView": {AnyView(BasicSquareView(isMini: false))}
     ]
     
     @Published var boardBgViewSettingItems: [String: () -> AnyView] = [
-        "SoccerFieldFullView": { AnyView(SoccerFieldFullView(width: 100.0, height: 100.0, stroke: 3, color: Color.white)) },
-        "SoccerFieldHalfView": { AnyView(SoccerFieldHalfView(width: 100.0, height: 100.0, stroke: 3, color: Color.white)) },
+        "SoccerFieldFullView": { AnyView(SoccerFieldFullView(isMini: true)) },
+        "SoccerFieldHalfView": { AnyView(SoccerFieldHalfView(isMini: true)) },
         "BasicSquareView": {AnyView(BasicSquareView(isMini: true))}
     ]
     func setBoardBgView(boardName: String) {
         boardBgName = boardName
     }
 
-    func boardBgView(width: CGFloat, height: CGFloat, stroke: CGFloat, color: Color) -> AnyView {
-        AnyView(SoccerFieldFullView(width: width, height: height, stroke: stroke, color: color))
+    func boardBgView() -> AnyView {
+        AnyView(SoccerFieldFullView(isMini: false))
     }
     
     func foregroundColor() -> Color { return foregroundColorForScheme(colorScheme) }

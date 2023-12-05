@@ -44,7 +44,7 @@ struct ColorListPicker: View {
     var callback: (Color) -> Void
     @State var colorNamesProvider = Array(colorDict().values)
 
-    @State private var selectedImage: Color?
+    @State private var selectedImage: Color = Color.black
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {

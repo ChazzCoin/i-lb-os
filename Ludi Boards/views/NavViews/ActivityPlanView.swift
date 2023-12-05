@@ -24,24 +24,13 @@ struct ActivityPlanView: View {
     @State private var showLoading = false
     @State private var showCompletion = false
     @State private var isCurrentPlan = false
+    @State private var colorOpacity = 1.0
+    @State private var lineOpacity = 1.0
+    @State private var lineStroke = 1.0
+    @State private var fieldRotation = 0.0
     
     @State var cancellables = Set<AnyCancellable>()
     @State private var sessionNotificationToken: NotificationToken? = nil
-    
-//    @State private var bgItems = [
-//        { AnyView(SoccerFieldFullView(width: 100, height: 100, stroke: 2, color: Color.blue)) },
-//        { AnyView(SoccerFieldHalfView(width: 100, height: 100, stroke: 2, color: Color.blue)) }
-//    ]
-    
-    private func fetchSessionPlan() {
-        if let ap = realmInstance.findByField(ActivityPlan.self, value: self.boardId) {
-            self.activityPlan = ap
-            self.boardId = ap.id
-            if self.BEO.currentActivityId == self.activityPlan.id {
-                self.isCurrentPlan = true
-            }
-        }
-    }
 
     var body: some View {
         
@@ -78,9 +67,6 @@ struct ActivityPlanView: View {
             }
             
             Section(header: Text("Board Settings")) {
-//                ThumbnailListView() { item in
-//                    
-//                }
                 Section(header: Text("Field Color")) {
                     ColorListPicker() { color in
                         if self.isCurrentPlan {
@@ -96,10 +82,28 @@ struct ActivityPlanView: View {
                             }
                         }
                     }
+                    Text("Background Field Color Transparency")
+                    Slider(
+                        value: $colorOpacity,
+                        in: 0.0...1.0,
+                        step: 0.1,
+                        onEditingChanged: { editing in
+                            if !editing {
+                                if self.isCurrentPlan {
+                                    self.BEO.boardBgAlpha = colorOpacity
+                                    self.BEO.boardBgColor = self.BEO.getColor()
+                                }
+                                realmInstance.safeWrite { r in
+                                    self.activityPlan.backgroundAlpha = colorOpacity
+                                    r.add(self.activityPlan)
+                                }
+                            }
+                        }
+                    ).padding()
                 }.padding(.leading)
                 
                 Section(header: Text("Field Lines")) {
-                    BarListPicker(viewBuilder: self.BEO.boardBgViewSettingItems) { v in
+                    BarListPicker(initialSelected: self.isCurrentPlan ? self.BEO.boardBgName : self.activityPlan.backgroundView, viewBuilder: self.BEO.boardBgViewSettingItems) { v in
                         if self.isCurrentPlan {
                             self.BEO.setBoardBgView(boardName: v)
                         }
@@ -109,7 +113,79 @@ struct ActivityPlanView: View {
                             r.add(self.activityPlan)
                         }
                     }
+                    
+                    ColorListPicker() { color in
+                        if self.isCurrentPlan {
+                            self.BEO.setFieldLineColor(colorIn: color)
+                        }
+                        if let c = color.toRGBA() {
+                            realmInstance.safeWrite { r in
+                                self.activityPlan.backgroundLineRed = c.red
+                                self.activityPlan.backgroundLineGreen = c.green
+                                self.activityPlan.backgroundLineBlue = c.blue
+                                self.activityPlan.backgroundLineAlpha = c.alpha
+                                r.add(self.activityPlan)
+                            }
+                        }
+                    }
+                    
+                    Text("Field Line Color Transparency")
+                    Slider(
+                        value: $lineOpacity,
+                        in: 0.0...1.0,
+                        step: 0.1,
+                        onEditingChanged: { editing in
+                            if !editing {
+                                if self.isCurrentPlan {
+                                    self.BEO.boardFieldLineAlpha = lineOpacity
+                                    self.BEO.boardFieldLineColor = self.BEO.getFieldLineColor()
+                                }
+                                realmInstance.safeWrite { r in
+                                    self.activityPlan.backgroundLineAlpha = lineOpacity
+                                    r.add(self.activityPlan)
+                                }
+                            }
+                        }
+                    ).padding()
+                    
+                    Text("Field Line Stroke Width")
+                    Slider(
+                        value: $lineStroke,
+                        in: 1.0...50.0,
+                        step: 1,
+                        onEditingChanged: { editing in
+                            if !editing {
+                                self.BEO.boardFeildLineStroke = lineStroke
+                                realmInstance.safeWrite { r in
+                                    self.activityPlan.backgroundLineStroke = lineStroke
+                                    r.add(self.activityPlan)
+                                }
+                            }
+                        }
+                    ).padding()
+                    
+                    Section() {
+                        Text("Rotate Field")
+                        Slider(
+                            value: $fieldRotation,
+                            in: 0...360,
+                            step: 45,
+                            onEditingChanged: { editing in
+                                if !editing {
+                                    self.BEO.boardFeildRotation = fieldRotation
+                                    realmInstance.safeWrite { r in
+                                        self.activityPlan.backgroundRotation = fieldRotation
+                                        r.add(self.activityPlan)
+                                    }
+                                }
+                            }
+                        ).padding()
+                    }
+                    
+                    
                 }.padding(.leading)
+                
+                
             }.clearSectionBackground()
             
             // BUTTONS
@@ -179,6 +255,20 @@ struct ActivityPlanView: View {
                     .frame(width: 30, height: 30)
             }
         })
+    }
+    
+    private func fetchSessionPlan() {
+        if let ap = realmInstance.findByField(ActivityPlan.self, value: self.boardId) {
+            self.activityPlan = ap
+            self.boardId = ap.id
+            self.lineStroke = ap.backgroundLineStroke
+            self.lineOpacity = ap.backgroundLineAlpha
+            self.colorOpacity = ap.backgroundAlpha
+            self.fieldRotation = ap.backgroundRotation
+            if self.BEO.currentActivityId == self.activityPlan.id {
+                self.isCurrentPlan = true
+            }
+        }
     }
     
     func startLoadingProcess() {

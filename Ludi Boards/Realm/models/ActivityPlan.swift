@@ -31,6 +31,12 @@ import RealmSwift
     dynamic var backgroundGreen: Double = 128.0
     dynamic var backgroundBlue: Double = 20.0
     dynamic var backgroundAlpha: Double = 0.75
+    dynamic var backgroundLineStroke: Double = 10
+    dynamic var backgroundRotation: Double = -90
+    dynamic var backgroundLineRed: Double = 0.0
+    dynamic var backgroundLineGreen: Double = 0.0
+    dynamic var backgroundLineBlue: Double = 0.0
+    dynamic var backgroundLineAlpha: Double = 1.0
     dynamic var backgroundView: String = "SoccerFieldFullView"
 
     override static func primaryKey() -> String? {

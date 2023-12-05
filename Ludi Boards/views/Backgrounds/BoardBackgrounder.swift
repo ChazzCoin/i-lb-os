@@ -33,14 +33,3 @@ struct FieldOverlayView<Background: View, Overlay: View>: View {
     }
 }
 
-
-
-struct ContentViewField_Previews: PreviewProvider {
-    static var previews: some View {
-        FieldOverlayView(width: 500, height: 500, background: {
-            GrassView()
-        }, overlay: {
-            SoccerFieldFullView(width: 500, height: 500, stroke: 2, color: Color.white)
-        })
-    }
-}
