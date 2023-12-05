@@ -15,7 +15,9 @@ import RealmSwift
     dynamic var userId: String? = ""
     dynamic var userName: String? = ""
     dynamic var name: String? = ""
-    dynamic var status: String? = ""
+    dynamic var status: String? = "offline"
+    dynamic var authLevel: Int = 0
+    dynamic var isGuest: Bool = false
 
     override static func primaryKey() -> String? {
         return "id"

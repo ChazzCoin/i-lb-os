@@ -8,18 +8,32 @@
 import Foundation
 import RealmSwift
 
-class ManagedViewAction: Object {
-    @objc dynamic var id: String = UUID().uuidString
-    @objc dynamic var managedViewId: String = ""
-    @objc dynamic var boardId: String = ""
-    @objc dynamic var orderIndex: Int = 0
-    @objc dynamic var x: Float = 0.0
-    @objc dynamic var y: Float = 0.0
-    @objc dynamic var width: Int = 0
-    @objc dynamic var height: Int = 0
-    @objc dynamic var color: String = ""
-    @objc dynamic var size: String = ""
-    @objc dynamic var duration: Int = 2000 // duration in milliseconds
+@objcMembers class ManagedViewAction: Object {
+    dynamic var id: String = UUID().uuidString
+    dynamic var managedViewId: String = ""
+    dynamic var boardId: String = ""
+    dynamic var orderIndex: Int = 0
+    dynamic var toolType: String = "8BALL"
+    dynamic var toolColor: String = "TOOLCOLOR.BLACK.name"  // Assuming it's a string representation
+    dynamic var toolSize: String = "TOOLSIZE.MEDIUM.name"  // Assuming it's a string representation
+    dynamic var x: Double = 0.0
+    dynamic var y: Double = 0.0
+    dynamic var startX: Double = 0.0
+    dynamic var startY: Double = 0.0
+    dynamic var endX: Double = 0.0
+    dynamic var endY: Double = 0.0
+    dynamic var width: Int = 0
+    dynamic var height: Int = 0
+    dynamic var rotation: Double = 0.0
+    dynamic var translationX: Double = 0.0
+    dynamic var translationY: Double = 0.0
+    dynamic var lastUserId: String = "me"
+    
+    dynamic var colorRed: Double = 48.0
+    dynamic var colorGreen: Double = 128.0
+    dynamic var colorBlue: Double = 20.0
+    dynamic var colorAlpha: Double = 0.75
+    dynamic var duration: Int = 2000 // duration in milliseconds
 
     override static func primaryKey() -> String? {
         return "id"

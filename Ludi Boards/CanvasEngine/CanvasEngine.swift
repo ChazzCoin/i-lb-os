@@ -12,6 +12,8 @@ import Combine
 
 struct CanvasEngine: View {
     
+    @StateObject var BEO = BoardEngineObject.shared
+    
     @State var cancellables = Set<AnyCancellable>()
     @State var isDrawing: Bool = false
     @State var popupIsVisible: Bool = true
@@ -140,7 +142,7 @@ struct CanvasEngine: View {
             }
             
             if self.isDrawing {
-                TipBoxView(tips: [
+                TipBoxViewExpander(tips: [
                     "Tap the Line Tool again to toggle Line Drawing Mode.",
                     "Tap anywhere on the field and begin dragging your finger to create a new line.",
                     "Once you create the line, toggle Line Drawing Mode off and double tap the line for settings.",
@@ -150,7 +152,9 @@ struct CanvasEngine: View {
             
 //            FloatingEmojiView()
 //                .position(using: gps, at: .topLeft, offsetX: 200, offsetY: 0)
-        }.zIndex(3.0)
+        }
+        .zIndex(3.0)
+        
         
         ZStack() {
             
@@ -159,10 +163,10 @@ struct CanvasEngine: View {
                 DrawGridLines().zIndex(1.0)
                 BoardEngine(isDraw: $isDrawing)
                     .zIndex(2.0)
-                    .environmentObject(BoardEngineObject.shared)
+                    .environmentObject(self.BEO)
             }
             .frame(width: 20000, height: 20000)
-            .background(Color.clear)
+//            .background(Color.clear)
             .offset(x: self.offset.x, y: self.offset.y)
             .scaleEffect(totalScale * gestureScale)
             .rotationEffect(angle)

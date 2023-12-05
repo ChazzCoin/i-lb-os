@@ -78,16 +78,17 @@ struct ActivityPlanView: View {
                         bgColor = color
                         if self.isCurrentPlan {
                             self.BEO.setColor(colorIn: color)
-                        }
-                        if let c = color.toRGBA() {
-                            realmInstance.safeWrite { r in
-                                self.activityPlan.backgroundRed = c.red
-                                self.activityPlan.backgroundGreen = c.green
-                                self.activityPlan.backgroundBlue = c.blue
-                                self.activityPlan.backgroundAlpha = c.alpha
-                                r.add(self.activityPlan)
+                            if let c = color.toRGBA() {
+                                realmInstance.safeWrite { r in
+                                    self.activityPlan.backgroundRed = c.red
+                                    self.activityPlan.backgroundGreen = c.green
+                                    self.activityPlan.backgroundBlue = c.blue
+                                    self.activityPlan.backgroundAlpha = c.alpha
+                                    r.add(self.activityPlan)
+                                }
                             }
                         }
+                        
                     }
                     Text("Background Color Transparency: \(colorOpacity)")
                     Slider(
@@ -99,11 +100,12 @@ struct ActivityPlanView: View {
                                 if self.isCurrentPlan {
                                     self.BEO.boardBgAlpha = colorOpacity
                                     self.BEO.boardBgColor = self.BEO.getColor()
+                                    realmInstance.safeWrite { r in
+                                        self.activityPlan.backgroundAlpha = colorOpacity
+                                        r.add(self.activityPlan)
+                                    }
                                 }
-                                realmInstance.safeWrite { r in
-                                    self.activityPlan.backgroundAlpha = colorOpacity
-                                    r.add(self.activityPlan)
-                                }
+                                
                             }
                         }
                     ).padding()
@@ -116,10 +118,10 @@ struct ActivityPlanView: View {
                         fieldName = v
                         if self.isCurrentPlan {
                             self.BEO.setBoardBgView(boardName: v)
-                        }
-                        realmInstance.safeWrite { r in
-                            self.activityPlan.backgroundView = v
-                            r.add(self.activityPlan)
+                            realmInstance.safeWrite { r in
+                                self.activityPlan.backgroundView = v
+                                r.add(self.activityPlan)
+                            }
                         }
                     }
                     
@@ -128,16 +130,17 @@ struct ActivityPlanView: View {
                         lineColor = color
                         if self.isCurrentPlan {
                             self.BEO.setFieldLineColor(colorIn: color)
-                        }
-                        if let c = color.toRGBA() {
-                            realmInstance.safeWrite { r in
-                                self.activityPlan.backgroundLineRed = c.red
-                                self.activityPlan.backgroundLineGreen = c.green
-                                self.activityPlan.backgroundLineBlue = c.blue
-                                self.activityPlan.backgroundLineAlpha = c.alpha
-                                r.add(self.activityPlan)
+                            if let c = color.toRGBA() {
+                                realmInstance.safeWrite { r in
+                                    self.activityPlan.backgroundLineRed = c.red
+                                    self.activityPlan.backgroundLineGreen = c.green
+                                    self.activityPlan.backgroundLineBlue = c.blue
+                                    self.activityPlan.backgroundLineAlpha = c.alpha
+                                    r.add(self.activityPlan)
+                                }
                             }
                         }
+                        
                     }
                     
                     Text("Line Transparency: \(lineOpacity)")
@@ -150,10 +153,10 @@ struct ActivityPlanView: View {
                                 if self.isCurrentPlan {
                                     self.BEO.boardFieldLineAlpha = lineOpacity
                                     self.BEO.boardFieldLineColor = self.BEO.getFieldLineColor()
-                                }
-                                realmInstance.safeWrite { r in
-                                    self.activityPlan.backgroundLineAlpha = lineOpacity
-                                    r.add(self.activityPlan)
+                                    realmInstance.safeWrite { r in
+                                        self.activityPlan.backgroundLineAlpha = lineOpacity
+                                        r.add(self.activityPlan)
+                                    }
                                 }
                             }
                         }
@@ -166,10 +169,12 @@ struct ActivityPlanView: View {
                         step: 1,
                         onEditingChanged: { editing in
                             if !editing {
-                                self.BEO.boardFeildLineStroke = lineStroke
-                                realmInstance.safeWrite { r in
-                                    self.activityPlan.backgroundLineStroke = lineStroke
-                                    r.add(self.activityPlan)
+                                if self.isCurrentPlan {
+                                    self.BEO.boardFeildLineStroke = lineStroke
+                                    realmInstance.safeWrite { r in
+                                        self.activityPlan.backgroundLineStroke = lineStroke
+                                        r.add(self.activityPlan)
+                                    }
                                 }
                             }
                         }
@@ -183,11 +188,14 @@ struct ActivityPlanView: View {
                             step: 45,
                             onEditingChanged: { editing in
                                 if !editing {
-                                    self.BEO.boardFeildRotation = fieldRotation
-                                    realmInstance.safeWrite { r in
-                                        self.activityPlan.backgroundRotation = fieldRotation
-                                        r.add(self.activityPlan)
+                                    if self.isCurrentPlan {
+                                        self.BEO.boardFeildRotation = fieldRotation
+                                        realmInstance.safeWrite { r in
+                                            self.activityPlan.backgroundRotation = fieldRotation
+                                            r.add(self.activityPlan)
+                                        }
                                     }
+                                    
                                 }
                             }
                         ).padding()
@@ -300,6 +308,34 @@ struct ActivityPlanView: View {
         let newAP = ActivityPlan()
         newAP.sessionId = sessionId
         newAP.orderIndex = 0
+        
+        newAP.title = self.activityPlan.title
+        newAP.subTitle = self.activityPlan.subTitle
+        newAP.duration = self.activityPlan.duration
+        newAP.dateOf = self.activityPlan.dateOf
+        newAP.ageLevel = self.activityPlan.ageLevel
+        newAP.timePeriod = self.activityPlan.timePeriod
+        newAP.activityDetails = self.activityPlan.activityDetails
+        newAP.objectiveDetails = self.activityPlan.objectiveDetails
+        
+        newAP.backgroundView = fieldName
+        newAP.backgroundRotation = fieldRotation
+        newAP.backgroundLineStroke = lineStroke
+        
+        if let c = bgColor.toRGBA() {
+            newAP.backgroundRed = c.red
+            newAP.backgroundGreen = c.green
+            newAP.backgroundBlue = c.blue
+            newAP.backgroundAlpha = c.alpha
+        }
+        
+        if let lc = lineColor.toRGBA() {
+            newAP.backgroundLineRed = lc.red
+            newAP.backgroundLineGreen = lc.green
+            newAP.backgroundLineBlue = lc.blue
+            newAP.backgroundLineAlpha = lc.alpha
+        }
+
         realmInstance.safeWrite { r in
             r.add(newAP)
         }

@@ -120,24 +120,17 @@ struct NavStackWindow : View {
         .shadow(radius: 10)
         .position(x: position.x + (isDragging ? dragOffset.width : 0) + (!isFloatable ? getPositionX() : 0), y: position.y + (isDragging ? dragOffset.height : 0))
         .animation(.easeInOut(duration: 1.0), value: isHidden)
-//        .gesture(
-//            DragGesture()
-//                .updating($dragOffset, body: { (value, state, transaction) in
-//                    if !self.isFloatable {return}
-//                    state = value.translation
-//                })
-//                .onChanged { _ in
-//                    if !self.isFloatable {return}
-//                    self.isDragging = true
-//                }
-//                .onEnded { value in
-//                    if !self.isFloatable {return}
-//                    self.position = CGPoint(x: self.position.x + value.translation.width, y: self.position.y + value.translation.height)
-//                    self.isDragging = false
-//                }
-//        )
+        .keyboardListener(
+            onAppear: { height in
+                // Handle keyboard appearance (e.g., adjust view)
+                print("Keyboard appeared with height: \(height)")
+            },
+            onDisappear: {
+                // Handle keyboard disappearance
+                print("Keyboard disappeared")
+            }
+        )
         .onAppear() {
-            
             resetSize()
             resetPosition()
             CodiChannel.MENU_WINDOW_TOGGLER.receive(on: RunLoop.main) { windowType in
@@ -229,6 +222,16 @@ struct GenericNavWindowFloat : View {
                     self.position = CGPoint(x: self.position.x + value.translation.width, y: self.position.y + value.translation.height)
                     self.isDragging = false
                 }
+        )
+        .keyboardListener(
+            onAppear: { height in
+                // Handle keyboard appearance (e.g., adjust view)
+                print("Keyboard appeared with height: \(height)")
+            },
+            onDisappear: {
+                // Handle keyboard disappearance
+                print("Keyboard disappeared")
+            }
         )
     }
 

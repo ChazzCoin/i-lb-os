@@ -20,8 +20,8 @@ class BoardEngineObject : ObservableObject {
     // Board Settings
     @Published var boardWidth: CGFloat = 3000.0
     @Published var boardHeight: CGFloat = 4000.0
-    @Published var boardStartPosX: CGFloat = 3000.0 / 2
-    @Published var boardStartPosY: CGFloat = 4000.0 / 2
+    @Published var boardStartPosX: CGFloat = 250.0
+    @Published var boardStartPosY: CGFloat = 1000.0
     @Published var boardBgColor: Color = Color.green.opacity(0.75)
     
     @Published var boardBgName: String = "SoccerFieldFullView"
@@ -152,13 +152,13 @@ struct BoardEngine: View {
         }
         .frame(width: self.BEO.boardWidth, height: self.BEO.boardHeight)
         .background {
-            FieldOverlayView(width: self.BEO.boardWidth, height: self.BEO.boardHeight, background: {
+            FieldOverlayView(width: 6000, height: 6000, background: {
                 self.BEO.boardBgColor
             }, overlay: {
                 if let temp = self.BEO.boardBgViewItems[self.BEO.boardBgName] { temp().environmentObject(self.BEO) }
             }).position(x: self.BEO.boardStartPosX, y: self.BEO.boardStartPosY)
         }
-        .gesture(
+        .simultaneousGesture( self.isDraw ?
             DragGesture()
                 .onChanged { value in
                     if !self.isDraw {return}
@@ -169,8 +169,9 @@ struct BoardEngine: View {
                     if !self.isDraw {return}
                     self.drawingEndPoint = value.location
                     saveLineData(start: value.startLocation, end: value.location)
-                }
-        ).onAppear {
+                } : nil
+        )
+        .onAppear {
             self.loadAllSessionPlans()
             CodiChannel.SESSION_ON_ID_CHANGE.receive(on: RunLoop.main) { sc in
                 let temp = sc as! SessionChange
@@ -298,7 +299,9 @@ struct BoardEngine: View {
         if planId != nil || !self.activityID.isEmpty {
             if let act = self.realmIntance.findByField(ActivityPlan.self, field: "id", value: self.activityID) {
                 self.BEO.setColor(red: act.backgroundRed, green: act.backgroundGreen, blue: act.backgroundBlue, alpha: act.backgroundAlpha)
+                self.BEO.setFieldLineColor(colorIn: Color(red: act.backgroundLineRed, green: act.backgroundLineGreen, blue: act.backgroundLineBlue).opacity(act.backgroundLineAlpha))
                 self.BEO.boardBgName = act.backgroundView
+                self.BEO.boardFeildRotation = act.backgroundRotation
                 self.activities.append(act)
             }
             loadManagedViewTools()
@@ -312,7 +315,9 @@ struct BoardEngine: View {
                     if !hasBeenSet {
                         self.activityID = i.id
                         self.BEO.setColor(red: i.backgroundRed, green: i.backgroundGreen, blue: i.backgroundBlue, alpha: i.backgroundAlpha)
+                        self.BEO.setFieldLineColor(colorIn: Color(red: i.backgroundLineRed, green: i.backgroundLineGreen, blue: i.backgroundLineBlue))
                         self.BEO.boardBgName = i.backgroundView
+                        self.BEO.boardFeildRotation = i.backgroundRotation
                         self.BEO.currentActivityId = self.activityID
                         hasBeenSet = true
                     }
@@ -326,7 +331,9 @@ struct BoardEngine: View {
         self.activityID = newActivity.id
         newActivity.sessionId = self.sessionID
         self.BEO.currentActivityId = self.activityID
-        self.BEO.setColor(red: newActivity.backgroundRed, green: newActivity.backgroundGreen, blue: newActivity.backgroundBlue, alpha: newActivity.backgroundAlpha)
+        self.BEO.setColor(colorIn: Color.green.opacity(0.75))
+        self.BEO.setFieldLineColor(colorIn: Color(red: newActivity.backgroundRed, green: newActivity.backgroundGreen, blue: newActivity.backgroundBlue))
+        self.BEO.setBoardBgView(boardName: newActivity.backgroundView)
         self.activities.append(newActivity)
         self.realmIntance.safeWrite { r in
             r.add(newActivity)
