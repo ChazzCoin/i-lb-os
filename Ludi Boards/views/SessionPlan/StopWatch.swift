@@ -16,39 +16,46 @@ struct StopwatchView: View {
     
     var body: some View {
         LoadingForm(isLoading: .constant(false)) { loader in
-            Text(viewModel.timeElapsed)
-                .font(.system(size: 40, weight: .bold, design: .default))
-                .padding()
-
-            Button(action: {
-                if viewModel.isRunning {
-                    viewModel.stop()
-                } else {
-                    viewModel.start()
-                }
-            }) {
-                Text(viewModel.isRunning ? "Stop" : "Start")
-                    .foregroundColor(.white)
-                    .padding()
-                    .background(Color.blue)
-                    .cornerRadius(8)
+            
+            Section(header: Text("Live Timer")) {
+                CountdownTimerView()
             }
-
-            Button(action: {
-                viewModel.reset()
-            }) {
-                Text("Reset")
-                    .foregroundColor(.white)
+            
+            Section(header: Text("Live Stop Watch")) {
+                Text(viewModel.timeElapsed)
+                    .font(.system(size: 40, weight: .bold, design: .default))
                     .padding()
-                    .background(Color.red)
-                    .cornerRadius(8)
+
+                Button(action: {
+                    if viewModel.isRunning {
+                        viewModel.stop()
+                    } else {
+                        viewModel.start()
+                    }
+                }) {
+                    Text(viewModel.isRunning ? "Stop" : "Start")
+                        .foregroundColor(.white)
+                        .padding()
+                        .background(Color.blue)
+                        .cornerRadius(8)
+                }
+
+                Button(action: {
+                    viewModel.reset()
+                }) {
+                    Text("Reset")
+                        .foregroundColor(.white)
+                        .padding()
+                        .background(Color.red)
+                        .cornerRadius(8)
+                }
             }
         }
         .padding()
 //        .background(Color(.systemBackground))
         .cornerRadius(12)
         .shadow(radius: 10)
-        .navigationBarTitle("Stop Watch", displayMode: .inline)
+        .navigationBarTitle("Live Time", displayMode: .inline)
     }
 }
 

@@ -189,7 +189,7 @@ struct GenericNavWindowFloat : View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                viewBuilder().environmentObject(BEO)
+                viewBuilder().environmentObject(self.BEO)
             }.opacity(isHidden ? 0 : 1)
             .navigationBarItems(trailing: HStack {
                 // Add buttons or icons here for minimize, maximize, close, etc.

@@ -99,8 +99,14 @@ struct CanvasEngine: View {
         
         GlobalPositioningZStack { geo, gps in
             
+            NavPadView().environmentObject(self.BEO)
+            
+//            GenericNavWindowFloat(id: "caller", viewBuilder: {StopwatchView()})
+//                .environmentObject(self.BEO)
+//                .position(using: gps, at: .center)
+            
             ForEach(Array(managedWindowsObject.managedViewGenerics.values)) { managedViewWindow in
-                managedViewWindow.viewBuilder().environmentObject(BoardEngineObject.shared)
+                managedViewWindow.viewBuilder().environmentObject(self.BEO)
             }.zIndex(5.0)
             
             // Global MenuBar

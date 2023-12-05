@@ -94,6 +94,7 @@
 		FBB450002B04B7580096F8EB /* ColorProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBB44FFF2B04B7580096F8EB /* ColorProvider.swift */; };
 		FBB450022B052B180096F8EB /* FireLiveData.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBB450012B052B180096F8EB /* FireLiveData.swift */; };
 		FBBAD3BC2B1F8ECC004A4332 /* Timer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBBAD3BB2B1F8ECC004A4332 /* Timer.swift */; };
+		FBBAD3BE2B1FBF58004A4332 /* NavPad.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBBAD3BD2B1FBF58004A4332 /* NavPad.swift */; };
 		FBD9AFA82AFF00BF005F8620 /* LudiBoardsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFA72AFF00BF005F8620 /* LudiBoardsApp.swift */; };
 		FBD9AFAA2AFF00BF005F8620 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFA92AFF00BF005F8620 /* ContentView.swift */; };
 		FBD9AFAC2AFF00BF005F8620 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FBD9AFAB2AFF00BF005F8620 /* Assets.xcassets */; };
@@ -190,6 +191,7 @@
 		FBB44FFF2B04B7580096F8EB /* ColorProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorProvider.swift; sourceTree = "<group>"; };
 		FBB450012B052B180096F8EB /* FireLiveData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireLiveData.swift; sourceTree = "<group>"; };
 		FBBAD3BB2B1F8ECC004A4332 /* Timer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timer.swift; sourceTree = "<group>"; };
+		FBBAD3BD2B1FBF58004A4332 /* NavPad.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavPad.swift; sourceTree = "<group>"; };
 		FBD9AFA42AFF00BF005F8620 /* Ludi Boards.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Ludi Boards.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FBD9AFA72AFF00BF005F8620 /* LudiBoardsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LudiBoardsApp.swift; sourceTree = "<group>"; };
 		FBD9AFA92AFF00BF005F8620 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -304,6 +306,7 @@
 				FB15DD332B074E6E00A21290 /* ChatUI.swift */,
 				FBA20A2E2B166FCE00045D1C /* MVSettingsView.swift */,
 				FB58A1B32B17D1420024B9A2 /* ToolBarView.swift */,
+				FBBAD3BD2B1FBF58004A4332 /* NavPad.swift */,
 			);
 			path = NavViews;
 			sourceTree = "<group>";
@@ -710,6 +713,7 @@
 				FB3E02A92B0C3B2C00D8558C /* RotationSlider.swift in Sources */,
 				FB9F1DD22B1529E400FD9078 /* LoadingView.swift in Sources */,
 				FBB450022B052B180096F8EB /* FireLiveData.swift in Sources */,
+				FBBAD3BE2B1FBF58004A4332 /* NavPad.swift in Sources */,
 				FBA4FB572B15AA2700BF409E /* GlobalPositioning.swift in Sources */,
 				FB9F1DD02B1528FC00FD9078 /* Extensions.swift in Sources */,
 				FBE2C62E2B1C3FDE004C0116 /* LoadingForm.swift in Sources */,

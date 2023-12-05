@@ -40,11 +40,28 @@ class BoardEngineObject : ObservableObject {
     @Published var boardFieldLineBlue: Double = 20.0
     @Published var boardFieldLineAlpha: Double = 0.75
     @Published var boardFeildLineStroke: Double = 10
-    @Published var boardFeildRotation: Double = -90
+    @Published var boardFeildRotation: Double = 0
+    
+    func navRight() {
+        self.canvasOffset.x = self.canvasOffset.x + 100
+    }
+    
+    func navLeft() {
+        self.canvasOffset.x = self.canvasOffset.x - 100
+    }
+    
+    func navDown() {
+        self.canvasOffset.y = self.canvasOffset.y + 100
+    }
+    
+    func navUp() {
+        self.canvasOffset.y = self.canvasOffset.y - 100
+    }
     
     func fullScreen() {
         canvasScale = 0.2
         canvasOffset = CGPoint.zero
+        canvasRotation = 0.0
     }
     
     func getColor() -> Color {
