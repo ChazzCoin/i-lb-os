@@ -27,6 +27,7 @@ class ViewAtts {
     var rotation: Double? = nil
     var color: Color? = nil    
     var level: Int = 0
+    var isLocked: Bool = false
     var isDeleted: Bool = false
     var stateAction: String = "open" //close
     

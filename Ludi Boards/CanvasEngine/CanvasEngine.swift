@@ -16,7 +16,6 @@ struct CanvasEngine: View {
     
     @State var cancellables = Set<AnyCancellable>()
     @State var showMenuBar: Bool = true
-    @State var isDrawing: Bool = false
     @State var popupIsVisible: Bool = true
     @State var gesturesAreLocked: Bool = false
     var maxScaleFactor: CGFloat = 1.0
@@ -94,10 +93,44 @@ struct CanvasEngine: View {
             }
     }
     
+    func toggleDrawingMode(drawingType:String="LINE") {
+        if self.BEO.isDraw {
+            disableDrawing()
+        } else {
+            enableDrawing(drawingType: drawingType)
+        }
+    }
+    
+    func enableDrawing(drawingType:String="LINE") {
+        self.BEO.isDraw = true
+        self.BEO.isDrawing = drawingType
+        self.gesturesAreLocked = true
+        self.toolBarIsEnabled = false
+        self.showMenuBar = false
+    }
+    
+    func disableDrawing() {
+        self.BEO.isDraw = false
+        self.gesturesAreLocked = false
+        self.toolBarIsEnabled = true
+        self.showMenuBar = true
+    }
+    
+    @State var conText = true
+    
     var body: some View {
         
         GlobalPositioningZStack { geo, gps in
             
+            if self.BEO.isLoading {
+                ProgressView()
+                    .frame(width: 300, height: 300)
+                    .progressViewStyle(.circular)
+                    .scaleEffect(5) // Adjust the size as needed
+                    .padding(20)
+                    .cornerRadius(10)
+                    .position(using: gps, at: .center)
+            }
             
             VStack {
                 MenuButtonIcon(icon: MenuBarProvider.menuBar)
@@ -124,11 +157,11 @@ struct CanvasEngine: View {
                     {MenuButtonIcon(icon: MenuBarProvider.toolbox)},
                     {MenuButtonIcon(icon: MenuBarProvider.lock)},
                     {MenuButtonIcon(icon: MenuBarProvider.navHome)},
-//                    {MenuButtonIcon(icon: MenuBarProvider.profile)},
-//                    {MenuButtonIcon(icon: MenuBarProvider.buddyList)},
                     {MenuButtonIcon(icon: MenuBarProvider.chat)},
                     {MenuButtonIcon(icon: MenuBarProvider.boardCreate)},
                     {MenuButtonIcon(icon: MenuBarProvider.boardDetails)},
+                    {MenuButtonIcon(icon: MenuBarProvider.profile)},
+//                    {MenuButtonIcon(icon: MenuBarProvider.buddyList)},
 //                    {MenuButtonIcon(icon: MenuBarProvider.share)}
                 ])
             }
@@ -136,16 +169,16 @@ struct CanvasEngine: View {
             
             if toolBarIsEnabled {
                 ToolBarPicker {
-                    LineIconView()
+                    LineIconView(isBgColor: false)
                         .frame(width: 50, height: 50)
                         .onTapAnimation {
-                            self.isDrawing = !self.isDrawing
+                            enableDrawing()
                         }
-//                    DottedLineIconView()
-//                        .frame(width: 50, height: 50)
-//                        .onTapAnimation {
-//                            self.isDrawing = !self.isDrawing
-//                        }
+                    DottedLineIconView()
+                        .frame(width: 50, height: 50)
+                        .onTapAnimation {
+                            enableDrawing(drawingType: "DOTTED-LINE")
+                        }
 //                    CurvedLineIconView()
 //                        .frame(width: 50, height: 50)
 //                        .onTapAnimation {
@@ -156,13 +189,15 @@ struct CanvasEngine: View {
                 .position(using: gps, at: .bottomCenter, offsetY: 50)
             }
             
-            if self.isDrawing {
+            if self.BEO.isDraw {
                 TipBoxViewExpander(tips: [
                     "Tap the Line Tool again to toggle Line Drawing Mode.",
                     "Tap anywhere on the field and begin dragging your finger to create a new line.",
                     "Once you create the line, toggle Line Drawing Mode off and double tap the line for settings.",
                     "You will be able to modify the line as you please once you turn off Line Drawing Mode."
-                ]).position(using: gps, at: .topRight, offsetX: 200, offsetY: 200)
+                ]){
+                    disableDrawing()
+                }.position(using: gps, at: .topRight, offsetX: 200, offsetY: 200)
             }
             
 //            FloatingEmojiView()
@@ -176,25 +211,23 @@ struct CanvasEngine: View {
             // Board/Canvas Level
             ZStack() {
                 DrawGridLines().zIndex(1.0)
-                BoardEngine(isDraw: $isDrawing)
+                BoardEngine()
                     .zIndex(2.0)
                     .environmentObject(self.BEO)
             }
             .frame(width: 20000, height: 20000)
             .offset(x: self.BEO.canvasOffset.x, y: self.BEO.canvasOffset.y)
-//            .position(x: 0, y: 0)
             .scaleEffect(self.BEO.canvasScale * gestureScale)
             .rotationEffect(Angle(degrees: self.BEO.canvasRotation))
             .zIndex(1.0)
             
         }
         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+        .blur(radius: self.BEO.isLoading ? 10 : 0)
         .gesture(self.gesturesAreLocked ? nil : dragAngleGestures.simultaneously(with: scaleGestures))
         .background(Color.clear)
         .zIndex(0.0)
         .onAppear() {
-            
-            
             menuBarButtonListener()
             handleChat()
 //            handleBuddyProfile()
@@ -228,8 +261,8 @@ struct CanvasEngine: View {
                 case .reset: return
                 case .trash: return
                 case .boardBackground: return
-            case .profile: return
-            case .share: return
+            case .profile: return self.BEO.isLoading = !self.BEO.isLoading
+                case .share: return
                 case .router: return
                 case .note: return
                 case .chat: return

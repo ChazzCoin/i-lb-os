@@ -19,7 +19,7 @@ struct LineDrawingManaged: View {
     let realmInstance = realm()
     @State private var isDeleted = false
     @State private var isDisabled = false
-    
+    @State private var lifeIsLocked = false
     @State private var lifeDateUpdated = Int(Date().timeIntervalSince1970)
     
     @State private var lifeCenterPoint = CGPoint.zero
@@ -39,7 +39,7 @@ struct LineDrawingManaged: View {
     @State private var lifeColorGreen = 0.0
     @State private var lifeColorBlue = 0.0
     @State private var lifeColorAlpha = 1.0
-    
+    @State private var lifeLineDash = 0.0
     @State private var lifeRotation: Angle = Angle.zero
     
     @State private var popUpIsVisible = false
@@ -93,7 +93,7 @@ struct LineDrawingManaged: View {
             path.move(to: CGPoint(x: lifeStartX, y: lifeStartY))
             path.addLine(to: CGPoint(x: lifeEndX, y: lifeEndY))
         }
-        .stroke(lifeColor, lineWidth: CGFloat(lifeWidth))
+        .stroke(lifeColor, style: StrokeStyle(lineWidth: lifeWidth, dash: [lifeLineDash]))
         .opacity(!isDisabledChecker() && !isDeletedChecker() ? 1 : 0.0)
         .overlay(
             Circle()
@@ -101,7 +101,7 @@ struct LineDrawingManaged: View {
                 .frame(width: 150, height: 150) // Adjust size for easier tapping
                 .opacity(anchorsAreVisible ? 1 : 0) // Invisible
                 .position(x: lifeStartX, y: lifeStartY)
-                .gesture(dragGesture(isStart: true))
+                .gesture(self.lifeIsLocked ? nil : dragGesture(isStart: true))
         )
         .overlay(
             Circle()
@@ -109,7 +109,7 @@ struct LineDrawingManaged: View {
                 .frame(width: 150, height: 150) // Increase size for finger tapping
                 .opacity(anchorsAreVisible ? 1 : 0) // Invisible
                 .position(x: lifeEndX, y: lifeEndY)
-                .gesture(dragGesture(isStart: false))
+                .gesture(self.lifeIsLocked ? nil : dragGesture(isStart: false))
         )
         .overlay(
             Rectangle()
@@ -118,9 +118,9 @@ struct LineDrawingManaged: View {
                 .rotationEffect(lifeRotation)
                 .opacity(1)
                 .position(x: lifeCenterPoint.x.isFinite ? lifeCenterPoint.x : 0, y: lifeCenterPoint.y.isFinite ? lifeCenterPoint.y : 0)
-                .gesture(dragGestureDuo())
+                .gesture(self.lifeIsLocked ? nil : dragGestureDuo())
         )
-        .gesture(dragGestureDuo())
+        .gesture(self.lifeIsLocked ? nil : dragGestureDuo())
         .onAppear() {
             loadFromRealm()
 
@@ -129,6 +129,9 @@ struct LineDrawingManaged: View {
                 if viewId != temp.viewId {return}
                 if let ts = temp.size { lifeWidth = ts }
                 if let tc = temp.color { lifeColor = tc }
+                
+                lifeIsLocked = temp.isLocked
+                
                 if temp.stateAction == "close" {
                     popUpIsVisible = false
                 }
@@ -268,19 +271,48 @@ struct LineDrawingManaged: View {
                 mv?.colorBlue = lc.blue
                 mv?.colorAlpha = lc.alpha
             }
-            
+            mv?.isLocked = lifeIsLocked
             mv?.toolType = "LINE"
             mv?.width = Int(lifeWidth)
             guard let tMV = mv else { return }
             r.create(ManagedView.self, value: tMV, update: .all)
-            
             // TODO: Firebase Users ONLY
-            firebaseDatabase { fdb in
-                fdb.child(DatabasePaths.managedViews.rawValue)
-                    .child(activityId)
-                    .child(viewId)
-                    .setValue(mv?.toDict())
-            }
+            updateFirebase(mv: mv)
+        }
+    }
+    
+    func updateFirebase(mv:ManagedView?) {
+        // TODO: Firebase Users ONLY
+        if self.activityId.isEmpty || self.viewId.isEmpty {return}
+        var newMv = mv
+        if mv == nil { newMv = realmInstance.findByField(ManagedView.self, value: viewId) }
+        firebaseDatabase { fdb in
+            fdb.child(DatabasePaths.managedViews.rawValue)
+                .child(activityId)
+                .child(viewId)
+                .setValue(newMv?.toDict())
+        }
+    }
+    
+    func deleteFromRealm() {
+        let mv = realmInstance.object(ofType: ManagedView.self, forPrimaryKey: viewId)
+        guard let umv = mv else { return }
+        realmInstance.safeWrite { r in
+            r.delete(umv)
+        }
+        // TODO: Firebase Users ONLY
+        deleteToolFromFirebase(mv: umv)
+    }
+    
+    func deleteToolFromFirebase(mv:ManagedView?) {
+        if self.activityId.isEmpty || self.viewId.isEmpty {return}
+        var newMv = mv
+        if mv == nil { newMv = realmInstance.findByField(ManagedView.self, value: viewId) }
+        firebaseDatabase { fdb in
+            fdb.child(DatabasePaths.managedViews.rawValue)
+                .child(activityId)
+                .child(viewId)
+                .setValue(newMv?.toDict())
         }
     }
     
@@ -296,6 +328,7 @@ struct LineDrawingManaged: View {
         lifeEndX = umv.endX
         lifeEndY = umv.endY
         lifeWidth = Double(umv.width)
+        lifeLineDash = Double(umv.lineDash)
         
         lifeColorRed = umv.colorRed
         lifeColorGreen = umv.colorGreen
@@ -308,21 +341,7 @@ struct LineDrawingManaged: View {
         loadRotationOfLine()
     }
     
-    func deleteFromRealm() {
-        let mv = realmInstance.object(ofType: ManagedView.self, forPrimaryKey: viewId)
-        guard let umv = mv else { return }
-        realmInstance.safeWrite { r in
-            r.delete(umv)
-        }
-        
-        // TODO: Firebase Users ONLY
-        firebaseDatabase { fdb in
-            fdb.child(DatabasePaths.managedViews.rawValue)
-                .child(activityId)
-                .child(viewId)
-                .removeValue()
-        }
-    }
+    
 }
 
 struct LineOverlay: View {

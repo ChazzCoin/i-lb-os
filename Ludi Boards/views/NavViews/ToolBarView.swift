@@ -51,6 +51,7 @@ struct ToolBarPicker<Content: View>: View {
 
 
 struct LineIconView: View {
+    @State var isBgColor: Bool
     @Environment(\.colorScheme) var colorScheme
     var body: some View {
         GeometryReader { geometry in
@@ -67,7 +68,7 @@ struct LineIconView: View {
                 path.move(to: startPoint)
                 path.addLine(to: endPoint)
             }
-            .stroke(foregroundColorForScheme(colorScheme), lineWidth: 2)
+            .stroke(isBgColor ? backgroundColorForScheme(colorScheme) : foregroundColorForScheme(colorScheme), lineWidth: 2)
         }
         .rotationEffect(Angle(degrees: 45))
         .aspectRatio(1, contentMode: .fit)

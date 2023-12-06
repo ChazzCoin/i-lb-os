@@ -56,12 +56,15 @@ struct ColorListPicker: View {
                         .cornerRadius(10)
                         .overlay(
                             RoundedRectangle(cornerRadius: 10)
-                                .stroke(selectedImage == colorName ? Color.white : Color.clear, lineWidth: 3)
+                                .stroke(selectedImage == colorName ? Color.blue : Color.clear, lineWidth: 3)
                         )
-                        .onTapAnimation {
-                            self.selectedImage = colorName
-                            callback(colorName)
-                        }
+                        .highPriorityGesture(TapGesture()
+                            .onEnded { _ in
+                                self.selectedImage = colorName
+                                callback(colorName)
+                            }
+                        )
+                        
                 }
             }
             .padding()

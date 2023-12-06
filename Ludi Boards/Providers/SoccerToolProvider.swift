@@ -88,3 +88,21 @@ struct ToolButtonIcon: View {
             .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
     }
 }
+
+
+struct ToolButtonSettingsIcon: View {
+    var icon: IconProvider // Assuming IconProvider conforms to SwiftUI's View
+
+    @State private var isLocked = false
+
+    var body: some View {
+        Image(icon.tool.image)
+            .resizable()
+            .frame(width: 100, height: 100)
+            .onTapAnimation {
+                print("CodiChannel SendTopic: \(icon.tool.title)")
+//                CodiChannel.TOOL_ON_CREATE.send(value: icon.tool.title)
+            }
+            .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
+    }
+}

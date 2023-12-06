@@ -66,8 +66,9 @@ struct TipBoxView: View {
 
 struct TipBoxViewExpander: View {
     var tips: [String]
+    var disableCallback: () -> Void
     @State private var isFlashing = false
-    @State private var isExpanded = false
+    @State private var isExpanded = true
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -119,6 +120,7 @@ struct TipBoxViewExpander: View {
             
             Button(action: {
                 // Add code here to "Turn Off" the feature
+                disableCallback()
             }) {
                 Text("Turn Off")
                     .foregroundColor(.white)
@@ -134,6 +136,7 @@ struct TipBoxViewExpander: View {
             .fill(Color(UIColor.systemBackground))
             .shadow(color: .gray.opacity(0.4), radius: 4, x: 0, y: 4))
         .padding()
+        .offset(y: self.isExpanded ? 0 : -150)
     }
 }
 

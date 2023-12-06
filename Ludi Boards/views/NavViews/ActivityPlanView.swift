@@ -21,6 +21,8 @@ struct ActivityPlanView: View {
     @State private var activityPlan: ActivityPlan = ActivityPlan() // Use StateObject for lifecycle management
     @State var realmInstance = realm()
     
+    @State var confirmationPopupIsShowing = false
+    
     @State private var showLoading = false
     @State private var showCompletion = false
     @State private var isCurrentPlan = false
@@ -200,36 +202,39 @@ struct ActivityPlanView: View {
                             }
                         ).padding()
                     }
-                    
-                    
                 }.padding(.leading)
-                
-                
             }.clearSectionBackground()
             
             // BUTTONS
             Section {
-                
                 // LOAD BUTTON
                 if self.boardId != "new" {
-                    solButton(title: "Load Activity onto Board", action: {
-                        runLoading()
-                        CodiChannel.SESSION_ON_ID_CHANGE.send(value: SessionChange(sessionId: self.sessionId, activityId: self.boardId))
-                        self.isCurrentPlan = true
-                    }, isEnabled: !self.isCurrentPlan)
+                    solConfirmButton(
+                        title: "Load Activity onto Board",
+                        message: "Would you like to load this plan onto the board?",
+                        action: {
+                            runLoading()
+                            CodiChannel.SESSION_ON_ID_CHANGE.send(value: SessionChange(sessionId: self.sessionId, activityId: self.boardId))
+                            self.isCurrentPlan = true
+                        }, 
+                        isEnabled: !self.isCurrentPlan
+                    )
                 }
                 
                 // SAVE BUTTON
-                solButton(title: "Save", action: {
-                    // Implement the save action
-                    runLoading()
-                    if self.boardId == "new" {
-                        saveNewActivityPlan()
-                    } else {
-                        updateActivityPlan()
+                solConfirmButton(
+                    title: "Save",
+                    message: "Would you like to save this plan?",
+                    action: {
+                        runLoading()
+                        if self.boardId == "new" {
+                            saveNewActivityPlan()
+                        } else {
+                            updateActivityPlan()
+                        }
+                        isShowing = false
                     }
-                    isShowing = false
-                })
+                )
                 
             }.clearSectionBackground()
             
@@ -339,18 +344,18 @@ struct ActivityPlanView: View {
         realmInstance.safeWrite { r in
             r.add(newAP)
         }
-        // TODO: Firebase
-        if let us = realmInstance.getCurrentUserSession() {
-            if us.membership > 0 {
-                // TODO
-                firebaseDatabase { db in
-                    db.child(DatabasePaths.activityPlan.rawValue)
-                        .child(newAP.id)
-                        .setValue(newAP.toDict())
-                }
-            }
-        }
+        // TODO: Firebase Users ONLY
+        updateInFirebase(newAP: newAP)
         
+    }
+    
+    func updateInFirebase(newAP: ActivityPlan) {
+        // TODO: Firebase Users ONLY
+        firebaseDatabase { db in
+            db.child(DatabasePaths.activityPlan.rawValue)
+                .child(newAP.id)
+                .setValue(newAP.toDict())
+        }
     }
     
     func updateActivityPlan() {

@@ -25,9 +25,11 @@ import RealmSwift
     dynamic var width: Int = 0
     dynamic var height: Int = 0
     dynamic var rotation: Double = 0.0
+    dynamic var lineDash: Int = 5
     dynamic var translationX: Double = 0.0
     dynamic var translationY: Double = 0.0
     dynamic var lastUserId: String = "me"
+    dynamic var isLocked: Bool = false
     
     dynamic var colorRed: Double = 48.0
     dynamic var colorGreen: Double = 128.0

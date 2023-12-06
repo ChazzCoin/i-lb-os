@@ -20,6 +20,7 @@ struct enableManagedViewTool : ViewModifier {
     let realmInstance = realm()
     @State private var isDeleted = false
     @State private var isDisabled = false
+    @State private var lifeIsLocked = false
     @State private var lifeUpdatedAt: Int = 0 // Using Double for time representation
     @State private var lifeBorderColor = Color.AIMYellow
     @State private var lifeColor = ColorProvider.black // SwiftUI color representation
@@ -75,6 +76,7 @@ struct enableManagedViewTool : ViewModifier {
         lifeColorGreen = umv.colorGreen
         lifeColorBlue = umv.colorBlue
         lifeColorAlpha = umv.colorAlpha
+        lifeIsLocked = umv.isLocked
         minSizeCheck()
     }
     func updateRealm() {
@@ -95,17 +97,37 @@ struct enableManagedViewTool : ViewModifier {
             mv?.colorGreen = lifeColorGreen
             mv?.colorBlue = lifeColorBlue
             mv?.colorAlpha = lifeColorAlpha
+            mv?.isLocked = lifeIsLocked
             guard let tMV = mv else { return }
             r.create(ManagedView.self, value: tMV, update: .all)
             
             // TODO: Firebase Users ONLY
-            if self.activityId.isEmpty || self.viewId.isEmpty {return}
-            firebaseDatabase { fdb in
-                fdb.child(DatabasePaths.managedViews.rawValue)
-                    .child(self.activityId)
-                    .child(self.viewId)
-                    .setValue(mv?.toDict())
-            }
+            updateInFirebase(mv: mv)
+        }
+    }
+    
+    func updateInFirebase(mv: ManagedView?) {
+        if self.activityId.isEmpty || self.viewId.isEmpty {return}
+        var newMv = mv
+        if mv == nil { newMv = realmInstance.findByField(ManagedView.self, value: viewId) }
+        firebaseDatabase { fdb in
+            fdb.child(DatabasePaths.managedViews.rawValue)
+                .child(self.activityId)
+                .child(self.viewId)
+                .setValue(newMv?.toDict())
+        }
+    }
+    
+    func deleteToolFromFirebase(mv:ManagedView?) {
+        // TODO: Firebase Users ONLY
+        if self.activityId.isEmpty || self.viewId.isEmpty {return}
+        var newMv = mv
+        if mv == nil { newMv = realmInstance.findByField(ManagedView.self, value: viewId) }
+        firebaseDatabase { fdb in
+            fdb.child(DatabasePaths.managedViews.rawValue)
+                .child(activityId)
+                .child(viewId)
+                .setValue(newMv?.toDict())
         }
     }
     
@@ -117,7 +139,7 @@ struct enableManagedViewTool : ViewModifier {
                 .border(popUpIsVisible ? lifeBorderColor : Color.clear, width: 10) // Border modifier
                 .position(x: position.x + (isDragging ? dragOffset.width : 0) + (self.lifeWidth),
                           y: position.y + (isDragging ? dragOffset.height : 0) + (self.lifeHeight))
-                .gesture(
+                .gesture(self.lifeIsLocked ? nil :
                     LongPressGesture(minimumDuration: 0.01)
                         .onEnded { _ in
                             self.isDragging = true
@@ -140,7 +162,7 @@ struct enableManagedViewTool : ViewModifier {
                                 //onMoveComplete()
                                 updateRealm()
                             }
-                        }.simultaneously(with: TapGesture(count: 2)
+                        }.simultaneously(with: self.lifeIsLocked ? nil : TapGesture(count: 2)
                             .onEnded { _ in
                                 print("Tapped")
                                 popUpIsVisible = !popUpIsVisible
@@ -150,7 +172,7 @@ struct enableManagedViewTool : ViewModifier {
                                         viewId: viewId,
                                         size: lifeWidth,
                                         rotation: lifeRotation,
-                                        level: ToolLevels.LINE.rawValue
+                                        level: ToolLevels.BASIC.rawValue
                                     ))
                                 }
                             }
@@ -187,9 +209,13 @@ struct enableManagedViewTool : ViewModifier {
                     
                     CodiChannel.TOOL_ATTRIBUTES.receive(on: RunLoop.main) { viewAtts in
                         let inVA = (viewAtts as! ViewAtts)
-                        if viewId != inVA.viewId { return }
+                        if viewId != inVA.viewId {
+                            popUpIsVisible = false
+                            return
+                        }
                         if let inColor = inVA.color { lifeColor = ColorProvider.fromColor(inColor) }
                         if let inRotation = inVA.rotation { lifeRotation = inRotation }
+                        lifeIsLocked = inVA.isLocked
                         if let inSize = inVA.size {
                             lifeWidth = inSize
                             lifeHeight = inSize
@@ -197,19 +223,13 @@ struct enableManagedViewTool : ViewModifier {
                         if inVA.isDeleted {
                             isDeleted = true
                             isDisabled = true
-                            
-                            // TODO: Firebase Users ONLY
-                            firebaseDatabase { fdb in
-                                fdb.child(DatabasePaths.managedViews.rawValue)
-                                    .child(self.activityId)
-                                    .child(self.viewId)
-                                    .removeValue()
-                            }
+                            deleteToolFromFirebase(mv: nil)
                             return
                         }
-                        //TODO : Check if anything changed?
                         updateRealm()
                     }.store(in: &cancellables)
                 }
         }
+    
+    
 }

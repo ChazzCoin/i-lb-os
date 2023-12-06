@@ -15,6 +15,9 @@ class BoardEngineObject : ObservableObject {
     static let shared = BoardEngineObject()
     @Environment(\.colorScheme) var colorScheme
     // Current Board
+    @Published var isDraw: Bool = false
+    @Published var isDrawing: String = "LINE"
+    @Published var isLoading: Bool = true
     @Published var currentSessionId: String = ""
     @Published var currentActivityId: String = ""
     
@@ -114,7 +117,7 @@ class BoardEngineObject : ObservableObject {
 }
 
 struct BoardEngine: View {
-    @Binding var isDraw: Bool
+    
     @EnvironmentObject var BEO: BoardEngineObject
     @State var cancellables = Set<AnyCancellable>()
     
@@ -144,44 +147,46 @@ struct BoardEngine: View {
          ZStack() {
              
              ForEach(self.basicTools) { item in
-                 if item.toolType == "LINE" {
-                     LineDrawingManaged(viewId: item.id, activityId: self.activityID).zIndex(15.0)
+                 if item.toolType == "LINE" || item.toolType == "DOTTED-LINE" {
+                     LineDrawingManaged(viewId: item.id, activityId: self.activityID).zIndex(3.0)
                  } else {
                      if let temp = SoccerToolProvider.parseByTitle(title: item.toolType)?.tool.image {
-                         ManagedViewBoardTool(viewId: item.id, activityId: self.activityID, toolType: temp)
+                         ManagedViewBoardTool(viewId: item.id, activityId: self.activityID, toolType: temp).zIndex(4.0)
                      }
                  }
              }
              
              // Temporary line being drawn
-             if self.isDraw {
+             if self.BEO.isDraw {
                  if drawingStartPoint != .zero {
                      Path { path in
                          path.move(to: drawingStartPoint)
                          path.addLine(to: drawingEndPoint)
                      }
-                     .stroke(Color.red, lineWidth: 10)
+                     .stroke(Color.red, style: StrokeStyle(lineWidth: 10, dash: [self.BEO.isDrawing == "LINE" ? 1 : 55]))
                  }
              }
             
         }
         .frame(width: self.BEO.boardWidth, height: self.BEO.boardHeight)
-        .background {
+        .background(
             FieldOverlayView(width: 6000, height: 6000, background: {
                 self.BEO.boardBgColor
             }, overlay: {
-                if let temp = self.BEO.boardBgViewItems[self.BEO.boardBgName] { temp().environmentObject(self.BEO) }
-            }).position(x: self.BEO.boardStartPosX, y: self.BEO.boardStartPosY).zIndex(2.0)
-        }
-        .simultaneousGesture( self.isDraw ?
+                if let temp = self.BEO.boardBgViewItems[self.BEO.boardBgName] { temp().environmentObject(self.BEO)
+                }
+            })
+            .position(x: self.BEO.boardStartPosX, y: self.BEO.boardStartPosY).zIndex(2.0)
+        )
+        .simultaneousGesture( self.BEO.isDraw ?
             DragGesture()
                 .onChanged { value in
-                    if !self.isDraw {return}
+                    if !self.BEO.isDraw {return}
                     self.drawingStartPoint = value.startLocation
                     self.drawingEndPoint = value.location
                 }
                 .onEnded { value in
-                    if !self.isDraw {return}
+                    if !self.BEO.isDraw {return}
                     self.drawingEndPoint = value.location
                     saveLineData(start: value.startLocation, end: value.location)
                 } : nil
@@ -190,7 +195,7 @@ struct BoardEngine: View {
             self.loadAllSessionPlans()
             CodiChannel.SESSION_ON_ID_CHANGE.receive(on: RunLoop.main) { sc in
                 let temp = sc as! SessionChange
-                
+                self.BEO.isLoading = true
                 var sessionDidChange = false
                 var activityDidChange = false
                 
@@ -217,7 +222,6 @@ struct BoardEngine: View {
                         self.loadActivityPlan(planId: self.activityID)
                     }
                 }
-                
             }.store(in: &cancellables)
             
             CodiChannel.TOOL_ON_DELETE.receive(on: RunLoop.main) { viewId in
@@ -245,7 +249,7 @@ struct BoardEngine: View {
     }
     
     func loadAllSessionPlans() {
-        
+        self.BEO.isLoading = true
         if self.currentSessionWasLoaded {
             loadSessionPlan()
             return
@@ -416,6 +420,7 @@ struct BoardEngine: View {
                     fatalError("\(error)")  // Handle errors appropriately in production code
             }
         }
+        self.BEO.isLoading = false
     }
     
     func deleteToolById(viewId:String) {
@@ -440,7 +445,8 @@ struct BoardEngine: View {
             line.y = Double(start.y)
             line.width = 10
             line.toolColor = "Black"
-            line.toolType = "LINE"
+            line.toolType = self.BEO.isDrawing
+            line.lineDash = self.BEO.isDrawing == "LINE" ? 1 : 55
             line.dateUpdated = Int(Date().timeIntervalSince1970)
             r.add(line)
             
