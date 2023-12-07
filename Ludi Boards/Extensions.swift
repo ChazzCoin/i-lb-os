@@ -10,6 +10,25 @@ import CoreGraphics
 import UIKit
 
 
+
+extension Array where Element: Share {
+    mutating func safeAdd(_ item: Share) {
+        if self.firstIndex(where: { $0.id == item.id }) != nil {
+            // Item found, remove it
+            return
+        }
+        // Item not found, add it
+        self.append(item as! Element)
+    }
+    
+    mutating func safeRemove(_ item: Share) {
+        if let index = self.firstIndex(where: { $0.id == item.id }) {
+            // Item found, remove it
+            self.remove(at: index)
+        }
+    }
+}
+
 extension Array where Element: ManagedView {
     mutating func safeAdd(_ item: ManagedView) {
         if self.firstIndex(where: { $0.id == item.id }) != nil {

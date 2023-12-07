@@ -18,6 +18,10 @@ extension Realm {
         return self.objects(type).filter("%K == %@", field, value)
     }
     
+    func findAllNotByField<T: Object>(_ type: T.Type, field: String, value: Any) -> Results<T>? {
+        return self.objects(type).filter("%K != %@", field, value)
+    }
+    
     func getCurrentUserSession() -> CurrentSession? {
         return self.findByField(CurrentSession.self, value: "SOL")
     }

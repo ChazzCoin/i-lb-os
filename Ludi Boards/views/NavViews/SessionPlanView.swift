@@ -101,6 +101,12 @@ struct SessionPlanView: View {
                     }
                     isShowing = false
                 })
+                solButton(title: "Delete", action: {
+                    
+                    runLoading()
+                    
+                    
+                })
             }.clearSectionBackground()
         }
         .onAppear {
@@ -130,14 +136,33 @@ struct SessionPlanView: View {
         }
     }
     
+    func deleteSessionPlan() {
+        if let sess = realmInstance.findByField(SessionPlan.self, value: self.sessionId) {
+            realmInstance.safeWrite { r in
+                r.delete(sess)
+            }
+            // TODO: FIREBASE ONLY
+            deleteSessionPlanFromFirebase(spId: self.sessionId)
+        }
+    }
+    
+    func deleteSessionPlanFromFirebase(spId: String) {
+        firebaseDatabase { db in
+            db.child(DatabasePaths.sessionPlan.rawValue)
+                .child(spId)
+                .removeValue()
+        }
+    }
+    
     func saveNewSessionPlan() {
         // New Plan
         let newSP = SessionPlan()
-        newSP.id = UUID().uuidString
+        newSP.id = "SOL-LIVE-DEMO"
         newSP.title = title
         newSP.sessionDetails = description
         newSP.objectiveDetails = objective
         newSP.isOpen = isOpen
+        newSP.ownerId = "SOL"
         // New Activity
         let newAP = ActivityPlan()
         newAP.sessionId = newSP.id
@@ -151,6 +176,24 @@ struct SessionPlanView: View {
         }
         
         // TODO: Firebase
+        saveSessionPlanToFirebase(sp: newSP)
+        saveActivityPlanToFirebase(ap: newAP)
+    }
+    
+    func saveSessionPlanToFirebase(sp: SessionPlan) {
+        firebaseDatabase { db in
+            db.child(DatabasePaths.sessionPlan.rawValue)
+                .child(sp.id)
+                .setValue(sp.toDict())
+        }
+    }
+    
+    func saveActivityPlanToFirebase(ap: ActivityPlan) {
+        firebaseDatabase { db in
+            db.child(DatabasePaths.activityPlan.rawValue)
+                .child(ap.id)
+                .setValue(ap.toDict())
+        }
     }
     
     func updateSessionPlan() {
@@ -163,16 +206,7 @@ struct SessionPlanView: View {
                 r.add(sp)
             }
             
-            if let us = realmInstance.getCurrentUserSession() {
-                if us.membership > 0 {
-                    // TODO
-                    firebaseDatabase { db in
-                        db.child(DatabasePaths.sessionPlan.rawValue)
-                            .child(sessionId)
-                            .setValue(sp.toDict())
-                    }
-                }
-            }
+            saveSessionPlanToFirebase(sp: sp)
             
         }
     }
@@ -186,11 +220,17 @@ struct SessionPlanView: View {
             self.isCurrentPlan = true
         }
         
+        fireGetSessionPlanAsync(sessionId: self.sessionId, realm: self.realmInstance)
+        fireGetActivitiesBySessionId(sessionId: self.sessionId, realm: self.realmInstance)
+        
         if let sp = realmInstance.findByField(SessionPlan.self, value: self.sessionId) {
             title = sp.title
             description = sp.sessionDetails
             objective = sp.objectiveDetails
             isOpen = sp.isOpen
+            if sp.ownerId != self.BEO.userId {
+                self.BEO.isShared = true
+            }
         }
         if let acts = realmInstance.findAllByField(ActivityPlan.self, field: "sessionId", value: self.sessionId) {
             if acts.isEmpty {return}
@@ -201,6 +241,8 @@ struct SessionPlanView: View {
             activities = temp
         }
     }
+    
+
     
 //    func checkCurrentSessionId() {
 //        if let umvs = realmInstance.findByField(CurrentSession.self, value: "SOL") {

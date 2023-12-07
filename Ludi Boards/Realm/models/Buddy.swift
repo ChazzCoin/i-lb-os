@@ -8,13 +8,26 @@
 import Foundation
 import RealmSwift
 
-@objcMembers class Buddy: Object, Identifiable {
+@objcMembers class RelationshipRequest: Object, Identifiable {
     dynamic var id: String = UUID().uuidString
-    dynamic var dateCreated: String? = ""
-    dynamic var dateUpdated: String? = ""
-    dynamic var userId: String? = ""
-    dynamic var userName: String? = ""
-    dynamic var name: String? = ""
+    dynamic var dateCreated: String? = getTimeStamp()
+    dynamic var dateUpdated: String? = getTimeStamp()
+    dynamic var userOneId: String? = "pending"
+    dynamic var userOneName: String? = "pending"
+    dynamic var userTwoId: String? = "pending"
+    dynamic var userTwoName: String? = "pending"
+
+    override static func primaryKey() -> String? {
+        return "id"
+    }
+}
+
+@objcMembers class Buddy: Object, Identifiable {
+    dynamic var id: String? = nil
+    dynamic var dateCreated: String? = nil
+    dynamic var dateUpdated: String? = nil
+    dynamic var userId: String? = nil
+    dynamic var userName: String? = nil
     dynamic var status: String? = "offline"
     dynamic var authLevel: Int = 0
     dynamic var isGuest: Bool = false

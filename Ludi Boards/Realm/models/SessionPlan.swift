@@ -9,7 +9,7 @@ import Foundation
 import RealmSwift
 
 @objcMembers class SessionPlan: Object, Identifiable {
-    dynamic var id: String = "SOL"
+    dynamic var id: String = UUID().uuidString
     dynamic var dateCreated: String = getTimeStamp()
     dynamic var dateUpdated: String = getTimeStamp()
     dynamic var dateOf: String = getTimeStamp()
@@ -20,20 +20,13 @@ import RealmSwift
     dynamic var subTitle: String = "A Basic Session"
     dynamic var objectiveDetails: String = "To show off SOL!"
     dynamic var sessionDetails: String = "Add some details here!"
-    dynamic var isHost: Bool = true
+    dynamic var ownerId: String = "Add some details here!"
+    dynamic var isHost: Bool = false
     dynamic var isOpen: Bool = false
     
     override static func primaryKey() -> String {
         return "id"
     }
     
-    func toDict() -> [String: Any] {
-        let properties = self.objectSchema.properties.map { $0.name }
-        var dictionary: [String: Any] = [:]
-        for property in properties {
-            dictionary[property] = self.value(forKey: property)
-        }
-        return dictionary
-    }
 }
 

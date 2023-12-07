@@ -13,7 +13,7 @@ import Combine
 struct CanvasEngine: View {
     
     @StateObject var BEO = BoardEngineObject.shared
-    
+
     @State var cancellables = Set<AnyCancellable>()
     @State var showMenuBar: Bool = true
     @State var popupIsVisible: Bool = true
@@ -162,7 +162,7 @@ struct CanvasEngine: View {
                     {MenuButtonIcon(icon: MenuBarProvider.boardDetails)},
                     {MenuButtonIcon(icon: MenuBarProvider.profile)},
 //                    {MenuButtonIcon(icon: MenuBarProvider.buddyList)},
-//                    {MenuButtonIcon(icon: MenuBarProvider.share)}
+                    {MenuButtonIcon(icon: MenuBarProvider.share)}
                 ])
             }
             
@@ -228,11 +228,13 @@ struct CanvasEngine: View {
         .background(Color.clear)
         .zIndex(0.0)
         .onAppear() {
+            self.BEO.loadUser()
+            
             menuBarButtonListener()
             handleChat()
 //            handleBuddyProfile()
             handleSessionPlan()
-//            handleShare()
+            handleShare()
 //            handleBuddyList()
 //            handleNavPad()
             handleMVSettings()
@@ -342,13 +344,15 @@ struct CanvasEngine: View {
         managedWindowsObject.toggleItem(key: caller, item: buddies)
     }
 //    
-//    func handleShare() {
-//        let caller = MenuBarProvider.share.tool.title
-//        let buddies = ManagedViewWindow(id: caller, viewBuilder: AnyView(SignUpView()))
-//        buddies.title = "Sign Up"
-//        buddies.windowId = caller
-//        managedWindowsObject.toggleItem(key: caller, item: AnyView(NavStackWindow(managedViewWindow: buddies)))
-//    }
+    func handleShare() {
+        let caller = MenuBarProvider.share.tool.title
+        let buddies = ManagedViewWindow(id: caller, viewBuilder: {NavStackWindow(id: caller, viewBuilder: {
+            SignUpView().environmentObject(self.BEO)
+        })})
+        buddies.title = "Sign Up"
+        buddies.windowId = caller
+        managedWindowsObject.toggleItem(key: caller, item: buddies)
+    }
     func handleMVSettings() {
         let caller = "mv_settings"
         let buddies = ManagedViewWindow(id: caller, viewBuilder: {NavStackWindow(id: caller, viewBuilder: {SettingsView(onDelete: {})})})

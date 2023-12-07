@@ -15,9 +15,6 @@ struct LudiBoardsApp: SwiftUI.App {
     
     @State var cancellables = Set<AnyCancellable>()
     
-    // Create an instance of your tip.
-//    var landmarkTip = SOLTip(id: UUID())
-    
     init() {
         let realmConfiguration = Realm.Configuration(deleteRealmIfMigrationNeeded: true)
         Realm.Configuration.defaultConfiguration = realmConfiguration
@@ -27,12 +24,6 @@ struct LudiBoardsApp: SwiftUI.App {
     var body: some Scene {
         WindowGroup {
             CanvasEngine()
-                .onAppear {
-                    print("Waiting...")
-                    CodiChannel.general.receive(on: RunLoop.main) { message in
-                        print("Received on general channel: \(message)")
-                    }.store(in: &cancellables)
-            }
         }
     }
 }

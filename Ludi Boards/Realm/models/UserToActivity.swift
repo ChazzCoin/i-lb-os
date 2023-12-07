@@ -15,27 +15,49 @@ class UserToSession: Object {
     @objc dynamic var hostUserName: String = "null"
     @objc dynamic var guestId: String = "null"
     @objc dynamic var guestUserName: String = "null"
-    @objc dynamic var status: String = "accepted"
+    @objc dynamic var status: String = "pending"
     @objc dynamic var isConnected: Bool = false
-    @objc dynamic var authLevel: Int = 0
+    @objc dynamic var authLevel: String = "guest"
 
     override static func primaryKey() -> String? {
         return "id"
     }
 }
 
-class UserToActivity: Object {
+class Share: Object, Identifiable {
     @objc dynamic var id: String = UUID().uuidString
-    @objc dynamic var activityId: String = "null"
+    @objc dynamic var sharedId: String = "null"
     @objc dynamic var hostId: String = "null"
     @objc dynamic var hostUserName: String = "null"
     @objc dynamic var guestId: String = "null"
     @objc dynamic var guestUserName: String = "null"
-    @objc dynamic var status: String = "accepted"
+    @objc dynamic var status: String = "pending"
     @objc dynamic var isConnected: Bool = false
-    @objc dynamic var authLevel: Int = 0
+    @objc dynamic var authLevel: String = "guest"
 
     override static func primaryKey() -> String? {
         return "id"
     }
 }
+
+//
+
+func firePostShareSession(sessionId: String, guestId: String, guestUserName:String) {
+    // get current user id
+    // get current user name
+    var share = UserToSession()
+    share.hostId = ""
+    share.hostUserName = ""
+    share.guestId = guestId
+    share.guestUserName = guestUserName
+    share.sessionId = sessionId
+    firebaseDatabase { db in
+        db
+            .child(DatabasePaths.userToSession.rawValue)
+            .child(share.id)
+            .setValue(share.toDict())
+    }
+}
+
+
+

@@ -12,11 +12,11 @@ struct AddBuddyView: View {
     @Binding var isPresented: Bool
     @State private var buddyName: String = ""
     @State private var buddyStatus: String = ""
-    @State private var searchResults: [User] = []
+    @State private var searchResults: [SolKnight] = []
 
     var body: some View {
         NavigationView {
-            Form {
+            LoadingForm { runLoading in
                 Section(header: Text("Buddy Details")) {
                     TextField("Buddy UserName", text: $buddyName)
                 }
@@ -24,11 +24,10 @@ struct AddBuddyView: View {
                 // Display search results
                 if !searchResults.isEmpty {
                     Section(header: Text("Search Results")) {
-                        List(searchResults, id: \.id) { user in
+                        List($searchResults, id: \.tempId) { $user in
                             HStack {
                                 Text(user.username)
                                 Spacer()
-                                Text(user.status ?? "Unknown") // Assuming status is an optional property
                             }
                             .onTapGesture {
                                 // Handle tap event for each user
@@ -41,10 +40,7 @@ struct AddBuddyView: View {
                 Section {
                     Button("Search Buddy") {
                         // Logic to add buddy
-                        searchResults = [
-                            User(),
-                            User()
-                        ]
+                        searchForUser(userName: buddyName)
                     }
                 }
             }
@@ -52,6 +48,17 @@ struct AddBuddyView: View {
             .navigationBarItems(trailing: Button("Cancel") {
                 isPresented = false
             })
+        }
+    }
+    
+    func searchForUser(userName: String) {
+        firebaseDatabase { db in
+            db.child(DatabasePaths.users.rawValue).queryOrdered(byChild: "username").queryEqual(toValue: userName).observeSingleEvent(of: .value) { snapshot, _ in
+                let map = snapshot.toHashMap()
+                for (_,v) in map {
+                    searchResults.append(SolKnight(dictionary: v as! [String:Any]))
+                }
+            }
         }
     }
 }

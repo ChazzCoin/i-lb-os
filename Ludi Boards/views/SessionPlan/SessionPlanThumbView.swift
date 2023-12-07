@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 struct SessionPlanThumbView: View {
-    let sessionPlan: SessionPlan
+    @State var sessionPlan: SessionPlan
 
     var body: some View {
         HStack(spacing: 16) {
@@ -52,6 +52,8 @@ struct SessionPlanThumbView: View {
         })
     }
 }
+
+
 
 //struct SessionPlanThumbView_Previews: PreviewProvider {
 //    static var previews: some View {

@@ -113,6 +113,9 @@
 		FBD9AFD52B008F6F005F8620 /* Channels.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFD42B008F6F005F8620 /* Channels.swift */; };
 		FBD9AFD72B00BB8F005F8620 /* ManagedViewBoardTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFD62B00BB8F005F8620 /* ManagedViewBoardTool.swift */; };
 		FBD9AFD92B01CB91005F8620 /* SoccerToolProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFD82B01CB91005F8620 /* SoccerToolProvider.swift */; };
+		FBDF0DC52B21811000FADE44 /* SharedSessionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDF0DC42B21811000FADE44 /* SharedSessionsView.swift */; };
+		FBDF0DC72B224D2600FADE44 /* ActivityPlanService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDF0DC62B224D2600FADE44 /* ActivityPlanService.swift */; };
+		FBDF0DC92B224EB500FADE44 /* ManagedViewsService copy.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDF0DC82B224EB500FADE44 /* ManagedViewsService copy.swift */; };
 		FBE2C6142B1AC68D004C0116 /* SoccerFieldBG.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C6132B1AC68D004C0116 /* SoccerFieldBG.swift */; };
 		FBE2C6172B1AF595004C0116 /* GrassFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C6162B1AF595004C0116 /* GrassFieldView.swift */; };
 		FBE2C61A2B1AF7D5004C0116 /* FootballFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C6192B1AF7D5004C0116 /* FootballFieldView.swift */; };
@@ -214,6 +217,9 @@
 		FBD9AFD42B008F6F005F8620 /* Channels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Channels.swift; sourceTree = "<group>"; };
 		FBD9AFD62B00BB8F005F8620 /* ManagedViewBoardTool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedViewBoardTool.swift; sourceTree = "<group>"; };
 		FBD9AFD82B01CB91005F8620 /* SoccerToolProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoccerToolProvider.swift; sourceTree = "<group>"; };
+		FBDF0DC42B21811000FADE44 /* SharedSessionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedSessionsView.swift; sourceTree = "<group>"; };
+		FBDF0DC62B224D2600FADE44 /* ActivityPlanService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityPlanService.swift; sourceTree = "<group>"; };
+		FBDF0DC82B224EB500FADE44 /* ManagedViewsService copy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ManagedViewsService copy.swift"; sourceTree = "<group>"; };
 		FBE2C6132B1AC68D004C0116 /* SoccerFieldBG.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoccerFieldBG.swift; sourceTree = "<group>"; };
 		FBE2C6162B1AF595004C0116 /* GrassFieldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrassFieldView.swift; sourceTree = "<group>"; };
 		FBE2C6192B1AF7D5004C0116 /* FootballFieldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FootballFieldView.swift; sourceTree = "<group>"; };
@@ -307,6 +313,7 @@
 		FB3E02CC2B0D45F000D8558C /* NavViews */ = {
 			isa = PBXGroup;
 			children = (
+				FBE2C6232B1B2E01004C0116 /* SessionPlanOverview.swift */,
 				FB3E02B22B0C6B5100D8558C /* SessionPlanView.swift */,
 				FB3E02B42B0C6B6000D8558C /* ActivityPlanView.swift */,
 				FB15DD332B074E6E00A21290 /* ChatUI.swift */,
@@ -467,6 +474,8 @@
 				FB58E8772B01F40300FD9E2E /* FireCore.swift */,
 				FB93BB1A2B03471C00864CB2 /* FireData.swift */,
 				FBB450012B052B180096F8EB /* FireLiveData.swift */,
+				FBDF0DC62B224D2600FADE44 /* ActivityPlanService.swift */,
+				FBDF0DC82B224EB500FADE44 /* ManagedViewsService copy.swift */,
 				FB982F902B19D1B900C0DA03 /* FirebaseService.swift */,
 			);
 			path = Firebase;
@@ -525,7 +534,6 @@
 				FBE2C61F2B1AFD20004C0116 /* SessionPlanThumbView.swift */,
 				FB10AE0A2B0F162F00295F4B /* ActivityPlanThumbView.swift */,
 				FB10AE0C2B0F16B100295F4B /* ActivityPlanThumbList.swift */,
-				FBE2C6232B1B2E01004C0116 /* SessionPlanOverview.swift */,
 				FB48409B2B1EBE8B0003377A /* StopWatch.swift */,
 				FBBAD3BB2B1F8ECC004A4332 /* Timer.swift */,
 			);
@@ -538,6 +546,7 @@
 				FB3E02C02B0C9A6D00D8558C /* BuddyProfileView.swift */,
 				FB3E02BE2B0C948A00D8558C /* AddBuddyView.swift */,
 				FB3E02BC2B0C90E600D8558C /* BuddyListView.swift */,
+				FBDF0DC42B21811000FADE44 /* SharedSessionsView.swift */,
 			);
 			path = Social;
 			sourceTree = "<group>";
@@ -649,11 +658,13 @@
 				FB58E8842B03169700FD9E2E /* TimeProvider.swift in Sources */,
 				FBF404432B19304700FA0545 /* BorderedView.swift in Sources */,
 				FB58E8822B030F1D00FD9E2E /* RealmFind.swift in Sources */,
+				FBDF0DC92B224EB500FADE44 /* ManagedViewsService copy.swift in Sources */,
 				FBE2C6242B1B2E01004C0116 /* SessionPlanOverview.swift in Sources */,
 				FBD9AFC92B008435005F8620 /* ManagedViewAction.swift in Sources */,
 				FB9F1DD92B1533C400FD9078 /* FirebaseLogin.swift in Sources */,
 				FB9F1E402B159F6A00FD9078 /* OrientationInfo.swift in Sources */,
 				FB58E87C2B02B1F100FD9E2E /* lineModifier.swift in Sources */,
+				FBDF0DC52B21811000FADE44 /* SharedSessionsView.swift in Sources */,
 				FBD9AFC02B00817A005F8620 /* ManagedView.swift in Sources */,
 				FBD9AFCD2B008457005F8620 /* UserToActivity.swift in Sources */,
 				FB581BEB2B1EF39C00F5C90F /* Stopwatch.swift in Sources */,
@@ -674,6 +685,7 @@
 				FBE2C61C2B1AF961004C0116 /* BoardBackgrounder.swift in Sources */,
 				FB9F1DD42B15307E00FD9078 /* UserSignUp.swift in Sources */,
 				FBE2C6282B1C26BF004C0116 /* StandardButton.swift in Sources */,
+				FBDF0DC72B224D2600FADE44 /* ActivityPlanService.swift in Sources */,
 				FBBAD3BC2B1F8ECC004A4332 /* Timer.swift in Sources */,
 				FBD9AFC22B0081C1005F8620 /* RealmInstance.swift in Sources */,
 				FB48409C2B1EBE8B0003377A /* StopWatch.swift in Sources */,
@@ -865,10 +877,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Ludi Boards/Preview Content\"";
-				DEVELOPMENT_TEAM = 248J2GKL56;
+				DEVELOPMENT_TEAM = 9LU8N76A9C;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = SOL;
@@ -876,15 +890,16 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = io.ludi.boards;
+				PRODUCT_BUNDLE_IDENTIFIER = io.sol.boards;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -896,10 +911,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Ludi Boards/Preview Content\"";
-				DEVELOPMENT_TEAM = 248J2GKL56;
+				DEVELOPMENT_TEAM = 9LU8N76A9C;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = SOL;
@@ -907,14 +923,14 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = io.ludi.boards;
+				PRODUCT_BUNDLE_IDENTIFIER = io.sol.boards;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;

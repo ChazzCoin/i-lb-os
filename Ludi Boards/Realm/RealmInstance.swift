@@ -39,6 +39,29 @@ extension Realm {
 import RealmSwift
 
 extension Object {
+    
+    
+    convenience init(dictionary: [String: Any]) {
+        self.init()
+        let properties = self.objectSchema.properties.map { $0.name }
+        
+        for property in properties {
+            if let value = dictionary[property] {
+                self.setValue(value, forKey: property)
+            }
+        }
+    }
+    
+    func toDict() -> [String: Any] {
+        let properties = self.objectSchema.properties.map { $0.name }
+        var dictionary: [String: Any] = [:]
+        for property in properties {
+            dictionary[property] = self.value(forKey: property)
+        }
+        return dictionary
+    }
+    
+    
     func updateFieldsAndSave(newObject: Object, realm: Realm) {
         do {
             try realm.write {
@@ -56,3 +79,5 @@ extension Object {
         }
     }
 }
+
+

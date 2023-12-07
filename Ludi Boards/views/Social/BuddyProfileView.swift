@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 
 struct BuddyProfileView: View {
+    @EnvironmentObject var BEO: BoardEngineObject
     @State private var username: String = "User123"
     @State private var status: String = "Online"
     @State private var aboutMe: String = "Just enjoying the world of coding and tech!"
@@ -19,13 +20,14 @@ struct BuddyProfileView: View {
     @State private var visibility: String = "closed"
     @State private var photoUrl: String = "default_image_url"
     
+    @State private var showNewPlanSheet = false
     @State private var showChatButton = true
     @State private var showAddBuddyButton = true
     @State private var showShareActivityButton = true
     
     var body: some View {
-        ScrollView {
-            VStack(spacing: 20) {
+        LoadingForm() { runLoading in
+            Group() {
                 Image(systemName: "person.crop.circle.fill")
                     .resizable()
                     .scaledToFit()
@@ -38,61 +40,76 @@ struct BuddyProfileView: View {
 
                 Text(status)
                     .font(.subheadline)
-                    .foregroundColor(status == "Online" ? .green : .gray)
+                    .foregroundColor(status == "online" ? .green : .gray)
 
                 Divider()
                     .padding(.horizontal)
                 
-                VStack(alignment: .leading) {
-                    Text("About Me:")
-                        .font(.headline)
-                        .padding(.bottom, 5)
-
-                    Text(aboutMe)
-                }
-                .padding(.horizontal)
-                
                 // Additional Info
-                Group {
-                    profileInfoRow(title: "Email", value: email)
-                    profileInfoRow(title: "Phone", value: phoneNumber)
-                    profileInfoRow(title: "Membership Type", value: String(membershipType))
-                    profileInfoRow(title: "Account Created", value: accountCreationDate)
-                    profileInfoRow(title: "Visibility", value: visibility)
-                }
-                .padding(.horizontal)
+//                Group {
+//                    profileInfoRow(title: "Membership Type", value: String(membershipType))
+//                    profileInfoRow(title: "Account Created", value: accountCreationDate)
+//                    profileInfoRow(title: "Visibility", value: visibility)
+//                }
+//                .padding(.horizontal)
+                solButton(title: "Sign Out", action: {
+                    runLoading()
+                    if let user = self.BEO.realmInstance.findByField(SolKnight.self, value: "1") {
+                        self.BEO.realmInstance.safeWrite { r in
+                            r.delete(user)
+                        }
+                    }
+                    self.BEO.userId = nil
+                    self.BEO.userName = nil
+                    self.BEO.isLoggedIn = false
+                }, isEnabled: true)
                 
                 if showAddBuddyButton {
                     Button("Add Buddy") {
                         // Add buddy action
+                        showNewPlanSheet = true
                     }
                     .buttonStyle(ActionButtonStyle())
                 }
                 
-                if showChatButton {
-                    Button("Chat") {
-                        // Chat action
-                    }
-                    .buttonStyle(ActionButtonStyle())
-                }
+//                if showChatButton {
+//                    Button("Chat") {
+//                        // Chat action
+//                    }
+//                    .buttonStyle(ActionButtonStyle())
+//                }
 
-                if showShareActivityButton {
-                    Button("Share Activity") {
-                        // Share activity action
-                    }
-                    .buttonStyle(ActionButtonStyle())
-                }
-                Spacer()
+//                if showShareActivityButton {
+//                    Button("Share Activity") {
+//                        // Share activity action
+//                    }
+//                    .buttonStyle(ActionButtonStyle())
+//                }
+//                Spacer()
             }
             .padding(.bottom, 20)
         }
+        .onAppear() {
+            loadUser()
+        }
         .navigationBarTitle("Profile", displayMode: .inline)
+        .sheet(isPresented: $showNewPlanSheet) {
+            AddBuddyView(isPresented: $showNewPlanSheet)
+        }
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button("Edit") {
                     // Edit profile action
                 }
             }
+        }
+    }
+    
+    func loadUser() {
+        self.BEO.loadUser()
+        if let un = self.BEO.userName {
+            username = un
+            status = "online"
         }
     }
     

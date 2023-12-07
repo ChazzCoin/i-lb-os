@@ -10,6 +10,7 @@ import SwiftUI
 import FirebaseStorage
 
 struct SignUpView: View {
+    @EnvironmentObject var BEO: BoardEngineObject
     @State private var username = ""
     @State private var email = ""
     @State private var phone = ""
@@ -18,78 +19,66 @@ struct SignUpView: View {
     @State private var image: UIImage?
     @State private var showImagePicker = false
     @State private var photoUrl: String = ""
+        
+//    @State var isLoggedIn: Bool = false
+    @State var isLoading: Bool = false
+    @State private var showCompletion = false
 
-    let realmInstance = realm()
     var body: some View {
-        Form {
-            Section(header: Text("User Information")) {
-                TextField("Username", text: $username)
-                    .autocapitalization(.none)
-                    .disableAutocorrection(true)
-                TextField("Email", text: $email)
-                    .keyboardType(.emailAddress)
-                    .autocapitalization(.none)
-                    .disableAutocorrection(true)
-                TextField("Phone", text: $phone)
-                    .keyboardType(.phonePad)
-                TextField("Name", text: $name)
-                
-                // Image Picker Section
-                if image != nil {
-                    Image(uiImage: image!)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: 200)
-                        .onTapGesture {
-                            self.showImagePicker = true
-                        }
-                } else {
-                    Button("Pick Image") {
-                        self.showImagePicker = true
-                    }
+        
+        if self.BEO.isLoggedIn {
+            BuddyProfileView().environmentObject(self.BEO)
+        } else {
+            LoadingForm(isLoading: $isLoading, showCompletion: $showCompletion) { runLoading in
+                Section(header: Text("User Information")) {
+                    TextField("Username", text: $username)
+                        .autocapitalization(.none)
+                        .disableAutocorrection(true)
                 }
-            }
 
-            Section(header: Text("Security")) {
-                SecureField("Password", text: $password)
+                solButton(title: "Sign Up", action: {
+                    runLoading()
+                    saveUser()
+                    self.BEO.loadUser()
+                }, isEnabled: isFormValid)
             }
-
-            Button("Sign Up") {
-                saveUser()
-            }
-            .disabled(!isFormValid)
+            .navigationBarTitle("Sign Up")
         }
-        .navigationBarTitle("Sign Up")
-        .sheet(isPresented: $showImagePicker) {
-            ImagePicker(image: $image)
-        }
+        
     }
     
     private func saveUser() {
-        let newUser = User()
-        newUser.id = UUID().uuidString // Generating a unique ID
+        let newUser = SolKnight()
+        newUser.tempId = UUID().uuidString
         newUser.username = username
-        newUser.email = email
-        newUser.phone = phone
-        newUser.name = name        
-        // Check if there is an image selected
-        if let selectedImage = self.image {
-            // Upload to Firebase Storage
-            uploadImageToFirebase(image: selectedImage) { url in
-                newUser.photoUrl = url?.absoluteString ?? ""
-                // Save user to Realm with photo URL
-                try! realmInstance.write {
-                    realmInstance.add(newUser)
-                }
-            }
-        } else {
-            // Save user to Realm without photo URL
-            try! realmInstance.write {
-                realmInstance.add(newUser)
-            }
+        
+        self.BEO.realmInstance.safeWrite { r in
+            r.add(newUser)
         }
         
-        saveUserToFirebase(user: newUser)
+        saveSolKnightToFirebase(user: newUser)
+        username = ""
+//        newUser.email = email
+//        newUser.phone = phone
+//        newUser.name = name        
+        // Check if there is an image selected
+//        if let selectedImage = self.image {
+//            // Upload to Firebase Storage
+//            uploadImageToFirebase(image: selectedImage) { url in
+//                newUser.photoUrl = url?.absoluteString ?? ""
+//                // Save user to Realm with photo URL
+//                try! realmInstance.write {
+//                    realmInstance.add(newUser)
+//                }
+//            }
+//        } else {
+//            // Save user to Realm without photo URL
+//            try! realmInstance.write {
+//                realmInstance.add(newUser)
+//            }
+//        }
+        
+        
         
     }
     
@@ -97,7 +86,15 @@ struct SignUpView: View {
         firebaseDatabase { fdb in
             fdb.child(DatabasePaths.users.rawValue)
                 .child(user.id)
-                .setValue(user.toDictionary())
+                .setValue(user.toDict())
+        }
+    }
+    
+    private func saveSolKnightToFirebase(user:SolKnight) {
+        firebaseDatabase { fdb in
+            fdb.child(DatabasePaths.users.rawValue)
+                .child(user.tempId)
+                .setValue(user.toDict())
         }
     }
     
@@ -118,7 +115,7 @@ struct SignUpView: View {
     }
 
     var isFormValid: Bool {
-        !username.isEmpty && !email.isEmpty && !password.isEmpty && !name.isEmpty
+        !username.isEmpty //&& !email.isEmpty && !password.isEmpty && !name.isEmpty
     }
 }
 

@@ -18,6 +18,7 @@ struct enableManagedViewTool : ViewModifier {
     let minSizeWH = 100.0
     
     let realmInstance = realm()
+    @State private var MVS: ManagedViewService? = nil
     @State private var isDeleted = false
     @State private var isDisabled = false
     @State private var lifeIsLocked = false
@@ -42,7 +43,7 @@ struct enableManagedViewTool : ViewModifier {
     @State private var position = CGPoint(x: 100, y: 100)
     @GestureState private var dragOffset = CGSize.zero
     @State private var isDragging = false
-    
+    @State private var managedViewNotificationToken: NotificationToken? = nil
     // Firebase
     let reference = Database.database().reference().child(DatabasePaths.managedViews.rawValue)
     
@@ -54,6 +55,12 @@ struct enableManagedViewTool : ViewModifier {
     func minSizeCheck() {
         if lifeWidth < minSizeWH { lifeWidth = minSizeWH }
         if lifeHeight < minSizeWH { lifeHeight = minSizeWH }
+    }
+    
+    func observeView() {
+        observeFromRealm()
+        MVS = ManagedViewService(realm: self.realmInstance)
+        MVS?.startObserving(activityId: self.activityId, viewId: self.viewId)
     }
     
     func loadFromRealm(managedView: ManagedView?=nil) {
@@ -78,7 +85,48 @@ struct enableManagedViewTool : ViewModifier {
         lifeColorAlpha = umv.colorAlpha
         lifeIsLocked = umv.isLocked
         minSizeCheck()
+        
+        
     }
+    
+    func observeFromRealm() {
+        if isDisabledChecker() {return}
+        if let mv = realmInstance.object(ofType: ManagedView.self, forPrimaryKey: viewId) {
+            managedViewNotificationToken = mv.observe { change in
+                if isDisabledChecker() {return}
+                switch change {
+                    case .change(let obj, _):
+                        let temp = obj as! ManagedView
+                        activityId = temp.boardId
+                        lifeOffsetX = temp.x
+                        lifeOffsetY = temp.y
+                        lifeUpdatedAt = temp.dateUpdated
+                        self.position = CGPoint(x: lifeOffsetX, y: lifeOffsetY)
+                        lifeWidth = Double(temp.width)
+                        lifeHeight = Double(temp.height)
+                        lifeRotation = temp.rotation
+                        lifeToolType = temp.toolType
+                        lifeColorRed = temp.colorRed
+                        lifeColorGreen = temp.colorGreen
+                        lifeColorBlue = temp.colorBlue
+                        lifeColorAlpha = temp.colorAlpha
+                        lifeIsLocked = temp.isLocked
+                        minSizeCheck()
+                    case .error(let error):
+                        // Handle errors, if any
+                        print("Error: \(error)")
+                    case .deleted:
+                        // Object has been deleted
+                        self.isDeleted = true
+                        self.isDisabled = true
+    //                    self.deleteToolFromFirebase(mv: T##ManagedView?)
+                        print("Object has been deleted.")
+                }
+            }
+        }
+
+    }
+    
     func updateRealm() {
         print("!!!! Updating Realm!")
         if isDisabledChecker() {return}
@@ -181,6 +229,9 @@ struct enableManagedViewTool : ViewModifier {
                 .opacity(!isDisabledChecker() && !isDeletedChecker() ? 1 : 0.0)
                 .onAppear {
                     isDisabled = false
+                    
+                    observeView()
+                    
                     loadFromRealm()
                     
                     CodiChannel.SESSION_ON_ID_CHANGE.receive(on: RunLoop.main) { sc in

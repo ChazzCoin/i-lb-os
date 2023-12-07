@@ -7,7 +7,7 @@
 
 import Foundation
 
-class SharedPrefs {
+class SharedPrefs: ObservableObject {
     static let shared = SharedPrefs()
     
     private let defaults = UserDefaults.standard
@@ -18,5 +18,14 @@ class SharedPrefs {
 
     func retrieve(_ key:String, defaultValue:String="") -> String {
         return defaults.string(forKey: key) ?? defaultValue
+    }
+    
+    func saveUserId(userId:String) { defaults.set("currentUserId", forKey: userId) }
+    func getUserId() -> String? { return defaults.string(forKey: "currentUserId") }
+    func saveUserName(userName:String) { defaults.set("currentUserName", forKey: userName) }
+    func getUserName() -> String? { return defaults.string(forKey: "currentUserName") }
+    func clearUser() {
+        saveUserId(userId: "")
+        saveUserName(userName: "")
     }
 }

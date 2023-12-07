@@ -22,16 +22,17 @@ import RealmSwift
     dynamic var objectiveDetails: String = ""
     dynamic var activityDetails: String = ""
     
-    dynamic var isHost: Bool = true
+    dynamic var ownerId: String = ""
+    dynamic var isHost: Bool = false
     dynamic var isOpen: Bool = false
     dynamic var orderIndex: Int = 0
     
     dynamic var width: Int = 3000
     dynamic var height: Int = 4000
-    dynamic var backgroundRed: Double = 48.0
-    dynamic var backgroundGreen: Double = 200.0
-    dynamic var backgroundBlue: Double = 20.0
-    dynamic var backgroundAlpha: Double = 1.0
+    dynamic var backgroundRed: Double = 0.2
+    dynamic var backgroundGreen: Double = 0.78
+    dynamic var backgroundBlue: Double = 0.34
+    dynamic var backgroundAlpha: Double = 0.75
     dynamic var backgroundLineStroke: Double = 10
     dynamic var backgroundRotation: Double = -90
     dynamic var backgroundLineRed: Double = 255.0
@@ -44,12 +45,4 @@ import RealmSwift
         return "id"
     }
     
-    func toDict() -> [String: Any] {
-        let properties = self.objectSchema.properties.map { $0.name }
-        var dictionary: [String: Any] = [:]
-        for property in properties {
-            dictionary[property] = self.value(forKey: property)
-        }
-        return dictionary
-    }
 }

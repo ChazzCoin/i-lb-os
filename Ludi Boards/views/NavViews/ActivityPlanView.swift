@@ -221,6 +221,24 @@ struct ActivityPlanView: View {
                     )
                 }
                 
+                // Delete BUTTON
+                solConfirmButton(
+                    title: "Delete",
+                    message: "Would you like to delete this plan?",
+                    action: {
+                        startLoadingProcess()
+                        if let temp = realmInstance.findByField(ActivityPlan.self, field: "id", value: self.boardId) {
+                            activityPlan = ActivityPlan()
+                            realmInstance.safeWrite { r in
+                                r.delete(temp)
+                            }
+                            // TODO: FIREBASE ONLY
+                            deleteActivityPlanFromFirebase(apId: self.boardId)
+                            self.presentationMode.wrappedValue.dismiss()
+                        }
+                    }
+                )
+                
                 // SAVE BUTTON
                 solConfirmButton(
                     title: "Save",
@@ -261,24 +279,6 @@ struct ActivityPlanView: View {
             }
         }
         .navigationBarTitle(isCurrentPlan ? "Current Activity" : "Activity Plan", displayMode: .inline)
-        .navigationBarItems(trailing: HStack {
-            Button(action: {
-                // Delete View
-                print("Trash")
-                startLoadingProcess()
-                if let temp = realmInstance.findByField(ActivityPlan.self, field: "id", value: self.boardId) {
-                    activityPlan = ActivityPlan()
-                    realmInstance.safeWrite { r in
-                        r.delete(temp)
-                    }
-                    self.presentationMode.wrappedValue.dismiss()
-                }
-            }) {
-                Image(systemName: "trash")
-                    .resizable()
-                    .frame(width: 30, height: 30)
-            }
-        })
     }
     
     private func fetchSessionPlan() {
@@ -362,8 +362,16 @@ struct ActivityPlanView: View {
         realmInstance.safeWrite { r in
             r.add(self.activityPlan)
         }
+        //TODO: FIREBASE ONLY
+        updateInFirebase(newAP: self.activityPlan)
     }
-    
+    func deleteActivityPlanFromFirebase(apId: String) {
+        firebaseDatabase { db in
+            db.child(DatabasePaths.activityPlan.rawValue)
+                .child(apId)
+                .removeValue()
+        }
+    }
 
 }
 

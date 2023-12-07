@@ -14,6 +14,11 @@ import FirebaseDatabase
 class BoardEngineObject : ObservableObject {
     static let shared = BoardEngineObject()
     @Environment(\.colorScheme) var colorScheme
+//    @StateObject var sharedPrefs = SharedPrefs.shared
+    @State var realmInstance = realm()
+    @Published var isLoggedIn: Bool = false
+    @Published var userId: String? = nil
+    @Published var userName: String? = nil
     // Current Board
     @Published var isDraw: Bool = false
     @Published var isDrawing: String = "LINE"
@@ -24,6 +29,11 @@ class BoardEngineObject : ObservableObject {
     @Published var canvasOffset = CGPoint.zero
     @Published var canvasScale: CGFloat = 0.2
     @Published var canvasRotation: CGFloat = 0.0
+    
+    // Shared
+    @Published var isShared: Bool = false
+    @Published var isHost: Bool = true
+    
     // Board Settings
     @Published var boardWidth: CGFloat = 3000.0
     @Published var boardHeight: CGFloat = 4000.0
@@ -49,6 +59,14 @@ class BoardEngineObject : ObservableObject {
     func navLeft() { self.canvasOffset.x = self.canvasOffset.x - 100 }
     func navDown() { self.canvasOffset.y = self.canvasOffset.y + 100 }
     func navUp() { self.canvasOffset.y  = self.canvasOffset.y - 100 }
+    
+    func loadUser() {
+        if let user = realmInstance.findByField(SolKnight.self, value: "1") {
+            userId = user.tempId
+            userName = user.username
+            isLoggedIn = true
+        }
+    }
     
     func fullScreen() {
         canvasScale = 0.2
@@ -119,6 +137,7 @@ class BoardEngineObject : ObservableObject {
 struct BoardEngine: View {
     
     @EnvironmentObject var BEO: BoardEngineObject
+    @State var APS: ActivityPlanService? = nil
     @State var cancellables = Set<AnyCancellable>()
     
     let realmIntance = realm()
@@ -315,18 +334,45 @@ struct BoardEngine: View {
     func loadActivityPlan(planId:String?=nil) {
         resetTools()
         
+        // LOAD SINGLE ACTIVITY
         if planId != nil || !self.activityID.isEmpty {
+            
+            APS = ActivityPlanService(realm: self.realmIntance)
+            APS?.startObserving(activityId: self.activityID)
+            
             if let act = self.realmIntance.findByField(ActivityPlan.self, field: "id", value: self.activityID) {
+                
                 self.BEO.setColor(red: act.backgroundRed, green: act.backgroundGreen, blue: act.backgroundBlue, alpha: act.backgroundAlpha)
                 self.BEO.setFieldLineColor(colorIn: Color(red: act.backgroundLineRed, green: act.backgroundLineGreen, blue: act.backgroundLineBlue).opacity(act.backgroundLineAlpha))
                 self.BEO.boardBgName = act.backgroundView
                 self.BEO.boardFeildRotation = act.backgroundRotation
                 self.activities.append(act)
+                
+                activityNotificationToken = act.observe { change in
+                    switch change {
+                        case .change(let obj, _):
+                            let temp = obj as! ActivityPlan
+                            self.BEO.setColor(red: temp.backgroundRed, green: temp.backgroundGreen, blue: temp.backgroundBlue, alpha: temp.backgroundAlpha)
+                            self.BEO.setFieldLineColor(colorIn: Color(red: temp.backgroundLineRed, green: temp.backgroundLineGreen, blue: temp.backgroundLineBlue).opacity(temp.backgroundLineAlpha))
+                            self.BEO.boardBgName = temp.backgroundView
+                            self.BEO.boardFeildRotation = temp.backgroundRotation
+                                                    
+                        case .error(let error):
+                            // Handle errors, if any
+                            print("Error: \(error)")
+                        case .deleted:
+                            // Object has been deleted
+                            print("Object has been deleted.")
+                    }
+                }
+                
+                
             }
             loadManagedViewTools()
             return
         }
         
+        // LOAD ALL ACTIVITIES
         if let acts = self.realmIntance.findAllByField(ActivityPlan.self, field: "sessionId", value: self.sessionID) {
             if !acts.isEmpty {
                 var hasBeenSet = false
@@ -346,6 +392,8 @@ struct BoardEngine: View {
                 return
             }
         }
+        
+        // CREATE NEW ACTIVITY
         let newActivity = ActivityPlan()
         self.activityID = newActivity.id
         newActivity.sessionId = self.sessionID
@@ -363,7 +411,35 @@ struct BoardEngine: View {
     func loadSessionPlans() {
         
         // TODO: Firebase Users ONLY
-        fireSessionPlansAsync(sessionId: self.sessionID, realm: self.realmIntance)
+        fireGetSessionPlanAsync(sessionId: self.sessionID, realm: self.realmIntance)
+        
+        // FREE
+        let umvs = realmIntance.objects(SessionPlan.self)
+        sessionNotificationToken = umvs.observe { (changes: RealmCollectionChange) in
+            switch changes {
+                case .initial(let results):
+                    print("Realm Listener: initial")
+                    for i in results {
+                        sessions.append(i)
+                    }
+                case .update(let results, let de, _, _):
+                    print("Realm Listener: update")
+                    for i in results {
+                        sessions.append(i)
+                    }
+                    for d in de {
+                        sessions.remove(at: d)
+                    }
+                case .error(let error):
+                    print("Realm Listener: error")
+                    fatalError("\(error)")  // Handle errors appropriately in production code
+            }
+        }
+    }
+    func observeActivityPlan() {
+        
+        // TODO: Firebase Users ONLY
+        fireGetSessionPlanAsync(sessionId: self.sessionID, realm: self.realmIntance)
         
         // FREE
         let umvs = realmIntance.objects(SessionPlan.self)
@@ -393,6 +469,9 @@ struct BoardEngine: View {
         
         // TODO: Firebase Users ONLY
         fireManagedViewsAsync(activityId: self.activityID, realm: self.realmIntance)
+        
+//        MVS = ManagedViewsService(realm: self.realmIntance)
+//        MVS?.startObserving(activityId: self.activityID)
         
         // FREE
         let umvs = realmIntance.findAllByField(ManagedView.self, field: "boardId", value: self.activityID)

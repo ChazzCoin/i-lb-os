@@ -84,5 +84,68 @@
             landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "1BDE644B-9C25-4E55-9D48-BAE547B4548C"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ludi Boards/views/NavViews/ActivityPlanView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "348"
+            endingLineNumber = "348"
+            landmarkName = "saveNewActivityPlan()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "1BDE644B-9C25-4E55-9D48-BAE547B4548C - 98a5975c2727ba92"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Ludi_Boards.ActivityPlanView.saveNewActivityPlan() -&gt; ()"
+                  moduleName = "Ludi Boards"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/views/NavViews/ActivityPlanView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "348"
+                  endingLineNumber = "348"
+                  offsetFromSymbolStart = "3972">
+               </Location>
+               <Location
+                  uuid = "1BDE644B-9C25-4E55-9D48-BAE547B4548C - 98a5975c2727ba92"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Ludi_Boards.ActivityPlanView.saveNewActivityPlan() -&gt; ()"
+                  moduleName = "Ludi Boards"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/views/NavViews/ActivityPlanView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "348"
+                  endingLineNumber = "348"
+                  offsetFromSymbolStart = "3960">
+               </Location>
+               <Location
+                  uuid = "1BDE644B-9C25-4E55-9D48-BAE547B4548C - 98a5975c2727ba92"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Ludi_Boards.ActivityPlanView.saveNewActivityPlan() -&gt; ()"
+                  moduleName = "Ludi Boards"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/views/NavViews/ActivityPlanView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "348"
+                  endingLineNumber = "348"
+                  offsetFromSymbolStart = "3980">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
    </Breakpoints>
 </Bucket>
