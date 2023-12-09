@@ -10,7 +10,7 @@ import SwiftUI
 import RealmSwift
 
 struct SessionPlanOverview: View {
-    @State var userId: String = ""
+    @State var userId: String = "temp"
     @State var sessionPlans: [SessionPlan] = []
     @State var shares: [Share] = []
     @State var sharedIds: [String] = []
@@ -42,11 +42,11 @@ struct SessionPlanOverview: View {
                 }
             }.clearSectionBackground()
             
-            Section(header: Text("Pending Shares")) {
-                List(shares) { share in
-                    ShareThumbnailView(share: share)
-                }
-            }.clearSectionBackground()
+//            Section(header: Text("Pending Shares")) {
+//                List(shares) { share in
+//                    ShareThumbnailView(share: share)
+//                }
+//            }.clearSectionBackground()
             
             Section(header: Text("Shared Sessions")) {
                 List(sessionPlansShared) { sessionPlan in
@@ -65,7 +65,7 @@ struct SessionPlanOverview: View {
                 fireGetLiveDemoAsync()
                 getShares()
                 observeSessions()
-                observeSharedSessions()
+//                observeSharedSessions()
                 return
             }
             observeSessions()
@@ -126,29 +126,38 @@ struct SessionPlanOverview: View {
     }
     
     func observeSessions() {
-            let umvs = realmInstance.objects(SessionPlan.self)
-            sessionNotificationToken = umvs.observe { (changes: RealmCollectionChange) in
-                isLoading = true
-                switch changes {
-                    case .initial(let results):
-                        print("Realm Listener: initial")
-                        for i in results {
-                            sessionPlans.safeAdd(i)
+        fireGetLiveDemoAsync(realm: self.realmInstance)
+        let umvs = realmInstance.objects(SessionPlan.self)
+        sessionNotificationToken = umvs.observe { (changes: RealmCollectionChange) in
+            sessionPlansShared.removeAll()
+            switch changes {
+                case .initial(let results):
+                    print("Realm Listener: initial")
+                    for i in results {
+                        if i.ownerId == "SOL" {
+                            sessionPlansShared.safeAdd(i)
+                            continue
                         }
-                        isLoading = false
-                    case .update(let results, let de, _, _):
-                        print("Realm Listener: update")
-                        for i in results {
-                            sessionPlans.safeAdd(i)
+                        sessionPlans.safeAdd(i)
+                    }
+                    isLoading = false
+                case .update(let results, let de, _, _):
+                    print("Realm Listener: update")
+                    for i in results {
+                        if i.ownerId == "SOL" {
+                            sessionPlansShared.safeAdd(i)
+                            continue
                         }
-                        for d in de {
-                            sessionPlans.remove(at: d)
-                        }
-                        isLoading = false
-                    case .error(let error):
-                        print("Realm Listener: error")
-                        isLoading = false
-                        fatalError("\(error)")  // Handle errors appropriately in production code
+                        sessionPlans.safeAdd(i)
+                    }
+                    for d in de {
+                        sessionPlans.remove(at: d)
+                    }
+                    isLoading = false
+                case .error(let error):
+                    print("Realm Listener: error")
+                    isLoading = false
+                    fatalError("\(error)")  // Handle errors appropriately in production code
             }
         }
     }
@@ -159,10 +168,16 @@ struct SessionPlanOverview: View {
                 switch changes {
                     case .initial(let results):
                         for i in results {
+                            if i.ownerId == self.userId {
+                                continue
+                            }
                             sessionPlansShared.safeAdd(i)
                         }
                     case .update(let results, let de, _, _):
                         for i in results {
+                            if i.ownerId == self.userId {
+                                continue
+                            }
                             sessionPlansShared.safeAdd(i)
                         }
                         for d in de {

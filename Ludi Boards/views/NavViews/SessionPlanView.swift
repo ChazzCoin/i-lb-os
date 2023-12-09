@@ -101,12 +101,13 @@ struct SessionPlanView: View {
                     }
                     isShowing = false
                 })
-                solButton(title: "Delete", action: {
-                    
-                    runLoading()
-                    
-                    
-                })
+                if sessionId != "SOL-LIVE-DEMO" {
+                    solButton(title: "Delete", action: {
+                        runLoading()
+                        deleteSessionPlan()
+                    })
+                }
+                
             }.clearSectionBackground()
         }
         .onAppear {

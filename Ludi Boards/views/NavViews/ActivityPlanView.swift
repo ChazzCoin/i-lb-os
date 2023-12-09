@@ -221,23 +221,26 @@ struct ActivityPlanView: View {
                     )
                 }
                 
-                // Delete BUTTON
-                solConfirmButton(
-                    title: "Delete",
-                    message: "Would you like to delete this plan?",
-                    action: {
-                        startLoadingProcess()
-                        if let temp = realmInstance.findByField(ActivityPlan.self, field: "id", value: self.boardId) {
-                            activityPlan = ActivityPlan()
-                            realmInstance.safeWrite { r in
-                                r.delete(temp)
+                if self.activityPlan.sessionId != "SOL-LIVE-DEMO" {
+                    // Delete BUTTON
+                    solConfirmButton(
+                        title: "Delete",
+                        message: "Would you like to delete this plan?",
+                        action: {
+                            startLoadingProcess()
+                            if let temp = realmInstance.findByField(ActivityPlan.self, field: "id", value: self.boardId) {
+                                activityPlan = ActivityPlan()
+                                realmInstance.safeWrite { r in
+                                    r.delete(temp)
+                                }
+                                // TODO: FIREBASE ONLY
+                                deleteActivityPlanFromFirebase(apId: self.boardId)
+                                self.presentationMode.wrappedValue.dismiss()
                             }
-                            // TODO: FIREBASE ONLY
-                            deleteActivityPlanFromFirebase(apId: self.boardId)
-                            self.presentationMode.wrappedValue.dismiss()
                         }
-                    }
-                )
+                    )
+                }
+                
                 
                 // SAVE BUTTON
                 solConfirmButton(

@@ -20,7 +20,7 @@ import RealmSwift
     dynamic var subTitle: String = "A Basic Session"
     dynamic var objectiveDetails: String = "To show off SOL!"
     dynamic var sessionDetails: String = "Add some details here!"
-    dynamic var ownerId: String = "Add some details here!"
+    dynamic var ownerId: String = "temp"
     dynamic var isHost: Bool = false
     dynamic var isOpen: Bool = false
     

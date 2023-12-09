@@ -200,8 +200,8 @@ struct CanvasEngine: View {
                 }.position(using: gps, at: .topRight, offsetX: 200, offsetY: 200)
             }
             
-//            FloatingEmojiView()
-//                .position(using: gps, at: .topLeft, offsetX: 200, offsetY: 0)
+            FloatingEmojiView()
+                .position(using: gps, at: .topLeft, offsetX: 200, offsetY: 0)
         }
         .zIndex(3.0)
         

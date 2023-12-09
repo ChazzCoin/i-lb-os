@@ -18,6 +18,11 @@ struct enableManagedViewTool : ViewModifier {
     let minSizeWH = 100.0
     
     let realmInstance = realm()
+    
+    @State private var updateDragCount = 0
+    @State private var isAnimating = false
+    @State private var coordinateStack: [CGPoint] = []
+    
     @State private var MVS: ManagedViewService? = nil
     @State private var isDeleted = false
     @State private var isDisabled = false
@@ -45,7 +50,7 @@ struct enableManagedViewTool : ViewModifier {
     @State private var isDragging = false
     @State private var managedViewNotificationToken: NotificationToken? = nil
     // Firebase
-    let reference = Database.database().reference().child(DatabasePaths.managedViews.rawValue)
+    @State var reference = Database.database().reference().child(DatabasePaths.managedViews.rawValue)
     
     @State var cancellables = Set<AnyCancellable>()
     
@@ -59,8 +64,8 @@ struct enableManagedViewTool : ViewModifier {
     
     func observeView() {
         observeFromRealm()
-        MVS = ManagedViewService(realm: self.realmInstance)
-        MVS?.startObserving(activityId: self.activityId, viewId: self.viewId)
+        MVS = ManagedViewService(realm: self.realmInstance, activityId: self.activityId, viewId: self.viewId)
+        MVS?.start()
     }
     
     func loadFromRealm(managedView: ManagedView?=nil) {
@@ -94,24 +99,37 @@ struct enableManagedViewTool : ViewModifier {
         if let mv = realmInstance.object(ofType: ManagedView.self, forPrimaryKey: viewId) {
             managedViewNotificationToken = mv.observe { change in
                 if isDisabledChecker() {return}
+                if isDragging {return}
                 switch change {
                     case .change(let obj, _):
                         let temp = obj as! ManagedView
-                        activityId = temp.boardId
-                        lifeOffsetX = temp.x
-                        lifeOffsetY = temp.y
-                        lifeUpdatedAt = temp.dateUpdated
-                        self.position = CGPoint(x: lifeOffsetX, y: lifeOffsetY)
-                        lifeWidth = Double(temp.width)
-                        lifeHeight = Double(temp.height)
-                        lifeRotation = temp.rotation
-                        lifeToolType = temp.toolType
-                        lifeColorRed = temp.colorRed
-                        lifeColorGreen = temp.colorGreen
-                        lifeColorBlue = temp.colorBlue
-                        lifeColorAlpha = temp.colorAlpha
-                        lifeIsLocked = temp.isLocked
-                        minSizeCheck()
+                        if temp.id != self.viewId {return}
+//                        if Int(temp.dateUpdated) == lifeUpdatedAt { return }
+                        if isDragging {return}
+                        let newPosition = CGPoint(x: temp.x, y: temp.y)
+                         self.coordinateStack.append(newPosition)
+                        animateToNextCoordinate()
+                        DispatchQueue.main.async {
+                            
+                            if activityId != temp.boardId {activityId = temp.boardId}
+//                            if lifeOffsetX != temp.x { lifeOffsetX = temp.x}
+//                            if lifeOffsetY != temp.y { lifeOffsetY = temp.y}
+                            if lifeUpdatedAt != Int(temp.dateUpdated) {lifeUpdatedAt = Int(temp.dateUpdated)}
+                            
+//                            if self.position != newPosition {self.position = newPosition}
+                            if lifeWidth != Double(temp.width) {lifeWidth = Double(temp.width)}
+                            if lifeHeight != Double(temp.height) { lifeHeight = Double(temp.height)}
+                            if lifeRotation != temp.rotation { lifeRotation = temp.rotation}
+                            if lifeToolType != temp.toolType { lifeToolType = temp.toolType}
+                            if lifeColorRed != temp.colorRed {lifeColorRed = temp.colorRed}
+                            if lifeColorGreen != temp.colorGreen { lifeColorGreen = temp.colorGreen}
+                            if lifeColorBlue != temp.colorBlue {lifeColorBlue = temp.colorBlue}
+                            if lifeColorAlpha != temp.colorAlpha { lifeColorAlpha = temp.colorAlpha}
+                            if lifeIsLocked != temp.isLocked { lifeIsLocked = temp.isLocked}
+
+//                            minSizeCheck()
+
+                        }
                     case .error(let error):
                         // Handle errors, if any
                         print("Error: \(error)")
@@ -127,16 +145,45 @@ struct enableManagedViewTool : ViewModifier {
 
     }
     
-    func updateRealm() {
+    
+    func animateToNextCoordinate() {
+        print("!!!COORDINATES COUNT: \(coordinateStack.count)")
+        guard !coordinateStack.isEmpty else {
+            isAnimating = false
+            return
+        }
+        
+        let nextCoordinate = coordinateStack.removeFirst()
+        isAnimating = true
+
+        withAnimation {
+            self.position = nextCoordinate
+        }
+
+        // Schedule the next animation after a delay
+        DispatchQueue.main.asyncAfter(deadline: .now()) {
+            self.isAnimating = false
+            if !self.coordinateStack.isEmpty {
+                self.animateToNextCoordinate()
+            }
+        }
+    }
+    
+    
+    func updateRealm(isBackground: Bool=true, x:Double?=nil, y:Double?=nil) {
         print("!!!! Updating Realm!")
         if isDisabledChecker() {return}
-        let mv = realmInstance.findByField(ManagedView.self, value: viewId)
+        
+        let tempRealm = isBackground ? realm() : self.realmInstance
+        
+        let mv = tempRealm.findByField(ManagedView.self, value: viewId)
         if mv == nil { return }
-        realmInstance.safeWrite { r in
-            lifeUpdatedAt = Int(Date().timeIntervalSince1970)
-            mv?.dateUpdated = lifeUpdatedAt
-            mv?.x = self.position.x
-            mv?.y = self.position.y
+        let t = Int(Date().timeIntervalSince1970)
+        lifeUpdatedAt = t
+        try? tempRealm.write {
+            mv?.dateUpdated = t
+            mv?.x = x ?? self.position.x
+            mv?.y = y ?? self.position.y
             mv?.rotation = lifeRotation
             mv?.toolType = lifeToolType
             mv?.width = Int(lifeWidth)
@@ -147,36 +194,38 @@ struct enableManagedViewTool : ViewModifier {
             mv?.colorAlpha = lifeColorAlpha
             mv?.isLocked = lifeIsLocked
             guard let tMV = mv else { return }
-            r.create(ManagedView.self, value: tMV, update: .all)
+            tempRealm.create(ManagedView.self, value: tMV, update: .all)
             
             // TODO: Firebase Users ONLY
-            updateInFirebase(mv: mv)
+            reference.setValue(mv?.toDict())
+//            updateInFirebase(mv: mv)
         }
     }
+    
     
     func updateInFirebase(mv: ManagedView?) {
         if self.activityId.isEmpty || self.viewId.isEmpty {return}
         var newMv = mv
         if mv == nil { newMv = realmInstance.findByField(ManagedView.self, value: viewId) }
-        firebaseDatabase { fdb in
-            fdb.child(DatabasePaths.managedViews.rawValue)
-                .child(self.activityId)
-                .child(self.viewId)
-                .setValue(newMv?.toDict())
-        }
+        reference.setValue(newMv?.toDict())
+//        firebaseDatabase { fdb in
+//            fdb.child(DatabasePaths.managedViews.rawValue)
+//                .child(self.activityId)
+//                .child(self.viewId)
+//                .setValue(newMv?.toDict())
+//        }
     }
     
     func deleteToolFromFirebase(mv:ManagedView?) {
         // TODO: Firebase Users ONLY
         if self.activityId.isEmpty || self.viewId.isEmpty {return}
-        var newMv = mv
-        if mv == nil { newMv = realmInstance.findByField(ManagedView.self, value: viewId) }
-        firebaseDatabase { fdb in
-            fdb.child(DatabasePaths.managedViews.rawValue)
-                .child(activityId)
-                .child(viewId)
-                .setValue(newMv?.toDict())
-        }
+        reference.removeValue()
+//        firebaseDatabase { fdb in
+//            fdb.child(DatabasePaths.managedViews.rawValue)
+//                .child(activityId)
+//                .child(viewId)
+//                .setValue(newMv?.toDict())
+//        }
     }
     
     func body(content: Content) -> some View {
@@ -191,13 +240,15 @@ struct enableManagedViewTool : ViewModifier {
                     LongPressGesture(minimumDuration: 0.01)
                         .onEnded { _ in
                             self.isDragging = true
+//                            MVS?.stop()
                             //onMoveStarted()
                         }
                         .sequenced(before: DragGesture())
                         .updating($dragOffset, body: { (value, state, transaction) in
                             switch value {
-                                case .second(true, let drag):
-                                    state = drag?.translation ?? .zero
+                                case .second(true, let drag?):
+                                    state = drag.translation
+                                    updateRealm(isBackground: true, x: self.position.x + drag.translation.width, y: self.position.y + drag.translation.height)
                                 default:
                                     break
                             }
@@ -205,10 +256,8 @@ struct enableManagedViewTool : ViewModifier {
                         .onEnded { value in
                             if case .second(true, let drag?) = value {
                                 self.position = CGPoint(x: self.position.x + drag.translation.width, y: self.position.y + drag.translation.height)
-                                print("!!!! X: [ \(self.position.x) ] Y: [ \(self.position.y) ]")
+                                updateRealm(isBackground: true)
                                 self.isDragging = false
-                                //onMoveComplete()
-                                updateRealm()
                             }
                         }.simultaneously(with: self.lifeIsLocked ? nil : TapGesture(count: 2)
                             .onEnded { _ in
@@ -228,6 +277,9 @@ struct enableManagedViewTool : ViewModifier {
                 )
                 .opacity(!isDisabledChecker() && !isDeletedChecker() ? 1 : 0.0)
                 .onAppear {
+                    reference = reference
+                        .child(self.activityId)
+                        .child(self.viewId)
                     isDisabled = false
                     
                     observeView()

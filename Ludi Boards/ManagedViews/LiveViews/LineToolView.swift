@@ -17,6 +17,8 @@ struct LineDrawingManaged: View {
     var managedView: ManagedView? = nil
     
     let realmInstance = realm()
+    @State private var managedViewNotificationToken: NotificationToken? = nil
+    @State private var MVS: ManagedViewService? = nil
     @State private var isDeleted = false
     @State private var isDisabled = false
     @State private var lifeIsLocked = false
@@ -53,7 +55,7 @@ struct LineDrawingManaged: View {
     @State var originalLifeEnd = CGPoint.zero
     
     // Firebase
-    let reference = Database
+    @State var reference = Database
         .database()
         .reference()
         .child(DatabasePaths.managedViews.rawValue)
@@ -123,6 +125,9 @@ struct LineDrawingManaged: View {
         .gesture(self.lifeIsLocked ? nil : dragGestureDuo())
         .onAppear() {
             loadFromRealm()
+            
+            observeView()
+            observeFromRealm()
 
             CodiChannel.TOOL_ATTRIBUTES.receive(on: RunLoop.main) { vId in
                 let temp = vId as! ViewAtts
@@ -249,6 +254,53 @@ struct LineDrawingManaged: View {
                    )
                }
            }))
+    }
+    
+    func observeView() {
+        observeFromRealm()
+        MVS = ManagedViewService(realm: self.realmInstance, activityId: self.activityId, viewId: self.viewId)
+        MVS?.start()
+    }
+    
+    func observeFromRealm() {
+        if isDisabledChecker() {return}
+        if let mv = realmInstance.object(ofType: ManagedView.self, forPrimaryKey: viewId) {
+            managedViewNotificationToken = mv.observe { change in
+                if isDisabledChecker() {return}
+                switch change {
+                    case .change(let obj, _):
+                        let temp = obj as! ManagedView
+                        if temp.id != self.viewId {return}
+                        activityId = temp.boardId
+                        lifeStartX = temp.startX
+                        lifeStartY = temp.startY
+                        lifeEndX = temp.endX
+                        lifeEndY = temp.endY
+                        lifeWidth = Double(temp.width)
+                        lifeLineDash = Double(temp.lineDash)
+                        
+                        lifeColorRed = temp.colorRed
+                        lifeColorGreen = temp.colorGreen
+                        lifeColorBlue = temp.colorBlue
+                        lifeColorAlpha = temp.colorAlpha
+                        lifeColor = colorFromRGBA(red: lifeColorRed, green: lifeColorGreen, blue: lifeColorBlue, alpha: lifeColorAlpha)
+                        
+                        loadCenterPoint()
+                        loadWidthAndHeight()
+                        loadRotationOfLine()
+                    case .error(let error):
+                        // Handle errors, if any
+                        print("Error: \(error)")
+                    case .deleted:
+                        // Object has been deleted
+                        self.isDeleted = true
+                        self.isDisabled = true
+    //                    self.deleteToolFromFirebase(mv: T##ManagedView?)
+                        print("Object has been deleted.")
+                }
+            }
+        }
+
     }
     
     func updateRealm(start: CGPoint? = nil, end: CGPoint? = nil) {

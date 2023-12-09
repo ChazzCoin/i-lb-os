@@ -346,6 +346,7 @@ struct BoardEngine: View {
                 self.BEO.setFieldLineColor(colorIn: Color(red: act.backgroundLineRed, green: act.backgroundLineGreen, blue: act.backgroundLineBlue).opacity(act.backgroundLineAlpha))
                 self.BEO.boardBgName = act.backgroundView
                 self.BEO.boardFeildRotation = act.backgroundRotation
+                self.BEO.boardFeildLineStroke = act.backgroundLineStroke
                 self.activities.append(act)
                 
                 activityNotificationToken = act.observe { change in
@@ -356,7 +357,7 @@ struct BoardEngine: View {
                             self.BEO.setFieldLineColor(colorIn: Color(red: temp.backgroundLineRed, green: temp.backgroundLineGreen, blue: temp.backgroundLineBlue).opacity(temp.backgroundLineAlpha))
                             self.BEO.boardBgName = temp.backgroundView
                             self.BEO.boardFeildRotation = temp.backgroundRotation
-                                                    
+                            self.BEO.boardFeildLineStroke = temp.backgroundLineStroke
                         case .error(let error):
                             // Handle errors, if any
                             print("Error: \(error)")
@@ -383,6 +384,7 @@ struct BoardEngine: View {
                         self.BEO.setFieldLineColor(colorIn: Color(red: i.backgroundLineRed, green: i.backgroundLineGreen, blue: i.backgroundLineBlue))
                         self.BEO.boardBgName = i.backgroundView
                         self.BEO.boardFeildRotation = i.backgroundRotation
+                        self.BEO.boardFeildLineStroke = i.backgroundLineStroke
                         self.BEO.currentActivityId = self.activityID
                         hasBeenSet = true
                     }

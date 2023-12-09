@@ -32,7 +32,6 @@ class ManagedViewsService: ObservableObject {
 
     func stopObserving() {
         guard isObserving, let handle = observerHandle else { return }
-
         reference.removeObserver(withHandle: handle)
         isObserving = false
         observerHandle = nil
@@ -40,16 +39,20 @@ class ManagedViewsService: ObservableObject {
 }
 
 class ManagedViewService: ObservableObject {
-    let realmInstance: Realm
-    var reference: DatabaseReference = Database.database().reference()
-    private var observerHandle: DatabaseHandle?
-    private var isObserving = false
+    @Published var realmInstance: Realm
+    @Published var reference: DatabaseReference = Database.database().reference()
+    @Published var observerHandle: DatabaseHandle?
+    @Published var isObserving = false
+    @Published var activityId = ""
+    @Published var viewId = ""
 
-    init(realm: Realm) {
+    init(realm: Realm, activityId:String, viewId:String) {
         self.realmInstance = realm
+        self.activityId = activityId
+        self.viewId = viewId
     }
 
-    func startObserving(activityId: String, viewId: String) {
+    func start() {
         guard !isObserving else { return }
         observerHandle = reference.child(DatabasePaths.managedViews.rawValue)
             .child(activityId).child(viewId).observe(.value, with: { snapshot in
@@ -60,7 +63,7 @@ class ManagedViewService: ObservableObject {
         isObserving = true
     }
 
-    func stopObserving() {
+    func stop() {
         guard isObserving, let handle = observerHandle else { return }
         reference.removeObserver(withHandle: handle)
         isObserving = false

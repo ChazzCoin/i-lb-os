@@ -23,13 +23,24 @@ class GlobalPositioningSystem: ObservableObject {
     }
 
     @objc private func updateScreenSizeAndInsets() {
-        if let window = UIApplication.shared.windows.first {
-            DispatchQueue.main.async {
-                self.screenSize = window.frame.size
-                let uiInsets = window.safeAreaInsets
-                self.safeAreaInsets = EdgeInsets(top: uiInsets.top, leading: uiInsets.left, bottom: uiInsets.bottom, trailing: uiInsets.right)
+        let allScenes = UIApplication.shared.connectedScenes
+        let scene = allScenes.first { $0.activationState == .foregroundActive }
+        if let temp = scene as? UIWindowScene {
+            if let w = temp.windows.first {
+                DispatchQueue.main.async {
+                    self.screenSize = w.frame.size
+                    let uiInsets = w.safeAreaInsets
+                    self.safeAreaInsets = EdgeInsets(top: uiInsets.top, leading: uiInsets.left, bottom: uiInsets.bottom, trailing: uiInsets.right)
+                }
             }
         }
+//        if let window = UIApplication.shared.windows.first {
+//            DispatchQueue.main.async {
+//                self.screenSize = window.frame.size
+//                let uiInsets = window.safeAreaInsets
+//                self.safeAreaInsets = EdgeInsets(top: uiInsets.top, leading: uiInsets.left, bottom: uiInsets.bottom, trailing: uiInsets.right)
+//            }
+//        }
     }
 
     // Function to get coordinates for specified area
