@@ -124,6 +124,9 @@ struct LineDrawingManaged: View {
         )
         .gesture(self.lifeIsLocked ? nil : dragGestureDuo())
         .onAppear() {
+            
+            reference = reference.child(self.activityId).child(self.viewId)
+            
             loadFromRealm()
             
             observeView()
@@ -163,6 +166,7 @@ struct LineDrawingManaged: View {
         DragGesture()
             .onChanged { value in
                 if !anchorsAreVisible {return}
+                self.isDragging = true
                 if isStart {
                     self.lifeStartX = value.location.x
                     self.lifeStartY = value.location.y
@@ -176,6 +180,7 @@ struct LineDrawingManaged: View {
             }
             .onEnded { _ in
                 if !anchorsAreVisible {return}
+                self.isDragging = false
                 updateRealm()
             }
             .simultaneously(with: TapGesture(count: 1)
@@ -209,6 +214,7 @@ struct LineDrawingManaged: View {
                 state = value.translation
             })
             .onChanged { value in
+                self.isDragging = true
                 if self.originalLifeStart == .zero {
                     self.originalLifeStart = CGPoint(x: lifeStartX, y: lifeStartY)
                     self.originalLifeEnd = CGPoint(x: lifeEndX, y: lifeEndY)
@@ -228,6 +234,7 @@ struct LineDrawingManaged: View {
                 lifeEndX = self.originalLifeEnd.x + translation.width
                 lifeEndY = self.originalLifeEnd.y + translation.height
                 loadCenterPoint()
+                self.isDragging = false
                 updateRealm(start: CGPoint(x: lifeStartX, y: lifeStartY),
                             end: CGPoint(x: lifeEndX, y: lifeEndY))
                 self.originalLifeStart = .zero
@@ -271,23 +278,35 @@ struct LineDrawingManaged: View {
                     case .change(let obj, _):
                         let temp = obj as! ManagedView
                         if temp.id != self.viewId {return}
-                        activityId = temp.boardId
-                        lifeStartX = temp.startX
-                        lifeStartY = temp.startY
-                        lifeEndX = temp.endX
-                        lifeEndY = temp.endY
-                        lifeWidth = Double(temp.width)
-                        lifeLineDash = Double(temp.lineDash)
+                        if self.isDragging {return}
+                            
+                        DispatchQueue.main.async {
+                            if activityId != temp.boardId { activityId = temp.boardId }
+                            
+                            if lifeStartX != temp.startX {lifeStartX = temp.startX}
+                            if lifeStartY != temp.startY {lifeStartY = temp.startY}
+                            if lifeEndX != temp.endX {lifeEndX = temp.endX}
+                            if lifeEndY != temp.endY {lifeEndY = temp.endY}
+                            
+                            if lifeWidth != Double(temp.width) {lifeWidth = Double(temp.width)}
+                            if lifeLineDash != Double(temp.lineDash) {lifeLineDash = Double(temp.lineDash)}
+                            
+                            var colorHasChanged = false
+                            if lifeColorRed != temp.colorRed { colorHasChanged = true; lifeColorRed = temp.colorRed}
+                            if lifeColorGreen != temp.colorGreen { colorHasChanged = true; lifeColorGreen = temp.colorGreen}
+                            if lifeColorBlue != temp.colorBlue { colorHasChanged = true; lifeColorBlue = temp.colorBlue }
+                            if lifeColorAlpha != temp.colorAlpha { colorHasChanged = true; lifeColorAlpha = temp.colorAlpha }
+                            if colorHasChanged {
+                                lifeColor = colorFromRGBA(red: lifeColorRed, green: lifeColorGreen, blue: lifeColorBlue, alpha: lifeColorAlpha)
+                            }
                         
-                        lifeColorRed = temp.colorRed
-                        lifeColorGreen = temp.colorGreen
-                        lifeColorBlue = temp.colorBlue
-                        lifeColorAlpha = temp.colorAlpha
-                        lifeColor = colorFromRGBA(red: lifeColorRed, green: lifeColorGreen, blue: lifeColorBlue, alpha: lifeColorAlpha)
+                            loadCenterPoint()
+                            loadWidthAndHeight()
+                            loadRotationOfLine()
+                            
+                            if lifeIsLocked != temp.isLocked { lifeIsLocked = temp.isLocked}
+                        }
                         
-                        loadCenterPoint()
-                        loadWidthAndHeight()
-                        loadRotationOfLine()
                     case .error(let error):
                         // Handle errors, if any
                         print("Error: \(error)")
@@ -295,7 +314,7 @@ struct LineDrawingManaged: View {
                         // Object has been deleted
                         self.isDeleted = true
                         self.isDisabled = true
-    //                    self.deleteToolFromFirebase(mv: T##ManagedView?)
+                        self.deleteToolFromFirebase()
                         print("Object has been deleted.")
                 }
             }
@@ -310,8 +329,6 @@ struct LineDrawingManaged: View {
         let mv = realmInstance.findByField(ManagedView.self, value: viewId)
         if mv == nil { return }
         realmInstance.safeWrite { r in
-            lifeDateUpdated = Int(Date().timeIntervalSince1970)
-            mv?.dateUpdated = lifeDateUpdated
             mv?.startX = Double(start?.x ?? CGFloat(lifeStartX))
             mv?.startY = Double(start?.y ?? CGFloat(lifeStartY))
             mv?.endX = Double(end?.x ?? CGFloat(lifeEndX))
@@ -323,11 +340,11 @@ struct LineDrawingManaged: View {
                 mv?.colorBlue = lc.blue
                 mv?.colorAlpha = lc.alpha
             }
-            mv?.isLocked = lifeIsLocked
+            mv?.isLocked = self.isDragging ? true : lifeIsLocked
             mv?.toolType = "LINE"
             mv?.width = Int(lifeWidth)
             guard let tMV = mv else { return }
-            r.create(ManagedView.self, value: tMV, update: .all)
+            r.create(ManagedView.self, value: tMV, update: .modified)
             // TODO: Firebase Users ONLY
             updateFirebase(mv: mv)
         }
@@ -336,14 +353,7 @@ struct LineDrawingManaged: View {
     func updateFirebase(mv:ManagedView?) {
         // TODO: Firebase Users ONLY
         if self.activityId.isEmpty || self.viewId.isEmpty {return}
-        var newMv = mv
-        if mv == nil { newMv = realmInstance.findByField(ManagedView.self, value: viewId) }
-        firebaseDatabase { fdb in
-            fdb.child(DatabasePaths.managedViews.rawValue)
-                .child(activityId)
-                .child(viewId)
-                .setValue(newMv?.toDict())
-        }
+        reference.setValue(mv?.toDict())
     }
     
     func deleteFromRealm() {
@@ -353,19 +363,12 @@ struct LineDrawingManaged: View {
             r.delete(umv)
         }
         // TODO: Firebase Users ONLY
-        deleteToolFromFirebase(mv: umv)
+        deleteToolFromFirebase()
     }
     
-    func deleteToolFromFirebase(mv:ManagedView?) {
+    func deleteToolFromFirebase() {
         if self.activityId.isEmpty || self.viewId.isEmpty {return}
-        var newMv = mv
-        if mv == nil { newMv = realmInstance.findByField(ManagedView.self, value: viewId) }
-        firebaseDatabase { fdb in
-            fdb.child(DatabasePaths.managedViews.rawValue)
-                .child(activityId)
-                .child(viewId)
-                .setValue(newMv?.toDict())
-        }
+        reference.removeValue()
     }
     
     func loadFromRealm() {
@@ -375,6 +378,8 @@ struct LineDrawingManaged: View {
         guard let umv = mv else { return }
         // set attributes
         activityId = umv.boardId
+        lifeIsLocked = umv.isLocked
+        
         lifeStartX = umv.startX
         lifeStartY = umv.startY
         lifeEndX = umv.endX
