@@ -19,8 +19,6 @@ struct enableManagedViewTool : ViewModifier {
     
     let realmInstance = realm()
     
-    @State private var updateDragCount = 0
-    @State private var isAnimating = false
     @State private var coordinateStack: [CGPoint] = []
     
     @State private var MVS: ManagedViewService? = nil
@@ -30,8 +28,6 @@ struct enableManagedViewTool : ViewModifier {
     @State private var lifeUpdatedAt: Int = 0 // Using Double for time representation
     @State private var lifeBorderColor = Color.AIMYellow
     @State private var lifeColor = ColorProvider.black // SwiftUI color representation
-//    @State private var lifeOffsetX: Double = 0.0 // CGFloat in SwiftUI
-//    @State private var lifeOffsetY: Double = 0.0 // CGFloat in SwiftUI
     @State private var lifeWidth = 75.0 // CGFloat in SwiftUI
     @State private var lifeHeight = 75.0 // CGFloat in SwiftUI
     @State private var lifeScale = 1.0 // CGFloat for scale
@@ -140,7 +136,7 @@ struct enableManagedViewTool : ViewModifier {
     
     func animateToNextCoordinate() {
         print("!!!COORDINATES COUNT: \(coordinateStack.count)")
-        guard !coordinateStack.isEmpty else {
+        guard !coordinateStack.isEmpty || self.isDragging else {
             return
         }
         

@@ -16,6 +16,8 @@ struct LineDrawingManaged: View {
     @State var activityId: String
     var managedView: ManagedView? = nil
     
+    @State private var coordinateStack: [[String:CGPoint]] = []
+    
     let realmInstance = realm()
     @State private var managedViewNotificationToken: NotificationToken? = nil
     @State private var MVS: ManagedViewService? = nil
@@ -25,10 +27,10 @@ struct LineDrawingManaged: View {
     @State private var lifeDateUpdated = Int(Date().timeIntervalSince1970)
     
     @State private var lifeCenterPoint = CGPoint.zero
-    @State private var lifeStartX = 0.0
-    @State private var lifeStartY = 0.0
-    @State private var lifeEndX = 0.0
-    @State private var lifeEndY = 0.0
+    @State private var lifeStartX: CGFloat = 0.0
+    @State private var lifeStartY: CGFloat = 0.0
+    @State private var lifeEndX: CGFloat = 0.0
+    @State private var lifeEndY: CGFloat = 0.0
     
     @State private var lifeLineLength = 0.0
     @State private var lifeWidthTouch = 300.0
@@ -177,6 +179,7 @@ struct LineDrawingManaged: View {
                 loadCenterPoint()
                 loadWidthAndHeight()
                 loadRotationOfLine()
+                updateRealm()
             }
             .onEnded { _ in
                 if !anchorsAreVisible {return}
@@ -226,6 +229,8 @@ struct LineDrawingManaged: View {
                 lifeEndX = self.originalLifeEnd.x + translation.width
                 lifeEndY = self.originalLifeEnd.y + translation.height
                 loadCenterPoint()
+                updateRealm(start: CGPoint(x: lifeStartX, y: lifeStartY),
+                            end: CGPoint(x: lifeEndX, y: lifeEndY))
             }
             .onEnded { value in
                 let translation = value.translation
@@ -281,12 +286,8 @@ struct LineDrawingManaged: View {
                         if self.isDragging {return}
                             
                         DispatchQueue.main.async {
+                            if self.isDragging {return}
                             if activityId != temp.boardId { activityId = temp.boardId }
-                            
-                            if lifeStartX != temp.startX {lifeStartX = temp.startX}
-                            if lifeStartY != temp.startY {lifeStartY = temp.startY}
-                            if lifeEndX != temp.endX {lifeEndX = temp.endX}
-                            if lifeEndY != temp.endY {lifeEndY = temp.endY}
                             
                             if lifeWidth != Double(temp.width) {lifeWidth = Double(temp.width)}
                             if lifeLineDash != Double(temp.lineDash) {lifeLineDash = Double(temp.lineDash)}
@@ -299,10 +300,28 @@ struct LineDrawingManaged: View {
                             if colorHasChanged {
                                 lifeColor = colorFromRGBA(red: lifeColorRed, green: lifeColorGreen, blue: lifeColorBlue, alpha: lifeColorAlpha)
                             }
-                        
-                            loadCenterPoint()
                             loadWidthAndHeight()
                             loadRotationOfLine()
+                            //
+//                            if lifeStartX != temp.startX {lifeStartX = temp.startX}
+//                            if lifeStartY != temp.startY {lifeStartY = temp.startY}
+//                            if lifeEndX != temp.endX {lifeEndX = temp.endX}
+//                            if lifeEndY != temp.endY {lifeEndY = temp.endY}
+                            
+//                            loadCenterPoint()
+                            
+                            let startPosition = CGPoint(x: temp.startX, y: temp.startY)
+                            let endPosition = CGPoint(x: temp.endX, y: temp.endY)
+                            let centerPosition = getCenterOfLine(start: startPosition, end: endPosition)
+                            
+                            let coords = [
+                                "start":startPosition,
+                                "end":endPosition,
+                                "center":centerPosition
+                            ]
+                            
+                            self.coordinateStack.append(coords)
+                            animateToNextCoordinate()
                             
                             if lifeIsLocked != temp.isLocked { lifeIsLocked = temp.isLocked}
                         }
@@ -320,6 +339,30 @@ struct LineDrawingManaged: View {
             }
         }
 
+    }
+    
+    func animateToNextCoordinate() {
+        print("!!!COORDINATES COUNT: \(coordinateStack.count)")
+        guard !coordinateStack.isEmpty || self.isDragging else {
+            return
+        }
+        
+        let nextCoordinate = coordinateStack.removeFirst()
+
+        withAnimation {
+            lifeStartX = nextCoordinate["start"]?.x ?? lifeStartX
+            lifeStartY = nextCoordinate["start"]?.y ?? lifeStartY
+            lifeEndX = nextCoordinate["end"]?.x ?? lifeEndX
+            lifeEndY = nextCoordinate["end"]?.y ?? lifeEndY
+            lifeCenterPoint = nextCoordinate["center"] ?? lifeCenterPoint
+        }
+
+        // Schedule the next animation after a delay
+        DispatchQueue.main.asyncAfter(deadline: .now()) {
+            if !self.coordinateStack.isEmpty {
+                self.animateToNextCoordinate()
+            }
+        }
     }
     
     func updateRealm(start: CGPoint? = nil, end: CGPoint? = nil) {
