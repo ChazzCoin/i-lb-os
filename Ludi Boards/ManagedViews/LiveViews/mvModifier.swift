@@ -19,6 +19,8 @@ struct enableManagedViewTool : ViewModifier {
     
     let realmInstance = realm()
     
+    @State var isWriting = false
+    @State private var updateCount = 0
     @State private var coordinateStack: [CGPoint] = []
     
     @State private var MVS: ManagedViewService? = nil
@@ -67,7 +69,7 @@ struct enableManagedViewTool : ViewModifier {
     func loadFromRealm(managedView: ManagedView?=nil) {
         if isDisabledChecker() {return}
         var mv = managedView
-        if mv == nil {mv = realmInstance.object(ofType: ManagedView.self, forPrimaryKey: viewId)}
+        if mv == nil {mv = realm().object(ofType: ManagedView.self, forPrimaryKey: viewId)}
         guard let umv = mv else { return }
         // set attributes
         activityId = umv.boardId
@@ -97,7 +99,7 @@ struct enableManagedViewTool : ViewModifier {
                         if self.isDragging {return}
                         
                         DispatchQueue.main.async {
-                            // Position
+                            if temp.id != self.viewId {return}
                             if self.isDragging {return}
                             let newPosition = CGPoint(x: temp.x, y: temp.y)
                             self.coordinateStack.append(newPosition)
@@ -114,9 +116,7 @@ struct enableManagedViewTool : ViewModifier {
                             if lifeColorBlue != temp.colorBlue {lifeColorBlue = temp.colorBlue}
                             if lifeColorAlpha != temp.colorAlpha { lifeColorAlpha = temp.colorAlpha}
                             if lifeIsLocked != temp.isLocked { lifeIsLocked = temp.isLocked}
-
-//                            minSizeCheck()
-
+                            minSizeCheck()
                         }
                     case .error(let error):
                         // Handle errors, if any
@@ -135,7 +135,6 @@ struct enableManagedViewTool : ViewModifier {
     
     
     func animateToNextCoordinate() {
-        print("!!!COORDINATES COUNT: \(coordinateStack.count)")
         guard !coordinateStack.isEmpty || self.isDragging else {
             return
         }
@@ -147,41 +146,82 @@ struct enableManagedViewTool : ViewModifier {
         }
 
         // Schedule the next animation after a delay
-        DispatchQueue.main.asyncAfter(deadline: .now()) {
+        DispatchQueue.main.asyncAfter(deadline: .now()+1000) {
             if !self.coordinateStack.isEmpty {
                 self.animateToNextCoordinate()
             }
         }
     }
     
-    
-    func updateRealm(isBackground: Bool=true, x:Double?=nil, y:Double?=nil) {
-        print("!!!! Updating Realm!")
+    // Function to update a Realm object in the background
+    func updateRealm(x:Double?=nil, y:Double?=nil) {
         if isDisabledChecker() {return}
-        let tempRealm = isBackground ? realm() : self.realmInstance
-        let mv = tempRealm.findByField(ManagedView.self, value: viewId)
-        if mv == nil { return }
-        let t = Int(Date().timeIntervalSince1970)
-        try? tempRealm.write {
-            mv?.dateUpdated = t
-            mv?.x = x ?? self.position.x
-            mv?.y = y ?? self.position.y
-            mv?.rotation = lifeRotation
-            mv?.toolType = lifeToolType
-            mv?.width = Int(lifeWidth)
-            mv?.height = Int(lifeHeight)
-            mv?.colorRed = lifeColorRed
-            mv?.colorGreen = lifeColorGreen
-            mv?.colorBlue = lifeColorBlue
-            mv?.colorAlpha = lifeColorAlpha
-            mv?.isLocked = lifeIsLocked
-            guard let tMV = mv else { return }
-            tempRealm.create(ManagedView.self, value: tMV, update: .all)
-            // TODO: Firebase Users ONLY
-            updateToolInFirebase(mv:mv)
+        DispatchQueue.global(qos: .background).async {
+            // Create a new Realm instance for the background thread
+            autoreleasepool {
+                do {
+                    let realm = try Realm()
+                    if let mv = realm.findByField(ManagedView.self, value: viewId) {
+                        try realm.write {
+                            // Modify the object
+                            mv.x = x ?? self.position.x
+                            mv.y = y ?? self.position.y
+                            mv.rotation = lifeRotation
+                            mv.toolType = lifeToolType
+                            mv.width = Int(lifeWidth)
+                            mv.height = Int(lifeHeight)
+                            mv.colorRed = lifeColorRed
+                            mv.colorGreen = lifeColorGreen
+                            mv.colorBlue = lifeColorBlue
+                            mv.colorAlpha = lifeColorAlpha
+                            mv.isLocked = lifeIsLocked
+                            realm.create(ManagedView.self, value: mv, update: .all)
+                            // TODO: Firebase Users ONLY
+                            reference.setValue(mv.toDict())
+                        }
+                    }
+                } catch {
+                    // Handle error
+                    print("Realm error: \(error)")
+                }
+            }
         }
     }
     
+    
+    // Function to update a Realm object in the background
+    func updateRealmPos(x:Double?=nil, y:Double?=nil) {
+        DispatchQueue.global(qos: .background).async {
+            // Create a new Realm instance for the background thread
+            autoreleasepool {
+                do {
+                    let realm = try Realm()
+                    if let mv = realm.findByField(ManagedView.self, value: self.viewId) {
+                        try realm.write {
+                            // Modify the object
+                            mv.x = x ?? self.position.x
+                            mv.y = y ?? self.position.y
+                        }
+                        
+                        if self.isWriting {return}
+                        self.isWriting = true
+                        reference.setValue(mv.toDict()) { (error:Error?, ref:DatabaseReference) in
+                            if let error = error {
+                                self.isWriting = false
+                              print("Data could not be saved: \(error).")
+                            } else {
+                                self.isWriting = false
+                              print("Data saved successfully!")
+                        }
+                      }
+                    }
+                } catch {
+                    // Handle error
+                    print("Realm error: \(error)")
+                }
+            }
+        }
+    }
     func updateToolInFirebase(mv:ManagedView?) {
         // TODO: Firebase Users ONLY
         reference.setValue(mv?.toDict())
@@ -210,7 +250,7 @@ struct enableManagedViewTool : ViewModifier {
                             switch value {
                                 case .second(true, let drag?):
                                     state = drag.translation
-                                    updateRealm(isBackground: true, x: self.position.x + drag.translation.width, y: self.position.y + drag.translation.height)
+                                    updateRealmPos(x: self.position.x + drag.translation.width, y: self.position.y + drag.translation.height)
                                 default:
                                     break
                             }
@@ -218,7 +258,7 @@ struct enableManagedViewTool : ViewModifier {
                         .onEnded { value in
                             if case .second(true, let drag?) = value {
                                 self.position = CGPoint(x: self.position.x + drag.translation.width, y: self.position.y + drag.translation.height)
-                                updateRealm(isBackground: true)
+                                updateRealmPos()
                                 self.isDragging = false
                             }
                         }.simultaneously(with: self.lifeIsLocked ? nil : TapGesture(count: 2)
