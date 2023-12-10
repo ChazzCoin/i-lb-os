@@ -146,7 +146,7 @@ struct enableManagedViewTool : ViewModifier {
         }
 
         // Schedule the next animation after a delay
-        DispatchQueue.main.asyncAfter(deadline: .now()+1000) {
+        DispatchQueue.main.asyncAfter(deadline: .now()) {
             if !self.coordinateStack.isEmpty {
                 self.animateToNextCoordinate()
             }
@@ -177,7 +177,7 @@ struct enableManagedViewTool : ViewModifier {
                             mv.isLocked = lifeIsLocked
                             realm.create(ManagedView.self, value: mv, update: .all)
                             // TODO: Firebase Users ONLY
-                            reference.setValue(mv.toDict())
+                            updateToolInFirebase(mv: mv)
                         }
                     }
                 } catch {
@@ -192,13 +192,11 @@ struct enableManagedViewTool : ViewModifier {
     // Function to update a Realm object in the background
     func updateRealmPos(x:Double?=nil, y:Double?=nil) {
         DispatchQueue.global(qos: .background).async {
-            // Create a new Realm instance for the background thread
             autoreleasepool {
                 do {
                     let realm = try Realm()
                     if let mv = realm.findByField(ManagedView.self, value: self.viewId) {
                         try realm.write {
-                            // Modify the object
                             mv.x = x ?? self.position.x
                             mv.y = y ?? self.position.y
                         }
@@ -212,11 +210,10 @@ struct enableManagedViewTool : ViewModifier {
                             } else {
                                 self.isWriting = false
                               print("Data saved successfully!")
+                            }
                         }
-                      }
                     }
                 } catch {
-                    // Handle error
                     print("Realm error: \(error)")
                 }
             }
@@ -224,7 +221,17 @@ struct enableManagedViewTool : ViewModifier {
     }
     func updateToolInFirebase(mv:ManagedView?) {
         // TODO: Firebase Users ONLY
-        reference.setValue(mv?.toDict())
+        if self.isWriting {return}
+        self.isWriting = true
+        reference.setValue(mv?.toDict()) { (error:Error?, ref:DatabaseReference) in
+            if let error = error {
+                self.isWriting = false
+              print("Data could not be saved: \(error).")
+            } else {
+                self.isWriting = false
+              print("Data saved successfully!")
+            }
+        }
     }
     
     func deleteToolFromFirebase() {

@@ -16,6 +16,7 @@ struct LineDrawingManaged: View {
     @State var activityId: String
     var managedView: ManagedView? = nil
     
+    @State private var isWriting = false
     @State private var coordinateStack: [[String:CGPoint]] = []
     
     let realmInstance = realm()
@@ -179,12 +180,14 @@ struct LineDrawingManaged: View {
                 loadCenterPoint()
                 loadWidthAndHeight()
                 loadRotationOfLine()
-                updateRealm()
+                updateRealmPos(start: CGPoint(x: lifeStartX, y: lifeStartY),
+                            end: CGPoint(x: lifeEndX, y: lifeEndY))
             }
             .onEnded { _ in
                 if !anchorsAreVisible {return}
                 self.isDragging = false
-                updateRealm()
+                updateRealmPos(start: CGPoint(x: lifeStartX, y: lifeStartY),
+                            end: CGPoint(x: lifeEndX, y: lifeEndY))
             }
             .simultaneously(with: TapGesture(count: 1)
                  .onEnded { _ in
@@ -229,7 +232,7 @@ struct LineDrawingManaged: View {
                 lifeEndX = self.originalLifeEnd.x + translation.width
                 lifeEndY = self.originalLifeEnd.y + translation.height
                 loadCenterPoint()
-                updateRealm(start: CGPoint(x: lifeStartX, y: lifeStartY),
+                updateRealmPos(start: CGPoint(x: lifeStartX, y: lifeStartY),
                             end: CGPoint(x: lifeEndX, y: lifeEndY))
             }
             .onEnded { value in
@@ -240,7 +243,7 @@ struct LineDrawingManaged: View {
                 lifeEndY = self.originalLifeEnd.y + translation.height
                 loadCenterPoint()
                 self.isDragging = false
-                updateRealm(start: CGPoint(x: lifeStartX, y: lifeStartY),
+                updateRealmPos(start: CGPoint(x: lifeStartX, y: lifeStartY),
                             end: CGPoint(x: lifeEndX, y: lifeEndY))
                 self.originalLifeStart = .zero
                 self.originalLifeEnd = .zero
@@ -303,12 +306,6 @@ struct LineDrawingManaged: View {
                             loadWidthAndHeight()
                             loadRotationOfLine()
                             //
-//                            if lifeStartX != temp.startX {lifeStartX = temp.startX}
-//                            if lifeStartY != temp.startY {lifeStartY = temp.startY}
-//                            if lifeEndX != temp.endX {lifeEndX = temp.endX}
-//                            if lifeEndY != temp.endY {lifeEndY = temp.endY}
-                            
-//                            loadCenterPoint()
                             
                             let startPosition = CGPoint(x: temp.startX, y: temp.startY)
                             let endPosition = CGPoint(x: temp.endX, y: temp.endY)
@@ -339,6 +336,39 @@ struct LineDrawingManaged: View {
             }
         }
 
+    }
+    
+    // Function to update a Realm object in the background
+    func updateRealmPos(start: CGPoint? = nil, end: CGPoint? = nil) {
+        DispatchQueue.global(qos: .background).async {
+            autoreleasepool {
+                do {
+                    let realm = try Realm()
+                    if let mv = realm.findByField(ManagedView.self, value: self.viewId) {
+                        try realm.write {
+                            mv.startX = Double(start?.x ?? CGFloat(lifeStartX))
+                            mv.startY = Double(start?.y ?? CGFloat(lifeStartY))
+                            mv.endX = Double(end?.x ?? CGFloat(lifeEndX))
+                            mv.endY = Double(end?.y ?? CGFloat(lifeEndY))
+                        }
+                        
+                        if self.isWriting {return}
+                        self.isWriting = true
+                        reference.setValue(mv.toDict()) { (error:Error?, ref:DatabaseReference) in
+                            if let error = error {
+                                self.isWriting = false
+                              print("Data could not be saved: \(error).")
+                            } else {
+                                self.isWriting = false
+                              print("Data saved successfully!")
+                            }
+                        }
+                    }
+                } catch {
+                    print("Realm error: \(error)")
+                }
+            }
+        }
     }
     
     func animateToNextCoordinate() {
