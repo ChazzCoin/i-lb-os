@@ -49,13 +49,6 @@ extension DataSnapshot {
 extension Dictionary where Key == String, Value == Any {
     func toRealmObject<T: Object>(_ type: T.Type, realmParameter: Realm? = nil) -> T? {
             do {
-                
-                if let temp = realmParameter?.object(ofType: type, forPrimaryKey: self["id"] ?? "nil") {
-                    if temp.isInvalidated {
-                        return nil
-                    }
-                }
-                
                 if let realm = realmParameter {
                     var object: T?
                     try? realm.write {

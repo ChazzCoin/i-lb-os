@@ -46,9 +46,7 @@ class ManagedViewService: ObservableObject {
     @Published var viewId = ""
     @Published var isDeleted: Bool = false
     
-    
-
-    func initialize(realm: Realm, activityId:String, viewId:String) {
+    init(realm: Realm, activityId:String, viewId:String) {
         self.realmInstance = realm
         self.activityId = activityId
         self.viewId = viewId
@@ -57,7 +55,7 @@ class ManagedViewService: ObservableObject {
     func start() {
         guard !isObserving else { return }
         observerHandle = reference.child(DatabasePaths.managedViews.rawValue)
-            .child(activityId).child(viewId).observe(.childChanged, with: { snapshot in
+            .child(activityId).child(viewId).observe(.value, with: { snapshot in
                 let _ = snapshot.toLudiObject(ManagedView.self, realm: self.realmInstance)
             })
         reference.child(DatabasePaths.managedViews.rawValue)

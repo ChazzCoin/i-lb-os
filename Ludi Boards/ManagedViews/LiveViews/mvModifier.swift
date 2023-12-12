@@ -14,6 +14,8 @@ import Combine
 struct enableManagedViewTool : ViewModifier {
     @State var viewId: String
     @State var activityId: String
+    @State private var currentUserId = "iphone"
+    @State private var lastUserId = ""
     
     let minSizeWH = 100.0
     
@@ -23,7 +25,8 @@ struct enableManagedViewTool : ViewModifier {
     @State private var updateCount = 0
     @State private var coordinateStack: [CGPoint] = []
     
-    @State private var MVS: ManagedViewService = ManagedViewService()
+    @State private var MVS: ManagedViewService? = nil
+    
     @State private var isDisabled = false
     @State private var lifeIsLocked = false
     @State private var lifeUpdatedAt: Int = 0 // Using Double for time representation
@@ -56,7 +59,7 @@ struct enableManagedViewTool : ViewModifier {
     
     // Functions
     func isDisabledChecker() -> Bool { return isDisabled }
-    func isDeletedChecker() -> Bool { return self.MVS.isDeleted }
+    func isDeletedChecker() -> Bool { return self.MVS?.isDeleted ?? false }
     func minSizeCheck() {
         if lifeWidth < minSizeWH { lifeWidth = minSizeWH }
         if lifeHeight < minSizeWH { lifeHeight = minSizeWH }
@@ -113,7 +116,8 @@ struct enableManagedViewTool : ViewModifier {
                 self.reference = reference
                     .child(self.activityId)
                     .child(self.viewId)
-                MVS.initialize(realm: self.realmInstance, activityId: self.activityId, viewId: self.viewId)
+                
+                MVS = ManagedViewService(realm: self.realmInstance, activityId: self.activityId, viewId: self.viewId)
                 
                 observeView()
                 
@@ -160,7 +164,7 @@ struct enableManagedViewTool : ViewModifier {
    
     func observeView() {
         observeFromRealm()
-        MVS.start()
+        MVS?.start()
     }
     
     func loadFromRealm(managedView: ManagedView?=nil) {
@@ -196,6 +200,7 @@ struct enableManagedViewTool : ViewModifier {
                         DispatchQueue.main.async {
                             if temp.id != self.viewId {return}
                             if self.isDragging {return}
+                            if temp.lastUserId == self.currentUserId {return}
                             let newPosition = CGPoint(x: temp.x, y: temp.y)
                             self.coordinateStack.append(newPosition)
                             animateToNextCoordinate()
@@ -211,6 +216,7 @@ struct enableManagedViewTool : ViewModifier {
                             if lifeColorBlue != temp.colorBlue {lifeColorBlue = temp.colorBlue}
                             if lifeColorAlpha != temp.colorAlpha { lifeColorAlpha = temp.colorAlpha}
                             if lifeIsLocked != temp.isLocked { lifeIsLocked = temp.isLocked}
+                            lastUserId = temp.lastUserId
                             minSizeCheck()
                         }
                     case .error(let error):
@@ -227,7 +233,12 @@ struct enableManagedViewTool : ViewModifier {
     
     
     func animateToNextCoordinate() {
-        guard !coordinateStack.isEmpty || self.isDragging else {
+        guard !coordinateStack.isEmpty else {
+            return
+        }
+        
+        if self.isDragging {
+            coordinateStack.removeAll()
             return
         }
         
@@ -267,7 +278,8 @@ struct enableManagedViewTool : ViewModifier {
                             mv.colorBlue = lifeColorBlue
                             mv.colorAlpha = lifeColorAlpha
                             mv.isLocked = lifeIsLocked
-                            realm.create(ManagedView.self, value: mv, update: .all)
+                            mv.lastUserId = self.currentUserId
+//                            realm.create(ManagedView.self, value: mv, update: .all)
                             // TODO: Firebase Users ONLY
                             updateToolInFirebase(mv: mv)
                         }
@@ -291,6 +303,7 @@ struct enableManagedViewTool : ViewModifier {
                         try realm.write {
                             mv.x = x ?? self.position.x
                             mv.y = y ?? self.position.y
+                            mv.lastUserId = "me"
                         }
                         
                         if self.isWriting {return}

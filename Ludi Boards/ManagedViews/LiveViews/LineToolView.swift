@@ -21,7 +21,7 @@ struct LineDrawingManaged: View {
     
     let realmInstance = realm()
     @State private var managedViewNotificationToken: NotificationToken? = nil
-    @State private var MVS = ManagedViewService()
+    @State private var MVS: ManagedViewService? = nil
     @State private var isDisabled = false
     @State private var lifeIsLocked = false
     @State private var lifeDateUpdated = Int(Date().timeIntervalSince1970)
@@ -67,7 +67,7 @@ struct LineDrawingManaged: View {
     
     // Functions
     func isDisabledChecker() -> Bool { return isDisabled }
-    func isDeletedChecker() -> Bool { return self.MVS.isDeleted }
+    func isDeletedChecker() -> Bool { return self.MVS?.isDeleted ?? false }
 
     private var lineLength: CGFloat {
         sqrt(pow(lifeEndX - lifeStartX, 2) + pow(lifeEndY - lifeStartY, 2))-100
@@ -128,11 +128,11 @@ struct LineDrawingManaged: View {
         .onAppear() {
         
             reference = reference.child(self.activityId).child(self.viewId)
-            MVS.initialize(realm: self.realmInstance, activityId: self.activityId, viewId: self.viewId)
+            MVS = ManagedViewService(realm: self.realmInstance, activityId: self.activityId, viewId: self.viewId)
             loadFromRealm()
             
             observeView()
-            observeFromRealm()
+//            observeFromRealm()
 
             CodiChannel.TOOL_ATTRIBUTES.receive(on: RunLoop.main) { vId in
                 let temp = vId as! ViewAtts
@@ -270,7 +270,7 @@ struct LineDrawingManaged: View {
     
     func observeView() {
         observeFromRealm()
-        MVS.start()
+        MVS?.start()
     }
     
     func observeFromRealm() {

@@ -150,49 +150,49 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "9306D390-89D2-4306-8BCC-5B494E02D3E7"
-            shouldBeEnabled = "Yes"
+            uuid = "1DCE608B-9FD1-4AD2-804A-A11CD97DA902"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Ludi Boards/Firebase/ManagedViewsService copy.swift"
+            filePath = "Ludi Boards/ManagedViews/LiveViews/mvModifier.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "69"
-            endingLineNumber = "69"
-            landmarkName = "start()"
+            startingLineNumber = "201"
+            endingLineNumber = "201"
+            landmarkName = "observeFromRealm()"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "9306D390-89D2-4306-8BCC-5B494E02D3E7 - 1695a99d6aecca2a"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (RealmSwift.Realm) -&gt; () in closure #2 (__C.FIRDataSnapshot) -&gt; () in Ludi_Boards.ManagedViewService.start() -&gt; ()"
-                  moduleName = "Ludi Boards"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/Firebase/ManagedViewsService%20copy.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "69"
-                  endingLineNumber = "69"
-                  offsetFromSymbolStart = "48">
-               </Location>
-               <Location
-                  uuid = "9306D390-89D2-4306-8BCC-5B494E02D3E7 - 1695a99d6aecca2a"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (RealmSwift.Realm) -&gt; () in closure #2 (__C.FIRDataSnapshot) -&gt; () in Ludi_Boards.ManagedViewService.start() -&gt; ()"
-                  moduleName = "Ludi Boards"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/Firebase/ManagedViewsService%20copy.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "69"
-                  endingLineNumber = "69"
-                  offsetFromSymbolStart = "44">
-               </Location>
-            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "ED74AF1B-0266-4A29-8C76-746EB24A96AA"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ludi Boards/ManagedViews/LiveViews/mvModifier.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "196"
+            endingLineNumber = "196"
+            landmarkName = "observeFromRealm()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "221A8399-62DB-4F71-9C94-421DD92E0958"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ludi Boards/ManagedViews/LiveViews/mvModifier.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "204"
+            endingLineNumber = "204"
+            landmarkName = "observeFromRealm()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
