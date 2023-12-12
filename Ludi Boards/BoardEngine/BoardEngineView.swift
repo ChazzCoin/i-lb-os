@@ -222,6 +222,27 @@ struct BoardEngine: View {
             })
             .position(x: self.BEO.boardStartPosX, y: self.BEO.boardStartPosY).zIndex(2.0)
         )
+        .onDrop(of: [.text], isTargeted: nil) { providers in
+            providers.first?.loadObject(ofClass: NSString.self) { (droppedString, error) in
+                DispatchQueue.main.async {
+                    let newTool = ManagedView()
+                    newTool.toolType = droppedString as! String
+                    newTool.boardId = self.activityID
+                    realmIntance.safeWrite { r in
+                        r.create(ManagedView.self, value: newTool, update: .all)
+                    }
+                    
+                    // TODO: Firebase Users ONLY
+                    firebaseDatabase { fdb in
+                        fdb.child(DatabasePaths.managedViews.rawValue)
+                            .child(self.activityID)
+                            .child(newTool.id)
+                            .setValue(newTool.toDict())
+                    }
+                }
+            }
+            return true
+        }
         .simultaneousGesture( self.BEO.isDraw ?
             DragGesture()
                 .onChanged { value in

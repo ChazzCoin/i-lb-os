@@ -166,10 +166,6 @@ struct enableManagedViewTool : ViewModifier {
     func observeView() {
         observeFromRealm()
         MVS?.start()
-        
-//        observerHandle = reference.child(activityId).child(viewId).observe(.value, with: { snapshot in
-//                let _ = snapshot.toLudiObject(ManagedView.self, realm: self.realmInstance)
-//            })
     }
     
     func loadFromRealm(managedView: ManagedView?=nil) {

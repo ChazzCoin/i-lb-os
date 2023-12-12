@@ -81,6 +81,9 @@ struct ToolButtonIcon: View {
         Image(icon.tool.image)
             .resizable()
             .frame(width: 40, height: 40)
+            .onDrag {
+                return NSItemProvider(object: icon.tool.title as NSString)
+            }
             .onTapAnimation {
                 print("CodiChannel SendTopic: \(icon.tool.title)")
                 CodiChannel.TOOL_ON_CREATE.send(value: icon.tool.title)

@@ -115,7 +115,7 @@
 		FBD9AFD92B01CB91005F8620 /* SoccerToolProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFD82B01CB91005F8620 /* SoccerToolProvider.swift */; };
 		FBDF0DC52B21811000FADE44 /* SharedSessionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDF0DC42B21811000FADE44 /* SharedSessionsView.swift */; };
 		FBDF0DC72B224D2600FADE44 /* ActivityPlanService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDF0DC62B224D2600FADE44 /* ActivityPlanService.swift */; };
-		FBDF0DC92B224EB500FADE44 /* ManagedViewsService copy.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDF0DC82B224EB500FADE44 /* ManagedViewsService copy.swift */; };
+		FBDF0DC92B224EB500FADE44 /* ManagedViewsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDF0DC82B224EB500FADE44 /* ManagedViewsService.swift */; };
 		FBE2C6142B1AC68D004C0116 /* SoccerFieldBG.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C6132B1AC68D004C0116 /* SoccerFieldBG.swift */; };
 		FBE2C6172B1AF595004C0116 /* GrassFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C6162B1AF595004C0116 /* GrassFieldView.swift */; };
 		FBE2C61A2B1AF7D5004C0116 /* FootballFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C6192B1AF7D5004C0116 /* FootballFieldView.swift */; };
@@ -219,7 +219,7 @@
 		FBD9AFD82B01CB91005F8620 /* SoccerToolProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoccerToolProvider.swift; sourceTree = "<group>"; };
 		FBDF0DC42B21811000FADE44 /* SharedSessionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedSessionsView.swift; sourceTree = "<group>"; };
 		FBDF0DC62B224D2600FADE44 /* ActivityPlanService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityPlanService.swift; sourceTree = "<group>"; };
-		FBDF0DC82B224EB500FADE44 /* ManagedViewsService copy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ManagedViewsService copy.swift"; sourceTree = "<group>"; };
+		FBDF0DC82B224EB500FADE44 /* ManagedViewsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedViewsService.swift; sourceTree = "<group>"; };
 		FBE2C6132B1AC68D004C0116 /* SoccerFieldBG.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoccerFieldBG.swift; sourceTree = "<group>"; };
 		FBE2C6162B1AF595004C0116 /* GrassFieldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrassFieldView.swift; sourceTree = "<group>"; };
 		FBE2C6192B1AF7D5004C0116 /* FootballFieldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FootballFieldView.swift; sourceTree = "<group>"; };
@@ -475,7 +475,7 @@
 				FB93BB1A2B03471C00864CB2 /* FireData.swift */,
 				FBB450012B052B180096F8EB /* FireLiveData.swift */,
 				FBDF0DC62B224D2600FADE44 /* ActivityPlanService.swift */,
-				FBDF0DC82B224EB500FADE44 /* ManagedViewsService copy.swift */,
+				FBDF0DC82B224EB500FADE44 /* ManagedViewsService.swift */,
 				FB982F902B19D1B900C0DA03 /* FirebaseService.swift */,
 			);
 			path = Firebase;
@@ -658,7 +658,7 @@
 				FB58E8842B03169700FD9E2E /* TimeProvider.swift in Sources */,
 				FBF404432B19304700FA0545 /* BorderedView.swift in Sources */,
 				FB58E8822B030F1D00FD9E2E /* RealmFind.swift in Sources */,
-				FBDF0DC92B224EB500FADE44 /* ManagedViewsService copy.swift in Sources */,
+				FBDF0DC92B224EB500FADE44 /* ManagedViewsService.swift in Sources */,
 				FBE2C6242B1B2E01004C0116 /* SessionPlanOverview.swift in Sources */,
 				FBD9AFC92B008435005F8620 /* ManagedViewAction.swift in Sources */,
 				FB9F1DD92B1533C400FD9078 /* FirebaseLogin.swift in Sources */,
