@@ -50,6 +50,7 @@ struct enableManagedViewTool : ViewModifier {
     @State private var isDragging = false
     @State private var managedViewNotificationToken: NotificationToken? = nil
     // Firebase
+    @State var observerHandle: DatabaseHandle?
     @State var reference = Database
         .database()
         .reference()
@@ -165,6 +166,10 @@ struct enableManagedViewTool : ViewModifier {
     func observeView() {
         observeFromRealm()
         MVS?.start()
+        
+//        observerHandle = reference.child(activityId).child(viewId).observe(.value, with: { snapshot in
+//                let _ = snapshot.toLudiObject(ManagedView.self, realm: self.realmInstance)
+//            })
     }
     
     func loadFromRealm(managedView: ManagedView?=nil) {
@@ -200,7 +205,7 @@ struct enableManagedViewTool : ViewModifier {
                         DispatchQueue.main.async {
                             if temp.id != self.viewId {return}
                             if self.isDragging {return}
-                            if temp.lastUserId == self.currentUserId {return}
+//                            if temp.lastUserId == self.currentUserId {return}
                             let newPosition = CGPoint(x: temp.x, y: temp.y)
                             self.coordinateStack.append(newPosition)
                             animateToNextCoordinate()

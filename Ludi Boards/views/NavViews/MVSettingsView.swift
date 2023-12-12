@@ -121,8 +121,6 @@ struct SettingsView: View {
                     title: "Delete Tool",
                     message: "Would you like to delete this tool?",
                     action: {
-//                        let va = ViewAtts(viewId: viewId, isDeleted: true)
-//                        CodiChannel.TOOL_ATTRIBUTES.send(value: va)
                         if let temp = self.realmInstance.findByField(ManagedView.self, value: self.viewId) {
                             self.realmInstance.safeWrite { r in
                                 temp.isDeleted = true
