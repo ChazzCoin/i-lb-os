@@ -22,8 +22,7 @@ class ManagedViewsService: ObservableObject {
     func startObserving(activityId: String) {
         guard !isObserving else { return }
         observerHandle = reference.child(DatabasePaths.managedViews.rawValue)
-            .child(activityId).observe(.value, with: { snapshot in
-                print("New Managed Views Arriving...")
+            .child(activityId).observe(.childAdded, with: { snapshot in
                 let _ = snapshot.toLudiObjects(ManagedView.self, realm: self.realmInstance)
             })
 
@@ -39,14 +38,17 @@ class ManagedViewsService: ObservableObject {
 }
 
 class ManagedViewService: ObservableObject {
-    @Published var realmInstance: Realm
+    @Published var realmInstance: Realm = realm()
     @Published var reference: DatabaseReference = Database.database().reference()
     @Published var observerHandle: DatabaseHandle?
     @Published var isObserving = false
     @Published var activityId = ""
     @Published var viewId = ""
+    @Published var isDeleted: Bool = false
+    
+    
 
-    init(realm: Realm, activityId:String, viewId:String) {
+    func initialize(realm: Realm, activityId:String, viewId:String) {
         self.realmInstance = realm
         self.activityId = activityId
         self.viewId = viewId
@@ -55,11 +57,19 @@ class ManagedViewService: ObservableObject {
     func start() {
         guard !isObserving else { return }
         observerHandle = reference.child(DatabasePaths.managedViews.rawValue)
-            .child(activityId).child(viewId).observe(.value, with: { snapshot in
-                print("New View Arriving...")
+            .child(activityId).child(viewId).observe(.childChanged, with: { snapshot in
                 let _ = snapshot.toLudiObject(ManagedView.self, realm: self.realmInstance)
             })
-
+        reference.child(DatabasePaths.managedViews.rawValue)
+               .child(activityId).child(viewId).observe(.childRemoved, with: { snapshot in
+                   if let mv = self.realmInstance.findByField(ManagedView.self, value: self.viewId) {
+                       if self.isDeleted {return}
+                       self.isDeleted = true
+                       self.realmInstance.safeWrite { r in
+                           mv.isDeleted = true
+                       }
+                   }
+               })
         isObserving = true
     }
 

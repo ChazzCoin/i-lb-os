@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import Combine
+import FirebaseDatabase
 
 enum ToolLevels: Int {
     case BASIC = 1
@@ -40,6 +41,11 @@ struct SettingsView: View {
     @State private var isLoading = false
     @State private var showCompletion = false
     @State var cancellables = Set<AnyCancellable>()
+    
+    @State var fireDB = Database
+        .database()
+        .reference()
+        .child(DatabasePaths.managedViews.rawValue)
     
     let tips = [
         "Double Tap to Toggle Settings.",
@@ -115,8 +121,15 @@ struct SettingsView: View {
                     title: "Delete Tool",
                     message: "Would you like to delete this tool?",
                     action: {
-                        let va = ViewAtts(viewId: viewId, isDeleted: true)
-                        CodiChannel.TOOL_ATTRIBUTES.send(value: va)
+//                        let va = ViewAtts(viewId: viewId, isDeleted: true)
+//                        CodiChannel.TOOL_ATTRIBUTES.send(value: va)
+                        if let temp = self.realmInstance.findByField(ManagedView.self, value: self.viewId) {
+                            self.realmInstance.safeWrite { r in
+                                temp.isDeleted = true
+                            }
+                            self.fireDB.child(self.activityId).child(self.viewId).setValue(temp.toDict())
+                        }
+                        CodiChannel.TOOL_ON_DELETE.send(value: self.viewId)
                         closeWindow()
                     }
                 )
@@ -210,8 +223,8 @@ struct SettingsView: View {
     
 }
 
-struct SettingsView_Previews: PreviewProvider {
-    static var previews: some View {
-        SettingsView(onDelete: {})
-    }
-}
+//struct SettingsView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        SettingsView(onDelete: {})
+//    }
+//}

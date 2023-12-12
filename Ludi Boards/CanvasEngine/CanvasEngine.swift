@@ -12,7 +12,7 @@ import Combine
 
 struct CanvasEngine: View {
     
-    @StateObject var BEO = BoardEngineObject.shared
+    @StateObject var BEO = BoardEngineObject()
 
     @State var cancellables = Set<AnyCancellable>()
     @State var showMenuBar: Bool = true

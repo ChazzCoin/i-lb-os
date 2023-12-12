@@ -18,8 +18,26 @@ func realm() -> Realm {
     return RealmInstance.instance
 }
 
+func isRealmObjectValid(_ object: Object) -> Bool {
+    return !object.isInvalidated
+}
+
+extension Object {
+    func isRealmObjectValid() -> Bool {
+        return !self.isInvalidated
+    }
+}
+
+func safeAccess<T>(to object: T, action: (T) -> Void) where T: Object {
+    guard !object.isInvalidated else {
+        print("Object is invalidated.")
+        return
+    }
+    action(object)
+}
 
 extension Realm {
+    
     // Using a closure as a shortcut for realm().write
     func safeWrite(_ block: @escaping (Realm) -> Void) {
         if isInWriteTransaction {
@@ -34,9 +52,9 @@ extension Realm {
             }
         }
     }
+    
+    
 }
-
-import RealmSwift
 
 extension Object {
     
@@ -62,22 +80,22 @@ extension Object {
     }
     
     
-    func updateFieldsAndSave(newObject: Object, realm: Realm) {
-        do {
-            try realm.write {
-                let fields = Mirror(reflecting: self).children.compactMap { $0.label }
-                for field in fields {
-                    if field != "id" {
-                        let newValue = newObject.value(forKey: field)
-                        self.setValue(newValue, forKey: field)
-                    }
-                }
-                realm.add(self, update: .modified)
-            }
-        } catch {
-            print("Error updating fields and saving object: \(error)")
-        }
-    }
+//    func updateFieldsAndSave(newObject: Object, realm: Realm) {
+//        do {
+//            try realm.write {
+//                let fields = Mirror(reflecting: self).children.compactMap { $0.label }
+//                for field in fields {
+//                    if field != "id" {
+//                        let newValue = newObject.value(forKey: field)
+//                        self.setValue(newValue, forKey: field)
+//                    }
+//                }
+//                realm.add(self, update: .modified)
+//            }
+//        } catch {
+//            print("Error updating fields and saving object: \(error)")
+//        }
+//    }
 }
 
 

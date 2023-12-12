@@ -21,8 +21,7 @@ struct LineDrawingManaged: View {
     
     let realmInstance = realm()
     @State private var managedViewNotificationToken: NotificationToken? = nil
-    @State private var MVS: ManagedViewService? = nil
-    @State private var isDeleted = false
+    @State private var MVS = ManagedViewService()
     @State private var isDisabled = false
     @State private var lifeIsLocked = false
     @State private var lifeDateUpdated = Int(Date().timeIntervalSince1970)
@@ -68,7 +67,7 @@ struct LineDrawingManaged: View {
     
     // Functions
     func isDisabledChecker() -> Bool { return isDisabled }
-    func isDeletedChecker() -> Bool { return isDeleted }
+    func isDeletedChecker() -> Bool { return self.MVS.isDeleted }
 
     private var lineLength: CGFloat {
         sqrt(pow(lifeEndX - lifeStartX, 2) + pow(lifeEndY - lifeStartY, 2))-100
@@ -127,9 +126,9 @@ struct LineDrawingManaged: View {
         )
         .gesture(self.lifeIsLocked ? nil : dragGestureDuo())
         .onAppear() {
-            
+        
             reference = reference.child(self.activityId).child(self.viewId)
-            
+            MVS.initialize(realm: self.realmInstance, activityId: self.activityId, viewId: self.viewId)
             loadFromRealm()
             
             observeView()
@@ -138,20 +137,18 @@ struct LineDrawingManaged: View {
             CodiChannel.TOOL_ATTRIBUTES.receive(on: RunLoop.main) { vId in
                 let temp = vId as! ViewAtts
                 if viewId != temp.viewId {return}
+                if temp.isDeleted {
+                    isDisabled = true
+                    return
+                }
                 if let ts = temp.size { lifeWidth = ts }
                 if let tc = temp.color { lifeColor = tc }
-                
                 lifeIsLocked = temp.isLocked
                 
                 if temp.stateAction == "close" {
                     popUpIsVisible = false
                 }
-                if temp.isDeleted {
-                    isDeleted = true  
-                    isDisabled = true
-                    deleteFromRealm()
-                    return
-                }
+                
                 updateRealm()
             }.store(in: &cancellables)
             CodiChannel.MENU_WINDOW_CONTROLLER.receive(on: RunLoop.main) { vId in
@@ -273,15 +270,16 @@ struct LineDrawingManaged: View {
     
     func observeView() {
         observeFromRealm()
-        MVS = ManagedViewService(realm: self.realmInstance, activityId: self.activityId, viewId: self.viewId)
-        MVS?.start()
+        MVS.start()
     }
     
     func observeFromRealm() {
         if isDisabledChecker() {return}
+        if isDeletedChecker() {return}
         if let mv = realmInstance.object(ofType: ManagedView.self, forPrimaryKey: viewId) {
+            if isDisabledChecker() {return}
+            if isDeletedChecker() {return}
             managedViewNotificationToken = mv.observe { change in
-                if isDisabledChecker() {return}
                 switch change {
                     case .change(let obj, _):
                         let temp = obj as! ManagedView
@@ -328,9 +326,7 @@ struct LineDrawingManaged: View {
                         print("Error: \(error)")
                     case .deleted:
                         // Object has been deleted
-                        self.isDeleted = true
                         self.isDisabled = true
-                        self.deleteToolFromFirebase()
                         print("Object has been deleted.")
                 }
             }
@@ -396,7 +392,6 @@ struct LineDrawingManaged: View {
     }
     
     func updateRealm(start: CGPoint? = nil, end: CGPoint? = nil) {
-        print("!!!! Updating Realm!")
         if isDisabledChecker() {return}
         if isDeletedChecker() {return}
         let mv = realmInstance.findByField(ManagedView.self, value: viewId)
@@ -429,20 +424,6 @@ struct LineDrawingManaged: View {
         reference.setValue(mv?.toDict())
     }
     
-    func deleteFromRealm() {
-        let mv = realmInstance.object(ofType: ManagedView.self, forPrimaryKey: viewId)
-        guard let umv = mv else { return }
-        realmInstance.safeWrite { r in
-            r.delete(umv)
-        }
-        // TODO: Firebase Users ONLY
-        deleteToolFromFirebase()
-    }
-    
-    func deleteToolFromFirebase() {
-        if self.activityId.isEmpty || self.viewId.isEmpty {return}
-        reference.removeValue()
-    }
     
     func loadFromRealm() {
         if isDisabledChecker() {return}

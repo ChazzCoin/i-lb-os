@@ -105,7 +105,7 @@ struct enableManagedViewLine : ViewModifier {
         // TODO: make this more rock solid, error handling, retry logic...
         if boardId.isEmpty || viewId.isEmpty {return}
         reference.child(boardId).child(viewId).fireObserver { snapshot in
-            let _ = snapshot.toLudiObject(ManagedView.self, realm: realmInstance)
+//            let _ = snapshot.toLudiObject(ManagedView.self, realm: realmInstance)
             let obj = snapshot.value as? [String:Any]
             lifeStartX = obj?["startX"] as? Double ?? lifeStartX
             lifeStartY = obj?["startY"] as? Double ?? lifeStartY

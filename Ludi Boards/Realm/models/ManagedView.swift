@@ -30,6 +30,7 @@ import RealmSwift
     dynamic var translationY: Double = 0.0
     dynamic var lastUserId: String = "me"
     dynamic var isLocked: Bool = false
+    dynamic var isDeleted: Bool = false
     
     dynamic var colorRed: Double = 48.0
     dynamic var colorGreen: Double = 128.0

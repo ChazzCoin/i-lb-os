@@ -231,7 +231,7 @@ struct ActivityPlanView: View {
                             if let temp = realmInstance.findByField(ActivityPlan.self, field: "id", value: self.boardId) {
                                 activityPlan = ActivityPlan()
                                 realmInstance.safeWrite { r in
-                                    r.delete(temp)
+//                                    r.delete(temp)
                                 }
                                 // TODO: FIREBASE ONLY
                                 deleteActivityPlanFromFirebase(apId: self.boardId)

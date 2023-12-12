@@ -16,6 +16,8 @@ class BoardEngineObject : ObservableObject {
     @Environment(\.colorScheme) var colorScheme
 //    @StateObject var sharedPrefs = SharedPrefs.shared
     @State var realmInstance = realm()
+    @State var boardRefreshFlag = true
+    
     @Published var isLoggedIn: Bool = false
     @Published var userId: String? = nil
     @Published var userName: String? = nil
@@ -131,16 +133,20 @@ class BoardEngineObject : ObservableObject {
     func foregroundColor() -> Color { return foregroundColorForScheme(colorScheme) }
     func backgroundColor() -> Color { return backgroundColorForScheme(colorScheme) }
 
-    private init() {}
+//    private init() {}
 }
 
 struct BoardEngine: View {
     
     @EnvironmentObject var BEO: BoardEngineObject
+    @State var MVS: ManagedViewsService? = nil
     @State var APS: ActivityPlanService? = nil
     @State var cancellables = Set<AnyCancellable>()
     
-    let realmIntance = realm()
+    @State private var realmIntance = realm()
+    @State private var reference: DatabaseReference = Database.database().reference()
+    @State private var observerHandle: DatabaseHandle?
+    
     @State private var sessionNotificationToken: NotificationToken? = nil
     @State private var activityNotificationToken: NotificationToken? = nil
     @State private var managedViewNotificationToken: NotificationToken? = nil
@@ -161,17 +167,36 @@ struct BoardEngine: View {
     @State private var basicTools: [ManagedView] = []
     @State private var lineTools: [ManagedView] = []
     
+    func isInvalid(id: String) -> Bool {
+        if let mv = self.realmIntance.object(ofType: ManagedView.self, forPrimaryKey: id) {
+            if mv.isInvalidated {
+                self.basicTools.safeRemove(mv)
+                return true
+            }
+        }
+        return false
+    }
+    
+    func refreshBoard() {
+        self.BEO.boardRefreshFlag = false
+        self.BEO.boardRefreshFlag = true
+    }
     
     var body: some View {
          ZStack() {
              
-             ForEach(self.basicTools) { item in
-                 if item.toolType == "LINE" || item.toolType == "DOTTED-LINE" {
-                     LineDrawingManaged(viewId: item.id, activityId: self.activityID).zIndex(3.0)
-                 } else {
-                     if let temp = SoccerToolProvider.parseByTitle(title: item.toolType)?.tool.image {
-                         ManagedViewBoardTool(viewId: item.id, activityId: self.activityID, toolType: temp).zIndex(4.0)
+             if self.BEO.boardRefreshFlag {
+                 ForEach(self.basicTools) { item in
+                     if !item.isDeleted {
+                         if item.toolType == "LINE" || item.toolType == "DOTTED-LINE" {
+                             LineDrawingManaged(viewId: item.id, activityId: self.activityID).zIndex(3.0)
+                         } else {
+                             if let temp = SoccerToolProvider.parseByTitle(title: item.toolType)?.tool.image {
+                                 ManagedViewBoardTool(viewId: item.id, activityId: self.activityID, toolType: temp).zIndex(4.0)
+                             }
+                         }
                      }
+                     
                  }
              }
              
@@ -211,6 +236,8 @@ struct BoardEngine: View {
                 } : nil
         )
         .onAppear {
+            MVS = ManagedViewsService(realm: self.realmIntance)
+            
             self.loadAllSessionPlans()
             CodiChannel.SESSION_ON_ID_CHANGE.receive(on: RunLoop.main) { sc in
                 let temp = sc as! SessionChange
@@ -244,7 +271,7 @@ struct BoardEngine: View {
             }.store(in: &cancellables)
             
             CodiChannel.TOOL_ON_DELETE.receive(on: RunLoop.main) { viewId in
-                self.deleteToolById(viewId: viewId as! String)
+                self.refreshBoard()
             }.store(in: &cancellables)
             
             CodiChannel.TOOL_ON_CREATE.receive(on: RunLoop.main) { tool in
@@ -252,7 +279,7 @@ struct BoardEngine: View {
                 newTool.toolType = tool as! String
                 newTool.boardId = self.activityID
                 realmIntance.safeWrite { r in
-                    r.add(newTool)
+                    r.create(ManagedView.self, value: newTool, update: .all)
                 }
                 
                 // TODO: Firebase Users ONLY
@@ -468,13 +495,10 @@ struct BoardEngine: View {
     }
     
     func loadManagedViewTools() {
-        
+//        deleteAllTools()
         // TODO: Firebase Users ONLY
         fireManagedViewsAsync(activityId: self.activityID, realm: self.realmIntance)
-        
-//        MVS = ManagedViewsService(realm: self.realmIntance)
-//        MVS?.startObserving(activityId: self.activityID)
-        
+                
         // FREE
         let umvs = realmIntance.findAllByField(ManagedView.self, field: "boardId", value: self.activityID)
         managedViewNotificationToken = umvs?.observe { (changes: RealmCollectionChange) in
@@ -501,16 +525,36 @@ struct BoardEngine: View {
                     fatalError("\(error)")  // Handle errors appropriately in production code
             }
         }
+        startObserving()
         self.BEO.isLoading = false
     }
     
-    func deleteToolById(viewId:String) {
-        self.realmIntance.safeWrite { r in
-            let temp = r.findByField(ManagedView.self, field: "boardId", value: viewId)
-            guard let t = temp else {return}
-            r.delete(t)
-        }
+    func startObserving() {
+        observerHandle = reference.child(DatabasePaths.managedViews.rawValue)
+            .child(self.activityID).observe(.childAdded, with: { snapshot in
+                
+                let mv = ManagedView(dictionary: snapshot.toHashMap())
+                if basicTools.hasView(mv) {
+                    return
+                }
+                self.realmIntance.safeWrite { r in
+                    r.create(ManagedView.self, value: mv, update: .all)
+                }
+                
+                basicTools.safeAdd(mv)
+            })
         
+        observerHandle = reference.child(DatabasePaths.managedViews.rawValue)
+            .child(self.activityID).observe(.childRemoved, with: { snapshot in
+                let temp = snapshot.toHashMap()
+                basicTools.safeRemoveById(temp["id"] as! String)
+            })
+    }
+    
+    func stopObserving() {
+        guard let handle = observerHandle else { return }
+        reference.removeObserver(withHandle: handle)
+        observerHandle = nil
     }
     
     // Line/Drawing
