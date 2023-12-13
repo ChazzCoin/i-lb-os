@@ -43,17 +43,18 @@ struct PopupMenuView: View {
     
     func animateOptionsOut() {
         withAnimation(.easeInOut(duration: 0.3).delay(0.10)) {
-            self.PMO.showLockOption = true
+            self.PMO.showLockOption = false
         }
         withAnimation(.easeInOut(duration: 0.3).delay(0.25)) {
-            self.PMO.showDeleteOption = true
+            self.PMO.showDeleteOption = false
         }
         withAnimation(.easeInOut(duration: 0.3).delay(0.40)) {
-            self.PMO.showSizeOption = true
+            self.PMO.showSizeOption = false
         }
     }
 
     var body: some View {
+        
         VStack(spacing: 1) {
             if self.PMO.showSizeOption {
                 MenuOptionSlider(label: "Size", imageName: "arrow.up.left.and.arrow.down.right", viewId: self.PMO.viewId)
@@ -71,10 +72,13 @@ struct PopupMenuView: View {
         .background(Color.clear)
         .cornerRadius(15)
         .shadow(radius: 10)
-        .position(x: self.PMO.position.x, y: self.PMO.position.y - 500)
+        .position(x: self.PMO.position.x, y: self.PMO.position.y + 800)
         .onAppear() {
+            
             animateOptionsIn()
+            
             self.BEO.gesturesAreLocked = true
+            
             CodiChannel.TOOL_ON_FOLLOW.receive(on: RunLoop.main) { viewFollow in
                 let vf = viewFollow as! ViewFollowing
                 print("Monitoring View: X: \(vf.x) Y: \(vf.y) ")
@@ -84,7 +88,9 @@ struct PopupMenuView: View {
         }
         .onDisappear() {
             self.BEO.gesturesAreLocked = false
+            animateOptionsOut()
         }
+        
     }
     
     private func dragGesture(for positionBinding: Binding<CGPoint>) -> some Gesture {
