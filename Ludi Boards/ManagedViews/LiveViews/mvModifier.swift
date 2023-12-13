@@ -67,99 +67,112 @@ struct enableManagedViewTool : ViewModifier {
     }
     
     func body(content: Content) -> some View {
-        content
-            .frame(width: lifeWidth * 2, height: lifeHeight * 2)
-            .rotationEffect(.degrees(lifeRotation))
-            .border(popUpIsVisible ? lifeBorderColor : Color.clear, width: 10) // Border modifier
-            .position(x: position.x + (isDragging ? dragOffset.width : 0) + (self.lifeWidth),
-                      y: position.y + (isDragging ? dragOffset.height : 0) + (self.lifeHeight))
-            .gesture(self.lifeIsLocked ? nil :
-                LongPressGesture(minimumDuration: 0.01)
+        GeometryReader { geo in
+            content
+        }
+        .frame(width: lifeWidth * 2, height: lifeHeight * 2)
+        .rotationEffect(.degrees(lifeRotation))
+        .border(popUpIsVisible ? lifeBorderColor : Color.clear, width: 10) // Border modifier
+        .position(x: position.x + (isDragging ? dragOffset.width : 0) + (self.lifeWidth),
+                  y: position.y + (isDragging ? dragOffset.height : 0) + (self.lifeHeight))
+        .gesture(self.lifeIsLocked ? nil :
+            LongPressGesture(minimumDuration: 0.01)
+                .onEnded { _ in
+                    self.isDragging = true
+                }
+                .sequenced(before: DragGesture())
+                .updating($dragOffset, body: { (value, state, transaction) in
+                    switch value {
+                        case .second(true, let drag?):
+                            state = drag.translation
+                            updateRealmPos(x: self.position.x + drag.translation.width, y: self.position.y + drag.translation.height)
+                            CodiChannel.TOOL_ON_FOLLOW.send(value: ViewFollowing(
+                                viewId: self.viewId,
+                                x: self.position.x + drag.translation.width,
+                                y: self.position.y + drag.translation.height
+                            ))
+                        default:
+                            break
+                    }
+                })
+                .onEnded { value in
+                    if case .second(true, let drag?) = value {
+                        self.position = CGPoint(x: self.position.x + drag.translation.width, y: self.position.y + drag.translation.height)
+                        updateRealmPos()
+//                        CodiChannel.TOOL_ON_FOLLOW.send(value: ViewFollowing(
+//                            viewId: self.viewId,
+//                            x: self.position.x,
+//                            y: self.position.y,
+//                            hasDropped: true
+//                        ))
+                        self.isDragging = false
+                    }
+                }.simultaneously(with: self.lifeIsLocked ? nil : TapGesture(count: 2)
                     .onEnded { _ in
-                        self.isDragging = true
-                    }
-                    .sequenced(before: DragGesture())
-                    .updating($dragOffset, body: { (value, state, transaction) in
-                        switch value {
-                            case .second(true, let drag?):
-                                state = drag.translation
-                                updateRealmPos(x: self.position.x + drag.translation.width, y: self.position.y + drag.translation.height)
-                            default:
-                                break
+                        print("Tapped")
+                        popUpIsVisible = !popUpIsVisible
+                        CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: "mv_settings", stateAction: popUpIsVisible ? "open" : "close", viewId: viewId))
+                        if popUpIsVisible {
+                            CodiChannel.TOOL_ATTRIBUTES.send(value: ViewAtts(
+                                viewId: viewId,
+                                size: lifeWidth,
+                                rotation: lifeRotation,
+                                level: ToolLevels.BASIC.rawValue
+                            ))
                         }
-                    })
-                    .onEnded { value in
-                        if case .second(true, let drag?) = value {
-                            self.position = CGPoint(x: self.position.x + drag.translation.width, y: self.position.y + drag.translation.height)
-                            updateRealmPos()
-                            self.isDragging = false
-                        }
-                    }.simultaneously(with: self.lifeIsLocked ? nil : TapGesture(count: 2)
-                        .onEnded { _ in
-                            print("Tapped")
-                            popUpIsVisible = !popUpIsVisible
-                            CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: "mv_settings", stateAction: popUpIsVisible ? "open" : "close", viewId: viewId))
-                            if popUpIsVisible {
-                                CodiChannel.TOOL_ATTRIBUTES.send(value: ViewAtts(
-                                    viewId: viewId,
-                                    size: lifeWidth,
-                                    rotation: lifeRotation,
-                                    level: ToolLevels.BASIC.rawValue
-                                ))
-                            }
-                        }
-                    )
-            )
-            .opacity(!isDisabledChecker() && !isDeletedChecker() ? 1 : 0.0)
-            .onAppear {
-                
-                isDisabled = false
-                self.reference = reference
-                    .child(self.activityId)
-                    .child(self.viewId)
-                
-                MVS = ManagedViewService(realm: self.realmInstance, activityId: self.activityId, viewId: self.viewId)
-                
-                observeView()
-                
-                loadFromRealm()
-                
-                CodiChannel.SESSION_ON_ID_CHANGE.receive(on: RunLoop.main) { sc in
-                    let temp = sc as! SessionChange
-                    if self.activityId == temp.activityId {
-                        isDisabled = false
-                    } else {
-                        isDisabled = true
                     }
-                }.store(in: &cancellables)
-                
-                CodiChannel.MENU_WINDOW_CONTROLLER.receive(on: RunLoop.main) { vId in
-                    let temp = vId as! WindowController
-                    if temp.windowId != "mv_settings" {return}
-                    if temp.stateAction == "close" {
-                        popUpIsVisible = false
-                    }
-                }.store(in: &cancellables)
-                
-                CodiChannel.TOOL_ATTRIBUTES.receive(on: RunLoop.main) { viewAtts in
-                    let inVA = (viewAtts as! ViewAtts)
-                    if viewId != inVA.viewId {
-                        popUpIsVisible = false
-                        return
-                    }
-                    if inVA.isDeleted {
-                        return
-                    }
-                    if let inColor = inVA.color { lifeColor = ColorProvider.fromColor(inColor) }
-                    if let inRotation = inVA.rotation { lifeRotation = inRotation }
-                    lifeIsLocked = inVA.isLocked
-                    if let inSize = inVA.size {
-                        lifeWidth = inSize
-                        lifeHeight = inSize
-                    }
-                    updateRealm()
-                }.store(in: &cancellables)
-            }
+                )
+        )
+        .opacity(!isDisabledChecker() && !isDeletedChecker() ? 1 : 0.0)
+        .onAppear {
+            
+            isDisabled = false
+            self.reference = reference
+                .child(self.activityId)
+                .child(self.viewId)
+            
+            MVS = ManagedViewService(realm: self.realmInstance, activityId: self.activityId, viewId: self.viewId)
+            
+            observeView()
+            
+            loadFromRealm()
+            
+            CodiChannel.SESSION_ON_ID_CHANGE.receive(on: RunLoop.main) { sc in
+                let temp = sc as! SessionChange
+                if self.activityId == temp.activityId {
+                    isDisabled = false
+                } else {
+                    isDisabled = true
+                }
+            }.store(in: &cancellables)
+            
+            CodiChannel.MENU_WINDOW_CONTROLLER.receive(on: RunLoop.main) { vId in
+                let temp = vId as! WindowController
+                if temp.windowId != "mv_settings" {return}
+                if temp.stateAction == "close" {
+                    popUpIsVisible = false
+                }
+            }.store(in: &cancellables)
+            
+            CodiChannel.TOOL_ATTRIBUTES.receive(on: RunLoop.main) { viewAtts in
+                let inVA = (viewAtts as! ViewAtts)
+                if viewId != inVA.viewId {
+                    popUpIsVisible = false
+                    return
+                }
+                if inVA.isDeleted {
+                    return
+                }
+                if let inColor = inVA.color { lifeColor = ColorProvider.fromColor(inColor) }
+                if let inRotation = inVA.rotation { lifeRotation = inRotation }
+                lifeIsLocked = inVA.isLocked
+                if let inSize = inVA.size {
+                    lifeWidth = inSize
+                    lifeHeight = inSize
+                }
+                updateRealm()
+            }.store(in: &cancellables)
+        }
     }
     
    
@@ -217,6 +230,7 @@ struct enableManagedViewTool : ViewModifier {
                             if lifeColorBlue != temp.colorBlue {lifeColorBlue = temp.colorBlue}
                             if lifeColorAlpha != temp.colorAlpha { lifeColorAlpha = temp.colorAlpha}
                             if lifeIsLocked != temp.isLocked { lifeIsLocked = temp.isLocked}
+                            self.MVS?.isDeleted = temp.isDeleted
                             lastUserId = temp.lastUserId
                             minSizeCheck()
                         }

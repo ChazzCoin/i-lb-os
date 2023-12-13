@@ -16,7 +16,10 @@ class BoardEngineObject : ObservableObject {
     @Environment(\.colorScheme) var colorScheme
 //    @StateObject var sharedPrefs = SharedPrefs.shared
     @State var realmInstance = realm()
-    @State var boardRefreshFlag = true
+    @Published var boardRefreshFlag = true
+    
+    @Published var gesturesAreLocked: Bool = false
+    @Published var isShowingPopUp: Bool = false
     
     @Published var isLoggedIn: Bool = false
     @Published var userId: String? = nil
@@ -31,6 +34,7 @@ class BoardEngineObject : ObservableObject {
     @Published var canvasOffset = CGPoint.zero
     @Published var canvasScale: CGFloat = 0.2
     @Published var canvasRotation: CGFloat = 0.0
+    @GestureState var gestureScale: CGFloat = 1.0
     
     // Shared
     @Published var isShared: Bool = false
@@ -139,6 +143,7 @@ class BoardEngineObject : ObservableObject {
 struct BoardEngine: View {
     
     @EnvironmentObject var BEO: BoardEngineObject
+    @StateObject var PMO = PopupMenuObject()
     @State var MVS: ManagedViewsService? = nil
     @State var APS: ActivityPlanService? = nil
     @State var cancellables = Set<AnyCancellable>()
@@ -154,6 +159,7 @@ struct BoardEngine: View {
         .database()
         .reference()
         .child(DatabasePaths.managedViews.rawValue))
+    
     
     @State private var drawingStartPoint: CGPoint = .zero
     @State private var drawingEndPoint: CGPoint = .zero
@@ -198,6 +204,12 @@ struct BoardEngine: View {
                      }
                      
                  }
+             }
+             
+             if self.BEO.isShowingPopUp {
+                 PopupMenuView(isPresented: self.$BEO.isShowingPopUp)
+                     .environmentObject(self.BEO)
+                     .environmentObject(self.PMO)
              }
              
              // Temporary line being drawn

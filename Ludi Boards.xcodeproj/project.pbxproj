@@ -94,6 +94,7 @@
 		FBABDAC52B20376F00321A00 /* ConfirmationPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBABDAC42B20376F00321A00 /* ConfirmationPopup.swift */; };
 		FBABDAC72B20456700321A00 /* ToolBarSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBABDAC62B20456700321A00 /* ToolBarSettings.swift */; };
 		FBABDAC92B20469900321A00 /* mvListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBABDAC82B20469900321A00 /* mvListener.swift */; };
+		FBAE62AD2B295A8100E008D5 /* MvPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBAE62AC2B295A8100E008D5 /* MvPopup.swift */; };
 		FBB450002B04B7580096F8EB /* ColorProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBB44FFF2B04B7580096F8EB /* ColorProvider.swift */; };
 		FBB450022B052B180096F8EB /* FireLiveData.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBB450012B052B180096F8EB /* FireLiveData.swift */; };
 		FBBAD3BC2B1F8ECC004A4332 /* Timer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBBAD3BB2B1F8ECC004A4332 /* Timer.swift */; };
@@ -197,6 +198,7 @@
 		FBABDAC42B20376F00321A00 /* ConfirmationPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmationPopup.swift; sourceTree = "<group>"; };
 		FBABDAC62B20456700321A00 /* ToolBarSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolBarSettings.swift; sourceTree = "<group>"; };
 		FBABDAC82B20469900321A00 /* mvListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mvListener.swift; sourceTree = "<group>"; };
+		FBAE62AC2B295A8100E008D5 /* MvPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MvPopup.swift; sourceTree = "<group>"; };
 		FBB44FFF2B04B7580096F8EB /* ColorProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorProvider.swift; sourceTree = "<group>"; };
 		FBB450012B052B180096F8EB /* FireLiveData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireLiveData.swift; sourceTree = "<group>"; };
 		FBBAD3BB2B1F8ECC004A4332 /* Timer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timer.swift; sourceTree = "<group>"; };
@@ -488,6 +490,7 @@
 				FB58E87A2B02B1E200FD9E2E /* modifiers */,
 				FBD9AFD62B00BB8F005F8620 /* ManagedViewBoardTool.swift */,
 				FB5094272B0584CA000AEA96 /* ManagedViewWindow.swift */,
+				FBAE62AC2B295A8100E008D5 /* MvPopup.swift */,
 			);
 			path = ManagedViews;
 			sourceTree = "<group>";
@@ -667,6 +670,7 @@
 				FBDF0DC52B21811000FADE44 /* SharedSessionsView.swift in Sources */,
 				FBD9AFC02B00817A005F8620 /* ManagedView.swift in Sources */,
 				FBD9AFCD2B008457005F8620 /* UserToActivity.swift in Sources */,
+				FBAE62AD2B295A8100E008D5 /* MvPopup.swift in Sources */,
 				FB581BEB2B1EF39C00F5C90F /* Stopwatch.swift in Sources */,
 				FB4840962B1D43AD0003377A /* BarListPicker.swift in Sources */,
 				FB3E02B12B0C6B1D00D8558C /* ActivityPlan.swift in Sources */,

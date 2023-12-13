@@ -70,6 +70,24 @@ class SessionChange {
     }
 }
 
+class ViewFollowing {
+    var viewId: String = ""
+    var x: Double = 0.0
+    var y: Double = 0.0
+    var hasDropped = false
+    
+    init(viewId: String, x:Double=0.0, y:Double=0.0, hasDropped:Bool=false) {
+        self.viewId = viewId
+        self.x = x
+        self.y = y
+        self.hasDropped = true
+    }
+    
+    func getPoint() -> CGPoint {
+        return CGPoint(x: self.x, y: self.y)
+    }
+}
+
 //@State var cancellables = Set<AnyCancellable>()
 enum CodiChannel {
     case general
@@ -85,6 +103,7 @@ enum CodiChannel {
     case TOOL_ON_DELETE
     case TOOL_SUBSCRIPTION
     case TOOL_ON_MENU_RETURN
+    case TOOL_ON_FOLLOW
     case TOOL_ATTRIBUTES
     case REALM_ON_CHANGE
     case REALM_ON_DELETE
@@ -115,6 +134,8 @@ enum CodiChannel {
                 return ToolOnCreateChannel.shared.subject
             case .TOOL_ON_DELETE:
                 return ToolOnCreateChannel.shared.subject
+            case .TOOL_ON_FOLLOW:
+                return ToolOnFollowChannel.shared.subject
             case .TOOL_SUBSCRIPTION:
                 return ToolSubscriptionChannel.shared.subject
             case .TOOL_ON_MENU_RETURN:
@@ -180,6 +201,10 @@ class ToolOnCreateChannel {
 }
 class ToolOnDeleteChannel {
     static let shared = ToolOnDeleteChannel()
+    let subject = PassthroughSubject<Any, Never>()
+}
+class ToolOnFollowChannel {
+    static let shared = ToolOnFollowChannel()
     let subject = PassthroughSubject<Any, Never>()
 }
 class ToolSubscriptionChannel {

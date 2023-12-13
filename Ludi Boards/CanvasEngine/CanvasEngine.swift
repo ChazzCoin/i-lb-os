@@ -17,9 +17,7 @@ struct CanvasEngine: View {
     @State var cancellables = Set<AnyCancellable>()
     @State var showMenuBar: Bool = true
     @State var popupIsVisible: Bool = true
-    @State var gesturesAreLocked: Bool = false
     var maxScaleFactor: CGFloat = 1.0
-    @GestureState private var gestureScale: CGFloat = 1.0
     
     @State private var angle: Angle = .zero
     @State private var lastAngle: Angle = .zero
@@ -42,7 +40,7 @@ struct CanvasEngine: View {
     var dragAngleGestures: some Gesture {
         DragGesture()
             .onChanged { gesture in
-                if gesturesAreLocked { return }
+                if self.BEO.gesturesAreLocked { return }
 
                 // Simplify calculations and potentially invert them
                 let translation = gesture.translation
@@ -61,23 +59,23 @@ struct CanvasEngine: View {
 //                print("CanvasEngine -> Offset: X = [ \(self.BEO.canvasOffset.x) ] Y = [ \(self.BEO.canvasOffset.y) ]")
             }
             .onEnded { _ in
-                if gesturesAreLocked { return }
+                if self.BEO.gesturesAreLocked { return }
                 self.lastOffset = self.BEO.canvasOffset
             }
             .updating($dragOffset) { value, state, _ in
-                if gesturesAreLocked { return }
+                if self.BEO.gesturesAreLocked { return }
                 state = value.translation
             }
     }
     
     var scaleGestures: some Gesture {
         MagnificationGesture()
-            .updating($gestureScale) { value, gestureScale, _ in
-                if gesturesAreLocked { return }
+            .updating(self.BEO.$gestureScale) { value, gestureScale, _ in
+                if self.BEO.gesturesAreLocked { return }
                 gestureScale = value
             }
             .onEnded { value in
-                if gesturesAreLocked { return }
+                if self.BEO.gesturesAreLocked { return }
                 self.BEO.canvasScale *= value
             }
     }
@@ -104,14 +102,14 @@ struct CanvasEngine: View {
     func enableDrawing(drawingType:String="LINE") {
         self.BEO.isDraw = true
         self.BEO.isDrawing = drawingType
-        self.gesturesAreLocked = true
+        self.BEO.gesturesAreLocked = true
         self.toolBarIsEnabled = false
         self.showMenuBar = false
     }
     
     func disableDrawing() {
         self.BEO.isDraw = false
-        self.gesturesAreLocked = false
+        self.BEO.gesturesAreLocked = false
         self.toolBarIsEnabled = true
         self.showMenuBar = true
     }
@@ -134,14 +132,10 @@ struct CanvasEngine: View {
             
             VStack {
                 MenuButtonIcon(icon: MenuBarProvider.menuBar)
+                TrashCanButtonIcon()
             }
-            .frame(width: 60, height: 60)
-            .background(
-                RoundedRectangle(cornerRadius: 15)
-                    .foregroundColor(foregroundColorForScheme(self.BEO.colorScheme))
-                    .shadow(radius: 5)
-            )
-           .position(using: gps, at: .topLeft, offsetX: 100)
+            .frame(width: 60, height: 150)
+            .position(using: gps, at: .topLeft, offsetX: 50, offsetY: 75)
             
             NavPadView()
                 .environmentObject(self.BEO)
@@ -200,11 +194,10 @@ struct CanvasEngine: View {
                 }.position(using: gps, at: .topRight, offsetX: 200, offsetY: 200)
             }
             
-            FloatingEmojiView()
-                .position(using: gps, at: .topLeft, offsetX: 200, offsetY: 0)
+//            FloatingEmojiView()
+//                .position(using: gps, at: .topLeft, offsetX: 200, offsetY: 0)
         }
         .zIndex(3.0)
-        
         
         ZStack() {
             
@@ -214,17 +207,18 @@ struct CanvasEngine: View {
                 BoardEngine()
                     .zIndex(2.0)
                     .environmentObject(self.BEO)
+                
             }
             .frame(width: 20000, height: 20000)
             .offset(x: self.BEO.canvasOffset.x, y: self.BEO.canvasOffset.y)
-            .scaleEffect(self.BEO.canvasScale * gestureScale)
+            .scaleEffect(self.BEO.canvasScale * self.BEO.gestureScale)
             .rotationEffect(Angle(degrees: self.BEO.canvasRotation))
             .zIndex(1.0)
             
         }
         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
         .blur(radius: self.BEO.isLoading ? 10 : 0)
-        .gesture(self.gesturesAreLocked ? nil : dragAngleGestures.simultaneously(with: scaleGestures))
+        .gesture(self.BEO.gesturesAreLocked ? nil : dragAngleGestures.simultaneously(with: scaleGestures))
         .background(Color.clear)
         .zIndex(0.0)
         .onAppear() {
@@ -253,7 +247,7 @@ struct CanvasEngine: View {
             switch MenuBarProvider.parseByTitle(title: buttonType) {
                 case .menuBar: return self.showMenuBar = !self.showMenuBar
                 case .toolbox: return self.toolBarIsEnabled = !self.toolBarIsEnabled
-                case .lock: return self.handleGestureLock()
+                case .lock: return self.BEO.isShowingPopUp = !self.BEO.isShowingPopUp //self.handleGestureLock()
                 case .canvasGrid: return
                 case .navHome: return 
                 case .buddyList: return
@@ -283,10 +277,10 @@ struct CanvasEngine: View {
         
     }
     func handleGestureLock() {
-        if gesturesAreLocked {
-            gesturesAreLocked = false
+        if self.BEO.gesturesAreLocked {
+            self.BEO.gesturesAreLocked = false
         } else {
-            gesturesAreLocked = true
+            self.BEO.gesturesAreLocked = true
         }
     }
     func handleChat() {

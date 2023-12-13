@@ -289,7 +289,7 @@ struct LineDrawingManaged: View {
                         DispatchQueue.main.async {
                             if self.isDragging {return}
                             if activityId != temp.boardId { activityId = temp.boardId }
-                            
+                            self.MVS?.isDeleted = temp.isDeleted
                             if lifeWidth != Double(temp.width) {lifeWidth = Double(temp.width)}
                             if lifeLineDash != Double(temp.lineDash) {lifeLineDash = Double(temp.lineDash)}
                             
