@@ -20,6 +20,8 @@ import RealmSwift
     dynamic var y: Double = 0.0
     dynamic var startX: Double = 0.0
     dynamic var startY: Double = 0.0
+    dynamic var centerX: Double = 0.0
+    dynamic var centerY: Double = 0.0
     dynamic var endX: Double = 0.0
     dynamic var endY: Double = 0.0
     dynamic var width: Int = 0

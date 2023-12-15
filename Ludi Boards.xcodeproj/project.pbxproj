@@ -95,6 +95,7 @@
 		FBABDAC72B20456700321A00 /* ToolBarSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBABDAC62B20456700321A00 /* ToolBarSettings.swift */; };
 		FBABDAC92B20469900321A00 /* mvListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBABDAC82B20469900321A00 /* mvListener.swift */; };
 		FBAE62AD2B295A8100E008D5 /* MvPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBAE62AC2B295A8100E008D5 /* MvPopup.swift */; };
+		FBAE62AF2B2A3FD200E008D5 /* CurvedLineToolView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBAE62AE2B2A3FD200E008D5 /* CurvedLineToolView.swift */; };
 		FBB450002B04B7580096F8EB /* ColorProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBB44FFF2B04B7580096F8EB /* ColorProvider.swift */; };
 		FBB450022B052B180096F8EB /* FireLiveData.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBB450012B052B180096F8EB /* FireLiveData.swift */; };
 		FBBAD3BC2B1F8ECC004A4332 /* Timer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBBAD3BB2B1F8ECC004A4332 /* Timer.swift */; };
@@ -199,6 +200,7 @@
 		FBABDAC62B20456700321A00 /* ToolBarSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolBarSettings.swift; sourceTree = "<group>"; };
 		FBABDAC82B20469900321A00 /* mvListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mvListener.swift; sourceTree = "<group>"; };
 		FBAE62AC2B295A8100E008D5 /* MvPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MvPopup.swift; sourceTree = "<group>"; };
+		FBAE62AE2B2A3FD200E008D5 /* CurvedLineToolView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurvedLineToolView.swift; sourceTree = "<group>"; };
 		FBB44FFF2B04B7580096F8EB /* ColorProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorProvider.swift; sourceTree = "<group>"; };
 		FBB450012B052B180096F8EB /* FireLiveData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireLiveData.swift; sourceTree = "<group>"; };
 		FBBAD3BB2B1F8ECC004A4332 /* Timer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timer.swift; sourceTree = "<group>"; };
@@ -397,6 +399,7 @@
 		FB982F8F2B19C41100C0DA03 /* LiveViews */ = {
 			isa = PBXGroup;
 			children = (
+				FBAE62AE2B2A3FD200E008D5 /* CurvedLineToolView.swift */,
 				FB07B66F2B17A5B9009A0962 /* mvModifier.swift */,
 				FB5094292B05856D000AEA96 /* LineToolView.swift */,
 				FBABDAC82B20469900321A00 /* mvListener.swift */,
@@ -721,6 +724,7 @@
 				FB3E02CB2B0D2E4700D8558C /* InputTextEditor.swift in Sources */,
 				FB15DD272B07440700A21290 /* ViewWrapper.swift in Sources */,
 				FB581BED2B1F8A6800F5C90F /* KeyboardListener.swift in Sources */,
+				FBAE62AF2B2A3FD200E008D5 /* CurvedLineToolView.swift in Sources */,
 				FBD9AFBA2AFF03D7005F8620 /* CanvasEngine.swift in Sources */,
 				FB58E8762B01F3D200FD9E2E /* FireParser.swift in Sources */,
 				FB5094262B058215000AEA96 /* LazyRow.swift in Sources */,

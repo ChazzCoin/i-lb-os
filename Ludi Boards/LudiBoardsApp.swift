@@ -24,6 +24,10 @@ struct LudiBoardsApp: SwiftUI.App {
     var body: some Scene {
         WindowGroup {
             CanvasEngine()
+                .onAppear() {
+                    // Startup Setup
+                    realm().safeSetupCurrentSolUser()
+                }
         }
     }
 }

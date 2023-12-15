@@ -8,6 +8,29 @@
 import Foundation
 import SwiftUI
 
+
+
+struct ImageBgView: View {
+    var image: String
+    @EnvironmentObject var BEO: BoardEngineObject
+    let isMini: Bool
+    
+    var body: some View {
+        Image(image)
+            .resizable()
+            .frame(width: isMini ? 100.0 : self.BEO.boardWidth, height: isMini ? 100.0 : self.BEO.boardHeight)
+            .scaledToFill()
+    }
+}
+
+struct EmptyView: View {
+    var body: some View {
+        Rectangle()
+            .frame(width: 100, height: 100)
+            .opacity(0)
+    }
+}
+
 // YES
 struct SoccerFieldFullView: View {
     @EnvironmentObject var BEO: BoardEngineObject

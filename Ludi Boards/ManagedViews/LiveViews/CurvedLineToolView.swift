@@ -11,7 +11,26 @@ import RealmSwift
 import Combine
 import FirebaseDatabase
 
-struct LineDrawingManaged: View {
+struct OverlayLineV: View {
+    @Binding var startX: CGFloat
+    @Binding var startY: CGFloat
+    @Binding var centerX: CGFloat
+    @Binding var centerY: CGFloat
+    @Binding var endX: CGFloat
+    @Binding var endY: CGFloat
+    
+    
+    var body: some View {
+        Path { path in
+                path.move(to: CGPoint(x: startX, y: startY))
+                path.addQuadCurve(to: CGPoint(x: endX, y: endY),
+                                  control: CGPoint(x: centerX, y: centerY))
+            }
+        .stroke(Color.black, style: StrokeStyle(lineWidth: 100, dash: [0.0]))
+    }
+}
+
+struct CurvedLineDrawingManaged: View {
     @State var viewId: String
     @State var activityId: String
     @EnvironmentObject var BEO: BoardEngineObject
@@ -27,7 +46,9 @@ struct LineDrawingManaged: View {
     @State private var lifeIsLocked = false
     @State private var lifeDateUpdated = Int(Date().timeIntervalSince1970)
     
-    @State private var lifeCenterPoint = CGPoint.zero
+    @State private var dragOffset: CGSize = .zero
+    @State private var lifeCenterX: CGFloat = 0.0
+    @State private var lifeCenterY: CGFloat = 0.0
     @State private var lifeStartX: CGFloat = 0.0
     @State private var lifeStartY: CGFloat = 0.0
     @State private var lifeEndX: CGFloat = 0.0
@@ -52,7 +73,7 @@ struct LineDrawingManaged: View {
     
     @State private var offset = CGSize.zero
     @State private var position = CGPoint(x: 0, y: 0)
-    @GestureState private var dragOffset = CGSize.zero
+//    @GestureState private var dragOffset = CGSize.zero
     @State private var isDragging = false
     @State var originalLifeStart = CGPoint.zero
     @State var originalLifeEnd = CGPoint.zero
@@ -81,11 +102,6 @@ struct LineDrawingManaged: View {
         print(lifeRotation)
     }
     
-    func loadCenterPoint() {
-        let lineStart = CGPoint(x: lifeStartX, y: lifeStartY)
-        let lineEnd = CGPoint(x: lifeEndX, y: lifeEndY)
-        lifeCenterPoint = getCenterOfLine(start: lineStart, end: lineEnd)
-    }
     func loadWidthAndHeight() {
         let lineStart = CGPoint(x: lifeStartX, y: lifeStartY)
         let lineEnd = CGPoint(x: lifeEndX, y: lifeEndY)
@@ -93,10 +109,26 @@ struct LineDrawingManaged: View {
         lifeWidthTouch = Double(lineWidth).bound(to: 100...200)
         lifeHeightTouch = Double(lineHeight).bound(to: 100...200)
     }
+    
+    func loadControlAnchor() {
+        let t: CGFloat = 0.5
+        lifeCenterX = (pow(1-t, 2) * lifeStartX + 2*(1-t)*t*lifeCenterX + pow(t, 2) * lifeEndX)
+        lifeCenterY = (pow(1-t, 2) * lifeStartY + 2*(1-t)*t*lifeCenterY + pow(t, 2) * lifeEndY)
+        
+    }
+    
+    func quadBezierPoint(start: CGPoint, end: CGPoint, control: CGPoint) -> CGPoint {
+        let t: CGFloat = 0.5
+        let x = pow(1-t, 2) * start.x + 2*(1-t)*t*control.x + pow(t, 2) * end.x
+        let y = pow(1-t, 2) * start.y + 2*(1-t)*t*control.y + pow(t, 2) * end.y
+        return CGPoint(x: x, y: y)
+    }
+    
     var body: some View {
         Path { path in
             path.move(to: CGPoint(x: lifeStartX, y: lifeStartY))
-            path.addLine(to: CGPoint(x: lifeEndX, y: lifeEndY))
+            path.addQuadCurve(to: CGPoint(x: lifeEndX, y: lifeEndY),
+                              control: CGPoint(x: lifeCenterX, y: lifeCenterY))
         }
         .stroke(lifeColor, style: StrokeStyle(lineWidth: lifeWidth, dash: [lifeLineDash]))
         .opacity(!isDisabledChecker() && !isDeletedChecker() ? 1 : 0.0)
@@ -117,15 +149,17 @@ struct LineDrawingManaged: View {
                 .gesture(self.lifeIsLocked ? nil : dragGesture(isStart: false))
         )
         .overlay(
-            Rectangle()
-                .fill(Color.white.opacity(0.001))
-                .frame(width: Double(lifeWidth+300).bound(to: 20...500), height: 200)
-                .rotationEffect(lifeRotation)
-                .opacity(1)
-                .position(x: lifeCenterPoint.x.isFinite ? lifeCenterPoint.x : 0, y: lifeCenterPoint.y.isFinite ? lifeCenterPoint.y : 0)
-                .gesture(self.lifeIsLocked ? nil : dragGestureDuo())
+            Circle() // Use a circle for the control point
+                .fill(Color.AIMYellow)
+                .frame(width: 100, height: 100) // Adjust size as needed
+                .opacity(anchorsAreVisible ? 1 : 0)
+                .position(quadBezierPoint(start: CGPoint(x: lifeStartX, y: lifeStartY), end: CGPoint(x: lifeEndX, y: lifeEndY), control: CGPoint(x: lifeCenterX, y: lifeCenterY)))
+                .gesture(self.lifeIsLocked ? nil : dragGestureForControlPoint())
         )
-        .gesture(self.lifeIsLocked ? nil : dragGestureDuo())
+        .onTap {
+            print("Tapped double")
+            anchorsAreVisible = !anchorsAreVisible
+        }
         .onAppear() {
         
             reference = reference.child(self.activityId).child(self.viewId)
@@ -133,6 +167,7 @@ struct LineDrawingManaged: View {
             loadFromRealm()
             
             observeView()
+//            observeFromRealm()
 
             CodiChannel.TOOL_ATTRIBUTES.receive(on: RunLoop.main) { vId in
                 let temp = vId as! ViewAtts
@@ -161,6 +196,23 @@ struct LineDrawingManaged: View {
         }
     }
     
+    func dragGestureForControlPoint() -> some Gesture {
+        DragGesture()
+            .onChanged { value in
+                if dragOffset == .zero {
+                    dragOffset = CGSize(width: (lifeCenterX - value.startLocation.x),
+                                        height: (lifeCenterY - value.startLocation.y))
+                }
+                lifeCenterX = value.location.x + dragOffset.width
+                lifeCenterY = value.location.y + dragOffset.height
+            }
+            .onEnded { _ in
+                dragOffset = .zero
+                updateRealm()
+            }
+    }
+
+    
     // Drag gesture definition
     private func dragGesture(isStart: Bool) -> some Gesture {
         DragGesture()
@@ -174,7 +226,6 @@ struct LineDrawingManaged: View {
                     self.lifeEndX = value.location.x
                     self.lifeEndY = value.location.y
                 }
-                loadCenterPoint()
                 loadWidthAndHeight()
                 loadRotationOfLine()
                 updateRealmPos(start: CGPoint(x: lifeStartX, y: lifeStartY),
@@ -186,87 +237,9 @@ struct LineDrawingManaged: View {
                 updateRealmPos(start: CGPoint(x: lifeStartX, y: lifeStartY),
                             end: CGPoint(x: lifeEndX, y: lifeEndY))
             }
-            .simultaneously(with: TapGesture(count: 1)
-                 .onEnded { _ in
-                     anchorsAreVisible = !anchorsAreVisible
-                 }
-            ).simultaneously(with: TapGesture(count: 2).onEnded({ _ in
-                print("Tapped double")
-                popUpIsVisible = !popUpIsVisible
-                CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(
-                   windowId: "mv_settings",
-                   stateAction: popUpIsVisible ? "open" : "close",
-                   viewId: viewId
-                ))
-                if popUpIsVisible {
-                    CodiChannel.TOOL_ATTRIBUTES.send(value: ViewAtts(
-                       viewId: viewId,
-                       size: lifeWidth,
-                       color: lifeColor,
-                       level: ToolLevels.LINE.rawValue,
-                       stateAction: popUpIsVisible ? "open" : "close")
-                    )
-                }
-            }))
     }
     
-    // Drag gesture definition
-    private func dragGestureDuo() -> some Gesture {
-        DragGesture()
-            .updating($dragOffset, body: { (value, state, transaction) in
-                state = value.translation
-            })
-            .onChanged { value in
-                self.isDragging = true
-                if self.originalLifeStart == .zero {
-                    self.originalLifeStart = CGPoint(x: lifeStartX, y: lifeStartY)
-                    self.originalLifeEnd = CGPoint(x: lifeEndX, y: lifeEndY)
-                }
-
-                let translation = value.translation
-                lifeStartX = self.originalLifeStart.x + translation.width
-                lifeStartY = self.originalLifeStart.y + translation.height
-                lifeEndX = self.originalLifeEnd.x + translation.width
-                lifeEndY = self.originalLifeEnd.y + translation.height
-                loadCenterPoint()
-                updateRealmPos(start: CGPoint(x: lifeStartX, y: lifeStartY),
-                            end: CGPoint(x: lifeEndX, y: lifeEndY))
-            }
-            .onEnded { value in
-                let translation = value.translation
-                lifeStartX = self.originalLifeStart.x + translation.width
-                lifeStartY = self.originalLifeStart.y + translation.height
-                lifeEndX = self.originalLifeEnd.x + translation.width
-                lifeEndY = self.originalLifeEnd.y + translation.height
-                loadCenterPoint()
-                self.isDragging = false
-                updateRealmPos(start: CGPoint(x: lifeStartX, y: lifeStartY),
-                            end: CGPoint(x: lifeEndX, y: lifeEndY))
-                self.originalLifeStart = .zero
-                self.originalLifeEnd = .zero
-            }.simultaneously(with: TapGesture(count: 1)
-                .onEnded { _ in
-                    anchorsAreVisible = !anchorsAreVisible
-                }
-           ).simultaneously(with: TapGesture(count: 2).onEnded({ _ in
-               print("Tapped double")
-               popUpIsVisible = !popUpIsVisible
-               CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(
-                  windowId: "mv_settings",
-                  stateAction: popUpIsVisible ? "open" : "close",
-                  viewId: viewId
-               ))
-               if popUpIsVisible {
-                   CodiChannel.TOOL_ATTRIBUTES.send(value: ViewAtts(
-                      viewId: viewId,
-                      size: lifeWidth,
-                      color: lifeColor,
-                      level: ToolLevels.LINE.rawValue,
-                      stateAction: popUpIsVisible ? "open" : "close")
-                   )
-               }
-           }))
-    }
+    
     
     func observeView() {
         observeFromRealm()
@@ -307,7 +280,7 @@ struct LineDrawingManaged: View {
                             
                             let startPosition = CGPoint(x: temp.startX, y: temp.startY)
                             let endPosition = CGPoint(x: temp.endX, y: temp.endY)
-                            let centerPosition = getCenterOfLine(start: startPosition, end: endPosition)
+                            let centerPosition = CGPoint(x: temp.centerX, y: temp.centerY)
                             
                             let coords = [
                                 "start":startPosition,
@@ -344,6 +317,8 @@ struct LineDrawingManaged: View {
                         try realm.write {
                             mv.startX = Double(start?.x ?? CGFloat(lifeStartX))
                             mv.startY = Double(start?.y ?? CGFloat(lifeStartY))
+                            mv.centerX = Double(lifeCenterX)
+                            mv.centerY = Double(lifeCenterY)
                             mv.endX = Double(end?.x ?? CGFloat(lifeEndX))
                             mv.endY = Double(end?.y ?? CGFloat(lifeEndY))
                         }
@@ -369,8 +344,7 @@ struct LineDrawingManaged: View {
     
     func animateToNextCoordinate() {
         print("!!!COORDINATES COUNT: \(coordinateStack.count)")
-        
-        guard !coordinateStack.isEmpty || self.isDragging || !self.BEO.isSharedBoard else {
+        guard !coordinateStack.isEmpty || self.isDragging else {
             return
         }
         
@@ -381,7 +355,9 @@ struct LineDrawingManaged: View {
             lifeStartY = nextCoordinate["start"]?.y ?? lifeStartY
             lifeEndX = nextCoordinate["end"]?.x ?? lifeEndX
             lifeEndY = nextCoordinate["end"]?.y ?? lifeEndY
-            lifeCenterPoint = nextCoordinate["center"] ?? lifeCenterPoint
+            let lifeCenterPoint = nextCoordinate["center"] ?? .zero
+            lifeCenterX = lifeCenterPoint.x
+            lifeCenterY = lifeCenterPoint.y
         }
 
         // Schedule the next animation after a delay
@@ -400,6 +376,8 @@ struct LineDrawingManaged: View {
         realmInstance.safeWrite { r in
             mv?.startX = Double(start?.x ?? CGFloat(lifeStartX))
             mv?.startY = Double(start?.y ?? CGFloat(lifeStartY))
+            mv?.centerX = Double(start?.x ?? CGFloat(lifeCenterX))
+            mv?.centerY = Double(start?.y ?? CGFloat(lifeCenterY))
             mv?.endX = Double(end?.x ?? CGFloat(lifeEndX))
             mv?.endY = Double(end?.y ?? CGFloat(lifeEndY))
             
@@ -410,9 +388,8 @@ struct LineDrawingManaged: View {
                 mv?.colorAlpha = lc.alpha
             }
             mv?.isLocked = self.isDragging ? true : lifeIsLocked
-            mv?.toolType = "LINE"
+            mv?.toolType = "CURVED-LINE"
             mv?.width = Int(lifeWidth)
-            mv?.lineDash = Int(lifeLineDash)
             guard let tMV = mv else { return }
             r.create(ManagedView.self, value: tMV, update: .modified)
             // TODO: Firebase Users ONLY
@@ -438,6 +415,8 @@ struct LineDrawingManaged: View {
         
         lifeStartX = umv.startX
         lifeStartY = umv.startY
+        lifeCenterX = umv.centerX
+        lifeCenterY = umv.centerY
         lifeEndX = umv.endX
         lifeEndY = umv.endY
         lifeWidth = Double(umv.width)
@@ -449,96 +428,11 @@ struct LineDrawingManaged: View {
         lifeColorAlpha = umv.colorAlpha
         lifeColor = colorFromRGBA(red: lifeColorRed, green: lifeColorGreen, blue: lifeColorBlue, alpha: lifeColorAlpha)
         
-        loadCenterPoint()
+//        loadCenterPoint()
         loadWidthAndHeight()
         loadRotationOfLine()
     }
     
     
-}
-
-struct LineOverlay: View {
-    var startPoint: CGPoint
-    var endPoint: CGPoint
-    let lineThickness: CGFloat = 10 // Adjust as needed
-
-    private var lineLength: CGFloat {
-        sqrt(pow(endPoint.x - startPoint.x, 2) + pow(endPoint.y - startPoint.y, 2))
-    }
-
-    private var centerPoint: CGPoint {
-        CGPoint(x: (startPoint.x + endPoint.x) / 2, y: (startPoint.y + endPoint.y) / 2)
-    }
-
-    private var rotationAngle: Angle {
-        rotationAngleOfLine(from: startPoint, to: endPoint)
-    }
-
-    var body: some View {
-        Rectangle()
-            .frame(width: lineLength, height: lineThickness)
-            .rotationEffect(rotationAngle)
-            .position(x: centerPoint.x, y: centerPoint.y)
-    }
-}
-
-func rotationAngleOfLine(from startPoint: CGPoint, to endPoint: CGPoint) -> Angle {
-    let deltaY = endPoint.y - startPoint.y
-    let deltaX = endPoint.x - startPoint.x
-
-    let angleInRadians = atan2(deltaY, deltaX)
-    return Angle(radians: Double(angleInRadians))
-}
-
-func getCenterOfLine(start: CGPoint, end: CGPoint) -> CGPoint {
-    let midX = (start.x + end.x) / 2
-    let midY = (start.y + end.y) / 2
-    return CGPoint(x: midX, y: midY)
-}
-
-func getWidthAndHeightOfLine(start: CGPoint, end: CGPoint) -> (width: CGFloat, height: CGFloat) {
-    let width = abs(end.x - start.x)
-    let height = abs(end.y - start.y)
-    return (width, height)
-}
-
-func boundingRect(start: CGPoint, end: CGPoint) -> CGRect {
-    let minX = min(start.x, end.x)
-    let minY = min(start.y, end.y)
-    let width = abs(end.x - start.x)
-    let height = abs(end.y - start.y)
-    return CGRect(x: minX, y: minY, width: width, height: height)
-}
-
-struct Arrowhead: Shape {
-    var size: CGFloat
-
-    func path(in rect: CGRect) -> Path {
-        var path = Path()
-
-        // Drawing a simple triangle
-        path.move(to: CGPoint(x: rect.midX, y: rect.minY))
-        path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
-        path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
-        path.closeSubpath()
-
-        return path
-    }
-}
-
-struct Arrowheady: Shape {
-    var size: CGFloat
-
-    func path(in rect: CGRect) -> Path {
-        var path = Path()
-
-        // Defining the arrowhead path
-        path.move(to: CGPoint(x: 0, y: -size / 2)) // Top point
-        path.addLine(to: CGPoint(x: size / 2, y: size / 2)) // Bottom right
-        path.addLine(to: CGPoint(x: -size / 2, y: size / 2)) // Bottom left
-        path.closeSubpath()
-
-        return path
-    }
 }
 

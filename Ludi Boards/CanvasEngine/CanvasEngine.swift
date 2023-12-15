@@ -55,8 +55,6 @@ struct CanvasEngine: View {
                 let offsetX = self.lastOffset.x + (rotationAdjustedTranslation.x / self.BEO.canvasScale)
                 let offsetY = self.lastOffset.y + (rotationAdjustedTranslation.y / self.BEO.canvasScale)
                 self.BEO.canvasOffset = CGPoint(x: offsetX, y: offsetY)
-
-//                print("CanvasEngine -> Offset: X = [ \(self.BEO.canvasOffset.x) ] Y = [ \(self.BEO.canvasOffset.y) ]")
             }
             .onEnded { _ in
                 if self.BEO.gesturesAreLocked { return }
@@ -114,8 +112,6 @@ struct CanvasEngine: View {
         self.showMenuBar = true
     }
     
-    @State var conText = true
-    
     var body: some View {
         
         GlobalPositioningZStack { geo, gps in
@@ -160,24 +156,23 @@ struct CanvasEngine: View {
                 ])
             }
             
-            
             if toolBarIsEnabled {
                 ToolBarPicker {
                     LineIconView(isBgColor: false)
                         .frame(width: 50, height: 50)
                         .onTapAnimation {
-                            enableDrawing()
+                            enableDrawing(drawingType: "LINE")
                         }
                     DottedLineIconView()
                         .frame(width: 50, height: 50)
                         .onTapAnimation {
                             enableDrawing(drawingType: "DOTTED-LINE")
                         }
-//                    CurvedLineIconView()
-//                        .frame(width: 50, height: 50)
-//                        .onTapAnimation {
-//                            self.isDrawing = !self.isDrawing
-//                        }
+                    CurvedLineIconView()
+                        .frame(width: 50, height: 50)
+                        .onTapAnimation {
+                            enableDrawing(drawingType: "CURVED-LINE")
+                        }
                 }
                 .zIndex(2.0)
                 .position(using: gps, at: .bottomCenter, offsetY: 50)
@@ -247,7 +242,7 @@ struct CanvasEngine: View {
             switch MenuBarProvider.parseByTitle(title: buttonType) {
                 case .menuBar: return self.showMenuBar = !self.showMenuBar
                 case .toolbox: return self.toolBarIsEnabled = !self.toolBarIsEnabled
-                case .lock: return self.BEO.isShowingPopUp = !self.BEO.isShowingPopUp //self.handleGestureLock()
+                case .lock: return self.handleGestureLock() //self.BEO.isShowingPopUp = !self.BEO.isShowingPopUp //
                 case .canvasGrid: return
                 case .navHome: return 
                 case .buddyList: return
@@ -257,7 +252,7 @@ struct CanvasEngine: View {
                 case .reset: return
                 case .trash: return
                 case .boardBackground: return
-            case .profile: return self.BEO.isLoading = !self.BEO.isLoading
+                case .profile: return self.BEO.isLoading = !self.BEO.isLoading
                 case .share: return
                 case .router: return
                 case .note: return

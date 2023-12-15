@@ -22,9 +22,9 @@ extension Realm {
         return self.objects(type).filter("%K != %@", field, value)
     }
     
-    func getCurrentUserSession() -> CurrentSession? {
-        return self.findByField(CurrentSession.self, value: "SOL")
-    }
+//    func getCurrentUserSession() -> CurrentSession? {
+//        return self.findByField(CurrentSession.self, value: "SOL")
+//    }
 }
 
 extension Results {

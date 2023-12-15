@@ -14,6 +14,12 @@ func firebaseDatabase(block: @escaping (DatabaseReference) -> Void) {
     block(reference)
 }
 
+func firebaseDatabase(safeFlag:Bool, _ block: @escaping (DatabaseReference) -> Void) {
+    if !safeFlag {return}
+    let reference = Database.database().reference()
+    block(reference)
+}
+
 func firebaseDatabase(collection: String, block: @escaping (DatabaseReference) -> Void) {
     let reference = Database.database().reference().child(collection)
     block(reference)

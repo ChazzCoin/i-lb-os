@@ -21,6 +21,7 @@ class BoardEngineObject : ObservableObject {
     @Published var gesturesAreLocked: Bool = false
     @Published var isShowingPopUp: Bool = false
     
+    @Published var isSharedBoard = false
     @Published var isLoggedIn: Bool = false
     @Published var userId: String? = nil
     @Published var userName: String? = nil
@@ -40,9 +41,11 @@ class BoardEngineObject : ObservableObject {
     @Published var isShared: Bool = false
     @Published var isHost: Bool = true
     
+    @Published var canvasWidth: CGFloat = 8000.0
+    @Published var canvasHeight: CGFloat = 8000.0
     // Board Settings
-    @Published var boardWidth: CGFloat = 3000.0
-    @Published var boardHeight: CGFloat = 4000.0
+    @Published var boardWidth: CGFloat = 5000.0
+    @Published var boardHeight: CGFloat = 6000.0
     @Published var boardStartPosX: CGFloat = 0.0
     @Published var boardStartPosY: CGFloat = 1000.0
     @Published var boardBgColor: Color = Color.green.opacity(0.75)
@@ -61,16 +64,40 @@ class BoardEngineObject : ObservableObject {
     @Published var boardFeildLineStroke: Double = 10
     @Published var boardFeildRotation: Double = 0
     
-    func navRight() { self.canvasOffset.x = self.canvasOffset.x + 100 }
-    func navLeft() { self.canvasOffset.x = self.canvasOffset.x - 100 }
-    func navDown() { self.canvasOffset.y = self.canvasOffset.y + 100 }
-    func navUp() { self.canvasOffset.y  = self.canvasOffset.y - 100 }
-    
+    func navRight() {
+        let adjustedOffset = calculateAdjustedOffset(angle: canvasRotation, x: -100, y: 0)
+        self.canvasOffset.x += adjustedOffset.dx
+        self.canvasOffset.y += adjustedOffset.dy
+    }
+
+    func navLeft() {
+        let adjustedOffset = calculateAdjustedOffset(angle: canvasRotation, x: 100, y: 0)
+        self.canvasOffset.x += adjustedOffset.dx
+        self.canvasOffset.y += adjustedOffset.dy
+    }
+
+    func navDown() {
+        let adjustedOffset = calculateAdjustedOffset(angle: canvasRotation, x: 0, y: -100)
+        self.canvasOffset.x += adjustedOffset.dx
+        self.canvasOffset.y += adjustedOffset.dy
+    }
+
+    func navUp() {
+        let adjustedOffset = calculateAdjustedOffset(angle: canvasRotation, x: 0, y: 100)
+        self.canvasOffset.x += adjustedOffset.dx
+        self.canvasOffset.y += adjustedOffset.dy
+    }
+
+    private func calculateAdjustedOffset(angle: CGFloat, x: CGFloat, y: CGFloat) -> CGVector {
+        let dx = x * cos(angle) - y * sin(angle)
+        let dy = x * sin(angle) + y * cos(angle)
+        return CGVector(dx: dx, dy: dy)
+    }
     func loadUser() {
-        if let user = realmInstance.findByField(SolKnight.self, value: "1") {
-            userId = user.tempId
-            userName = user.username
-            isLoggedIn = true
+        self.realmInstance.loadGetCurrentSolUser { su in
+            userId = su.userId
+            userName = su.userName
+            isLoggedIn = su.isLoggedIn
         }
     }
     
@@ -116,15 +143,21 @@ class BoardEngineObject : ObservableObject {
         }
     }
     @Published var boardBgViewItems: [String: () -> AnyView] = [
-        "SoccerFieldFullView": { AnyView(SoccerFieldFullView(isMini: false)) },
-        "SoccerFieldHalfView": { AnyView(SoccerFieldHalfView(isMini: false)) },
-        "BasicSquareView": {AnyView(BasicSquareView(isMini: false))}
+        "Empty View": { AnyView(EmptyView()) },
+        "Soccer Field Full View": { AnyView(SoccerFieldFullView(isMini: false)) },
+        "Soccer Field Half View": { AnyView(SoccerFieldHalfView(isMini: false)) },
+        "Football Field": {AnyView(FootballFieldView(isMini: false))},
+        "Basic Square View": {AnyView(BasicSquareView(isMini: false))},
+        "Soccer Field 1": {AnyView(ImageBgView(image: "soccer_one", isMini: false))}
     ]
     
     @Published var boardBgViewSettingItems: [String: () -> AnyView] = [
-        "SoccerFieldFullView": { AnyView(SoccerFieldFullView(isMini: true)) },
-        "SoccerFieldHalfView": { AnyView(SoccerFieldHalfView(isMini: true)) },
-        "BasicSquareView": {AnyView(BasicSquareView(isMini: true))}
+        "Empty View": { AnyView(EmptyView()) },
+        "Soccer Field Full View": { AnyView(SoccerFieldFullView(isMini: true)) },
+        "Soccer Field Half View": { AnyView(SoccerFieldHalfView(isMini: true)) },
+        "Football Field": { AnyView(FootballFieldView(isMini: true)) },
+        "Basic Square View": { AnyView(BasicSquareView(isMini: true)) },
+        "Soccer Field 1": { AnyView(ImageBgView(image: "soccer_one", isMini: true)) }
     ]
     func setBoardBgView(boardName: String) {
         boardBgName = boardName
@@ -136,8 +169,7 @@ class BoardEngineObject : ObservableObject {
     
     func foregroundColor() -> Color { return foregroundColorForScheme(colorScheme) }
     func backgroundColor() -> Color { return backgroundColorForScheme(colorScheme) }
-
-//    private init() {}
+    
 }
 
 struct BoardEngine: View {
@@ -173,16 +205,6 @@ struct BoardEngine: View {
     @State private var basicTools: [ManagedView] = []
     @State private var lineTools: [ManagedView] = []
     
-    func isInvalid(id: String) -> Bool {
-        if let mv = self.realmIntance.object(ofType: ManagedView.self, forPrimaryKey: id) {
-            if mv.isInvalidated {
-                self.basicTools.safeRemove(mv)
-                return true
-            }
-        }
-        return false
-    }
-    
     func refreshBoard() {
         self.BEO.boardRefreshFlag = false
         self.BEO.boardRefreshFlag = true
@@ -194,11 +216,21 @@ struct BoardEngine: View {
              if self.BEO.boardRefreshFlag {
                  ForEach(self.basicTools) { item in
                      if !item.isDeleted {
-                         if item.toolType == "LINE" || item.toolType == "DOTTED-LINE" {
-                             LineDrawingManaged(viewId: item.id, activityId: self.activityID).zIndex(3.0)
-                         } else {
+                         if item.toolType == "LINE" {
+                             LineDrawingManaged(viewId: item.id, activityId: self.activityID)
+                                 .zIndex(20.0)
+                                 .environmentObject(self.BEO)
+                         }
+                         else if item.toolType == "CURVED-LINE" {
+                             CurvedLineDrawingManaged(viewId: item.id, activityId: self.activityID)
+                                 .zIndex(20.0)
+                                 .environmentObject(self.BEO)
+                         }
+                         else {
                              if let temp = SoccerToolProvider.parseByTitle(title: item.toolType)?.tool.image {
-                                 ManagedViewBoardTool(viewId: item.id, activityId: self.activityID, toolType: temp).zIndex(4.0)
+                                 ManagedViewBoardTool(viewId: item.id, activityId: self.activityID, toolType: temp)
+                                     .zIndex(10.0)
+                                     .environmentObject(self.BEO)
                              }
                          }
                      }
@@ -226,11 +258,10 @@ struct BoardEngine: View {
         }
         .frame(width: self.BEO.boardWidth, height: self.BEO.boardHeight)
         .background(
-            FieldOverlayView(width: 6000, height: 6000, background: {
+            FieldOverlayView(width: self.BEO.canvasWidth, height: self.BEO.canvasHeight, background: {
                 self.BEO.boardBgColor
             }, overlay: {
-                if let temp = self.BEO.boardBgViewItems[self.BEO.boardBgName] { temp().environmentObject(self.BEO)
-                }
+                if let temp = self.BEO.boardBgViewItems[self.BEO.boardBgName] { temp().environmentObject(self.BEO) }
             })
             .position(x: self.BEO.boardStartPosX, y: self.BEO.boardStartPosY).zIndex(2.0)
         )
@@ -245,7 +276,7 @@ struct BoardEngine: View {
                     }
                     
                     // TODO: Firebase Users ONLY
-                    firebaseDatabase { fdb in
+                    firebaseDatabase(safeFlag: self.BEO.isLoggedIn) { fdb in
                         fdb.child(DatabasePaths.managedViews.rawValue)
                             .child(self.activityID)
                             .child(newTool.id)
@@ -316,7 +347,7 @@ struct BoardEngine: View {
                 }
                 
                 // TODO: Firebase Users ONLY
-                firebaseDatabase { fdb in
+                firebaseDatabase(safeFlag: self.BEO.isLoggedIn) { fdb in
                     fdb.child(DatabasePaths.managedViews.rawValue)
                         .child(self.activityID)
                         .child(newTool.id)
@@ -360,30 +391,6 @@ struct BoardEngine: View {
         basicTools = []
     }
     
-    func loadFromCurrentSession() {
-        if let temp = realmIntance.findByField(CurrentSession.self, value: "SOL") {
-            self.sessionID = temp.sessionId
-            self.activityID = temp.activityId
-            currentSessionWasLoaded = true
-        }
-    }
-    func createUpdateCurrentSession() {
-        if let temp = realmIntance.findByField(CurrentSession.self, value: "SOL") {
-            realmIntance.safeWrite { r in
-                temp.sessionId = self.sessionID
-                temp.activityId = self.activityID
-                r.add(temp, update: .all)
-            }
-        } else {
-            let newCS = CurrentSession()
-            newCS.sessionId = self.sessionID
-            newCS.activityId = self.activityID
-            realmIntance.safeWrite { r in
-                r.add(newCS)
-            }
-        }
-    }
-    
     func loadSessionPlan() {
         let tempBoard = self.realmIntance.findByField(SessionPlan.self, field: "id", value: self.sessionID)
         if tempBoard == nil { return }
@@ -396,10 +403,7 @@ struct BoardEngine: View {
         
         // LOAD SINGLE ACTIVITY
         if planId != nil || !self.activityID.isEmpty {
-            
-            APS = ActivityPlanService(realm: self.realmIntance)
-            APS?.startObserving(activityId: self.activityID)
-            
+           
             if let act = self.realmIntance.findByField(ActivityPlan.self, field: "id", value: self.activityID) {
                 
                 self.BEO.setColor(red: act.backgroundRed, green: act.backgroundGreen, blue: act.backgroundBlue, alpha: act.backgroundAlpha)
@@ -409,6 +413,7 @@ struct BoardEngine: View {
                 self.BEO.boardFeildLineStroke = act.backgroundLineStroke
                 self.activities.append(act)
                 
+                // Realm
                 activityNotificationToken = act.observe { change in
                     switch change {
                         case .change(let obj, _):
@@ -427,6 +432,11 @@ struct BoardEngine: View {
                     }
                 }
                 
+                // Firebase
+                if self.BEO.isLoggedIn {
+                    APS = ActivityPlanService(realm: self.realmIntance)
+                    APS?.startObserving(activityId: self.activityID)
+                }
                 
             }
             loadManagedViewTools()
@@ -468,14 +478,12 @@ struct BoardEngine: View {
             r.add(newActivity)
         }
         loadManagedViewTools()
+        
     }
     
     func loadSessionPlans() {
         
-        // TODO: Firebase Users ONLY
-        fireGetSessionPlanAsync(sessionId: self.sessionID, realm: self.realmIntance)
-        
-        // FREE
+        // Realm
         let umvs = realmIntance.objects(SessionPlan.self)
         sessionNotificationToken = umvs.observe { (changes: RealmCollectionChange) in
             switch changes {
@@ -492,18 +500,20 @@ struct BoardEngine: View {
                     for d in de {
                         sessions.remove(at: d)
                     }
-                case .error(let error):
+                case .error(_):
                     print("Realm Listener: error")
-                    fatalError("\(error)")  // Handle errors appropriately in production code
             }
         }
+        
+        // Firebase
+        if self.BEO.isLoggedIn {
+            fireGetSessionPlanAsync(sessionId: self.sessionID, realm: self.realmIntance)
+        }
     }
+    
     func observeActivityPlan() {
         
-        // TODO: Firebase Users ONLY
-        fireGetSessionPlanAsync(sessionId: self.sessionID, realm: self.realmIntance)
-        
-        // FREE
+        // Realm
         let umvs = realmIntance.objects(SessionPlan.self)
         sessionNotificationToken = umvs.observe { (changes: RealmCollectionChange) in
             switch changes {
@@ -521,18 +531,19 @@ struct BoardEngine: View {
                         sessions.remove(at: d)
                     }
                 case .error(let error):
-                    print("Realm Listener: error")
-                    fatalError("\(error)")  // Handle errors appropriately in production code
+                    print("Realm Listener: \(error)")
             }
+        }
+        
+        // Firebase
+        if self.BEO.isLoggedIn {
+            fireGetSessionPlanAsync(sessionId: self.sessionID, realm: self.realmIntance)
         }
     }
     
     func loadManagedViewTools() {
-//        deleteAllTools()
-        // TODO: Firebase Users ONLY
-        fireManagedViewsAsync(activityId: self.activityID, realm: self.realmIntance)
-                
-        // FREE
+
+        // Realm
         let umvs = realmIntance.findAllByField(ManagedView.self, field: "boardId", value: self.activityID)
         managedViewNotificationToken = umvs?.observe { (changes: RealmCollectionChange) in
             switch changes {
@@ -558,7 +569,11 @@ struct BoardEngine: View {
                     fatalError("\(error)")  // Handle errors appropriately in production code
             }
         }
-        startObserving()
+        
+        // Firebase
+        if self.BEO.isLoggedIn {
+            startObserving()
+        }
         self.BEO.isLoading = false
     }
     
@@ -604,17 +619,19 @@ struct BoardEngine: View {
             line.width = 10
             line.toolColor = "Black"
             line.toolType = self.BEO.isDrawing
-            line.lineDash = self.BEO.isDrawing == "LINE" ? 1 : 55
+            line.lineDash = self.BEO.isDrawing == "DOTTED-LINE" ? 55 : 1
             line.dateUpdated = Int(Date().timeIntervalSince1970)
-            r.add(line)
+            r.create(ManagedView.self, value: line)
             
             // TODO: Firebase Users ONLY
-            firebaseDatabase { fdb in
+            firebaseDatabase(safeFlag: self.BEO.isLoggedIn) { fdb in
                 fdb.child(DatabasePaths.managedViews.rawValue)
                     .child(self.activityID)
                     .child(line.id)
                     .setValue(line.toDict())
             }
+            
+            
         }
     }
 }

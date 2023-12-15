@@ -14,6 +14,7 @@ import Combine
 struct enableManagedViewTool : ViewModifier {
     @State var viewId: String
     @State var activityId: String
+    @EnvironmentObject var BEO: BoardEngineObject
     @State private var currentUserId = "iphone"
     @State private var lastUserId = ""
     
@@ -235,7 +236,7 @@ struct enableManagedViewTool : ViewModifier {
                             minSizeCheck()
                         }
                     case .error(let error):
-                        // Handle errors, if any
+                        // TODO: RESTART OBSERVER
                         print("Error: \(error)")
                     case .deleted:
                         self.isDisabled = true
@@ -248,20 +249,15 @@ struct enableManagedViewTool : ViewModifier {
     
     
     func animateToNextCoordinate() {
-        guard !coordinateStack.isEmpty else {
-            return
-        }
+        guard !coordinateStack.isEmpty else { return }
         
-        if self.isDragging {
+        if self.isDragging || !self.BEO.isSharedBoard {
             coordinateStack.removeAll()
             return
         }
         
         let nextCoordinate = coordinateStack.removeFirst()
-
-        withAnimation {
-            self.position = nextCoordinate
-        }
+        withAnimation { self.position = nextCoordinate}
 
         // Schedule the next animation after a delay
         DispatchQueue.main.asyncAfter(deadline: .now()) {
@@ -294,7 +290,6 @@ struct enableManagedViewTool : ViewModifier {
                             mv.colorAlpha = lifeColorAlpha
                             mv.isLocked = lifeIsLocked
                             mv.lastUserId = self.currentUserId
-//                            realm.create(ManagedView.self, value: mv, update: .all)
                             // TODO: Firebase Users ONLY
                             updateToolInFirebase(mv: mv)
                         }
@@ -307,9 +302,9 @@ struct enableManagedViewTool : ViewModifier {
         }
     }
     
-    
     // Function to update a Realm object in the background
     func updateRealmPos(x:Double?=nil, y:Double?=nil) {
+        if !self.BEO.isLoggedIn {return}
         DispatchQueue.global(qos: .background).async {
             autoreleasepool {
                 do {
@@ -318,20 +313,10 @@ struct enableManagedViewTool : ViewModifier {
                         try realm.write {
                             mv.x = x ?? self.position.x
                             mv.y = y ?? self.position.y
-                            mv.lastUserId = "me"
+                            mv.lastUserId = self.BEO.userId ?? "nil"
                         }
                         
-                        if self.isWriting {return}
-                        self.isWriting = true
-                        reference.setValue(mv.toDict()) { (error:Error?, ref:DatabaseReference) in
-                            if let error = error {
-                                self.isWriting = false
-                              print("Data could not be saved: \(error).")
-                            } else {
-                                self.isWriting = false
-                              print("Data saved successfully!")
-                            }
-                        }
+                        updateToolInFirebase(mv: mv)
                     }
                 } catch {
                     print("Realm error: \(error)")
@@ -339,8 +324,10 @@ struct enableManagedViewTool : ViewModifier {
             }
         }
     }
+    
+    // TODO: FIREBASE
     func updateToolInFirebase(mv:ManagedView?) {
-        // TODO: Firebase Users ONLY
+        if !self.BEO.isLoggedIn {return}
         if self.isWriting {return}
         self.isWriting = true
         reference.setValue(mv?.toDict()) { (error:Error?, ref:DatabaseReference) in
