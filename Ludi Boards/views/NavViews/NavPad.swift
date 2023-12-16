@@ -17,7 +17,8 @@ struct NavPadView: View {
     @GestureState private var dragOffset = CGSize.zero
     @State private var isDragging = false
     
-    @State private var isHidden = false
+    @State private var isHidden = true
+    
     @State var cancellables = Set<AnyCancellable>()
     var body: some View {
         HStack(spacing: 15) {
@@ -25,8 +26,8 @@ struct NavPadView: View {
             NavButton(label: "arrow.down", action: { self.BEO.navDown() })
             NavButton(label: "arrow.left", action: { self.BEO.navLeft() })
             NavButton(label: "arrow.right", action: { self.BEO.navRight() })
-            NavButton(label: "plus.magnifyingglass", action: { self.BEO.canvasScale += 0.05 })
-            NavButton(label: "minus.magnifyingglass", action: { self.BEO.canvasScale -= 0.05 })
+            NavButton(label: "plus.magnifyingglass", action: { self.BEO.canvasScale += 0.02 })
+            NavButton(label: "minus.magnifyingglass", action: { self.BEO.canvasScale -= 0.02 })
             NavButton(label: "rotate.left", action: { self.BEO.canvasRotation += -45.0 })
             NavButton(label: "rotate.right", action: { self.BEO.canvasRotation += 45.0 })
             NavButton(label: "house", action: { self.BEO.fullScreen() })

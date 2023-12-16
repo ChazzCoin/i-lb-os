@@ -119,7 +119,7 @@ struct LineDrawingManaged: View {
         .overlay(
             Rectangle()
                 .fill(Color.white.opacity(0.001))
-                .frame(width: Double(lifeWidth+300).bound(to: 20...500), height: 200)
+                .frame(width: Double(lifeWidth+400).bound(to: 20...500), height: 200)
                 .rotationEffect(lifeRotation)
                 .opacity(1)
                 .position(x: lifeCenterPoint.x.isFinite ? lifeCenterPoint.x : 0, y: lifeCenterPoint.y.isFinite ? lifeCenterPoint.y : 0)

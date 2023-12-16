@@ -126,11 +126,10 @@ struct CanvasEngine: View {
                     .position(using: gps, at: .center)
             }
             
-            VStack {
-                MenuButtonIcon(icon: MenuBarProvider.menuBar)
-                TrashCanButtonIcon()
+            GeometryReader { geo in
+                MenuBarStatic()
             }
-            .frame(width: 60, height: 150)
+            .frame(width: 60)
             .position(using: gps, at: .topLeft, offsetX: 50, offsetY: 75)
             
             NavPadView()
@@ -141,20 +140,6 @@ struct CanvasEngine: View {
                 managedViewWindow.viewBuilder().environmentObject(self.BEO)
             }.zIndex(5.0)
             
-            if self.showMenuBar {
-                // Global MenuBar
-                MenuBarWindow(items: [
-                    {MenuButtonIcon(icon: MenuBarProvider.toolbox)},
-                    {MenuButtonIcon(icon: MenuBarProvider.lock)},
-                    {MenuButtonIcon(icon: MenuBarProvider.navHome)},
-                    {MenuButtonIcon(icon: MenuBarProvider.chat)},
-                    {MenuButtonIcon(icon: MenuBarProvider.boardCreate)},
-                    {MenuButtonIcon(icon: MenuBarProvider.boardDetails)},
-                    {MenuButtonIcon(icon: MenuBarProvider.profile)},
-//                    {MenuButtonIcon(icon: MenuBarProvider.buddyList)},
-                    {MenuButtonIcon(icon: MenuBarProvider.share)}
-                ])
-            }
             
             if toolBarIsEnabled {
                 ToolBarPicker {
@@ -179,15 +164,25 @@ struct CanvasEngine: View {
             }
             
             if self.BEO.isDraw {
-                TipBoxViewExpander(tips: [
-                    "Tap the Line Tool again to toggle Line Drawing Mode.",
-                    "Tap anywhere on the field and begin dragging your finger to create a new line.",
-                    "Once you create the line, toggle Line Drawing Mode off and double tap the line for settings.",
-                    "You will be able to modify the line as you please once you turn off Line Drawing Mode."
-                ]){
-                    disableDrawing()
-                }.position(using: gps, at: .topRight, offsetX: 200, offsetY: 200)
+                GeometryReader { geo in
+                    TipBoxViewFlasher(tips: TipLineDrawing){
+                        disableDrawing()
+                    }
+                }
+                .frame(width: 300)
+                .position(using: gps, at: .topRight, offsetX: 150, offsetY: 0)
             }
+            
+            if self.BEO.showTipViewStatic {
+                GeometryReader { geo in
+                    TipBoxViewStatic(tips: TipLineGestures){
+                        self.BEO.showTipViewStatic = false
+                    }
+                }
+                .frame(width: 300)
+                .position(using: gps, at: .topRight, offsetX: 150, offsetY: 0)
+            }
+            
             
 //            FloatingEmojiView()
 //                .position(using: gps, at: .topLeft, offsetX: 200, offsetY: 0)
@@ -241,6 +236,7 @@ struct CanvasEngine: View {
             
             switch MenuBarProvider.parseByTitle(title: buttonType) {
                 case .menuBar: return self.showMenuBar = !self.showMenuBar
+                case .info: return self.BEO.showTipViewStatic = !self.BEO.showTipViewStatic
                 case .toolbox: return self.toolBarIsEnabled = !self.toolBarIsEnabled
                 case .lock: return self.handleGestureLock() //self.BEO.isShowingPopUp = !self.BEO.isShowingPopUp //
                 case .canvasGrid: return
@@ -252,7 +248,7 @@ struct CanvasEngine: View {
                 case .reset: return
                 case .trash: return
                 case .boardBackground: return
-                case .profile: return self.BEO.isLoading = !self.BEO.isLoading
+                case .profile: return// self.BEO.isLoading = !self.BEO.isLoading
                 case .share: return
                 case .router: return
                 case .note: return
@@ -334,7 +330,7 @@ struct CanvasEngine: View {
     }
 //    
     func handleShare() {
-        let caller = MenuBarProvider.share.tool.title
+        let caller = MenuBarProvider.profile.tool.title
         let buddies = ManagedViewWindow(id: caller, viewBuilder: {NavStackWindow(id: caller, viewBuilder: {
             SignUpView().environmentObject(self.BEO)
         })})

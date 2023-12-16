@@ -156,6 +156,16 @@ struct CurvedLineDrawingManaged: View {
                 .position(quadBezierPoint(start: CGPoint(x: lifeStartX, y: lifeStartY), end: CGPoint(x: lifeEndX, y: lifeEndY), control: CGPoint(x: lifeCenterX, y: lifeCenterY)))
                 .gesture(self.lifeIsLocked ? nil : dragGestureForControlPoint())
         )
+        .overlay(
+            Rectangle()
+                .fill(Color.white.opacity(0.01))
+                .frame(width: Double(lifeWidth+300).bound(to: 20...500), height: 200)
+                .rotationEffect(lifeRotation)
+                .opacity(1)
+                .position(quadBezierPoint(start: CGPoint(x: lifeStartX, y: lifeStartY), end: CGPoint(x: lifeEndX, y: lifeEndY), control: CGPoint(x: lifeCenterX, y: lifeCenterY)))
+                .gesture(self.lifeIsLocked ? nil : dragGestureForControlPoint()
+                )
+        )
         .onTap {
             print("Tapped double")
             anchorsAreVisible = !anchorsAreVisible
@@ -203,8 +213,8 @@ struct CurvedLineDrawingManaged: View {
                     dragOffset = CGSize(width: (lifeCenterX - value.startLocation.x),
                                         height: (lifeCenterY - value.startLocation.y))
                 }
-                lifeCenterX = value.location.x + dragOffset.width
-                lifeCenterY = value.location.y + dragOffset.height
+                lifeCenterX = (value.location.x + dragOffset.width)
+                lifeCenterY = (value.location.y + dragOffset.height)
             }
             .onEnded { _ in
                 dragOffset = .zero

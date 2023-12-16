@@ -116,7 +116,7 @@ struct ActivityPlanView: View {
                 Section(header: Text("Field Lines")) {
                     
                     Text("Field Type: \(fieldName)")
-                    BarListPicker(initialSelected: self.isCurrentPlan ? self.BEO.boardBgName : self.activityPlan.backgroundView, viewBuilder: self.BEO.boardBgViewSettingItems) { v in
+                    BarListPicker(initialSelected: self.isCurrentPlan ? self.BEO.boardBgName : self.activityPlan.backgroundView, viewBuilder: self.BEO.boards.getAllMinis()) { v in
                         fieldName = v
                         if self.isCurrentPlan {
                             self.BEO.setBoardBgView(boardName: v)

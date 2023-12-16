@@ -16,6 +16,7 @@ class BoardEngineObject : ObservableObject {
     @Environment(\.colorScheme) var colorScheme
 //    @StateObject var sharedPrefs = SharedPrefs.shared
     @State var realmInstance = realm()
+    @Published var boards = Sports()
     @Published var boardRefreshFlag = true
     
     @Published var gesturesAreLocked: Bool = false
@@ -26,6 +27,7 @@ class BoardEngineObject : ObservableObject {
     @Published var userId: String? = nil
     @Published var userName: String? = nil
     // Current Board
+    @Published var showTipViewStatic: Bool = false
     @Published var isDraw: Bool = false
     @Published var isDrawing: String = "LINE"
     @Published var isLoading: Bool = true
@@ -142,23 +144,7 @@ class BoardEngineObject : ObservableObject {
             boardFieldLineColor = getFieldLineColor()
         }
     }
-    @Published var boardBgViewItems: [String: () -> AnyView] = [
-        "Empty View": { AnyView(EmptyView()) },
-        "Soccer Field Full View": { AnyView(SoccerFieldFullView(isMini: false)) },
-        "Soccer Field Half View": { AnyView(SoccerFieldHalfView(isMini: false)) },
-        "Football Field": {AnyView(FootballFieldView(isMini: false))},
-        "Basic Square View": {AnyView(BasicSquareView(isMini: false))},
-        "Soccer Field 1": {AnyView(ImageBgView(image: "soccer_one", isMini: false))}
-    ]
-    
-    @Published var boardBgViewSettingItems: [String: () -> AnyView] = [
-        "Empty View": { AnyView(EmptyView()) },
-        "Soccer Field Full View": { AnyView(SoccerFieldFullView(isMini: true)) },
-        "Soccer Field Half View": { AnyView(SoccerFieldHalfView(isMini: true)) },
-        "Football Field": { AnyView(FootballFieldView(isMini: true)) },
-        "Basic Square View": { AnyView(BasicSquareView(isMini: true)) },
-        "Soccer Field 1": { AnyView(ImageBgView(image: "soccer_one", isMini: true)) }
-    ]
+  
     func setBoardBgView(boardName: String) {
         boardBgName = boardName
     }
@@ -229,7 +215,7 @@ struct BoardEngine: View {
                          else {
                              if let temp = SoccerToolProvider.parseByTitle(title: item.toolType)?.tool.image {
                                  ManagedViewBoardTool(viewId: item.id, activityId: self.activityID, toolType: temp)
-                                     .zIndex(10.0)
+                                     .zIndex(20.0)
                                      .environmentObject(self.BEO)
                              }
                          }
@@ -261,7 +247,11 @@ struct BoardEngine: View {
             FieldOverlayView(width: self.BEO.canvasWidth, height: self.BEO.canvasHeight, background: {
                 self.BEO.boardBgColor
             }, overlay: {
-                if let temp = self.BEO.boardBgViewItems[self.BEO.boardBgName] { temp().environmentObject(self.BEO) }
+                if let CurrentBoardBackground = self.BEO.boards.getAllBoards()[self.BEO.boardBgName] {
+                    CurrentBoardBackground()
+                        .zIndex(2.0)
+                        .environmentObject(self.BEO)
+                }
             })
             .position(x: self.BEO.boardStartPosX, y: self.BEO.boardStartPosY).zIndex(2.0)
         )
