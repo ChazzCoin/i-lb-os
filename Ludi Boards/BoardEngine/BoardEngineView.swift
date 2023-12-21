@@ -38,6 +38,8 @@ class BoardEngineObject : ObservableObject {
     @Published var canvasScale: CGFloat = 0.2
     @Published var canvasRotation: CGFloat = 0.0
     @GestureState var gestureScale: CGFloat = 1.0
+    @Published var lastScaleValue: CGFloat = 1.0
+
     
     // Shared
     @Published var isShared: Bool = false

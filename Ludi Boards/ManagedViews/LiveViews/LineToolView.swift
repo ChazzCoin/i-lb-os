@@ -90,9 +90,20 @@ struct LineDrawingManaged: View {
         let lineStart = CGPoint(x: lifeStartX, y: lifeStartY)
         let lineEnd = CGPoint(x: lifeEndX, y: lifeEndY)
         let (lineWidth, lineHeight) = getWidthAndHeightOfLine(start: lineStart, end: lineEnd)
-        lifeWidthTouch = Double(lineWidth).bound(to: 100...200)
-        lifeHeightTouch = Double(lineHeight).bound(to: 100...200)
+        lifeWidthTouch = Double(lineWidth)
+        lifeHeightTouch = Double(lineHeight)
     }
+    func lengthOfLine(start: CGPoint, end: CGPoint) -> CGFloat {
+        let deltaX = end.x - start.x
+        let deltaY = end.y - start.y
+        return sqrt(deltaX * deltaX + deltaY * deltaY)
+    }
+    
+    func boundedLength(start: CGPoint, end: CGPoint) -> CGFloat {
+        let length = lengthOfLine(start: start, end: end)
+        return length.bounded(byMin: 1.0, andMax: length - 400.0)
+    }
+    
     var body: some View {
         Path { path in
             path.move(to: CGPoint(x: lifeStartX, y: lifeStartY))
@@ -119,7 +130,7 @@ struct LineDrawingManaged: View {
         .overlay(
             Rectangle()
                 .fill(Color.white.opacity(0.001))
-                .frame(width: Double(lifeWidth+400).bound(to: 20...500), height: 200)
+                .frame(width: boundedLength(start: CGPoint(x: lifeStartX, y: lifeStartY), end: CGPoint(x: lifeEndX, y: lifeEndY)), height: Double(lifeWidth+300))
                 .rotationEffect(lifeRotation)
                 .opacity(1)
                 .position(x: lifeCenterPoint.x.isFinite ? lifeCenterPoint.x : 0, y: lifeCenterPoint.y.isFinite ? lifeCenterPoint.y : 0)
@@ -455,6 +466,24 @@ struct LineDrawingManaged: View {
     }
     
     
+}
+
+
+struct MatchedShape: View {
+    var startPoint: CGPoint
+    var endPoint: CGPoint
+    var controlPoint1: CGPoint
+    var controlPoint2: CGPoint
+    
+    var body: some View {
+        Path { path in
+            path.move(to: startPoint)
+            path.addCurve(to: endPoint, control1: controlPoint1, control2: controlPoint2)
+        }
+        .stroke(Color.blue, style: StrokeStyle(lineWidth: 100.0, dash: [1]))
+        
+        .opacity(1)
+    }
 }
 
 struct LineOverlay: View {

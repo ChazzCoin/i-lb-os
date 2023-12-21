@@ -197,12 +197,12 @@ struct TipBoxViewStatic: View {
             }
         }
         .padding()
-        .frame(maxWidth: 300)
+        .frame(maxWidth: 350)
         .background(RoundedRectangle(cornerRadius: 12)
             .fill(Color(UIColor.systemBackground))
             .shadow(color: .gray.opacity(0.4), radius: 4, x: 0, y: 4))
         .padding()
-        .offset(y: self.isExpanded ? 0 : -150)
+//        .offset(y: self.isExpanded ? 0 : 0)
     }
 }
 

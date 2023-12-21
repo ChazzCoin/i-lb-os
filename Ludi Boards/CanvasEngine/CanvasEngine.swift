@@ -68,13 +68,15 @@ struct CanvasEngine: View {
     
     var scaleGestures: some Gesture {
         MagnificationGesture()
-            .updating(self.BEO.$gestureScale) { value, gestureScale, _ in
+            .onChanged { value in
                 if self.BEO.gesturesAreLocked { return }
-                gestureScale = value
+                let delta = value / self.BEO.lastScaleValue
+                self.BEO.canvasScale *= delta
+                self.BEO.lastScaleValue = value
             }
             .onEnded { value in
                 if self.BEO.gesturesAreLocked { return }
-                self.BEO.canvasScale *= value
+                self.BEO.lastScaleValue = 1.0
             }
     }
     
@@ -201,7 +203,7 @@ struct CanvasEngine: View {
             }
             .frame(width: 20000, height: 20000)
             .offset(x: self.BEO.canvasOffset.x, y: self.BEO.canvasOffset.y)
-            .scaleEffect(self.BEO.canvasScale * self.BEO.gestureScale)
+            .scaleEffect(self.BEO.canvasScale)
             .rotationEffect(Angle(degrees: self.BEO.canvasRotation))
             .zIndex(1.0)
             

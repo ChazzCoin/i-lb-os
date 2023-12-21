@@ -146,7 +146,11 @@ extension CGSize {
         return CGSize(width: self.width, height: self.height - deltaHeight)
     }
 }
-
+extension CGFloat {
+    func bounded(byMin minValue: CGFloat, andMax maxValue: CGFloat) -> CGFloat {
+        return Swift.max(Swift.min(self, maxValue), minValue)
+    }
+}
 
 extension CGPoint {
     

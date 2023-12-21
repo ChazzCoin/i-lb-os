@@ -157,14 +157,12 @@ struct CurvedLineDrawingManaged: View {
                 .gesture(self.lifeIsLocked ? nil : dragGestureForControlPoint())
         )
         .overlay(
-            Rectangle()
-                .fill(Color.white.opacity(0.01))
-                .frame(width: Double(lifeWidth+300).bound(to: 20...500), height: 200)
-                .rotationEffect(lifeRotation)
-                .opacity(1)
-                .position(quadBezierPoint(start: CGPoint(x: lifeStartX, y: lifeStartY), end: CGPoint(x: lifeEndX, y: lifeEndY), control: CGPoint(x: lifeCenterX, y: lifeCenterY)))
-                .gesture(self.lifeIsLocked ? nil : dragGestureForControlPoint()
-                )
+            MatchedShape(
+                startPoint: CGPoint(x: 50, y: 150),
+                endPoint: CGPoint(x: 250, y: 150),
+                controlPoint1: CGPoint(x: 100, y: 50),
+                controlPoint2: CGPoint(x: 200, y: 50)
+            )
         )
         .onTap {
             print("Tapped double")
