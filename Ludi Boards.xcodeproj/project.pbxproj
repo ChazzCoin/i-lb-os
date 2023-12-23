@@ -58,6 +58,10 @@
 		FB58E8802B02B26C00FD9E2E /* DragAndDrop.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58E87F2B02B26C00FD9E2E /* DragAndDrop.swift */; };
 		FB58E8822B030F1D00FD9E2E /* RealmFind.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58E8812B030F1D00FD9E2E /* RealmFind.swift */; };
 		FB58E8842B03169700FD9E2E /* TimeProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58E8832B03169700FD9E2E /* TimeProvider.swift */; };
+		FB829F0A2B36A83300FAC6E0 /* WrldsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB829F092B36A83300FAC6E0 /* WrldsApp.swift */; };
+		FB829F0C2B36A83300FAC6E0 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB829F0B2B36A83300FAC6E0 /* ContentView.swift */; };
+		FB829F0E2B36A83400FAC6E0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FB829F0D2B36A83400FAC6E0 /* Assets.xcassets */; };
+		FB829F112B36A83400FAC6E0 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FB829F102B36A83400FAC6E0 /* Preview Assets.xcassets */; };
 		FB93BB172B033E2000864CB2 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FB93BB162B033E2000864CB2 /* GoogleService-Info.plist */; };
 		FB93BB1B2B03471C00864CB2 /* FireData.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB93BB1A2B03471C00864CB2 /* FireData.swift */; };
 		FB982F912B19D1B900C0DA03 /* FirebaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB982F902B19D1B900C0DA03 /* FirebaseService.swift */; };
@@ -186,6 +190,11 @@
 		FB58E87F2B02B26C00FD9E2E /* DragAndDrop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragAndDrop.swift; sourceTree = "<group>"; };
 		FB58E8812B030F1D00FD9E2E /* RealmFind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmFind.swift; sourceTree = "<group>"; };
 		FB58E8832B03169700FD9E2E /* TimeProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeProvider.swift; sourceTree = "<group>"; };
+		FB829F072B36A83300FAC6E0 /* Wrlds.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Wrlds.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FB829F092B36A83300FAC6E0 /* WrldsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WrldsApp.swift; sourceTree = "<group>"; };
+		FB829F0B2B36A83300FAC6E0 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		FB829F0D2B36A83400FAC6E0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		FB829F102B36A83400FAC6E0 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		FB93BB162B033E2000864CB2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
 		FB93BB1A2B03471C00864CB2 /* FireData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireData.swift; sourceTree = "<group>"; };
 		FB982F902B19D1B900C0DA03 /* FirebaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseService.swift; sourceTree = "<group>"; };
@@ -242,6 +251,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		FB829F042B36A83300FAC6E0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		FBD9AFA12AFF00BF005F8620 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -397,6 +413,25 @@
 			path = modifiers;
 			sourceTree = "<group>";
 		};
+		FB829F082B36A83300FAC6E0 /* Wrlds */ = {
+			isa = PBXGroup;
+			children = (
+				FB829F092B36A83300FAC6E0 /* WrldsApp.swift */,
+				FB829F0B2B36A83300FAC6E0 /* ContentView.swift */,
+				FB829F0D2B36A83400FAC6E0 /* Assets.xcassets */,
+				FB829F0F2B36A83400FAC6E0 /* Preview Content */,
+			);
+			path = Wrlds;
+			sourceTree = "<group>";
+		};
+		FB829F0F2B36A83400FAC6E0 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				FB829F102B36A83400FAC6E0 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
 		FB982F8F2B19C41100C0DA03 /* LiveViews */ = {
 			isa = PBXGroup;
 			children = (
@@ -421,6 +456,7 @@
 			isa = PBXGroup;
 			children = (
 				FBD9AFA62AFF00BF005F8620 /* Ludi Boards */,
+				FB829F082B36A83300FAC6E0 /* Wrlds */,
 				FBD9AFA52AFF00BF005F8620 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -429,6 +465,7 @@
 			isa = PBXGroup;
 			children = (
 				FBD9AFA42AFF00BF005F8620 /* Ludi Boards.app */,
+				FB829F072B36A83300FAC6E0 /* Wrlds.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -571,6 +608,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		FB829F062B36A83300FAC6E0 /* Wrlds */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FB829F142B36A83400FAC6E0 /* Build configuration list for PBXNativeTarget "Wrlds" */;
+			buildPhases = (
+				FB829F032B36A83300FAC6E0 /* Sources */,
+				FB829F042B36A83300FAC6E0 /* Frameworks */,
+				FB829F052B36A83300FAC6E0 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Wrlds;
+			productName = Wrlds;
+			productReference = FB829F072B36A83300FAC6E0 /* Wrlds.app */;
+			productType = "com.apple.product-type.application";
+		};
 		FBD9AFA32AFF00BF005F8620 /* Ludi Boards */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = FBD9AFB22AFF00BF005F8620 /* Build configuration list for PBXNativeTarget "Ludi Boards" */;
@@ -622,6 +676,9 @@
 				LastSwiftUpdateCheck = 1500;
 				LastUpgradeCheck = 1500;
 				TargetAttributes = {
+					FB829F062B36A83300FAC6E0 = {
+						CreatedOnToolsVersion = 15.0.1;
+					};
 					FBD9AFA32AFF00BF005F8620 = {
 						CreatedOnToolsVersion = 15.0.1;
 					};
@@ -645,11 +702,21 @@
 			projectRoot = "";
 			targets = (
 				FBD9AFA32AFF00BF005F8620 /* Ludi Boards */,
+				FB829F062B36A83300FAC6E0 /* Wrlds */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		FB829F052B36A83300FAC6E0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FB829F112B36A83400FAC6E0 /* Preview Assets.xcassets in Resources */,
+				FB829F0E2B36A83400FAC6E0 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		FBD9AFA22AFF00BF005F8620 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -663,6 +730,15 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		FB829F032B36A83300FAC6E0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FB829F0C2B36A83300FAC6E0 /* ContentView.swift in Sources */,
+				FB829F0A2B36A83300FAC6E0 /* WrldsApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		FBD9AFA02AFF00BF005F8620 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -773,6 +849,68 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		FB829F122B36A83400FAC6E0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"Wrlds/Preview Content\"";
+				DEVELOPMENT_TEAM = 248J2GKL56;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Wrlds;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = io.ludi.Wrlds;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		FB829F132B36A83400FAC6E0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"Wrlds/Preview Content\"";
+				DEVELOPMENT_TEAM = 248J2GKL56;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Wrlds;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = io.ludi.Wrlds;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		FBD9AFB02AFF00BF005F8620 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -961,6 +1099,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		FB829F142B36A83400FAC6E0 /* Build configuration list for PBXNativeTarget "Wrlds" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FB829F122B36A83400FAC6E0 /* Debug */,
+				FB829F132B36A83400FAC6E0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		FBD9AF9F2AFF00BE005F8620 /* Build configuration list for PBXProject "Ludi Boards" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

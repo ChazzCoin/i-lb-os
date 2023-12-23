@@ -204,7 +204,7 @@ struct BoardEngine: View {
              if self.BEO.boardRefreshFlag {
                  ForEach(self.basicTools) { item in
                      if !item.isDeleted {
-                         if item.toolType == "LINE" {
+                         if item.toolType == "LINE" || item.toolType == "DOTTED-LINE" {
                              LineDrawingManaged(viewId: item.id, activityId: self.activityID)
                                  .zIndex(20.0)
                                  .environmentObject(self.BEO)
@@ -239,7 +239,7 @@ struct BoardEngine: View {
                          path.move(to: drawingStartPoint)
                          path.addLine(to: drawingEndPoint)
                      }
-                     .stroke(Color.red, style: StrokeStyle(lineWidth: 10, dash: [self.BEO.isDrawing == "LINE" ? 1 : 55]))
+                     .stroke(Color.red, style: StrokeStyle(lineWidth: 10, dash: [self.BEO.isDrawing == "DOTTED_LINE" ? 55 : 1]))
                  }
              }
             

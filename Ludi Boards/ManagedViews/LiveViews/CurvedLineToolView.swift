@@ -133,6 +133,15 @@ struct CurvedLineDrawingManaged: View {
         .stroke(lifeColor, style: StrokeStyle(lineWidth: lifeWidth, dash: [lifeLineDash]))
         .opacity(!isDisabledChecker() && !isDeletedChecker() ? 1 : 0.0)
         .overlay(
+            MatchedShape(
+                startPoint: CGPoint(x: lifeStartX, y: lifeStartY),
+                endPoint: CGPoint(x: lifeEndX, y: lifeEndY),
+                controlPoint1: CGPoint(x: lifeCenterX, y: lifeCenterY)
+            ).onTap(perform: {
+                anchorsAreVisible = !anchorsAreVisible
+            }).simultaneousGesture(doubleTap())
+        )
+        .overlay(
             Circle()
                 .fill(Color.AIMYellow)
                 .frame(width: 150, height: 150) // Adjust size for easier tapping
@@ -151,23 +160,15 @@ struct CurvedLineDrawingManaged: View {
         .overlay(
             Circle() // Use a circle for the control point
                 .fill(Color.AIMYellow)
-                .frame(width: 100, height: 100) // Adjust size as needed
+                .frame(width: 150, height: 150) // Adjust size as needed
                 .opacity(anchorsAreVisible ? 1 : 0)
                 .position(quadBezierPoint(start: CGPoint(x: lifeStartX, y: lifeStartY), end: CGPoint(x: lifeEndX, y: lifeEndY), control: CGPoint(x: lifeCenterX, y: lifeCenterY)))
                 .gesture(self.lifeIsLocked ? nil : dragGestureForControlPoint())
         )
-        .overlay(
-            MatchedShape(
-                startPoint: CGPoint(x: 50, y: 150),
-                endPoint: CGPoint(x: 250, y: 150),
-                controlPoint1: CGPoint(x: 100, y: 50),
-                controlPoint2: CGPoint(x: 200, y: 50)
-            )
-        )
-        .onTap {
-            print("Tapped double")
-            anchorsAreVisible = !anchorsAreVisible
-        }
+//        .onTap {
+//            print("Tapped double")
+//            anchorsAreVisible = !anchorsAreVisible
+//        }
         .onAppear() {
         
             reference = reference.child(self.activityId).child(self.viewId)
@@ -175,7 +176,6 @@ struct CurvedLineDrawingManaged: View {
             loadFromRealm()
             
             observeView()
-//            observeFromRealm()
 
             CodiChannel.TOOL_ATTRIBUTES.receive(on: RunLoop.main) { vId in
                 let temp = vId as! ViewAtts
@@ -203,6 +203,29 @@ struct CurvedLineDrawingManaged: View {
             }.store(in: &cancellables)
         }
     }
+    
+    // Drag gesture definition
+    private func doubleTap() -> some Gesture {
+        TapGesture(count: 2).onEnded({ _ in
+            print("Tapped double")
+            popUpIsVisible = !popUpIsVisible
+            CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(
+               windowId: "mv_settings",
+               stateAction: popUpIsVisible ? "open" : "close",
+               viewId: viewId
+            ))
+            if popUpIsVisible {
+                CodiChannel.TOOL_ATTRIBUTES.send(value: ViewAtts(
+                   viewId: viewId,
+                   size: lifeWidth,
+                   color: lifeColor,
+                   level: ToolLevels.LINE.rawValue,
+                   stateAction: popUpIsVisible ? "open" : "close")
+                )
+            }
+        })
+    }
+
     
     func dragGestureForControlPoint() -> some Gesture {
         DragGesture()

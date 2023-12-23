@@ -473,15 +473,14 @@ struct MatchedShape: View {
     var startPoint: CGPoint
     var endPoint: CGPoint
     var controlPoint1: CGPoint
-    var controlPoint2: CGPoint
     
     var body: some View {
         Path { path in
             path.move(to: startPoint)
-            path.addCurve(to: endPoint, control1: controlPoint1, control2: controlPoint2)
+            path.addQuadCurve(to: endPoint,
+                              control: controlPoint1)
         }
-        .stroke(Color.blue, style: StrokeStyle(lineWidth: 100.0, dash: [1]))
-        
+        .stroke(Color.white.opacity(0.001), style: StrokeStyle(lineWidth: 200.0, dash: [1]))
         .opacity(1)
     }
 }
