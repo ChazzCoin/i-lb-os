@@ -189,7 +189,6 @@ struct SettingsView: View {
     }
     
     func closeWindow() {
-//        closeSession()
         CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: "mv_settings", stateAction: "close", viewId: viewId))
     }
     

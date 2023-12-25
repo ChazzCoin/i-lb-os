@@ -100,19 +100,13 @@ struct enableManagedViewTool : ViewModifier {
                     if case .second(true, let drag?) = value {
                         self.position = CGPoint(x: self.position.x + drag.translation.width, y: self.position.y + drag.translation.height)
                         updateRealmPos()
-//                        CodiChannel.TOOL_ON_FOLLOW.send(value: ViewFollowing(
-//                            viewId: self.viewId,
-//                            x: self.position.x,
-//                            y: self.position.y,
-//                            hasDropped: true
-//                        ))
                         self.isDragging = false
                     }
                 }.simultaneously(with: self.lifeIsLocked ? nil : TapGesture(count: 2)
                     .onEnded { _ in
                         print("Tapped")
                         popUpIsVisible = !popUpIsVisible
-                        CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: "mv_settings", stateAction: popUpIsVisible ? "open" : "close", viewId: viewId))
+                        CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: "pop_settings", stateAction: popUpIsVisible ? "open" : "close", viewId: viewId, x: self.position.x, y: self.position.y))
                         if popUpIsVisible {
                             CodiChannel.TOOL_ATTRIBUTES.send(value: ViewAtts(
                                 viewId: viewId,
@@ -149,7 +143,7 @@ struct enableManagedViewTool : ViewModifier {
             
             CodiChannel.MENU_WINDOW_CONTROLLER.receive(on: RunLoop.main) { vId in
                 let temp = vId as! WindowController
-                if temp.windowId != "mv_settings" {return}
+                if temp.windowId != "pop_settings" {return}
                 if temp.stateAction == "close" {
                     popUpIsVisible = false
                 }

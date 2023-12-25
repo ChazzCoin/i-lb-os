@@ -205,9 +205,11 @@ struct LineDrawingManaged: View {
                 print("Tapped double")
                 popUpIsVisible = !popUpIsVisible
                 CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(
-                   windowId: "mv_settings",
+                   windowId: "pop_settings",
                    stateAction: popUpIsVisible ? "open" : "close",
-                   viewId: viewId
+                   viewId: viewId,
+                   x: self.lifeStartX + 500,
+                   y: self.lifeStartY
                 ))
                 if popUpIsVisible {
                     CodiChannel.TOOL_ATTRIBUTES.send(value: ViewAtts(
@@ -240,6 +242,11 @@ struct LineDrawingManaged: View {
                 lifeEndX = self.originalLifeEnd.x + translation.width
                 lifeEndY = self.originalLifeEnd.y + translation.height
                 loadCenterPoint()
+                CodiChannel.TOOL_ON_FOLLOW.send(value: ViewFollowing(
+                    viewId: self.viewId,
+                    x: lifeStartX + 200,
+                    y: lifeStartY + 200
+                ))
                 updateRealmPos(start: CGPoint(x: lifeStartX, y: lifeStartY),
                             end: CGPoint(x: lifeEndX, y: lifeEndY))
             }
@@ -263,9 +270,11 @@ struct LineDrawingManaged: View {
                print("Tapped double")
                popUpIsVisible = !popUpIsVisible
                CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(
-                  windowId: "mv_settings",
+                  windowId: "pop_settings",
                   stateAction: popUpIsVisible ? "open" : "close",
-                  viewId: viewId
+                  viewId: viewId,
+                  x: self.lifeStartX + 500,
+                  y: self.lifeStartY
                ))
                if popUpIsVisible {
                    CodiChannel.TOOL_ATTRIBUTES.send(value: ViewAtts(

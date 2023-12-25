@@ -13,11 +13,15 @@ class WindowController {
     var windowId: String = ""
     var stateAction: String = "open" //close
     var viewId: String = ""
+    var x: CGFloat? = nil
+    var y: CGFloat? = nil
     
-    init(windowId: String, stateAction: String, viewId: String="") {
+    init(windowId: String, stateAction: String, viewId: String="", x: CGFloat?=nil, y: CGFloat?=nil) {
         self.windowId = windowId
         self.stateAction = stateAction
         self.viewId = viewId
+        self.x = x
+        self.y = y
     }
 }
 

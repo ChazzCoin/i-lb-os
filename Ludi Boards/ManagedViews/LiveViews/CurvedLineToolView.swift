@@ -165,10 +165,6 @@ struct CurvedLineDrawingManaged: View {
                 .position(quadBezierPoint(start: CGPoint(x: lifeStartX, y: lifeStartY), end: CGPoint(x: lifeEndX, y: lifeEndY), control: CGPoint(x: lifeCenterX, y: lifeCenterY)))
                 .gesture(self.lifeIsLocked ? nil : dragGestureForControlPoint())
         )
-//        .onTap {
-//            print("Tapped double")
-//            anchorsAreVisible = !anchorsAreVisible
-//        }
         .onAppear() {
         
             reference = reference.child(self.activityId).child(self.viewId)
@@ -210,9 +206,11 @@ struct CurvedLineDrawingManaged: View {
             print("Tapped double")
             popUpIsVisible = !popUpIsVisible
             CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(
-               windowId: "mv_settings",
+               windowId: "pop_settings",
                stateAction: popUpIsVisible ? "open" : "close",
-               viewId: viewId
+               viewId: viewId,
+               x: self.lifeStartX,
+               y: self.lifeStartY
             ))
             if popUpIsVisible {
                 CodiChannel.TOOL_ATTRIBUTES.send(value: ViewAtts(
@@ -253,6 +251,11 @@ struct CurvedLineDrawingManaged: View {
                 if isStart {
                     self.lifeStartX = value.location.x
                     self.lifeStartY = value.location.y
+                    CodiChannel.TOOL_ON_FOLLOW.send(value: ViewFollowing(
+                        viewId: self.viewId,
+                        x: self.lifeStartX,
+                        y: (self.lifeStartY + 200)
+                    ))
                 } else {
                     self.lifeEndX = value.location.x
                     self.lifeEndY = value.location.y
