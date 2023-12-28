@@ -490,7 +490,6 @@ struct MatchedShape: View {
                               control: controlPoint1)
         }
         .stroke(Color.white.opacity(0.001), style: StrokeStyle(lineWidth: 200.0, dash: [1]))
-        .opacity(1)
     }
 }
 

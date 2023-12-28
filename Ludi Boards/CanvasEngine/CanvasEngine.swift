@@ -133,8 +133,8 @@ struct CanvasEngine: View {
             MenuBarStatic(){
                 menuIsOpen = !menuIsOpen
             }
-            .frame(width: 60, height: menuIsOpen ? (gps.screenSize.height - 200) : 60)
-            .position(using: gps, at: .topLeft, offsetX: 50, offsetY: menuIsOpen ? ((gps.screenSize.height - 200) / 2) : 30)
+            .frame(width: 60, height: menuIsOpen ? (gps.screenSize.height - 100) : 60)
+            .position(using: gps, at: .topLeft, offsetX: 50, offsetY: menuIsOpen ? ((gps.screenSize.height - 100) / 2) : 30)
 //            GeometryReader { geo in
 //                MenuBarStatic()
 //            }

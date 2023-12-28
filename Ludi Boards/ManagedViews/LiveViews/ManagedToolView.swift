@@ -11,6 +11,27 @@ import FirebaseDatabase
 import RealmSwift
 import Combine
 
+
+struct ManagedViewBoardTool: View {
+    let viewId: String
+    let activityId: String
+    let toolType: String
+    
+    @State private var color: Color = .black
+    @State private var rotation = 0.0
+    
+    @State private var position = CGPoint(x: 100, y: 100)
+    @GestureState private var dragOffset = CGSize.zero
+    @State private var isDragging = false
+
+    var body: some View {
+        Image(toolType)
+            .resizable()
+            .enableMVT(viewId: viewId, activityId: activityId)
+    }
+}
+
+
 struct enableManagedViewTool : ViewModifier {
     @State var viewId: String
     @State var activityId: String
@@ -176,6 +197,8 @@ struct enableManagedViewTool : ViewModifier {
         MVS?.start()
     }
     
+    
+    // Load From Realm
     func loadFromRealm(managedView: ManagedView?=nil) {
         if isDisabledChecker() {return}
         var mv = managedView
@@ -196,6 +219,7 @@ struct enableManagedViewTool : ViewModifier {
         minSizeCheck()
     }
     
+    // Observe From Realm
     func observeFromRealm() {
         if let mv = realmInstance.object(ofType: ManagedView.self, forPrimaryKey: self.viewId) {
             managedViewNotificationToken = mv.observe { change in
@@ -251,7 +275,7 @@ struct enableManagedViewTool : ViewModifier {
         }
         
         let nextCoordinate = coordinateStack.removeFirst()
-        withAnimation { self.position = nextCoordinate}
+        withAnimation { self.position = nextCoordinate }
 
         // Schedule the next animation after a delay
         DispatchQueue.main.asyncAfter(deadline: .now()) {

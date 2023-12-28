@@ -273,8 +273,6 @@ struct CurvedLineDrawingManaged: View {
             }
     }
     
-    
-    
     func observeView() {
         observeFromRealm()
         MVS?.start()
@@ -462,7 +460,6 @@ struct CurvedLineDrawingManaged: View {
         lifeColorAlpha = umv.colorAlpha
         lifeColor = colorFromRGBA(red: lifeColorRed, green: lifeColorGreen, blue: lifeColorBlue, alpha: lifeColorAlpha)
         
-//        loadCenterPoint()
         loadWidthAndHeight()
         loadRotationOfLine()
     }

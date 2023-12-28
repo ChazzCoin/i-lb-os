@@ -9,6 +9,8 @@ import Foundation
 import FirebaseDatabase
 import RealmSwift
 
+
+//
 class ManagedViewsService: ObservableObject {
     let realmInstance: Realm
     var reference: DatabaseReference = Database.database().reference()
@@ -68,6 +70,16 @@ class ManagedViewService: ObservableObject {
                        }
                    }
                })
+        isObserving = true
+    }
+    
+    func observeActivity(activityId: String) {
+        guard !isObserving else { return }
+        observerHandle = reference.child(DatabasePaths.managedViews.rawValue)
+            .child(activityId).observe(.childAdded, with: { snapshot in
+                let _ = snapshot.toLudiObjects(ManagedView.self, realm: self.realmInstance)
+            })
+
         isObserving = true
     }
 

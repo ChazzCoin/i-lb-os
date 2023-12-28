@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		FB07B6702B17A5B9009A0962 /* mvModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB07B66F2B17A5B9009A0962 /* mvModifier.swift */; };
+		FB07B6702B17A5B9009A0962 /* ManagedToolView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB07B66F2B17A5B9009A0962 /* ManagedToolView.swift */; };
 		FB10AE052B0DC8E600295F4B /* Tips.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB10AE042B0DC8E600295F4B /* Tips.swift */; };
 		FB10AE072B0DCDB500295F4B /* FloatingEmoji.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB10AE062B0DCDB500295F4B /* FloatingEmoji.swift */; };
 		FB10AE092B0DD76C00295F4B /* EmojiProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB10AE082B0DD76C00295F4B /* EmojiProvider.swift */; };
@@ -39,7 +39,7 @@
 		FB48409A2B1EBC940003377A /* Sports.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB4840992B1EBC940003377A /* Sports.swift */; };
 		FB48409C2B1EBE8B0003377A /* StopWatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB48409B2B1EBE8B0003377A /* StopWatch.swift */; };
 		FB5094262B058215000AEA96 /* LazyRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5094252B058215000AEA96 /* LazyRow.swift */; };
-		FB5094282B0584CA000AEA96 /* ManagedViewWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5094272B0584CA000AEA96 /* ManagedViewWindow.swift */; };
+		FB5094282B0584CA000AEA96 /* NavStackWindowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5094272B0584CA000AEA96 /* NavStackWindowView.swift */; };
 		FB50942A2B05856D000AEA96 /* LineToolView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5094292B05856D000AEA96 /* LineToolView.swift */; };
 		FB581BEB2B1EF39C00F5C90F /* Stopwatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB581BEA2B1EF39C00F5C90F /* Stopwatch.swift */; };
 		FB581BED2B1F8A6800F5C90F /* KeyboardListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB581BEC2B1F8A6800F5C90F /* KeyboardListener.swift */; };
@@ -47,7 +47,6 @@
 		FB58A1B62B1804C80024B9A2 /* FlashingLight.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58A1B52B1804C80024B9A2 /* FlashingLight.swift */; };
 		FB58E8762B01F3D200FD9E2E /* FireParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58E8752B01F3D200FD9E2E /* FireParser.swift */; };
 		FB58E8782B01F40300FD9E2E /* FireCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58E8772B01F40300FD9E2E /* FireCore.swift */; };
-		FB58E87C2B02B1F100FD9E2E /* lineModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58E87B2B02B1F000FD9E2E /* lineModifier.swift */; };
 		FB58E87E2B02B21700FD9E2E /* CoreMods.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58E87D2B02B21700FD9E2E /* CoreMods.swift */; };
 		FB58E8802B02B26C00FD9E2E /* DragAndDrop.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58E87F2B02B26C00FD9E2E /* DragAndDrop.swift */; };
 		FB58E8822B030F1D00FD9E2E /* RealmFind.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58E8812B030F1D00FD9E2E /* RealmFind.swift */; };
@@ -57,6 +56,7 @@
 		FB829F0E2B36A83400FAC6E0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FB829F0D2B36A83400FAC6E0 /* Assets.xcassets */; };
 		FB829F112B36A83400FAC6E0 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FB829F102B36A83400FAC6E0 /* Preview Assets.xcassets */; };
 		FB829F172B3D4DF500FAC6E0 /* DispatchQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB829F162B3D4DF500FAC6E0 /* DispatchQueue.swift */; };
+		FB829F192B3D540100FAC6E0 /* ManagedWindowObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB829F182B3D540100FAC6E0 /* ManagedWindowObjects.swift */; };
 		FB93BB172B033E2000864CB2 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FB93BB162B033E2000864CB2 /* GoogleService-Info.plist */; };
 		FB93BB1B2B03471C00864CB2 /* FireData.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB93BB1A2B03471C00864CB2 /* FireData.swift */; };
 		FB982F912B19D1B900C0DA03 /* FirebaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB982F902B19D1B900C0DA03 /* FirebaseService.swift */; };
@@ -92,8 +92,8 @@
 		FBA4FB572B15AA2700BF409E /* GlobalPositioning.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBA4FB562B15AA2700BF409E /* GlobalPositioning.swift */; };
 		FBABDAC52B20376F00321A00 /* ConfirmationPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBABDAC42B20376F00321A00 /* ConfirmationPopup.swift */; };
 		FBABDAC72B20456700321A00 /* ToolBarSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBABDAC62B20456700321A00 /* ToolBarSettings.swift */; };
-		FBABDAC92B20469900321A00 /* mvListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBABDAC82B20469900321A00 /* mvListener.swift */; };
-		FBAE62AD2B295A8100E008D5 /* MvPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBAE62AC2B295A8100E008D5 /* MvPopup.swift */; };
+		FBABDAC92B20469900321A00 /* ManagedViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBABDAC82B20469900321A00 /* ManagedViewManager.swift */; };
+		FBAE62AD2B295A8100E008D5 /* ManagedPopUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBAE62AC2B295A8100E008D5 /* ManagedPopUpView.swift */; };
 		FBAE62AF2B2A3FD200E008D5 /* CurvedLineToolView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBAE62AE2B2A3FD200E008D5 /* CurvedLineToolView.swift */; };
 		FBB450002B04B7580096F8EB /* ColorProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBB44FFF2B04B7580096F8EB /* ColorProvider.swift */; };
 		FBB450022B052B180096F8EB /* FireLiveData.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBB450012B052B180096F8EB /* FireLiveData.swift */; };
@@ -112,7 +112,6 @@
 		FBD9AFCD2B008457005F8620 /* UserToActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFCC2B008457005F8620 /* UserToActivity.swift */; };
 		FBD9AFD22B008CAB005F8620 /* MenuBarProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFD12B008CAB005F8620 /* MenuBarProvider.swift */; };
 		FBD9AFD52B008F6F005F8620 /* Channels.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFD42B008F6F005F8620 /* Channels.swift */; };
-		FBD9AFD72B00BB8F005F8620 /* ManagedViewBoardTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFD62B00BB8F005F8620 /* ManagedViewBoardTool.swift */; };
 		FBD9AFD92B01CB91005F8620 /* SoccerToolProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFD82B01CB91005F8620 /* SoccerToolProvider.swift */; };
 		FBDF0DC52B21811000FADE44 /* SharedSessionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDF0DC42B21811000FADE44 /* SharedSessionsView.swift */; };
 		FBDF0DC72B224D2600FADE44 /* ActivityPlanService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDF0DC62B224D2600FADE44 /* ActivityPlanService.swift */; };
@@ -134,7 +133,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		FB07B66F2B17A5B9009A0962 /* mvModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mvModifier.swift; sourceTree = "<group>"; };
+		FB07B66F2B17A5B9009A0962 /* ManagedToolView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedToolView.swift; sourceTree = "<group>"; };
 		FB10AE042B0DC8E600295F4B /* Tips.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tips.swift; sourceTree = "<group>"; };
 		FB10AE062B0DCDB500295F4B /* FloatingEmoji.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingEmoji.swift; sourceTree = "<group>"; };
 		FB10AE082B0DD76C00295F4B /* EmojiProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiProvider.swift; sourceTree = "<group>"; };
@@ -166,7 +165,7 @@
 		FB4840992B1EBC940003377A /* Sports.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sports.swift; sourceTree = "<group>"; };
 		FB48409B2B1EBE8B0003377A /* StopWatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopWatch.swift; sourceTree = "<group>"; };
 		FB5094252B058215000AEA96 /* LazyRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LazyRow.swift; sourceTree = "<group>"; };
-		FB5094272B0584CA000AEA96 /* ManagedViewWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedViewWindow.swift; sourceTree = "<group>"; };
+		FB5094272B0584CA000AEA96 /* NavStackWindowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavStackWindowView.swift; sourceTree = "<group>"; };
 		FB5094292B05856D000AEA96 /* LineToolView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineToolView.swift; sourceTree = "<group>"; };
 		FB581BEA2B1EF39C00F5C90F /* Stopwatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stopwatch.swift; sourceTree = "<group>"; };
 		FB581BEC2B1F8A6800F5C90F /* KeyboardListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardListener.swift; sourceTree = "<group>"; };
@@ -174,7 +173,6 @@
 		FB58A1B52B1804C80024B9A2 /* FlashingLight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlashingLight.swift; sourceTree = "<group>"; };
 		FB58E8752B01F3D200FD9E2E /* FireParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireParser.swift; sourceTree = "<group>"; };
 		FB58E8772B01F40300FD9E2E /* FireCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireCore.swift; sourceTree = "<group>"; };
-		FB58E87B2B02B1F000FD9E2E /* lineModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = lineModifier.swift; sourceTree = "<group>"; };
 		FB58E87D2B02B21700FD9E2E /* CoreMods.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreMods.swift; sourceTree = "<group>"; };
 		FB58E87F2B02B26C00FD9E2E /* DragAndDrop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragAndDrop.swift; sourceTree = "<group>"; };
 		FB58E8812B030F1D00FD9E2E /* RealmFind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmFind.swift; sourceTree = "<group>"; };
@@ -185,6 +183,7 @@
 		FB829F0D2B36A83400FAC6E0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FB829F102B36A83400FAC6E0 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		FB829F162B3D4DF500FAC6E0 /* DispatchQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatchQueue.swift; sourceTree = "<group>"; };
+		FB829F182B3D540100FAC6E0 /* ManagedWindowObjects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedWindowObjects.swift; sourceTree = "<group>"; };
 		FB93BB162B033E2000864CB2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
 		FB93BB1A2B03471C00864CB2 /* FireData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireData.swift; sourceTree = "<group>"; };
 		FB982F902B19D1B900C0DA03 /* FirebaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseService.swift; sourceTree = "<group>"; };
@@ -198,8 +197,8 @@
 		FBA4FB562B15AA2700BF409E /* GlobalPositioning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalPositioning.swift; sourceTree = "<group>"; };
 		FBABDAC42B20376F00321A00 /* ConfirmationPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmationPopup.swift; sourceTree = "<group>"; };
 		FBABDAC62B20456700321A00 /* ToolBarSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolBarSettings.swift; sourceTree = "<group>"; };
-		FBABDAC82B20469900321A00 /* mvListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mvListener.swift; sourceTree = "<group>"; };
-		FBAE62AC2B295A8100E008D5 /* MvPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MvPopup.swift; sourceTree = "<group>"; };
+		FBABDAC82B20469900321A00 /* ManagedViewManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedViewManager.swift; sourceTree = "<group>"; };
+		FBAE62AC2B295A8100E008D5 /* ManagedPopUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedPopUpView.swift; sourceTree = "<group>"; };
 		FBAE62AE2B2A3FD200E008D5 /* CurvedLineToolView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurvedLineToolView.swift; sourceTree = "<group>"; };
 		FBB44FFF2B04B7580096F8EB /* ColorProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorProvider.swift; sourceTree = "<group>"; };
 		FBB450012B052B180096F8EB /* FireLiveData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireLiveData.swift; sourceTree = "<group>"; };
@@ -219,7 +218,6 @@
 		FBD9AFCC2B008457005F8620 /* UserToActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserToActivity.swift; sourceTree = "<group>"; };
 		FBD9AFD12B008CAB005F8620 /* MenuBarProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarProvider.swift; sourceTree = "<group>"; };
 		FBD9AFD42B008F6F005F8620 /* Channels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Channels.swift; sourceTree = "<group>"; };
-		FBD9AFD62B00BB8F005F8620 /* ManagedViewBoardTool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedViewBoardTool.swift; sourceTree = "<group>"; };
 		FBD9AFD82B01CB91005F8620 /* SoccerToolProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoccerToolProvider.swift; sourceTree = "<group>"; };
 		FBDF0DC42B21811000FADE44 /* SharedSessionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedSessionsView.swift; sourceTree = "<group>"; };
 		FBDF0DC62B224D2600FADE44 /* ActivityPlanService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityPlanService.swift; sourceTree = "<group>"; };
@@ -382,7 +380,6 @@
 		FB58E87A2B02B1E200FD9E2E /* modifiers */ = {
 			isa = PBXGroup;
 			children = (
-				FB58E87B2B02B1F000FD9E2E /* lineModifier.swift */,
 				FB58E87F2B02B26C00FD9E2E /* DragAndDrop.swift */,
 				FB58E87D2B02B21700FD9E2E /* CoreMods.swift */,
 			);
@@ -420,10 +417,11 @@
 		FB982F8F2B19C41100C0DA03 /* LiveViews */ = {
 			isa = PBXGroup;
 			children = (
-				FBAE62AE2B2A3FD200E008D5 /* CurvedLineToolView.swift */,
-				FB07B66F2B17A5B9009A0962 /* mvModifier.swift */,
+				FB07B66F2B17A5B9009A0962 /* ManagedToolView.swift */,
 				FB5094292B05856D000AEA96 /* LineToolView.swift */,
-				FBABDAC82B20469900321A00 /* mvListener.swift */,
+				FBAE62AE2B2A3FD200E008D5 /* CurvedLineToolView.swift */,
+				FBABDAC82B20469900321A00 /* ManagedViewManager.swift */,
+				FBDF0DC82B224EB500FADE44 /* ManagedViewsService.swift */,
 			);
 			path = LiveViews;
 			sourceTree = "<group>";
@@ -503,7 +501,6 @@
 				FB93BB1A2B03471C00864CB2 /* FireData.swift */,
 				FBB450012B052B180096F8EB /* FireLiveData.swift */,
 				FBDF0DC62B224D2600FADE44 /* ActivityPlanService.swift */,
-				FBDF0DC82B224EB500FADE44 /* ManagedViewsService.swift */,
 				FB982F902B19D1B900C0DA03 /* FirebaseService.swift */,
 			);
 			path = Firebase;
@@ -514,9 +511,9 @@
 			children = (
 				FB982F8F2B19C41100C0DA03 /* LiveViews */,
 				FB58E87A2B02B1E200FD9E2E /* modifiers */,
-				FBD9AFD62B00BB8F005F8620 /* ManagedViewBoardTool.swift */,
-				FB5094272B0584CA000AEA96 /* ManagedViewWindow.swift */,
-				FBAE62AC2B295A8100E008D5 /* MvPopup.swift */,
+				FB5094272B0584CA000AEA96 /* NavStackWindowView.swift */,
+				FB829F182B3D540100FAC6E0 /* ManagedWindowObjects.swift */,
+				FBAE62AC2B295A8100E008D5 /* ManagedPopUpView.swift */,
 			);
 			path = ManagedViews;
 			sourceTree = "<group>";
@@ -740,11 +737,10 @@
 				FBD9AFC92B008435005F8620 /* ManagedViewAction.swift in Sources */,
 				FB9F1DD92B1533C400FD9078 /* FirebaseLogin.swift in Sources */,
 				FB9F1E402B159F6A00FD9078 /* OrientationInfo.swift in Sources */,
-				FB58E87C2B02B1F100FD9E2E /* lineModifier.swift in Sources */,
 				FBDF0DC52B21811000FADE44 /* SharedSessionsView.swift in Sources */,
 				FBD9AFC02B00817A005F8620 /* ManagedView.swift in Sources */,
 				FBD9AFCD2B008457005F8620 /* UserToActivity.swift in Sources */,
-				FBAE62AD2B295A8100E008D5 /* MvPopup.swift in Sources */,
+				FBAE62AD2B295A8100E008D5 /* ManagedPopUpView.swift in Sources */,
 				FB581BEB2B1EF39C00F5C90F /* Stopwatch.swift in Sources */,
 				FB4840962B1D43AD0003377A /* BarListPicker.swift in Sources */,
 				FB3E02B12B0C6B1D00D8558C /* ActivityPlan.swift in Sources */,
@@ -771,12 +767,11 @@
 				FBE2C6222B1B1490004C0116 /* RealmChangeListener.swift in Sources */,
 				FB3E02B92B0C724A00D8558C /* BoardBgProvider.swift in Sources */,
 				FB15DD322B07461500A21290 /* MenuBarWindow.swift in Sources */,
-				FBD9AFD72B00BB8F005F8620 /* ManagedViewBoardTool.swift in Sources */,
 				FB3E02B72B0C70D100D8558C /* InputField.swift in Sources */,
 				FBABDAC52B20376F00321A00 /* ConfirmationPopup.swift in Sources */,
 				FB15DD362B074F5C00A21290 /* Chat.swift in Sources */,
 				FB3E02C32B0D19A300D8558C /* User.swift in Sources */,
-				FB5094282B0584CA000AEA96 /* ManagedViewWindow.swift in Sources */,
+				FB5094282B0584CA000AEA96 /* NavStackWindowView.swift in Sources */,
 				FB3E02C12B0C9A6D00D8558C /* BuddyProfileView.swift in Sources */,
 				FBD9AFB82AFF0253005F8620 /* GridLines.swift in Sources */,
 				FBE2C6262B1BD7BA004C0116 /* TipBoxView.swift in Sources */,
@@ -788,7 +783,7 @@
 				FBA20A2F2B166FCE00045D1C /* MVSettingsView.swift in Sources */,
 				FB58A1B62B1804C80024B9A2 /* FlashingLight.swift in Sources */,
 				FB3E02B32B0C6B5100D8558C /* SessionPlanView.swift in Sources */,
-				FBABDAC92B20469900321A00 /* mvListener.swift in Sources */,
+				FBABDAC92B20469900321A00 /* ManagedViewManager.swift in Sources */,
 				FB3E02CB2B0D2E4700D8558C /* InputTextEditor.swift in Sources */,
 				FB15DD272B07440700A21290 /* ViewWrapper.swift in Sources */,
 				FB581BED2B1F8A6800F5C90F /* KeyboardListener.swift in Sources */,
@@ -806,10 +801,11 @@
 				FBE2C61A2B1AF7D5004C0116 /* FootballFieldView.swift in Sources */,
 				FBD9AFD52B008F6F005F8620 /* Channels.swift in Sources */,
 				FB982F912B19D1B900C0DA03 /* FirebaseService.swift in Sources */,
+				FB829F192B3D540100FAC6E0 /* ManagedWindowObjects.swift in Sources */,
 				FB3E02BF2B0C948A00D8558C /* AddBuddyView.swift in Sources */,
 				FB48409A2B1EBC940003377A /* Sports.swift in Sources */,
 				FB10AE0D2B0F16B100295F4B /* ActivityPlanThumbList.swift in Sources */,
-				FB07B6702B17A5B9009A0962 /* mvModifier.swift in Sources */,
+				FB07B6702B17A5B9009A0962 /* ManagedToolView.swift in Sources */,
 				FB15DD2A2B07443600A21290 /* BoardEngineView.swift in Sources */,
 				FB9F1DD22B1529E400FD9078 /* LoadingView.swift in Sources */,
 				FBABDAC72B20456700321A00 /* ToolBarSettings.swift in Sources */,
