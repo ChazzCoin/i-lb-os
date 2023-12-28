@@ -91,7 +91,7 @@ struct PopupMenuView: View {
         .onAppear() {
             
             animateOptionsIn()
-            self.BEO.gesturesAreLocked = true
+//            self.BEO.gesturesAreLocked = true
             
             onFollow()
             onCreate()

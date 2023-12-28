@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		FB07B6702B17A5B9009A0962 /* mvModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB07B66F2B17A5B9009A0962 /* mvModifier.swift */; };
-		FB0AA56A2B0BEBE1001AA316 /* TwoFingerPanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB0AA5692B0BEBE1001AA316 /* TwoFingerPanView.swift */; };
 		FB10AE052B0DC8E600295F4B /* Tips.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB10AE042B0DC8E600295F4B /* Tips.swift */; };
 		FB10AE072B0DCDB500295F4B /* FloatingEmoji.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB10AE062B0DCDB500295F4B /* FloatingEmoji.swift */; };
 		FB10AE092B0DD76C00295F4B /* EmojiProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB10AE082B0DD76C00295F4B /* EmojiProvider.swift */; };
@@ -16,15 +15,10 @@
 		FB10AE0D2B0F16B100295F4B /* ActivityPlanThumbList.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB10AE0C2B0F16B100295F4B /* ActivityPlanThumbList.swift */; };
 		FB15DD272B07440700A21290 /* ViewWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB15DD262B07440700A21290 /* ViewWrapper.swift */; };
 		FB15DD2A2B07443600A21290 /* BoardEngineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB15DD292B07443600A21290 /* BoardEngineView.swift */; };
-		FB15DD2D2B0744A500A21290 /* CanvasEngineVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB15DD2C2B0744A500A21290 /* CanvasEngineVM.swift */; };
 		FB15DD302B0745DF00A21290 /* MenuBarIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB15DD2F2B0745DF00A21290 /* MenuBarIcon.swift */; };
 		FB15DD322B07461500A21290 /* MenuBarWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB15DD312B07461500A21290 /* MenuBarWindow.swift */; };
 		FB15DD342B074E6E00A21290 /* ChatUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB15DD332B074E6E00A21290 /* ChatUI.swift */; };
 		FB15DD362B074F5C00A21290 /* Chat.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB15DD352B074F5C00A21290 /* Chat.swift */; };
-		FB3E02A72B0C3A0C00D8558C /* SizeSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02A62B0C3A0C00D8558C /* SizeSlider.swift */; };
-		FB3E02A92B0C3B2C00D8558C /* RotationSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02A82B0C3B2C00D8558C /* RotationSlider.swift */; };
-		FB3E02AB2B0C3BFF00D8558C /* ColorSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02AA2B0C3BFF00D8558C /* ColorSlider.swift */; };
-		FB3E02AD2B0C3CAB00D8558C /* PopupMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02AC2B0C3CAB00D8558C /* PopupMenu.swift */; };
 		FB3E02AF2B0C6B1200D8558C /* SessionPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02AE2B0C6B1200D8558C /* SessionPlan.swift */; };
 		FB3E02B12B0C6B1D00D8558C /* ActivityPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02B02B0C6B1D00D8558C /* ActivityPlan.swift */; };
 		FB3E02B32B0C6B5100D8558C /* SessionPlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02B22B0C6B5100D8558C /* SessionPlanView.swift */; };
@@ -62,6 +56,7 @@
 		FB829F0C2B36A83300FAC6E0 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB829F0B2B36A83300FAC6E0 /* ContentView.swift */; };
 		FB829F0E2B36A83400FAC6E0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FB829F0D2B36A83400FAC6E0 /* Assets.xcassets */; };
 		FB829F112B36A83400FAC6E0 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FB829F102B36A83400FAC6E0 /* Preview Assets.xcassets */; };
+		FB829F172B3D4DF500FAC6E0 /* DispatchQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB829F162B3D4DF500FAC6E0 /* DispatchQueue.swift */; };
 		FB93BB172B033E2000864CB2 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FB93BB162B033E2000864CB2 /* GoogleService-Info.plist */; };
 		FB93BB1B2B03471C00864CB2 /* FireData.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB93BB1A2B03471C00864CB2 /* FireData.swift */; };
 		FB982F912B19D1B900C0DA03 /* FirebaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB982F902B19D1B900C0DA03 /* FirebaseService.swift */; };
@@ -140,7 +135,6 @@
 
 /* Begin PBXFileReference section */
 		FB07B66F2B17A5B9009A0962 /* mvModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mvModifier.swift; sourceTree = "<group>"; };
-		FB0AA5692B0BEBE1001AA316 /* TwoFingerPanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwoFingerPanView.swift; sourceTree = "<group>"; };
 		FB10AE042B0DC8E600295F4B /* Tips.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tips.swift; sourceTree = "<group>"; };
 		FB10AE062B0DCDB500295F4B /* FloatingEmoji.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingEmoji.swift; sourceTree = "<group>"; };
 		FB10AE082B0DD76C00295F4B /* EmojiProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiProvider.swift; sourceTree = "<group>"; };
@@ -148,15 +142,10 @@
 		FB10AE0C2B0F16B100295F4B /* ActivityPlanThumbList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityPlanThumbList.swift; sourceTree = "<group>"; };
 		FB15DD262B07440700A21290 /* ViewWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewWrapper.swift; sourceTree = "<group>"; };
 		FB15DD292B07443600A21290 /* BoardEngineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardEngineView.swift; sourceTree = "<group>"; };
-		FB15DD2C2B0744A500A21290 /* CanvasEngineVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasEngineVM.swift; sourceTree = "<group>"; };
 		FB15DD2F2B0745DF00A21290 /* MenuBarIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarIcon.swift; sourceTree = "<group>"; };
 		FB15DD312B07461500A21290 /* MenuBarWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarWindow.swift; sourceTree = "<group>"; };
 		FB15DD332B074E6E00A21290 /* ChatUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatUI.swift; sourceTree = "<group>"; };
 		FB15DD352B074F5C00A21290 /* Chat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chat.swift; sourceTree = "<group>"; };
-		FB3E02A62B0C3A0C00D8558C /* SizeSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SizeSlider.swift; sourceTree = "<group>"; };
-		FB3E02A82B0C3B2C00D8558C /* RotationSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RotationSlider.swift; sourceTree = "<group>"; };
-		FB3E02AA2B0C3BFF00D8558C /* ColorSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorSlider.swift; sourceTree = "<group>"; };
-		FB3E02AC2B0C3CAB00D8558C /* PopupMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopupMenu.swift; sourceTree = "<group>"; };
 		FB3E02AE2B0C6B1200D8558C /* SessionPlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionPlan.swift; sourceTree = "<group>"; };
 		FB3E02B02B0C6B1D00D8558C /* ActivityPlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityPlan.swift; sourceTree = "<group>"; };
 		FB3E02B22B0C6B5100D8558C /* SessionPlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionPlanView.swift; sourceTree = "<group>"; };
@@ -195,6 +184,7 @@
 		FB829F0B2B36A83300FAC6E0 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		FB829F0D2B36A83400FAC6E0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FB829F102B36A83400FAC6E0 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		FB829F162B3D4DF500FAC6E0 /* DispatchQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatchQueue.swift; sourceTree = "<group>"; };
 		FB93BB162B033E2000864CB2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
 		FB93BB1A2B03471C00864CB2 /* FireData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireData.swift; sourceTree = "<group>"; };
 		FB982F902B19D1B900C0DA03 /* FirebaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseService.swift; sourceTree = "<group>"; };
@@ -290,22 +280,10 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		FB0AA5682B0BEBD3001AA316 /* Gestures */ = {
-			isa = PBXGroup;
-			children = (
-				FB0AA5692B0BEBE1001AA316 /* TwoFingerPanView.swift */,
-			);
-			path = Gestures;
-			sourceTree = "<group>";
-		};
 		FB15DD282B07442600A21290 /* BoardEngine */ = {
 			isa = PBXGroup;
 			children = (
 				FB15DD292B07443600A21290 /* BoardEngineView.swift */,
-				FB3E02A62B0C3A0C00D8558C /* SizeSlider.swift */,
-				FB3E02A82B0C3B2C00D8558C /* RotationSlider.swift */,
-				FB3E02AA2B0C3BFF00D8558C /* ColorSlider.swift */,
-				FB3E02AC2B0C3CAB00D8558C /* PopupMenu.swift */,
 			);
 			path = BoardEngine;
 			sourceTree = "<group>";
@@ -313,10 +291,8 @@
 		FB15DD2B2B07448B00A21290 /* CanvasEngine */ = {
 			isa = PBXGroup;
 			children = (
-				FB0AA5682B0BEBD3001AA316 /* Gestures */,
 				FB15DD2E2B0745C900A21290 /* MenuBar */,
 				FBD9AFB92AFF03D7005F8620 /* CanvasEngine.swift */,
-				FB15DD2C2B0744A500A21290 /* CanvasEngineVM.swift */,
 				FB9F1E3F2B159F6A00FD9078 /* OrientationInfo.swift */,
 			);
 			path = CanvasEngine;
@@ -432,6 +408,15 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
+		FB829F152B3D4DE100FAC6E0 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				FB9F1DCF2B1528FC00FD9078 /* Extensions.swift */,
+				FB829F162B3D4DF500FAC6E0 /* DispatchQueue.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
 		FB982F8F2B19C41100C0DA03 /* LiveViews */ = {
 			isa = PBXGroup;
 			children = (
@@ -473,6 +458,7 @@
 		FBD9AFA62AFF00BF005F8620 /* Ludi Boards */ = {
 			isa = PBXGroup;
 			children = (
+				FB829F152B3D4DE100FAC6E0 /* Extensions */,
 				FB15DD2B2B07448B00A21290 /* CanvasEngine */,
 				FB15DD282B07442600A21290 /* BoardEngine */,
 				FB5094242B05820B000AEA96 /* views */,
@@ -486,7 +472,6 @@
 				FBD9AFAB2AFF00BF005F8620 /* Assets.xcassets */,
 				FBD9AFAD2AFF00BF005F8620 /* Preview Content */,
 				FBD9AFB72AFF0253005F8620 /* GridLines.swift */,
-				FB9F1DCF2B1528FC00FD9078 /* Extensions.swift */,
 			);
 			path = "Ludi Boards";
 			sourceTree = "<group>";
@@ -747,7 +732,6 @@
 				FB10AE052B0DC8E600295F4B /* Tips.swift in Sources */,
 				FBD9AFAA2AFF00BF005F8620 /* ContentView.swift in Sources */,
 				FB9F1DD62B1532AB00FD9078 /* ImagePicker.swift in Sources */,
-				FB3E02AB2B0C3BFF00D8558C /* ColorSlider.swift in Sources */,
 				FB58E8842B03169700FD9E2E /* TimeProvider.swift in Sources */,
 				FBF404432B19304700FA0545 /* BorderedView.swift in Sources */,
 				FB58E8822B030F1D00FD9E2E /* RealmFind.swift in Sources */,
@@ -764,7 +748,6 @@
 				FB581BEB2B1EF39C00F5C90F /* Stopwatch.swift in Sources */,
 				FB4840962B1D43AD0003377A /* BarListPicker.swift in Sources */,
 				FB3E02B12B0C6B1D00D8558C /* ActivityPlan.swift in Sources */,
-				FB3E02AD2B0C3CAB00D8558C /* PopupMenu.swift in Sources */,
 				FB3E02BD2B0C90E600D8558C /* BuddyListView.swift in Sources */,
 				FBD9AFD22B008CAB005F8620 /* MenuBarProvider.swift in Sources */,
 				FBD9AFD92B01CB91005F8620 /* SoccerToolProvider.swift in Sources */,
@@ -792,7 +775,6 @@
 				FB3E02B72B0C70D100D8558C /* InputField.swift in Sources */,
 				FBABDAC52B20376F00321A00 /* ConfirmationPopup.swift in Sources */,
 				FB15DD362B074F5C00A21290 /* Chat.swift in Sources */,
-				FB15DD2D2B0744A500A21290 /* CanvasEngineVM.swift in Sources */,
 				FB3E02C32B0D19A300D8558C /* User.swift in Sources */,
 				FB5094282B0584CA000AEA96 /* ManagedViewWindow.swift in Sources */,
 				FB3E02C12B0C9A6D00D8558C /* BuddyProfileView.swift in Sources */,
@@ -805,7 +787,6 @@
 				FB3E02AF2B0C6B1200D8558C /* SessionPlan.swift in Sources */,
 				FBA20A2F2B166FCE00045D1C /* MVSettingsView.swift in Sources */,
 				FB58A1B62B1804C80024B9A2 /* FlashingLight.swift in Sources */,
-				FB3E02A72B0C3A0C00D8558C /* SizeSlider.swift in Sources */,
 				FB3E02B32B0C6B5100D8558C /* SessionPlanView.swift in Sources */,
 				FBABDAC92B20469900321A00 /* mvListener.swift in Sources */,
 				FB3E02CB2B0D2E4700D8558C /* InputTextEditor.swift in Sources */,
@@ -815,6 +796,7 @@
 				FBAE62AF2B2A3FD200E008D5 /* CurvedLineToolView.swift in Sources */,
 				FBD9AFBA2AFF03D7005F8620 /* CanvasEngine.swift in Sources */,
 				FB58E8762B01F3D200FD9E2E /* FireParser.swift in Sources */,
+				FB829F172B3D4DF500FAC6E0 /* DispatchQueue.swift in Sources */,
 				FB5094262B058215000AEA96 /* LazyRow.swift in Sources */,
 				FB3E02C92B0D2D8D00D8558C /* ExpandingTextEditor.swift in Sources */,
 				FB3E02C72B0D2C3100D8558C /* InputSwitch.swift in Sources */,
@@ -829,7 +811,6 @@
 				FB10AE0D2B0F16B100295F4B /* ActivityPlanThumbList.swift in Sources */,
 				FB07B6702B17A5B9009A0962 /* mvModifier.swift in Sources */,
 				FB15DD2A2B07443600A21290 /* BoardEngineView.swift in Sources */,
-				FB3E02A92B0C3B2C00D8558C /* RotationSlider.swift in Sources */,
 				FB9F1DD22B1529E400FD9078 /* LoadingView.swift in Sources */,
 				FBABDAC72B20456700321A00 /* ToolBarSettings.swift in Sources */,
 				FBB450022B052B180096F8EB /* FireLiveData.swift in Sources */,
@@ -837,7 +818,6 @@
 				FBA4FB572B15AA2700BF409E /* GlobalPositioning.swift in Sources */,
 				FB9F1DD02B1528FC00FD9078 /* Extensions.swift in Sources */,
 				FBE2C62E2B1C3FDE004C0116 /* LoadingForm.swift in Sources */,
-				FB0AA56A2B0BEBE1001AA316 /* TwoFingerPanView.swift in Sources */,
 				FBE2C6142B1AC68D004C0116 /* SoccerFieldBG.swift in Sources */,
 				FB58E8802B02B26C00FD9E2E /* DragAndDrop.swift in Sources */,
 				FB4840982B1D66380003377A /* CurrentSession.swift in Sources */,
@@ -1038,7 +1018,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_ASSET_PATHS = "\"Ludi Boards/Preview Content\"";
 				DEVELOPMENT_TEAM = 9LU8N76A9C;
 				ENABLE_PREVIEWS = YES;
@@ -1054,7 +1034,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = io.sol.boards;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1071,7 +1051,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_ASSET_PATHS = "\"Ludi Boards/Preview Content\"";
 				DEVELOPMENT_TEAM = 9LU8N76A9C;
 				ENABLE_PREVIEWS = YES;
@@ -1087,7 +1067,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = io.sol.boards;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

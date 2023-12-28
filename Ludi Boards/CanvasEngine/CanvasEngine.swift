@@ -114,6 +114,8 @@ struct CanvasEngine: View {
         self.showMenuBar = true
     }
     
+    @State var menuIsOpen = false
+    
     var body: some View {
         
         GlobalPositioningZStack { geo, gps in
@@ -128,11 +130,16 @@ struct CanvasEngine: View {
                     .position(using: gps, at: .center)
             }
             
-            GeometryReader { geo in
-                MenuBarStatic()
+            MenuBarStatic(){
+                menuIsOpen = !menuIsOpen
             }
-            .frame(width: 60)
-            .position(using: gps, at: .topLeft, offsetX: 50, offsetY: 75)
+            .frame(width: 60, height: menuIsOpen ? (gps.screenSize.height - 200) : 60)
+            .position(using: gps, at: .topLeft, offsetX: 50, offsetY: menuIsOpen ? ((gps.screenSize.height - 200) / 2) : 30)
+//            GeometryReader { geo in
+//                MenuBarStatic()
+//            }
+//            .frame(width: 60)
+//            .position(using: gps, at: .topLeft, offsetX: 50, offsetY: 200)
             
             NavPadView()
                 .environmentObject(self.BEO)
@@ -349,10 +356,10 @@ struct CanvasEngine: View {
     }
 }
 
-struct LargeCanvasView2_Previews: PreviewProvider {
-    static var previews: some View {
-        CanvasEngine()
-    }
-}
+//struct LargeCanvasView2_Previews: PreviewProvider {
+//    static var previews: some View {
+//        CanvasEngine()
+//    }
+//}
 
 

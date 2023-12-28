@@ -14,7 +14,7 @@ import FirebaseDatabase
 class BoardEngineObject : ObservableObject {
     static let shared = BoardEngineObject()
     @Environment(\.colorScheme) var colorScheme
-//    @StateObject var sharedPrefs = SharedPrefs.shared
+
     @State var realmInstance = realm()
     @Published var boards = Sports()
     @Published var boardRefreshFlag = true
