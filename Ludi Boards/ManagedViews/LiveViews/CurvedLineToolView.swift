@@ -114,7 +114,6 @@ struct CurvedLineDrawingManaged: View {
         let t: CGFloat = 0.5
         lifeCenterX = (pow(1-t, 2) * lifeStartX + 2*(1-t)*t*lifeCenterX + pow(t, 2) * lifeEndX)
         lifeCenterY = (pow(1-t, 2) * lifeStartY + 2*(1-t)*t*lifeCenterY + pow(t, 2) * lifeEndY)
-        
     }
     
     func quadBezierPoint(start: CGPoint, end: CGPoint, control: CGPoint) -> CGPoint {

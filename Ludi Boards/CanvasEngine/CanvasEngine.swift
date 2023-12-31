@@ -135,11 +135,6 @@ struct CanvasEngine: View {
             }
             .frame(width: 60, height: menuIsOpen ? (gps.screenSize.height - 100) : 60)
             .position(using: gps, at: .topLeft, offsetX: 50, offsetY: menuIsOpen ? ((gps.screenSize.height - 100) / 2) : 30)
-//            GeometryReader { geo in
-//                MenuBarStatic()
-//            }
-//            .frame(width: 60)
-//            .position(using: gps, at: .topLeft, offsetX: 50, offsetY: 200)
             
             NavPadView()
                 .environmentObject(self.BEO)
