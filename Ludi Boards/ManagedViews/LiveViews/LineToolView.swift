@@ -117,7 +117,7 @@ struct LineDrawingManaged: View {
                 .frame(width: 150, height: 150) // Adjust size for easier tapping
                 .opacity(anchorsAreVisible ? 1 : 0) // Invisible
                 .position(x: lifeStartX, y: lifeStartY)
-                .gesture(self.lifeIsLocked ? nil : dragGesture(isStart: true))
+                .gesture(dragGesture(isStart: true))
         )
         .overlay(
             Circle()
@@ -125,7 +125,7 @@ struct LineDrawingManaged: View {
                 .frame(width: 150, height: 150) // Increase size for finger tapping
                 .opacity(anchorsAreVisible ? 1 : 0) // Invisible
                 .position(x: lifeEndX, y: lifeEndY)
-                .gesture(self.lifeIsLocked ? nil : dragGesture(isStart: false))
+                .gesture(dragGesture(isStart: false))
         )
         .overlay(
             Rectangle()
@@ -134,9 +134,9 @@ struct LineDrawingManaged: View {
                 .rotationEffect(lifeRotation)
                 .opacity(1)
                 .position(x: lifeCenterPoint.x.isFinite ? lifeCenterPoint.x : 0, y: lifeCenterPoint.y.isFinite ? lifeCenterPoint.y : 0)
-                .gesture(self.lifeIsLocked ? nil : dragGestureDuo())
+                .gesture(dragGestureDuo())
         )
-        .gesture(self.lifeIsLocked ? nil : dragGestureDuo())
+        .gesture(dragGestureDuo())
         .onAppear() {
         
             reference = reference.child(self.activityId).child(self.viewId)
@@ -154,7 +154,8 @@ struct LineDrawingManaged: View {
                 }
                 if let ts = temp.size { lifeWidth = ts }
                 if let tc = temp.color { lifeColor = tc }
-                lifeIsLocked = temp.isLocked
+                if let tstroke = temp.stroke { lifeWidth = tstroke }
+                if let tl = temp.isLocked { lifeIsLocked = tl }
                 
                 if temp.stateAction == "close" {
                     popUpIsVisible = false
@@ -176,6 +177,7 @@ struct LineDrawingManaged: View {
     private func dragGesture(isStart: Bool) -> some Gesture {
         DragGesture()
             .onChanged { value in
+                if self.lifeIsLocked {return}
                 if !anchorsAreVisible {return}
                 self.isDragging = true
                 if isStart {
@@ -192,6 +194,7 @@ struct LineDrawingManaged: View {
                             end: CGPoint(x: lifeEndX, y: lifeEndY))
             }
             .onEnded { _ in
+                if self.lifeIsLocked {return}
                 if !anchorsAreVisible {return}
                 self.isDragging = false
                 updateRealmPos(start: CGPoint(x: lifeStartX, y: lifeStartY),
@@ -199,10 +202,11 @@ struct LineDrawingManaged: View {
             }
             .simultaneously(with: TapGesture(count: 1)
                  .onEnded { _ in
-                     anchorsAreVisible = !anchorsAreVisible
+//                     anchorsAreVisible = !anchorsAreVisible
                  }
             ).simultaneously(with: TapGesture(count: 2).onEnded({ _ in
                 print("Tapped double")
+                anchorsAreVisible = !anchorsAreVisible
                 popUpIsVisible = !popUpIsVisible
                 CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(
                    windowId: "pop_settings",
@@ -214,9 +218,12 @@ struct LineDrawingManaged: View {
                 if popUpIsVisible {
                     CodiChannel.TOOL_ATTRIBUTES.send(value: ViewAtts(
                        viewId: viewId,
-                       size: lifeWidth,
                        color: lifeColor,
+                       stroke: lifeWidth,
+                       position: CGPoint(x: lifeStartX, y: lifeStartY),
+                       toolType: "Line",
                        level: ToolLevels.LINE.rawValue,
+                       isLocked: lifeIsLocked,
                        stateAction: popUpIsVisible ? "open" : "close")
                     )
                 }
@@ -227,9 +234,11 @@ struct LineDrawingManaged: View {
     private func dragGestureDuo() -> some Gesture {
         DragGesture()
             .updating($dragOffset, body: { (value, state, transaction) in
+                if self.lifeIsLocked {return}
                 state = value.translation
             })
             .onChanged { value in
+                if self.lifeIsLocked {return}
                 self.isDragging = true
                 if self.originalLifeStart == .zero {
                     self.originalLifeStart = CGPoint(x: lifeStartX, y: lifeStartY)
@@ -251,6 +260,7 @@ struct LineDrawingManaged: View {
                             end: CGPoint(x: lifeEndX, y: lifeEndY))
             }
             .onEnded { value in
+                if self.lifeIsLocked {return}
                 let translation = value.translation
                 lifeStartX = self.originalLifeStart.x + translation.width
                 lifeStartY = self.originalLifeStart.y + translation.height
@@ -264,10 +274,11 @@ struct LineDrawingManaged: View {
                 self.originalLifeEnd = .zero
             }.simultaneously(with: TapGesture(count: 1)
                 .onEnded { _ in
-                    anchorsAreVisible = !anchorsAreVisible
+//                    anchorsAreVisible = !anchorsAreVisible
                 }
            ).simultaneously(with: TapGesture(count: 2).onEnded({ _ in
                print("Tapped double")
+                anchorsAreVisible = !anchorsAreVisible
                popUpIsVisible = !popUpIsVisible
                CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(
                   windowId: "pop_settings",
@@ -279,9 +290,12 @@ struct LineDrawingManaged: View {
                if popUpIsVisible {
                    CodiChannel.TOOL_ATTRIBUTES.send(value: ViewAtts(
                       viewId: viewId,
-                      size: lifeWidth,
                       color: lifeColor,
+                      stroke: lifeWidth,
+                      position: CGPoint(x: lifeStartX, y: lifeStartY),
+                      toolType: "Line",
                       level: ToolLevels.LINE.rawValue,
+                      isLocked: lifeIsLocked,
                       stateAction: popUpIsVisible ? "open" : "close")
                    )
                }

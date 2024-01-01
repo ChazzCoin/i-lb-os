@@ -64,7 +64,6 @@ struct ColorListPicker: View {
                                 callback(colorName)
                             }
                         )
-                        
                 }
             }
             .padding()
@@ -72,10 +71,10 @@ struct ColorListPicker: View {
     }
 }
 
-struct ThumbnailListView_Previews: PreviewProvider {
-    static var previews: some View {
-        ThumbnailListView() { item in
-            print(item)
-        }
-    }
-}
+//struct ThumbnailListView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ThumbnailListView() { item in
+//            print(item)
+//        }
+//    }
+//}

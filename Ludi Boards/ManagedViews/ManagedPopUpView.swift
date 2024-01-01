@@ -9,6 +9,14 @@ import Foundation
 import SwiftUI
 import Combine
 
+/*
+    - Basic
+        Delete, Lock, Size, Rotation
+ 
+    - Line
+        Delete, Lock, Stroke, Color
+ */
+
 class PopupMenuObject: ObservableObject {
     @Published var viewId = ""
     
@@ -17,16 +25,13 @@ class PopupMenuObject: ObservableObject {
     @Published var viewSize: CGFloat = 50
     @Published var viewRotation: Double = 0
     @Published var viewColor: Color = .black
+    @Published var toolType: String = "Basic"
     @Published var toolLevel: Int = ToolLevels.BASIC.rawValue
     
     @Published var showColor = false
     @Published var isShowing = false
     @Published var isLoading = false
     @Published var showCompletion = false
-    
-    @Published var showSizeOption = false
-    @Published var showDeleteOption = false
-    @Published var showLockOption = false
     
     @Published var position = CGPoint(x: 100, y: 100)
     @GestureState var dragOffset = CGSize.zero
@@ -38,30 +43,70 @@ struct PopupMenuView: View {
     @EnvironmentObject var PMO: PopupMenuObject
     @Binding var isPresented: Bool
     
+    @State var viewRotation: Double = 0.0
+    @State var viewSize: Double = 0.0
+    @State var viewColor: Color = .black
+    @State var viewStroke: Double = 0.0
+    @State var viewIsLocked: Bool = false
+    
+    @State var showRotationOption = false
+    @State var showSizeOption = false
+    @State var showStrokeOption = false
+    @State var showColorOption = false
+    @State var showDeleteOption = false
+    @State var showLockOption = false
+    
     @State var isHidden: Bool = true
    
     @State var realmInstance = realm()
     @State var cancellables = Set<AnyCancellable>()
 
     func animateOptionsIn() {
-        withAnimation(.easeInOut(duration: 0.3).delay(0.40)) { self.PMO.showLockOption = true }
-        withAnimation(.easeInOut(duration: 0.3).delay(0.25)) { self.PMO.showDeleteOption = true }
-        withAnimation(.easeInOut(duration: 0.3).delay(0.10)) { self.PMO.showSizeOption = true }
+        withAnimation(.easeInOut(duration: 0.3).delay(0.60)) { self.showLockOption = true }
+        withAnimation(.easeInOut(duration: 0.3).delay(0.50)) { self.showDeleteOption = true }
+        withAnimation(.easeInOut(duration: 0.3).delay(0.40)) { self.showStrokeOption = true }
+        withAnimation(.easeInOut(duration: 0.3).delay(0.30)) { self.showColorOption = true }
+        withAnimation(.easeInOut(duration: 0.3).delay(0.20)) { self.showSizeOption = true }
+        withAnimation(.easeInOut(duration: 0.3).delay(0.10)) { self.showRotationOption = true }
+        
     }
     
     func animateOptionsOut() {
-        withAnimation(.easeInOut(duration: 0.3).delay(0.10)) { self.PMO.showLockOption = false }
-        withAnimation(.easeInOut(duration: 0.3).delay(0.25)) { self.PMO.showDeleteOption = false }
-        withAnimation(.easeInOut(duration: 0.3).delay(0.40)) { self.PMO.showSizeOption = false }
+        withAnimation(.easeInOut(duration: 0.3).delay(0.10)) { self.showLockOption = false }
+        withAnimation(.easeInOut(duration: 0.3).delay(0.20)) { self.showDeleteOption = false }
+        withAnimation(.easeInOut(duration: 0.3).delay(0.30)) { self.showStrokeOption = false }
+        withAnimation(.easeInOut(duration: 0.3).delay(0.40)) { self.showColorOption = false }
+        withAnimation(.easeInOut(duration: 0.3).delay(0.50)) { self.showSizeOption = false }
+        withAnimation(.easeInOut(duration: 0.3).delay(0.60)) { self.showRotationOption = false }
+        
     }
 
     var body: some View {
         
         VStack(spacing: 1) {
-            if self.PMO.showSizeOption {
-                MenuOptionSlider(label: "Size", imageName: "arrow.up.left.and.arrow.down.right", viewId: self.PMO.viewId)
+            
+            // BASIC -> Rotation
+            if self.PMO.toolType == "Basic" {
+                MenuOptionRotation(label: "Rotation", imageName: "arrow.up.left.and.arrow.down.right", viewId: self.PMO.viewId, viewRotation: $viewRotation)
             }
-            if self.PMO.showDeleteOption {
+            
+            // BASIC -> Size
+            if self.PMO.toolType == "Basic" {
+                MenuOptionSize(label: "Size", imageName: "arrow.up.left.and.arrow.down.right", viewId: self.PMO.viewId, viewSize: $viewSize)
+            }
+            
+            // LINE -> Color
+            if self.PMO.toolType == "Line" {
+                MenuOptionColor(label: "Color", imageName: "arrow.up.left.and.arrow.down.right", viewId: self.PMO.viewId, viewColor: $viewColor)
+            }
+            
+            // LINE -> Stroke
+            if self.PMO.toolType == "Line" {
+                MenuOptionStroke(label: "Stroke", imageName: "arrow.up.left.and.arrow.down.right", viewId: self.PMO.viewId, lineStroke: $viewStroke)
+            }
+            
+            // ALL -> Delete
+            if self.showDeleteOption {
                 MenuOptionButton(label: "Delete", imageName: "trash") {
                     if let temp = self.realmInstance.findByField(ManagedView.self, value: self.PMO.viewId) {
                         self.realmInstance.safeWrite { r in
@@ -70,8 +115,10 @@ struct PopupMenuView: View {
                     }
                 }
             }
-            if self.PMO.showLockOption {
-                MenuCheckBoxButton(label: "Unlocked", imageName: "lock") { isChecked in
+            
+            // ALL -> Lock
+            if self.showLockOption {
+                MenuCheckBoxButton(label: "Unlocked", imageName: "lock", isChecked: $viewIsLocked) { isChecked in
                     if let temp = self.realmInstance.findByField(ManagedView.self, value: self.PMO.viewId) {
                         self.realmInstance.safeWrite { r in
                             temp.isLocked = isChecked
@@ -82,16 +129,15 @@ struct PopupMenuView: View {
         }
         .zIndex(5.0)
         .scaleEffect(6.0)
-        .frame(width: 1000, height: 1000)
+        .frame(width: 2000, height: 3000)
         .background(Color.clear)
         .opacity(isHidden ? 0.0 : 1.0)
         .cornerRadius(15)
         .shadow(radius: 10)
-        .position(x: self.PMO.position.x, y: self.PMO.position.y + 800)
+        .position(x: self.PMO.position.x, y: self.PMO.position.y + 1000)
         .onAppear() {
             
             animateOptionsIn()
-//            self.BEO.gesturesAreLocked = true
             
             onFollow()
             onCreate()
@@ -108,7 +154,7 @@ struct PopupMenuView: View {
         CodiChannel.TOOL_ON_FOLLOW.receive(on: RunLoop.main) { viewFollow in
             let vf = viewFollow as! ViewFollowing
             print("Monitoring View: X: \(vf.x) Y: \(vf.y) ")
-            self.PMO.viewId = vf.viewId
+            if self.PMO.viewId != vf.viewId {return}
             self.PMO.position = CGPoint(x: vf.x, y: vf.y)
         }.store(in: &cancellables)
     }
@@ -120,21 +166,22 @@ struct PopupMenuView: View {
                 self.PMO.viewId = temp.viewId
                 isHidden = false
             }
-            if self.PMO.toolLevel != temp.level {
-                self.PMO.toolLevel = temp.level
-                if self.PMO.toolLevel == ToolLevels.BASIC.rawValue {self.PMO.showColor = false}
-                else if self.PMO.toolLevel == ToolLevels.LINE.rawValue {self.PMO.showColor = true}
-            }
-            if let ts = temp.size { self.PMO.viewSize = ts }
-            if let tr = temp.rotation { self.PMO.viewRotation = tr }
-            if let tc = temp.color { self.PMO.viewColor = tc }
+            if let tt = temp.toolType { self.PMO.toolType = tt }
+            if let ts = temp.size { self.viewSize = ts }
+            if let tr = temp.rotation { self.viewRotation = tr }
+            if let tc = temp.color { self.viewColor = tc }
+            if let tc = temp.stroke { self.viewStroke = tc }
+            if let tp = temp.position { self.PMO.position = tp }
+            if let tl = temp.isLocked { self.viewIsLocked = tl }
+            
         }.store(in: &cancellables)
     }
     
     func onWindowToggle() {
         CodiChannel.MENU_WINDOW_CONTROLLER.receive(on: RunLoop.main) { wc in
             let temp = wc as! WindowController
-            if temp.windowId != "pop_settings" { return }
+            
+            if temp.windowId != "pop_settings" || temp.viewId != self.PMO.viewId { return }
             
             if let tx = temp.x {
                 if let ty = temp.y {
@@ -172,6 +219,22 @@ struct PopupMenuView: View {
                 positionBinding.wrappedValue = value.location
             }
     }
+    
+    func loadFromRealm() {
+        
+        let mv = realmInstance.object(ofType: ManagedView.self, forPrimaryKey: self.PMO.viewId)
+        guard let umv = mv else { return }
+        // set attributes
+        let _ = umv.boardId
+        viewIsLocked = umv.isLocked
+    
+        self.PMO.toolType = umv.toolType == "LINE" || umv.toolType == "CURVED-LINE" ? "Line" : "Basic"
+        
+        viewSize = Double(umv.width)
+        viewStroke = Double(umv.lineDash)
+        viewRotation = umv.rotation
+        viewColor = colorFromRGBA(red: umv.colorRed, green: umv.colorGreen, blue: umv.colorBlue, alpha: umv.colorAlpha)
+    }
 }
 
 /**
@@ -194,7 +257,7 @@ struct MenuOptionButton: View {
             Text(label)
         }
         .padding()
-        .frame(maxWidth: .infinity, maxHeight: 50)
+        .frame(maxWidth: 200, maxHeight: 50)
         .background(foregroundColorForScheme(colorScheme))
         .cornerRadius(8)
         .scaleEffect(0.8) // Enhanced scale effect
@@ -207,9 +270,10 @@ struct MenuOptionButton: View {
 struct MenuCheckBoxButton: View {
     let label: String
     let imageName: String
+    @Binding var isChecked: Bool
     let onClick: (Bool) -> Void
     @Environment(\.colorScheme) var colorScheme
-    @State private var isChecked: Bool = false
+    
 
     var body: some View {
         HStack {
@@ -222,19 +286,21 @@ struct MenuCheckBoxButton: View {
                 }
         }
         .padding()
-        .frame(maxWidth: .infinity, maxHeight: 50)
+        .frame(maxWidth: 200, maxHeight: 50)
         .background(foregroundColorForScheme(colorScheme))
         .cornerRadius(8)
         .scaleEffect(0.8) // Enhanced scale effect
     }
 }
 
-struct MenuOptionSlider: View {
+struct MenuOptionRotation: View {
     let label: String
     let imageName: String
     let viewId: String
+    @Binding var viewRotation: Double
+    
     @Environment(\.colorScheme) var colorScheme
-    @State var viewRotation: Double = 0
+    let realmInstance = realm()
 
     var body: some View {
         Slider(
@@ -248,10 +314,108 @@ struct MenuOptionSlider: View {
                 }
             }
         ).padding()
-        
         .frame(maxWidth: 200, maxHeight: 50)
         .background(foregroundColorForScheme(colorScheme))
         .cornerRadius(8)
         .scaleEffect(1.0) // Enhanced scale effect
     }
+    
+    func loadFromRealm() {
+        
+        let mv = realmInstance.object(ofType: ManagedView.self, forPrimaryKey: self.viewId)
+        guard let umv = mv else { return }
+        // set attributes
+        viewRotation = umv.rotation
+        let _ = colorFromRGBA(red: umv.colorRed, green: umv.colorGreen, blue: umv.colorBlue, alpha: umv.colorAlpha)
+    }
+}
+
+struct MenuOptionSize: View {
+    let label: String
+    let imageName: String
+    let viewId: String
+    @Binding var viewSize: Double
+    
+    @Environment(\.colorScheme) var colorScheme
+    let realmInstance = realm()
+
+    var body: some View {
+        Slider(
+            value: $viewSize,
+            in: 25...200,
+            step: 1,
+            onEditingChanged: { editing in
+                if !editing {
+                    let va = ViewAtts(viewId: viewId, size: viewSize)
+                    CodiChannel.TOOL_ATTRIBUTES.send(value: va)
+                }
+            }
+        ).padding()
+        .frame(maxWidth: 200, maxHeight: 50)
+        .background(foregroundColorForScheme(colorScheme))
+        .cornerRadius(8)
+        .scaleEffect(1.0) // Enhanced scale effect
+        
+    }
+    
+    
+}
+
+struct MenuOptionStroke: View {
+    let label: String
+    let imageName: String
+    let viewId: String
+    @Binding var lineStroke: Double
+    
+    
+    @Environment(\.colorScheme) var colorScheme
+    let realmInstance = realm()
+
+    var body: some View {
+        Slider(
+            value: $lineStroke,
+            in: 3...75,
+            step: 1,
+            onEditingChanged: { editing in
+                if !editing {
+                    let va = ViewAtts(viewId: viewId, stroke: lineStroke)
+                    CodiChannel.TOOL_ATTRIBUTES.send(value: va)
+                }
+            }
+        ).padding()
+        .frame(maxWidth: 200, maxHeight: 50)
+        .background(foregroundColorForScheme(colorScheme))
+        .cornerRadius(8)
+        .scaleEffect(1.0) // Enhanced scale effect
+        
+    }
+    
+    
+}
+
+struct MenuOptionColor: View {
+    let label: String
+    let imageName: String
+    let viewId: String
+    @Binding var viewColor: Color
+    
+    @Environment(\.colorScheme) var colorScheme
+    let realmInstance = realm()
+
+    var body: some View {
+        ColorListPicker() { color in
+            viewColor = color
+            let va = ViewAtts(viewId: viewId, color: viewColor)
+            CodiChannel.TOOL_ATTRIBUTES.send(value: va)
+        }
+        
+        .frame(width: 200, height: 50)
+        .background(foregroundColorForScheme(colorScheme))
+        .cornerRadius(8)
+        .scaleEffect(1.0) // Enhanced scale effect
+        .padding()
+        
+    }
+    
+    
 }

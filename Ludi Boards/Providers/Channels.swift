@@ -29,9 +29,12 @@ class ViewAtts {
     var viewId: String = ""
     var size: Double? = nil
     var rotation: Double? = nil
-    var color: Color? = nil    
+    var color: Color? = nil
+    var stroke: Double? = nil
+    var position: CGPoint? = nil
+    var toolType: String? = nil
     var level: Int = 0
-    var isLocked: Bool = false
+    var isLocked: Bool? = nil
     var isDeleted: Bool = false
     var stateAction: String = "open" //close
     
@@ -40,7 +43,11 @@ class ViewAtts {
         size: Double? = nil,
         rotation: Double? = nil,
         color: Color? = nil,
+        stroke: Double? = nil,
+        position: CGPoint? = nil,
+        toolType: String? = nil,
         level:Int=0,
+        isLocked: Bool? = nil,
         isDeleted: Bool = false,
         stateAction: String="open"
     ){
@@ -48,7 +55,11 @@ class ViewAtts {
         self.size = size
         self.rotation = rotation
         self.color = color
+        self.stroke = stroke
+        self.position = position
+        self.toolType = toolType
         self.level = level
+        self.isLocked = isLocked
         self.isDeleted = isDeleted
         self.stateAction = stateAction
     }

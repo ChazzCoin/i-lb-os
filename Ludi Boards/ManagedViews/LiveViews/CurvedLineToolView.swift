@@ -137,7 +137,7 @@ struct CurvedLineDrawingManaged: View {
                 endPoint: CGPoint(x: lifeEndX, y: lifeEndY),
                 controlPoint1: CGPoint(x: lifeCenterX, y: lifeCenterY)
             ).onTap(perform: {
-                anchorsAreVisible = !anchorsAreVisible
+                
             }).simultaneousGesture(doubleTap())
         )
         .overlay(
@@ -146,7 +146,7 @@ struct CurvedLineDrawingManaged: View {
                 .frame(width: 150, height: 150) // Adjust size for easier tapping
                 .opacity(anchorsAreVisible ? 1 : 0) // Invisible
                 .position(x: lifeStartX, y: lifeStartY)
-                .gesture(self.lifeIsLocked ? nil : dragGesture(isStart: true))
+                .gesture(dragGesture(isStart: true))
         )
         .overlay(
             Circle()
@@ -154,7 +154,7 @@ struct CurvedLineDrawingManaged: View {
                 .frame(width: 150, height: 150) // Increase size for finger tapping
                 .opacity(anchorsAreVisible ? 1 : 0) // Invisible
                 .position(x: lifeEndX, y: lifeEndY)
-                .gesture(self.lifeIsLocked ? nil : dragGesture(isStart: false))
+                .gesture(dragGesture(isStart: false))
         )
         .overlay(
             Circle() // Use a circle for the control point
@@ -162,7 +162,7 @@ struct CurvedLineDrawingManaged: View {
                 .frame(width: 150, height: 150) // Adjust size as needed
                 .opacity(anchorsAreVisible ? 1 : 0)
                 .position(quadBezierPoint(start: CGPoint(x: lifeStartX, y: lifeStartY), end: CGPoint(x: lifeEndX, y: lifeEndY), control: CGPoint(x: lifeCenterX, y: lifeCenterY)))
-                .gesture(self.lifeIsLocked ? nil : dragGestureForControlPoint())
+                .gesture(dragGestureForControlPoint())
         )
         .onAppear() {
         
@@ -181,7 +181,9 @@ struct CurvedLineDrawingManaged: View {
                 }
                 if let ts = temp.size { lifeWidth = ts }
                 if let tc = temp.color { lifeColor = tc }
-                lifeIsLocked = temp.isLocked
+                if let tstroke = temp.stroke { lifeWidth = tstroke }
+                
+                if let tl = temp.isLocked { lifeIsLocked = tl }
                 
                 if temp.stateAction == "close" {
                     popUpIsVisible = false
@@ -203,6 +205,7 @@ struct CurvedLineDrawingManaged: View {
     private func doubleTap() -> some Gesture {
         TapGesture(count: 2).onEnded({ _ in
             print("Tapped double")
+            anchorsAreVisible = !anchorsAreVisible
             popUpIsVisible = !popUpIsVisible
             CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(
                windowId: "pop_settings",
@@ -214,9 +217,12 @@ struct CurvedLineDrawingManaged: View {
             if popUpIsVisible {
                 CodiChannel.TOOL_ATTRIBUTES.send(value: ViewAtts(
                    viewId: viewId,
-                   size: lifeWidth,
                    color: lifeColor,
+                   stroke: lifeWidth,
+                   position: CGPoint(x: lifeStartX, y: lifeStartY),
+                   toolType: "Line",
                    level: ToolLevels.LINE.rawValue,
+                   isLocked: lifeIsLocked,
                    stateAction: popUpIsVisible ? "open" : "close")
                 )
             }
@@ -227,6 +233,7 @@ struct CurvedLineDrawingManaged: View {
     func dragGestureForControlPoint() -> some Gesture {
         DragGesture()
             .onChanged { value in
+                if self.lifeIsLocked {return}
                 if dragOffset == .zero {
                     dragOffset = CGSize(width: (lifeCenterX - value.startLocation.x),
                                         height: (lifeCenterY - value.startLocation.y))
@@ -245,6 +252,7 @@ struct CurvedLineDrawingManaged: View {
     private func dragGesture(isStart: Bool) -> some Gesture {
         DragGesture()
             .onChanged { value in
+                if self.lifeIsLocked {return}
                 if !anchorsAreVisible {return}
                 self.isDragging = true
                 if isStart {
@@ -265,6 +273,7 @@ struct CurvedLineDrawingManaged: View {
                             end: CGPoint(x: lifeEndX, y: lifeEndY))
             }
             .onEnded { _ in
+                if self.lifeIsLocked {return}
                 if !anchorsAreVisible {return}
                 self.isDragging = false
                 updateRealmPos(start: CGPoint(x: lifeStartX, y: lifeStartY),

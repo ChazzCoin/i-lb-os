@@ -97,13 +97,15 @@ struct enableManagedViewTool : ViewModifier {
         .border(popUpIsVisible ? lifeBorderColor : Color.clear, width: 10) // Border modifier
         .position(x: position.x + (isDragging ? dragOffset.width : 0) + (self.lifeWidth),
                   y: position.y + (isDragging ? dragOffset.height : 0) + (self.lifeHeight))
-        .gesture(self.lifeIsLocked ? nil :
+        .gesture(
             LongPressGesture(minimumDuration: 0.01)
                 .onEnded { _ in
+                    if self.lifeIsLocked {return}
                     self.isDragging = true
                 }
                 .sequenced(before: DragGesture())
                 .updating($dragOffset, body: { (value, state, transaction) in
+                    if self.lifeIsLocked {return}
                     switch value {
                         case .second(true, let drag?):
                             state = drag.translation
@@ -118,12 +120,13 @@ struct enableManagedViewTool : ViewModifier {
                     }
                 })
                 .onEnded { value in
+                    if self.lifeIsLocked {return}
                     if case .second(true, let drag?) = value {
                         self.position = CGPoint(x: self.position.x + drag.translation.width, y: self.position.y + drag.translation.height)
                         updateRealmPos()
                         self.isDragging = false
                     }
-                }.simultaneously(with: self.lifeIsLocked ? nil : TapGesture(count: 2)
+                }.simultaneously(with: TapGesture(count: 2)
                     .onEnded { _ in
                         print("Tapped")
                         popUpIsVisible = !popUpIsVisible
@@ -133,7 +136,10 @@ struct enableManagedViewTool : ViewModifier {
                                 viewId: viewId,
                                 size: lifeWidth,
                                 rotation: lifeRotation,
-                                level: ToolLevels.BASIC.rawValue
+                                position: self.position,
+                                toolType: "Basic",
+                                level: ToolLevels.BASIC.rawValue,
+                                isLocked: lifeIsLocked
                             ))
                         }
                     }
@@ -176,12 +182,10 @@ struct enableManagedViewTool : ViewModifier {
                     popUpIsVisible = false
                     return
                 }
-                if inVA.isDeleted {
-                    return
-                }
+                if inVA.isDeleted { return }
                 if let inColor = inVA.color { lifeColor = ColorProvider.fromColor(inColor) }
                 if let inRotation = inVA.rotation { lifeRotation = inRotation }
-                lifeIsLocked = inVA.isLocked
+                if let isL = inVA.isLocked { lifeIsLocked = isL }
                 if let inSize = inVA.size {
                     lifeWidth = inSize
                     lifeHeight = inSize
