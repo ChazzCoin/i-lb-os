@@ -61,7 +61,7 @@ struct SessionPlanOverview: View {
 
         }
         .onAppear() {
-            if let user = realmInstance.findByField(SolKnight.self, value: "1") {
+            if realmInstance.userIsLoggedIn() {
                 fireGetLiveDemoAsync()
                 getShares()
                 observeSessions()
@@ -76,7 +76,7 @@ struct SessionPlanOverview: View {
             SessionPlanView(sessionId: "new", isShowing: $showNewPlanSheet, isMasterWindow: false)
         }
         .refreshable {
-            if let user = realmInstance.findByField(SolKnight.self, value: "1") {
+            if realmInstance.userIsLoggedIn() {
                 fireGetLiveDemoAsync(realm: self.realmInstance)
                 getShares()
                 observeSessions()

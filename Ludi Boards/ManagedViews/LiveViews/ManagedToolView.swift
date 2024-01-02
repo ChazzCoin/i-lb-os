@@ -16,6 +16,7 @@ struct ManagedViewBoardTool: View {
     let viewId: String
     let activityId: String
     let toolType: String
+    @EnvironmentObject var BEO: BoardEngineObject
     
     @State private var color: Color = .black
     @State private var rotation = 0.0
@@ -71,12 +72,6 @@ struct enableManagedViewTool : ViewModifier {
     @GestureState private var dragOffset = CGSize.zero
     @State private var isDragging = false
     @State private var managedViewNotificationToken: NotificationToken? = nil
-    // Firebase
-    @State var observerHandle: DatabaseHandle?
-    @State var reference = Database
-        .database()
-        .reference()
-        .child(DatabasePaths.managedViews.rawValue)
     
     @State var cancellables = Set<AnyCancellable>()
     
@@ -149,10 +144,6 @@ struct enableManagedViewTool : ViewModifier {
         .onAppear {
             
             isDisabled = false
-            self.reference = reference
-                .child(self.activityId)
-                .child(self.viewId)
-            
             MVS = ManagedViewService(realm: self.realmInstance, activityId: self.activityId, viewId: self.viewId)
             
             observeView()
@@ -225,55 +216,48 @@ struct enableManagedViewTool : ViewModifier {
     
     // Observe From Realm
     func observeFromRealm() {
-        if let mv = realmInstance.object(ofType: ManagedView.self, forPrimaryKey: self.viewId) {
-            managedViewNotificationToken = mv.observe { change in
-                if isDragging {return}
-                switch change {
-                    case .change(let obj, _):
-                        let temp = obj as! ManagedView
-                        if temp.id != self.viewId {return}
-                        if self.isDragging {return}
-                        
-                        DispatchQueue.main.async {
-                            if temp.id != self.viewId {return}
-                            if self.isDragging {return}
-//                            if temp.lastUserId == self.currentUserId {return}
-                            let newPosition = CGPoint(x: temp.x, y: temp.y)
-                            self.coordinateStack.append(newPosition)
-                            animateToNextCoordinate()
-                            
-                            if activityId != temp.boardId {activityId = temp.boardId}
-                            
-                            if lifeWidth != Double(temp.width) {lifeWidth = Double(temp.width)}
-                            if lifeHeight != Double(temp.height) { lifeHeight = Double(temp.height)}
-                            if lifeRotation != temp.rotation { lifeRotation = temp.rotation}
-                            if lifeToolType != temp.toolType { lifeToolType = temp.toolType}
-                            if lifeColorRed != temp.colorRed {lifeColorRed = temp.colorRed}
-                            if lifeColorGreen != temp.colorGreen { lifeColorGreen = temp.colorGreen}
-                            if lifeColorBlue != temp.colorBlue {lifeColorBlue = temp.colorBlue}
-                            if lifeColorAlpha != temp.colorAlpha { lifeColorAlpha = temp.colorAlpha}
-                            if lifeIsLocked != temp.isLocked { lifeIsLocked = temp.isLocked}
-                            self.MVS?.isDeleted = temp.isDeleted
-                            lastUserId = temp.lastUserId
-                            minSizeCheck()
-                        }
-                    case .error(let error):
-                        // TODO: RESTART OBSERVER
-                        print("Error: \(error)")
-                    case .deleted:
-                        self.isDisabled = true
-                        print("Object has been deleted.")
-                }
+        
+        MVS?.observeManagedView() { mv in
+            print("!!ManagedToolView!!")
+            guard let temp = mv else {
+                self.isDisabled = true
+                return
+            }
+            
+            if temp.id != self.viewId {return}
+            if self.isDragging {return}
+            
+            DispatchQueue.main.async {
+                if temp.id != self.viewId {return}
+                if self.isDragging {return}
+                let newPosition = CGPoint(x: temp.x, y: temp.y)
+                self.coordinateStack.append(newPosition)
+                animateToNextCoordinate()
+                
+                if activityId != temp.boardId {activityId = temp.boardId}
+                
+                if lifeWidth != Double(temp.width) {lifeWidth = Double(temp.width)}
+                if lifeHeight != Double(temp.height) { lifeHeight = Double(temp.height)}
+                if lifeRotation != temp.rotation { lifeRotation = temp.rotation}
+                if lifeToolType != temp.toolType { lifeToolType = temp.toolType}
+                if lifeColorRed != temp.colorRed {lifeColorRed = temp.colorRed}
+                if lifeColorGreen != temp.colorGreen { lifeColorGreen = temp.colorGreen}
+                if lifeColorBlue != temp.colorBlue {lifeColorBlue = temp.colorBlue}
+                if lifeColorAlpha != temp.colorAlpha { lifeColorAlpha = temp.colorAlpha}
+                if lifeIsLocked != temp.isLocked { lifeIsLocked = temp.isLocked}
+                self.MVS?.isDeleted = temp.isDeleted
+                lastUserId = temp.lastUserId
+                minSizeCheck()
             }
         }
-
+        
     }
     
     
     func animateToNextCoordinate() {
         guard !coordinateStack.isEmpty else { return }
         
-        if self.isDragging || !self.BEO.isSharedBoard {
+        if self.isDragging {
             coordinateStack.removeAll()
             return
         }
@@ -313,7 +297,7 @@ struct enableManagedViewTool : ViewModifier {
                             mv.isLocked = lifeIsLocked
                             mv.lastUserId = self.currentUserId
                             // TODO: Firebase Users ONLY
-                            updateToolInFirebase(mv: mv)
+                            MVS?.updateFirebase(mv: mv)
                         }
                     }
                 } catch {
@@ -326,7 +310,6 @@ struct enableManagedViewTool : ViewModifier {
     
     // Function to update a Realm object in the background
     func updateRealmPos(x:Double?=nil, y:Double?=nil) {
-        if !self.BEO.isLoggedIn {return}
         DispatchQueue.global(qos: .background).async {
             autoreleasepool {
                 do {
@@ -338,7 +321,7 @@ struct enableManagedViewTool : ViewModifier {
                             mv.lastUserId = self.BEO.userId ?? "nil"
                         }
                         
-                        updateToolInFirebase(mv: mv)
+                        MVS?.updateFirebase(mv: mv)
                     }
                 } catch {
                     print("Realm error: \(error)")
@@ -347,20 +330,5 @@ struct enableManagedViewTool : ViewModifier {
         }
     }
     
-    // TODO: FIREBASE
-    func updateToolInFirebase(mv:ManagedView?) {
-        if !self.BEO.isLoggedIn {return}
-        if self.isWriting {return}
-        self.isWriting = true
-        reference.setValue(mv?.toDict()) { (error:Error?, ref:DatabaseReference) in
-            if let error = error {
-                self.isWriting = false
-              print("Data could not be saved: \(error).")
-            } else {
-                self.isWriting = false
-              print("Data saved successfully!")
-            }
-        }
-    }
-    
+
 }

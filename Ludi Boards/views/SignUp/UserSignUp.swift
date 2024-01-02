@@ -20,13 +20,13 @@ struct SignUpView: View {
     @State private var showImagePicker = false
     @State private var photoUrl: String = ""
         
-//    @State var isLoggedIn: Bool = false
+    @State var realmInstance = realm()
     @State var isLoading: Bool = false
     @State private var showCompletion = false
 
     var body: some View {
         
-        if self.BEO.isLoggedIn {
+        if self.realmInstance.userIsLoggedIn() {
             BuddyProfileView().environmentObject(self.BEO)
         } else {
             LoadingForm(isLoading: $isLoading, showCompletion: $showCompletion) { runLoading in
@@ -47,42 +47,21 @@ struct SignUpView: View {
         
     }
     
-    private func saveUser() {
-        let newUser = SolKnight()
-        newUser.tempId = UUID().uuidString
-        newUser.username = username
-        
-        self.BEO.realmInstance.safeWrite { r in
-            r.add(newUser)
-        }
-        
-        saveSolKnightToFirebase(user: newUser)
-        username = ""
-//        newUser.email = email
-//        newUser.phone = phone
-//        newUser.name = name        
-        // Check if there is an image selected
-//        if let selectedImage = self.image {
-//            // Upload to Firebase Storage
-//            uploadImageToFirebase(image: selectedImage) { url in
-//                newUser.photoUrl = url?.absoluteString ?? ""
-//                // Save user to Realm with photo URL
-//                try! realmInstance.write {
-//                    realmInstance.add(newUser)
-//                }
-//            }
-//        } else {
-//            // Save user to Realm without photo URL
-//            try! realmInstance.write {
-//                realmInstance.add(newUser)
-//            }
-//        }
-        
-        
-        
+    func userIsLoggedIn() -> Bool {
+        return self.realmInstance.userIsLoggedIn()
     }
     
-    private func saveUserToFirebase(user:User) {
+    private func saveUser() {
+        self.BEO.realmInstance.updateGetCurrentSolUser { u in
+            u.userId = UUID().uuidString
+            u.userName = username
+            u.isLoggedIn = true
+            saveUserToFirebase(user: u)
+        }
+        username = ""
+    }
+    
+    private func saveUserToFirebase(user:CurrentSolUser) {
         firebaseDatabase { fdb in
             fdb.child(DatabasePaths.users.rawValue)
                 .child(user.id)
@@ -90,13 +69,6 @@ struct SignUpView: View {
         }
     }
     
-    private func saveSolKnightToFirebase(user:SolKnight) {
-        firebaseDatabase { fdb in
-            fdb.child(DatabasePaths.users.rawValue)
-                .child(user.tempId)
-                .setValue(user.toDict())
-        }
-    }
     
     private func uploadImageToFirebase(image: UIImage, completion: @escaping (URL?) -> Void) {
         let storageRef = Storage.storage().reference().child("userImages/\(UUID().uuidString).jpg")
@@ -119,8 +91,8 @@ struct SignUpView: View {
     }
 }
 
-struct SignUpView_Previews: PreviewProvider {
-    static var previews: some View {
-        SignUpView()
-    }
-}
+//struct SignUpView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        SignUpView()
+//    }
+//}

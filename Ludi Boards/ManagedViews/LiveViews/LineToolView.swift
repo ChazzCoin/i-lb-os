@@ -17,7 +17,6 @@ struct LineDrawingManaged: View {
     @EnvironmentObject var BEO: BoardEngineObject
     var managedView: ManagedView? = nil
     
-    @State private var isWriting = false
     @State private var coordinateStack: [[String:CGPoint]] = []
     
     let realmInstance = realm()
@@ -56,12 +55,6 @@ struct LineDrawingManaged: View {
     @State private var isDragging = false
     @State var originalLifeStart = CGPoint.zero
     @State var originalLifeEnd = CGPoint.zero
-    
-    // Firebase
-    @State var reference = Database
-        .database()
-        .reference()
-        .child(DatabasePaths.managedViews.rawValue)
     
     @State private var objectNotificationToken: NotificationToken? = nil
     @State private var cancellables = Set<AnyCancellable>()
@@ -139,7 +132,6 @@ struct LineDrawingManaged: View {
         .gesture(dragGestureDuo())
         .onAppear() {
         
-            reference = reference.child(self.activityId).child(self.viewId)
             MVS = ManagedViewService(realm: self.realmInstance, activityId: self.activityId, viewId: self.viewId)
             loadFromRealm()
             
@@ -278,7 +270,7 @@ struct LineDrawingManaged: View {
                 }
            ).simultaneously(with: TapGesture(count: 2).onEnded({ _ in
                print("Tapped double")
-                anchorsAreVisible = !anchorsAreVisible
+               anchorsAreVisible = !anchorsAreVisible
                popUpIsVisible = !popUpIsVisible
                CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(
                   windowId: "pop_settings",
@@ -310,60 +302,52 @@ struct LineDrawingManaged: View {
     func observeFromRealm() {
         if isDisabledChecker() {return}
         if isDeletedChecker() {return}
-        if let mv = realmInstance.object(ofType: ManagedView.self, forPrimaryKey: viewId) {
-            if isDisabledChecker() {return}
-            if isDeletedChecker() {return}
-            managedViewNotificationToken = mv.observe { change in
-                switch change {
-                    case .change(let obj, _):
-                        let temp = obj as! ManagedView
-                        if temp.id != self.viewId {return}
-                        if self.isDragging {return}
-                            
-                        DispatchQueue.main.async {
-                            if self.isDragging {return}
-                            if activityId != temp.boardId { activityId = temp.boardId }
-                            self.MVS?.isDeleted = temp.isDeleted
-                            if lifeWidth != Double(temp.width) {lifeWidth = Double(temp.width)}
-                            if lifeLineDash != Double(temp.lineDash) {lifeLineDash = Double(temp.lineDash)}
-                            
-                            var colorHasChanged = false
-                            if lifeColorRed != temp.colorRed { colorHasChanged = true; lifeColorRed = temp.colorRed}
-                            if lifeColorGreen != temp.colorGreen { colorHasChanged = true; lifeColorGreen = temp.colorGreen}
-                            if lifeColorBlue != temp.colorBlue { colorHasChanged = true; lifeColorBlue = temp.colorBlue }
-                            if lifeColorAlpha != temp.colorAlpha { colorHasChanged = true; lifeColorAlpha = temp.colorAlpha }
-                            if colorHasChanged {
-                                lifeColor = colorFromRGBA(red: lifeColorRed, green: lifeColorGreen, blue: lifeColorBlue, alpha: lifeColorAlpha)
-                            }
-                            loadWidthAndHeight()
-                            loadRotationOfLine()
-                            //
-                            
-                            let startPosition = CGPoint(x: temp.startX, y: temp.startY)
-                            let endPosition = CGPoint(x: temp.endX, y: temp.endY)
-                            let centerPosition = getCenterOfLine(start: startPosition, end: endPosition)
-                            
-                            let coords = [
-                                "start":startPosition,
-                                "end":endPosition,
-                                "center":centerPosition
-                            ]
-                            
-                            self.coordinateStack.append(coords)
-                            animateToNextCoordinate()
-                            
-                            if lifeIsLocked != temp.isLocked { lifeIsLocked = temp.isLocked}
-                        }
-                        
-                    case .error(let error):
-                        // Handle errors, if any
-                        print("Error: \(error)")
-                    case .deleted:
-                        // Object has been deleted
-                        self.isDisabled = true
-                        print("Object has been deleted.")
-                }
+        
+        MVS?.observeManagedView() { mv in
+            print("!!ManagedToolView!!")
+            guard let temp = mv else {
+                self.isDisabled = true
+                return
             }
+            
+            if temp.id != self.viewId {return}
+            if self.isDragging {return}
+                
+            DispatchQueue.main.async {
+                if self.isDragging {return}
+                if activityId != temp.boardId { activityId = temp.boardId }
+                self.MVS?.isDeleted = temp.isDeleted
+                if lifeWidth != Double(temp.width) {lifeWidth = Double(temp.width)}
+                if lifeLineDash != Double(temp.lineDash) {lifeLineDash = Double(temp.lineDash)}
+                
+                var colorHasChanged = false
+                if lifeColorRed != temp.colorRed { colorHasChanged = true; lifeColorRed = temp.colorRed}
+                if lifeColorGreen != temp.colorGreen { colorHasChanged = true; lifeColorGreen = temp.colorGreen}
+                if lifeColorBlue != temp.colorBlue { colorHasChanged = true; lifeColorBlue = temp.colorBlue }
+                if lifeColorAlpha != temp.colorAlpha { colorHasChanged = true; lifeColorAlpha = temp.colorAlpha }
+                if colorHasChanged {
+                    lifeColor = colorFromRGBA(red: lifeColorRed, green: lifeColorGreen, blue: lifeColorBlue, alpha: lifeColorAlpha)
+                }
+                loadWidthAndHeight()
+                loadRotationOfLine()
+                //
+                
+                let startPosition = CGPoint(x: temp.startX, y: temp.startY)
+                let endPosition = CGPoint(x: temp.endX, y: temp.endY)
+                let centerPosition = getCenterOfLine(start: startPosition, end: endPosition)
+                
+                let coords = [
+                    "start":startPosition,
+                    "end":endPosition,
+                    "center":centerPosition
+                ]
+                
+                self.coordinateStack.append(coords)
+                animateToNextCoordinate()
+                
+                if lifeIsLocked != temp.isLocked { lifeIsLocked = temp.isLocked}
+            }
+            
         }
 
     }
@@ -382,17 +366,7 @@ struct LineDrawingManaged: View {
                             mv.endY = Double(end?.y ?? CGFloat(lifeEndY))
                         }
                         
-                        if self.isWriting {return}
-                        self.isWriting = true
-                        reference.setValue(mv.toDict()) { (error:Error?, ref:DatabaseReference) in
-                            if let error = error {
-                                self.isWriting = false
-                              print("Data could not be saved: \(error).")
-                            } else {
-                                self.isWriting = false
-                              print("Data saved successfully!")
-                            }
-                        }
+                        MVS?.updateFirebase(mv: mv)
                     }
                 } catch {
                     print("Realm error: \(error)")
@@ -450,15 +424,17 @@ struct LineDrawingManaged: View {
             guard let tMV = mv else { return }
             r.create(ManagedView.self, value: tMV, update: .modified)
             // TODO: Firebase Users ONLY
-            updateFirebase(mv: mv)
+            MVS?.updateFirebase(mv: mv)
         }
     }
     
-    func updateFirebase(mv:ManagedView?) {
-        // TODO: Firebase Users ONLY
-        if self.activityId.isEmpty || self.viewId.isEmpty {return}
-        reference.setValue(mv?.toDict())
-    }
+//    func updateFirebase(mv:ManagedView?) {
+//        // TODO: Firebase Users ONLY
+//        if !self.realmInstance.userIsLoggedIn() { return }
+//        
+//        if self.activityId.isEmpty || self.viewId.isEmpty {return}
+//        reference.setValue(mv?.toDict())
+//    }
     
     
     func loadFromRealm() {

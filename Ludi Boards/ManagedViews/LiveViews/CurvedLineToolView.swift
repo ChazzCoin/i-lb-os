@@ -79,10 +79,10 @@ struct CurvedLineDrawingManaged: View {
     @State var originalLifeEnd = CGPoint.zero
     
     // Firebase
-    @State var reference = Database
-        .database()
-        .reference()
-        .child(DatabasePaths.managedViews.rawValue)
+//    @State var reference = Database
+//        .database()
+//        .reference()
+//        .child(DatabasePaths.managedViews.rawValue)
     
     @State private var objectNotificationToken: NotificationToken? = nil
     @State private var cancellables = Set<AnyCancellable>()
@@ -166,7 +166,7 @@ struct CurvedLineDrawingManaged: View {
         )
         .onAppear() {
         
-            reference = reference.child(self.activityId).child(self.viewId)
+//            reference = reference.child(self.activityId).child(self.viewId)
             MVS = ManagedViewService(realm: self.realmInstance, activityId: self.activityId, viewId: self.viewId)
             loadFromRealm()
             
@@ -363,17 +363,7 @@ struct CurvedLineDrawingManaged: View {
                             mv.endY = Double(end?.y ?? CGFloat(lifeEndY))
                         }
                         
-                        if self.isWriting {return}
-                        self.isWriting = true
-                        reference.setValue(mv.toDict()) { (error:Error?, ref:DatabaseReference) in
-                            if let error = error {
-                                self.isWriting = false
-                              print("Data could not be saved: \(error).")
-                            } else {
-                                self.isWriting = false
-                              print("Data saved successfully!")
-                            }
-                        }
+                        MVS?.updateFirebase(mv: mv)
                     }
                 } catch {
                     print("Realm error: \(error)")
@@ -433,15 +423,15 @@ struct CurvedLineDrawingManaged: View {
             guard let tMV = mv else { return }
             r.create(ManagedView.self, value: tMV, update: .modified)
             // TODO: Firebase Users ONLY
-            updateFirebase(mv: mv)
+            MVS?.updateFirebase(mv: mv)
         }
     }
     
-    func updateFirebase(mv:ManagedView?) {
-        // TODO: Firebase Users ONLY
-        if self.activityId.isEmpty || self.viewId.isEmpty {return}
-        reference.setValue(mv?.toDict())
-    }
+//    func updateFirebase(mv:ManagedView?) {
+//        // TODO: Firebase Users ONLY
+//        if self.activityId.isEmpty || self.viewId.isEmpty {return}
+//        reference.setValue(mv?.toDict())
+//    }
     
     
     func loadFromRealm() {

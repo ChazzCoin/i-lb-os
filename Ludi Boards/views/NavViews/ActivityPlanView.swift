@@ -228,7 +228,7 @@ struct ActivityPlanView: View {
                         message: "Would you like to delete this plan?",
                         action: {
                             startLoadingProcess()
-                            if let temp = realmInstance.findByField(ActivityPlan.self, field: "id", value: self.boardId) {
+                            if let _ = realmInstance.findByField(ActivityPlan.self, field: "id", value: self.boardId) {
                                 activityPlan = ActivityPlan()
                                 realmInstance.safeWrite { r in
 //                                    r.delete(temp)
@@ -345,7 +345,7 @@ struct ActivityPlanView: View {
         }
 
         realmInstance.safeWrite { r in
-            r.add(newAP)
+            r.create(ActivityPlan.self, value: newAP, update: .all)
         }
         // TODO: Firebase Users ONLY
         updateInFirebase(newAP: newAP)
@@ -363,7 +363,7 @@ struct ActivityPlanView: View {
     
     func updateActivityPlan() {
         realmInstance.safeWrite { r in
-            r.add(self.activityPlan)
+            r.create(ActivityPlan.self, value: self.activityPlan, update: .all)
         }
         //TODO: FIREBASE ONLY
         updateInFirebase(newAP: self.activityPlan)

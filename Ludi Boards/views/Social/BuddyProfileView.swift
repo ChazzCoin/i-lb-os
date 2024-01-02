@@ -54,7 +54,7 @@ struct BuddyProfileView: View {
 //                .padding(.horizontal)
                 solButton(title: "Sign Out", action: {
                     runLoading()
-                    if let user = self.BEO.realmInstance.findByField(SolKnight.self, value: "1") {
+                    if let user = self.BEO.realmInstance.findByField(CurrentSolUser.self, value: CURRENT_USER_ID) {
                         self.BEO.realmInstance.safeWrite { r in
                             r.delete(user)
                         }
@@ -106,9 +106,8 @@ struct BuddyProfileView: View {
     }
     
     func loadUser() {
-        self.BEO.loadUser()
-        if let un = self.BEO.userName {
-            username = un
+        if let user = self.BEO.realmInstance.getCurrentSolUserId() {
+            username = user.userName
             status = "online"
         }
     }
@@ -138,8 +137,8 @@ struct ActionButtonStyle: ButtonStyle {
     }
 }
 
-struct BuddyProfileView_Previews: PreviewProvider {
-    static var previews: some View {
-        BuddyProfileView()
-    }
-}
+//struct BuddyProfileView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        BuddyProfileView()
+//    }
+//}

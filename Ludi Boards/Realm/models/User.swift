@@ -12,6 +12,7 @@ class SolKnight: Object, Identifiable {
     @objc dynamic var id: String = "1" // Primary key
     @objc dynamic var tempId: String = ""
     @objc dynamic var username: String = ""
+    @objc dynamic var isLoggedIn: Bool = false
     @objc dynamic var status: String = "away"
     
     override static func primaryKey() -> String? {

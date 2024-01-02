@@ -12,7 +12,7 @@ import RealmSwift
 import FirebaseDatabase
 
 class BoardEngineObject : ObservableObject {
-    static let shared = BoardEngineObject()
+//    static let shared = BoardEngineObject()
     @Environment(\.colorScheme) var colorScheme
 
     @State var realmInstance = realm()
@@ -23,7 +23,7 @@ class BoardEngineObject : ObservableObject {
     @Published var isShowingPopUp: Bool = false
     
     @Published var isSharedBoard = false
-    @Published var isLoggedIn: Bool = false
+    @Published var isLoggedIn: Bool = true
     @Published var userId: String? = nil
     @Published var userName: String? = nil
     // Current Board
@@ -423,7 +423,7 @@ struct BoardEngine: View {
                 }
                 
                 // Firebase
-                if self.BEO.isLoggedIn {
+                if self.realmIntance.userIsLoggedIn() {
                     APS = ActivityPlanService(realm: self.realmIntance)
                     APS?.startObserving(activityId: self.activityID)
                 }
@@ -465,10 +465,9 @@ struct BoardEngine: View {
         self.BEO.setBoardBgView(boardName: newActivity.backgroundView)
         self.activities.append(newActivity)
         self.realmIntance.safeWrite { r in
-            r.add(newActivity)
+            r.create(ActivityPlan.self, value: newActivity, update: .all)
         }
         loadManagedViewTools()
-        
     }
     
     func loadSessionPlans() {
@@ -496,9 +495,10 @@ struct BoardEngine: View {
         }
         
         // Firebase
-        if self.BEO.isLoggedIn {
-            fireGetSessionPlanAsync(sessionId: self.sessionID, realm: self.realmIntance)
-        }
+        fireGetSessionPlanAsync(sessionId: self.sessionID, realm: self.realmIntance)
+//        if self.BEO.isLoggedIn {
+//            fireGetSessionPlanAsync(sessionId: self.sessionID, realm: self.realmIntance)
+//        }
     }
     
     func observeActivityPlan() {
@@ -526,9 +526,10 @@ struct BoardEngine: View {
         }
         
         // Firebase
-        if self.BEO.isLoggedIn {
-            fireGetSessionPlanAsync(sessionId: self.sessionID, realm: self.realmIntance)
-        }
+        fireGetSessionPlanAsync(sessionId: self.sessionID, realm: self.realmIntance)
+//        if self.BEO.isLoggedIn {
+//            fireGetSessionPlanAsync(sessionId: self.sessionID, realm: self.realmIntance)
+//        }
     }
     
     func loadManagedViewTools() {
@@ -561,9 +562,10 @@ struct BoardEngine: View {
         }
         
         // Firebase
-        if self.BEO.isLoggedIn {
-            startObserving()
-        }
+        startObserving()
+//        if self.BEO.isLoggedIn {
+//            startObserving()
+//        }
         self.BEO.isLoading = false
     }
     
@@ -611,7 +613,7 @@ struct BoardEngine: View {
             line.toolType = self.BEO.isDrawing
             line.lineDash = self.BEO.isDrawing == "DOTTED-LINE" ? 55 : 1
             line.dateUpdated = Int(Date().timeIntervalSince1970)
-            r.create(ManagedView.self, value: line)
+            r.create(ManagedView.self, value: line, update: .all)
             
             // TODO: Firebase Users ONLY
             firebaseDatabase(safeFlag: self.BEO.isLoggedIn) { fdb in

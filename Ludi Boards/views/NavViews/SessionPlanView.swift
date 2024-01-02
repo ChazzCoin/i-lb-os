@@ -204,9 +204,7 @@ struct SessionPlanView: View {
                 sp.sessionDetails = description
                 sp.objectiveDetails = objective
                 sp.isOpen = isOpen
-                r.add(sp)
             }
-            
             saveSessionPlanToFirebase(sp: sp)
             
         }
@@ -345,9 +343,9 @@ struct InputTextEditorA: View {
 
 
 
-struct BoardSessionDetailsForm_Previews: PreviewProvider {
-    static var previews: some View {
-        SessionPlanView(sessionId: "SOL", isShowing: .constant(true), isMasterWindow: true)
-    }
-}
+//struct BoardSessionDetailsForm_Previews: PreviewProvider {
+//    static var previews: some View {
+//        SessionPlanView(sessionId: "SOL", isShowing: .constant(true), isMasterWindow: true)
+//    }
+//}
 
