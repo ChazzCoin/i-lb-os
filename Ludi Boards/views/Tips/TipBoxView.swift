@@ -101,21 +101,28 @@ struct TipBoxViewFlasher: View {
             }
 
             if isExpanded {
-                ForEach(tips, id: \.self) { tip in
-                    HStack(alignment: .top) {
-                        Image(systemName: "circle.fill")
-                            .font(.system(size: 6))
-                            .frame(width: 12, height: 12)
-                            .foregroundColor(.blue)
-                            .padding(.top, 5)
+                
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 10) {
+                        ForEach(tips, id: \.self) { tip in
+                            HStack(alignment: .top) {
+                                Image(systemName: "circle.fill")
+                                    .font(.system(size: 6))
+                                    .frame(width: 12, height: 12)
+                                    .foregroundColor(.blue)
+                                    .padding(.top, 5)
 
-                        Text(tip)
-                            .font(.body)
-                            .foregroundColor(.secondary)
-                            .multilineTextAlignment(.leading)
-                            .fixedSize(horizontal: false, vertical: true)
+                                Text(tip)
+                                    .font(.body)
+                                    .foregroundColor(.secondary)
+                                    .multilineTextAlignment(.leading)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
+                        }
                     }
+                    .padding(.horizontal) // Adjust padding as needed
                 }
+                
             }
             
             Button(action: {
@@ -131,12 +138,12 @@ struct TipBoxViewFlasher: View {
             }
         }
         .padding()
-        .frame(maxWidth: 300)
+        .frame(maxWidth: 300, maxHeight: UIScreen.main.bounds.height - 100)
         .background(RoundedRectangle(cornerRadius: 12)
             .fill(Color(UIColor.systemBackground))
             .shadow(color: .gray.opacity(0.4), radius: 4, x: 0, y: 4))
         .padding()
-        .offset(y: self.isExpanded ? 0 : -150)
+//        .offset(y: self.isExpanded ? 0 : -150)
     }
 }
 

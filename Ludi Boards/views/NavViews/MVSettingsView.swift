@@ -80,7 +80,7 @@ struct SettingsView: View {
                 Section(header: Text("Size: \(Int(viewSize))")) {
                     
                     Slider(value: $viewSize,
-                       in: 10...175,
+                       in: 15...300,
                        onEditingChanged: { editing in
                             if !editing {
                                 let va = ViewAtts(viewId: viewId, size: viewSize)
@@ -88,6 +88,7 @@ struct SettingsView: View {
                             }
                         }
                     ).padding()
+                        .gesture(DragGesture().onChanged { _ in }, including: .subviews)
                     
                 }
                 .padding(.horizontal)
@@ -168,16 +169,6 @@ struct SettingsView: View {
         }
         .background(Color.clear)
         .navigationBarTitle("Settings", displayMode: .inline)
-        .navigationBarItems(trailing: HStack {
-            Button(action: {
-                print("Minimize")
-                closeWindow()
-            }) {
-                Image(systemName: "minus")
-                    .resizable()
-                    .frame(width: 30, height: 30)
-            }
-        })
         .refreshable { onCreate() }
         .onAppear() { onCreate() }
         .onDisappear() { closeSession() }

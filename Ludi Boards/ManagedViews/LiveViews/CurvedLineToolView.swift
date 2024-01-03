@@ -35,6 +35,7 @@ struct CurvedLineDrawingManaged: View {
     @State var activityId: String
     @EnvironmentObject var BEO: BoardEngineObject
     var managedView: ManagedView? = nil
+    private let menuWindowId = "mv_settings"
     
     @State private var isWriting = false
     @State private var coordinateStack: [[String:CGPoint]] = []
@@ -73,16 +74,9 @@ struct CurvedLineDrawingManaged: View {
     
     @State private var offset = CGSize.zero
     @State private var position = CGPoint(x: 0, y: 0)
-//    @GestureState private var dragOffset = CGSize.zero
     @State private var isDragging = false
     @State var originalLifeStart = CGPoint.zero
     @State var originalLifeEnd = CGPoint.zero
-    
-    // Firebase
-//    @State var reference = Database
-//        .database()
-//        .reference()
-//        .child(DatabasePaths.managedViews.rawValue)
     
     @State private var objectNotificationToken: NotificationToken? = nil
     @State private var cancellables = Set<AnyCancellable>()
@@ -136,9 +130,7 @@ struct CurvedLineDrawingManaged: View {
                 startPoint: CGPoint(x: lifeStartX, y: lifeStartY),
                 endPoint: CGPoint(x: lifeEndX, y: lifeEndY),
                 controlPoint1: CGPoint(x: lifeCenterX, y: lifeCenterY)
-            ).onTap(perform: {
-                
-            }).simultaneousGesture(doubleTap())
+            ).highPriorityGesture(doubleTap())
         )
         .overlay(
             Circle()
@@ -164,9 +156,9 @@ struct CurvedLineDrawingManaged: View {
                 .position(quadBezierPoint(start: CGPoint(x: lifeStartX, y: lifeStartY), end: CGPoint(x: lifeEndX, y: lifeEndY), control: CGPoint(x: lifeCenterX, y: lifeCenterY)))
                 .gesture(dragGestureForControlPoint())
         )
+//        .highPriorityGesture(doubleTap())
         .onAppear() {
         
-//            reference = reference.child(self.activityId).child(self.viewId)
             MVS = ManagedViewService(realm: self.realmInstance, activityId: self.activityId, viewId: self.viewId)
             loadFromRealm()
             
@@ -193,13 +185,15 @@ struct CurvedLineDrawingManaged: View {
             }.store(in: &cancellables)
             CodiChannel.MENU_WINDOW_CONTROLLER.receive(on: RunLoop.main) { vId in
                 let temp = vId as! WindowController
-                if temp.windowId != "mv_settings" {return}
+                if temp.windowId != self.menuWindowId {return}
                 if temp.stateAction == "close" {
                     popUpIsVisible = false
+                    anchorsAreVisible = false
                 }
             }.store(in: &cancellables)
         }
     }
+    
     
     // Drag gesture definition
     private func doubleTap() -> some Gesture {
@@ -208,7 +202,7 @@ struct CurvedLineDrawingManaged: View {
             anchorsAreVisible = !anchorsAreVisible
             popUpIsVisible = !popUpIsVisible
             CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(
-               windowId: "pop_settings",
+                windowId: self.menuWindowId,
                stateAction: popUpIsVisible ? "open" : "close",
                viewId: viewId,
                x: self.lifeStartX,
@@ -226,6 +220,8 @@ struct CurvedLineDrawingManaged: View {
                    stateAction: popUpIsVisible ? "open" : "close")
                 )
             }
+        }).simultaneously(with: LongPressGesture().onEnded { _ in
+            anchorsAreVisible = !anchorsAreVisible
         })
     }
 

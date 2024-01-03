@@ -11,14 +11,24 @@ import SwiftUI
 struct MenuBarStatic: View {
     var onClick: () -> Void
     @State private var showIcons = false
-    @State private var iconStates = Array(repeating: false, count: 9)
+    @State private var iconStates = Array(repeating: false, count: 8)
     @Environment(\.colorScheme) var colorScheme
     @State private var isLocked = false
     @State private var lifeColor = Color.black
     
     func setColorScheme() { lifeColor = foregroundColorForScheme(colorScheme) }
 
-    let icons = [
+    let iconsLoggedOut = [
+        MenuBarProvider.info,
+        MenuBarProvider.lock,
+        MenuBarProvider.toolbox,
+        MenuBarProvider.navHome,
+        MenuBarProvider.boardDetails,
+        MenuBarProvider.boardCreate,
+        MenuBarProvider.profile
+    ]
+    
+    let iconsLoggedIn = [
         MenuBarProvider.info,
         MenuBarProvider.lock,
         MenuBarProvider.toolbox,
@@ -28,6 +38,8 @@ struct MenuBarStatic: View {
         MenuBarProvider.chat,
         MenuBarProvider.profile
     ]
+    
+    @State var icons: [IconProvider] = []
 
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
@@ -68,6 +80,14 @@ struct MenuBarStatic: View {
                 }
             }
         }.background(Color.clear)
+            .onAppear() {
+                if isLoggedIntoFirebase() {
+                    icons = iconsLoggedIn
+                } else {
+                    icons = iconsLoggedOut
+                }
+                iconStates = Array(repeating: false, count: icons.count)
+            }
     }
     
     private func animateIcons() {

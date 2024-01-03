@@ -54,9 +54,16 @@ struct BuddyProfileView: View {
 //                .padding(.horizontal)
                 solButton(title: "Sign Out", action: {
                     runLoading()
+                    logoutUser() { result in
+                        print("User Logged Out. \(result)")
+                    }
                     if let user = self.BEO.realmInstance.findByField(CurrentSolUser.self, value: CURRENT_USER_ID) {
                         self.BEO.realmInstance.safeWrite { r in
-                            r.delete(user)
+                            user.userId = ""
+                            user.userName = ""
+                            user.email = ""
+                            user.imgUrl = ""
+                            user.isLoggedIn = false
                         }
                     }
                     self.BEO.userId = nil
@@ -89,6 +96,9 @@ struct BuddyProfileView: View {
             }
             .padding(.bottom, 20)
         }
+        .refreshable {
+            loadUser()
+        }
         .onAppear() {
             loadUser()
         }
@@ -106,9 +116,13 @@ struct BuddyProfileView: View {
     }
     
     func loadUser() {
-        if let user = self.BEO.realmInstance.getCurrentSolUserId() {
-            username = user.userName
-            status = "online"
+        syncUserFromFirebaseDb(email) { result in
+            print(result)
+            if let user = self.BEO.realmInstance.getCurrentSolUserId() {
+                username = user.userName
+                email = user.email
+                status = "online"
+            }
         }
     }
     

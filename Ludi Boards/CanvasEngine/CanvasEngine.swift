@@ -120,15 +120,15 @@ struct CanvasEngine: View {
         
         GlobalPositioningZStack { geo, gps in
             
-            if self.BEO.isLoading {
-                ProgressView()
-                    .frame(width: 300, height: 300)
-                    .progressViewStyle(.circular)
-                    .scaleEffect(5) // Adjust the size as needed
-                    .padding(20)
-                    .cornerRadius(10)
-                    .position(using: gps, at: .center)
-            }
+//            if self.BEO.isLoading {
+//                ProgressView()
+//                    .frame(width: 300, height: 300)
+//                    .progressViewStyle(.circular)
+//                    .scaleEffect(5) // Adjust the size as needed
+//                    .padding(20)
+//                    .cornerRadius(10)
+//                    .position(using: gps, at: .center)
+//            }
             
             MenuBarStatic(){
                 menuIsOpen = !menuIsOpen
@@ -142,7 +142,7 @@ struct CanvasEngine: View {
             
             ForEach(Array(managedWindowsObject.managedViewGenerics.values)) { managedViewWindow in
                 managedViewWindow.viewBuilder().environmentObject(self.BEO)
-            }.zIndex(5.0)
+            }.zIndex(25.0)
             
             
             if toolBarIsEnabled {
@@ -177,15 +177,15 @@ struct CanvasEngine: View {
                 .position(using: gps, at: .topRight, offsetX: 150, offsetY: 0)
             }
             
-            if self.BEO.showTipViewStatic {
-                GeometryReader { geo in
-                    TipBoxViewStatic(tips: TipLineGestures){
-                        self.BEO.showTipViewStatic = false
-                    }
-                }
-                .frame(width: 300)
-                .position(using: gps, at: .topRight, offsetX: 150, offsetY: 0)
-            }
+//            if self.BEO.showTipViewStatic {
+//                GeometryReader { geo in
+//                    TipBoxViewStatic(tips: TipLineGestures){
+//                        self.BEO.showTipViewStatic = false
+//                    }
+//                }
+//                .frame(width: 300)
+//                .position(using: gps, at: .topRight, offsetX: 150, offsetY: 0)
+//            }
             
             
 //            FloatingEmojiView()
@@ -280,7 +280,7 @@ struct CanvasEngine: View {
     }
     func handleChat() {
         let caller = MenuBarProvider.chat.tool.title
-        let temp = ManagedViewWindow(id: caller, viewBuilder: {NavStackWindow(id: caller, viewBuilder: {ChatView(chatId: "default-1")})})
+        let temp = ManagedViewWindow(id: caller, viewBuilder: {NavStackWindow(id: caller, viewBuilder: {ChatView(chatId: "default-1").environmentObject(self.BEO)})})
         temp.title = "Real-Time Chat"
         temp.windowId = caller
         managedWindowsObject.safelyAddItem(key: caller, item: temp)
@@ -344,7 +344,7 @@ struct CanvasEngine: View {
     }
     func handleMVSettings() {
         let caller = "mv_settings"
-        let buddies = ManagedViewWindow(id: caller, viewBuilder: {NavStackWindow(id: caller, viewBuilder: {SettingsView(onDelete: {})})})
+        let buddies = ManagedViewWindow(id: caller, viewBuilder: {NavStackFloatingWindow(id: caller, viewBuilder: {SettingsView(onDelete: {})})})
         buddies.title = "Tool View Settings"
         buddies.windowId = caller
         managedWindowsObject.safelyAddItem(key: caller, item: buddies)

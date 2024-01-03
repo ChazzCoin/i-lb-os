@@ -226,10 +226,6 @@ struct BoardEngine: View {
                  }
              }
              
-             PopupMenuView(isPresented: self.$BEO.isShowingPopUp)
-                 .environmentObject(self.BEO)
-                 .environmentObject(self.PMO)
-             
              // Temporary line being drawn
              if self.BEO.isDraw {
                  if drawingStartPoint != .zero {

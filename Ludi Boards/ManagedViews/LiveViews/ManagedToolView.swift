@@ -40,6 +40,8 @@ struct enableManagedViewTool : ViewModifier {
     @State private var currentUserId = "iphone"
     @State private var lastUserId = ""
     
+    private let menuWindowId = "mv_settings"
+    
     let minSizeWH = 100.0
     
     let realmInstance = realm()
@@ -92,7 +94,7 @@ struct enableManagedViewTool : ViewModifier {
         .border(popUpIsVisible ? lifeBorderColor : Color.clear, width: 10) // Border modifier
         .position(x: position.x + (isDragging ? dragOffset.width : 0) + (self.lifeWidth),
                   y: position.y + (isDragging ? dragOffset.height : 0) + (self.lifeHeight))
-        .gesture(
+        .simultaneousGesture(
             LongPressGesture(minimumDuration: 0.01)
                 .onEnded { _ in
                     if self.lifeIsLocked {return}
@@ -125,7 +127,7 @@ struct enableManagedViewTool : ViewModifier {
                     .onEnded { _ in
                         print("Tapped")
                         popUpIsVisible = !popUpIsVisible
-                        CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: "pop_settings", stateAction: popUpIsVisible ? "open" : "close", viewId: viewId, x: self.position.x, y: self.position.y))
+                        CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: self.menuWindowId, stateAction: popUpIsVisible ? "open" : "close", viewId: viewId, x: self.position.x, y: self.position.y))
                         if popUpIsVisible {
                             CodiChannel.TOOL_ATTRIBUTES.send(value: ViewAtts(
                                 viewId: viewId,
@@ -161,7 +163,7 @@ struct enableManagedViewTool : ViewModifier {
             
             CodiChannel.MENU_WINDOW_CONTROLLER.receive(on: RunLoop.main) { vId in
                 let temp = vId as! WindowController
-                if temp.windowId != "pop_settings" {return}
+                if temp.windowId != self.menuWindowId {return}
                 if temp.stateAction == "close" {
                     popUpIsVisible = false
                 }

@@ -59,7 +59,7 @@ class GlobalPositioningSystem: ObservableObject {
             case .bottomCenter:
                 return CGPoint(x: screenSize.width / 2, y: screenSize.height - safeAreaInsets.bottom)
             case .topCenter:
-                return CGPoint(x: screenSize.width / 2, y: safeAreaInsets.top + screenPaddingY)
+                return CGPoint(x: screenSize.width / 2, y: screenPaddingY)
         }
     }
     

@@ -158,12 +158,12 @@ struct SessionPlanView: View {
     func saveNewSessionPlan() {
         // New Plan
         let newSP = SessionPlan()
-        newSP.id = "SOL-LIVE-DEMO"
+        newSP.id = UUID().uuidString
         newSP.title = title
         newSP.sessionDetails = description
         newSP.objectiveDetails = objective
         newSP.isOpen = isOpen
-        newSP.ownerId = "SOL"
+        newSP.ownerId = CURRENT_USER_ID
         // New Activity
         let newAP = ActivityPlan()
         newAP.sessionId = newSP.id
@@ -172,8 +172,8 @@ struct SessionPlanView: View {
         newAP.isOpen = isOpen
         
         realmInstance.safeWrite { r in
-            r.add(newSP)
-            r.add(newAP)
+            r.create(SessionPlan.self, value: newSP, update: .all)
+            r.create(ActivityPlan.self, value: newAP, update: .all)
         }
         
         // TODO: Firebase

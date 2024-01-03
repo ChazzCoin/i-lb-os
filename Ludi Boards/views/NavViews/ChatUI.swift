@@ -24,7 +24,8 @@ extension Color {
 }
 
 struct ChatView: View {
-    @State var chatId: String
+    @EnvironmentObject var boardEngineObject: BoardEngineObject
+    @State var chatId: String = ""
     @State private var messageText = ""
     @State private var messages: [String: Chat?] = [:]
     @State private var lastMessageId: String?
@@ -40,7 +41,7 @@ struct ChatView: View {
     let chatRef = fireGetReference(dbPath: DatabasePaths.chat)
     
     func observeChat() {
-        self.chatRef.child(chatId).fireObserver { snapshot in
+        self.chatRef.child(boardEngineObject.currentActivityId).fireObserver { snapshot in
             let mapped: [String:Any] = snapshot.toHashMap()
             for (_, value) in mapped {
                 let singleChat: Chat? = toChat(from: value as? [String: Any] ?? [:])
@@ -53,7 +54,7 @@ struct ChatView: View {
     }
     
     func observeLudiChat() {
-        self.chatRef.child(chatId).fireObserver { snapshot in
+        self.chatRef.child(boardEngineObject.currentActivityId).fireObserver { snapshot in
             let _ = snapshot.toLudiObjects(Chat.self)
         }
         CodiChannel.REALM_ON_CHANGE.receive(on: RunLoop.main) { realmId in
@@ -73,7 +74,7 @@ struct ChatView: View {
     }
     
     func reloader() {
-        let results = realmInstance.findAllByField(Chat.self, field: "chatId", value: "default-1")
+        let results = realmInstance.findAllByField(Chat.self, field: "chatId", value: boardEngineObject.currentActivityId)
         var temp: [String:Chat] = [:]
         guard let r = results else {return}
         for i in r { temp[i.id] = i }
@@ -121,6 +122,9 @@ struct ChatView: View {
         }
         .loading(isShowing: $isReloading)
         .background(Color.white)
+        .onAppear() {
+            chatId = boardEngineObject.currentActivityId
+        }
     }
     var sidebarView: some View {
         BuddyListView()
@@ -154,7 +158,7 @@ struct ChatView: View {
 
     func sendMessage() {
         let newMessage = Chat()
-        newMessage.chatId = chatId
+        newMessage.chatId = boardEngineObject.currentActivityId
         newMessage.messageText = messageText
         newMessage.senderId = "me"
         newMessage.timestamp = getTimeStamp()

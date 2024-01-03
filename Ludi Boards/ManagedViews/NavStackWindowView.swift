@@ -32,22 +32,15 @@ struct NavStackWindow : View {
     @GestureState private var dragOffset = CGSize.zero
     @State private var isDragging = false
     
-    @State private var width = 0.0
-    @State private var height = 0.0
+    @State private var width = UIScreen.main.bounds.width * 0.5
+    @State private var height = UIScreen.main.bounds.height
     
-    func getPositionX() -> Double {
-        let coords = gps.getCoordinate(for: .center)
-        return isHidden ? screen.bounds.width : (coords.x - (self.width/2))
-    }
-    func getFloatableWidth() -> Double { return (screen.bounds.width/2) }
-    func getFloatableHeight() -> Double { return (screen.bounds.height/2) }
-    func resetSize() {
-        self.width = (!isFloatable ? ((screen.bounds.width - 100.0)/2) : getFloatableWidth()).bound(to: 100...screen.bounds.width - 100.0)
-        self.height = (!isFloatable ? screen.bounds.height : getFloatableHeight()).bound(to: 100...screen.bounds.height)
-    }
+    @State private var keyboardIsShowing = false
+    @State private var keyboardHeight = 0.0
+    
+    
     func resetPosition() {
-        offset = CGSize.zero
-        position = gps.getCoordinate(for: .center)
+        position = gps.getCoordinate(for: .center, offsetX: width / 2)
     }
 
     var body: some View {
@@ -59,31 +52,46 @@ struct NavStackWindow : View {
         .background(Color.clear)
         .cornerRadius(15)
         .shadow(radius: 10)
-        .position(x: position.x + (isDragging ? dragOffset.width : 0) + (!isFloatable ? getPositionX() : 0), y: position.y + (isDragging ? dragOffset.height : 0))
+        .position(position)
+        .offset(y: keyboardHeight)
         .animation(.easeInOut(duration: 1.0), value: isHidden)
         .keyboardListener(
             onAppear: { height in
                 // Handle keyboard appearance (e.g., adjust view)
                 print("Keyboard appeared with height: \(height)")
+                if height < 100 {
+                    keyboardHeight = 0.0
+                    return
+                }
+                if keyboardHeight < height {
+                    keyboardHeight = height / 2
+                }
             },
-            onDisappear: {
+            onDisappear: { height in
                 // Handle keyboard disappearance
                 print("Keyboard disappeared")
+                if height > 100 {
+                    keyboardHeight = 0.0
+                    return
+                }
+                if keyboardHeight > height {
+                    keyboardHeight = height * 2
+                }
             }
         )
+        .onDisappear() {
+            resetPosition()
+        }
         .onAppear() {
-            resetSize()
             resetPosition()
             CodiChannel.MENU_WINDOW_TOGGLER.receive(on: RunLoop.main) { windowType in
                 print(windowType)
                 if (windowType as! String) != self.id { return }
+                resetPosition()
                 if self.isHidden {
                     self.isHidden = false
                 } else {
                     self.isHidden = true
-                    self.isFloatable = false
-                    resetSize()
-                    resetPosition()
                 }
             }.store(in: &cancellables)
             
@@ -91,23 +99,18 @@ struct NavStackWindow : View {
                 print(wc)
                 let temp = wc as! WindowController
                 if temp.windowId != self.id { return }
-                
+                resetPosition()
                 if temp.stateAction == "toggle" {
                     if self.isHidden {
                         self.isHidden = false
                     } else {
+                        
                         self.isHidden = true
-                        self.isFloatable = false
-                        resetSize()
-                        resetPosition()
                     }
                 } else if temp.stateAction == "open" {
                     self.isHidden = false
                 } else if temp.stateAction == "close" {
                     self.isHidden = true
-                    self.isFloatable = false
-                    resetSize()
-                    resetPosition()
                 }
             }.store(in: &cancellables)
         }
@@ -116,7 +119,7 @@ struct NavStackWindow : View {
 }
 
 
-struct GenericNavWindowFloat : View {
+struct NavStackFloatingWindow : View {
     @State var id: String
     var viewBuilder: () -> AnyView
     @EnvironmentObject var BEO: BoardEngineObject
@@ -125,40 +128,64 @@ struct GenericNavWindowFloat : View {
         self.id = id
         self.viewBuilder = { AnyView(viewBuilder()) }
     }
+    @State var screenWidth = UIScreen.main.bounds.width
+    @State var screenHeight = UIScreen.main.bounds.height
     
+    @State var width = 0.0
+    @State var height = 0.0
+
+    @State var cancellables = Set<AnyCancellable>()
+    @State private var isHidden = true
     
-    @State private var isHidden = false
+    @State private var isLocked = false
+    @State var unLockedImage = "lock.open.fill"
+    @State var lockedImage = "lock.fill"
     
     @State private var offset = CGSize.zero
     @State private var position = CGPoint(x: 0, y: 0)
     @GestureState private var dragOffset = CGSize.zero
     @State private var isDragging = false
+    
+    func resetSize() {
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            self.width = min(screenWidth, screenHeight) * 0.5
+        } else {
+            self.width = min(screenWidth, screenHeight) * 0.8
+        }
+        
+        self.height = min(screenWidth, screenHeight) * 0.6
+    }
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                viewBuilder().environmentObject(self.BEO)
-            }.opacity(isHidden ? 0 : 1)
-            .navigationBarItems(trailing: HStack {
-                // Add buttons or icons here for minimize, maximize, close, etc.
-                Button(action: {
-                    // Minimize:
-//                    CodiChannel.general.send(value: managedViewWindow.windowId)
-//                    CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: managedViewWindow.windowId, stateAction: "close", viewId: "self"))
-                }) {
-                    Image(systemName: "arrow.down.circle.fill")
-                        .resizable()
-                        .frame(width: 30, height: 30)
-                }
-            })
+            viewBuilder()
+                .environmentObject(self.BEO)
+                .opacity(isHidden ? 0 : 1)
+                .navigationBarItems(trailing: HStack {
+                    // Add buttons or icons here for minimize, maximize, close, etc.
+                    Button(action: {
+                        CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: self.id, stateAction: "close", viewId: "self"))
+                    }) {
+                        Image(systemName: "arrow.down.circle.fill")
+                            .resizable()
+                            .frame(width: 30, height: 30)
+                    }
+                    Button(action: {
+                        self.isLocked = !self.isLocked
+                    }) {
+                        Image(systemName: self.isLocked ? "lock.fill" : "lock.open.fill")
+                            .resizable()
+                            .frame(width: 30, height: 30)
+                    }
+                })
         }
-        .frame(width: 500, height: 500)
-        .opacity(isHidden ? 0 : 1)
+        .frame(width: self.width, height: self.height)
         .background(Color.white)
         .cornerRadius(15)
         .shadow(radius: 10)
+        .opacity(isHidden ? 0 : 1)
         .offset(x: position.x + (isDragging ? dragOffset.width : 0), y: position.y + (isDragging ? dragOffset.height : 0))
-        .gesture(
+        .simultaneousGesture( self.isLocked ? nil :
             DragGesture()
                 .updating($dragOffset, body: { (value, state, transaction) in
                     state = value.translation
@@ -171,16 +198,27 @@ struct GenericNavWindowFloat : View {
                     self.isDragging = false
                 }
         )
-        .keyboardListener(
-            onAppear: { height in
-                // Handle keyboard appearance (e.g., adjust view)
-                print("Keyboard appeared with height: \(height)")
-            },
-            onDisappear: {
-                // Handle keyboard disappearance
-                print("Keyboard disappeared")
-            }
-        )
+
+        .onAppear() {
+            resetSize()
+            CodiChannel.MENU_WINDOW_CONTROLLER.receive(on: RunLoop.main) { wc in
+                let temp = wc as! WindowController
+                
+                if temp.windowId != self.id { return }
+                
+                if temp.stateAction == "toggle" {
+                    if self.isHidden {
+                        self.isHidden = false
+                    } else {
+                        self.isHidden = true
+                    }
+                } else if temp.stateAction == "open" {
+                    self.isHidden = false
+                } else if temp.stateAction == "close" {
+                    self.isHidden = true
+                }
+            }.store(in: &cancellables)
+        }
     }
 
 }

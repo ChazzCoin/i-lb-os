@@ -16,6 +16,7 @@ struct LineDrawingManaged: View {
     @State var activityId: String
     @EnvironmentObject var BEO: BoardEngineObject
     var managedView: ManagedView? = nil
+    private let menuWindowId = "mv_settings"
     
     @State private var coordinateStack: [[String:CGPoint]] = []
     
@@ -157,9 +158,10 @@ struct LineDrawingManaged: View {
             }.store(in: &cancellables)
             CodiChannel.MENU_WINDOW_CONTROLLER.receive(on: RunLoop.main) { vId in
                 let temp = vId as! WindowController
-                if temp.windowId != "mv_settings" {return}
+                if temp.windowId != self.menuWindowId {return}
                 if temp.stateAction == "close" {
                     popUpIsVisible = false
+                    anchorsAreVisible = false
                 }
             }.store(in: &cancellables)
         }
@@ -192,34 +194,36 @@ struct LineDrawingManaged: View {
                 updateRealmPos(start: CGPoint(x: lifeStartX, y: lifeStartY),
                             end: CGPoint(x: lifeEndX, y: lifeEndY))
             }
-            .simultaneously(with: TapGesture(count: 1)
-                 .onEnded { _ in
-//                     anchorsAreVisible = !anchorsAreVisible
-                 }
-            ).simultaneously(with: TapGesture(count: 2).onEnded({ _ in
+            .simultaneously(with: TapGesture(count: 2).onEnded({ _ in
                 print("Tapped double")
+                toggleMenuSettings()
+            })).simultaneously(with: LongPressGesture().onEnded { _ in
                 anchorsAreVisible = !anchorsAreVisible
-                popUpIsVisible = !popUpIsVisible
-                CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(
-                   windowId: "pop_settings",
-                   stateAction: popUpIsVisible ? "open" : "close",
-                   viewId: viewId,
-                   x: self.lifeStartX + 500,
-                   y: self.lifeStartY
-                ))
-                if popUpIsVisible {
-                    CodiChannel.TOOL_ATTRIBUTES.send(value: ViewAtts(
-                       viewId: viewId,
-                       color: lifeColor,
-                       stroke: lifeWidth,
-                       position: CGPoint(x: lifeStartX, y: lifeStartY),
-                       toolType: "Line",
-                       level: ToolLevels.LINE.rawValue,
-                       isLocked: lifeIsLocked,
-                       stateAction: popUpIsVisible ? "open" : "close")
-                    )
-                }
-            }))
+            })
+    }
+    
+    private func toggleMenuSettings() {
+        anchorsAreVisible = !anchorsAreVisible
+        popUpIsVisible = !popUpIsVisible
+        CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(
+           windowId: self.menuWindowId,
+           stateAction: popUpIsVisible ? "open" : "close",
+           viewId: viewId,
+           x: self.lifeStartX + 500,
+           y: self.lifeStartY
+        ))
+        if popUpIsVisible {
+            CodiChannel.TOOL_ATTRIBUTES.send(value: ViewAtts(
+               viewId: viewId,
+               color: lifeColor,
+               stroke: lifeWidth,
+               position: CGPoint(x: lifeStartX, y: lifeStartY),
+               toolType: "Line",
+               level: ToolLevels.LINE.rawValue,
+               isLocked: lifeIsLocked,
+               stateAction: popUpIsVisible ? "open" : "close")
+            )
+        }
     }
     
     // Drag gesture definition
@@ -270,28 +274,10 @@ struct LineDrawingManaged: View {
                 }
            ).simultaneously(with: TapGesture(count: 2).onEnded({ _ in
                print("Tapped double")
+               toggleMenuSettings()
+           })).simultaneously(with: LongPressGesture(minimumDuration: 1.0).onEnded { _ in
                anchorsAreVisible = !anchorsAreVisible
-               popUpIsVisible = !popUpIsVisible
-               CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(
-                  windowId: "pop_settings",
-                  stateAction: popUpIsVisible ? "open" : "close",
-                  viewId: viewId,
-                  x: self.lifeStartX + 500,
-                  y: self.lifeStartY
-               ))
-               if popUpIsVisible {
-                   CodiChannel.TOOL_ATTRIBUTES.send(value: ViewAtts(
-                      viewId: viewId,
-                      color: lifeColor,
-                      stroke: lifeWidth,
-                      position: CGPoint(x: lifeStartX, y: lifeStartY),
-                      toolType: "Line",
-                      level: ToolLevels.LINE.rawValue,
-                      isLocked: lifeIsLocked,
-                      stateAction: popUpIsVisible ? "open" : "close")
-                   )
-               }
-           }))
+           })
     }
     
     func observeView() {

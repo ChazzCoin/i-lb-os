@@ -15,7 +15,13 @@ struct SignUpView: View {
     @State private var email = ""
     @State private var phone = ""
     @State private var name = ""
-    @State private var password = "" // Assuming you need a password field
+    
+    @State private var emailLogin = ""
+    @State private var passLogin = ""
+    
+    @State private var password: String = ""
+    @State private var verifyPassword: String = ""
+    @State private var arePasswordsMatching: Bool? = nil
     @State private var image: UIImage?
     @State private var showImagePicker = false
     @State private var photoUrl: String = ""
@@ -23,26 +29,117 @@ struct SignUpView: View {
     @State var realmInstance = realm()
     @State var isLoading: Bool = false
     @State private var showCompletion = false
+    
+    @State var isLoginValid = false
+    @State private var isUsernameAvailable: Bool? = nil
+    @State var keyboardOffset: Double = 0.0
 
     var body: some View {
         
-        if self.realmInstance.userIsLoggedIn() {
+        if isLoggedIntoFirebase() {
             BuddyProfileView().environmentObject(self.BEO)
         } else {
             LoadingForm(isLoading: $isLoading, showCompletion: $showCompletion) { runLoading in
-                Section(header: Text("User Information")) {
-                    TextField("Username", text: $username)
-                        .autocapitalization(.none)
-                        .disableAutocorrection(true)
-                }
+                
+                VStack(alignment: .leading) {
+                    Section(header: Text("User Information")) {
+                        TextField("Email", text: $email)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .padding(.leading, 24)
+                            .padding(.trailing, 24)
+                            .autocapitalization(.none)
+                            .disableAutocorrection(true)
+                            
+                        
+                        HStack {
+                            TextField("Username", text: $username)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                                .padding(.leading, 24)
+                                .padding(.trailing, 24)
+                                .onChange(of: username) { newValue in
+                                    if newValue.count < 4 {return}
+                                    checkUsernameExists(newValue) { result in
+                                        if !result {
+                                            isUsernameAvailable = true
+                                        } else {
+                                            isUsernameAvailable = false
+                                        }
+                                    }
+                                }
 
+                            if let isAvailable = isUsernameAvailable {
+                                Image(systemName: isAvailable ? "checkmark.circle.fill" : "xmark.circle.fill")
+                                    .foregroundColor(isAvailable ? .green : .red)
+                                    .padding(.trailing, 10)
+                            }
+                        }
+                        
+                        TextField("Name", text: $name)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .padding(.leading, 24)
+                            .padding(.trailing, 24)
+                            .autocapitalization(.none)
+                            .disableAutocorrection(true)
+                        
+                        SecureField("Password", text: $password)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .padding(.leading, 24)
+                            .padding(.trailing, 24)
+
+                        HStack {
+                            SecureField("Verify Password", text: $verifyPassword)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                                .padding(.leading, 24)
+                                .padding(.trailing, 24)
+                                .onChange(of: verifyPassword) { newValue in
+                                    arePasswordsMatching = (password == newValue)
+                                }
+
+                            if let areMatching = arePasswordsMatching {
+                                Image(systemName: areMatching ? "checkmark.circle.fill" : "xmark.circle.fill")
+                                    .foregroundColor(areMatching ? .green : .red)
+                                    .padding(.trailing, 10)
+                            }
+                        }
+                        
+                        
+                    }
+                }
+                
                 solButton(title: "Sign Up", action: {
                     runLoading()
-                    saveUser()
+                    signUpNewUserInFirebase()
                     self.BEO.loadUser()
                 }, isEnabled: isFormValid)
+                
+                
+                Section(header: Text("Login")) {
+                    TextField("Email", text: $emailLogin)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .padding(.leading, 24)
+                        .padding(.trailing, 24)
+                        .autocapitalization(.none)
+                        .disableAutocorrection(true)
+                    
+                    SecureField("Password", text: $passLogin)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .padding(.leading, 24)
+                        .padding(.trailing, 24)
+                    
+                }
+                
+                solButton(title: "Login", action: {
+                    runLoading()
+                    loginUser(withEmail: emailLogin, password: passLogin) { result in
+                        print("User LogIn: \(result)")
+                        self.BEO.loadUser()
+                    }
+                }, isEnabled: true)
+                
+                
             }
-            .navigationBarTitle("Sign Up")
+            .navigationBarTitle("Sign Up/Login")
+            
         }
         
     }
@@ -51,24 +148,31 @@ struct SignUpView: View {
         return self.realmInstance.userIsLoggedIn()
     }
     
-    private func saveUser() {
-        self.BEO.realmInstance.updateGetCurrentSolUser { u in
-            u.userId = UUID().uuidString
-            u.userName = username
-            u.isLoggedIn = true
-            saveUserToFirebase(user: u)
+    private func signUpNewUserInFirebase() {
+        signUpWithEmail(email: email, password: password) { result in
+            switch result {
+            case .success(let authResult):
+                print("User signed up successfully: \(authResult.user.email ?? "")")
+                let user = authResult.user
+                self.BEO.realmInstance.updateGetCurrentSolUser { u in
+                    u.userId = user.uid
+                    u.userName = username
+                    u.email = user.email ?? ""
+                    u.imgUrl = user.photoURL?.absoluteString ?? ""
+                    u.isLoggedIn = true
+                    saveUserToRealtimeDatabase(user: u) { result in
+                        print(result)
+                    }
+                }
+  
+            case .failure(let error):
+                print("Error signing up: \(error.localizedDescription)")
+                // Handle error
+            }
         }
-        username = ""
+
     }
-    
-    private func saveUserToFirebase(user:CurrentSolUser) {
-        firebaseDatabase { fdb in
-            fdb.child(DatabasePaths.users.rawValue)
-                .child(user.id)
-                .setValue(user.toDict())
-        }
-    }
-    
+       
     
     private func uploadImageToFirebase(image: UIImage, completion: @escaping (URL?) -> Void) {
         let storageRef = Storage.storage().reference().child("userImages/\(UUID().uuidString).jpg")
@@ -91,8 +195,8 @@ struct SignUpView: View {
     }
 }
 
-//struct SignUpView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        SignUpView()
-//    }
-//}
+struct SignUpView_Previews: PreviewProvider {
+    static var previews: some View {
+        SignUpView()
+    }
+}

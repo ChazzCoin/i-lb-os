@@ -25,6 +25,8 @@ struct SessionPlanOverview: View {
     @State private var sessionSharesNotificationToken: NotificationToken? = nil
     @State private var sharesNotificationToken: NotificationToken? = nil
     @State private var showNewPlanSheet = false
+    
+    @State private var isLoggedIn = false
 
     var body: some View {
         Form {
@@ -47,21 +49,24 @@ struct SessionPlanOverview: View {
 //                    ShareThumbnailView(share: share)
 //                }
 //            }.clearSectionBackground()
-            
-            Section(header: Text("Shared Sessions")) {
-                List(sessionPlansShared) { sessionPlan in
-                    
-                    NavigationLink(destination: SessionPlanView(sessionId: sessionPlan.id, isShowing: .constant(true), isMasterWindow: false)) {
-                        SessionPlanThumbView(sessionPlan: sessionPlan)
+            if self.isLoggedIn {
+                Section(header: Text("Shared Sessions")) {
+                    List(sessionPlansShared) { sessionPlan in
+                        
+                        NavigationLink(destination: SessionPlanView(sessionId: sessionPlan.id, isShowing: .constant(true), isMasterWindow: false)) {
+                            SessionPlanThumbView(sessionPlan: sessionPlan)
+                        }
+    //                    Spacer()
+    //                    AcceptRejectButtons(session: sessionPlan)
                     }
-//                    Spacer()
-//                    AcceptRejectButtons(session: sessionPlan)
-                }
-            }.clearSectionBackground()
+                }.clearSectionBackground()
+            }
+            
 
         }
         .onAppear() {
             if realmInstance.userIsLoggedIn() {
+                self.isLoggedIn = true
                 fireGetLiveDemoAsync()
                 getShares()
                 observeSessions()
@@ -77,6 +82,7 @@ struct SessionPlanOverview: View {
         }
         .refreshable {
             if realmInstance.userIsLoggedIn() {
+                self.isLoggedIn = true
                 fireGetLiveDemoAsync(realm: self.realmInstance)
                 getShares()
                 observeSessions()
