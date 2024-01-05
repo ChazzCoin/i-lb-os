@@ -42,7 +42,7 @@ struct CurvedLineDrawingManaged: View {
     
     let realmInstance = realm()
     @State private var managedViewNotificationToken: NotificationToken? = nil
-    @State private var MVS: ManagedViewService? = nil
+    @State private var MVS: ManagedViewService = ManagedViewService()
     @State private var isDisabled = false
     @State private var lifeIsLocked = false
     @State private var lifeDateUpdated = Int(Date().timeIntervalSince1970)
@@ -83,7 +83,7 @@ struct CurvedLineDrawingManaged: View {
     
     // Functions
     func isDisabledChecker() -> Bool { return isDisabled }
-    func isDeletedChecker() -> Bool { return self.MVS?.isDeleted ?? false }
+    func isDeletedChecker() -> Bool { return self.MVS.isDeleted }
 
     private var lineLength: CGFloat {
         sqrt(pow(lifeEndX - lifeStartX, 2) + pow(lifeEndY - lifeStartY, 2))-100
@@ -159,7 +159,7 @@ struct CurvedLineDrawingManaged: View {
 //        .highPriorityGesture(doubleTap())
         .onAppear() {
         
-            MVS = ManagedViewService(realm: self.realmInstance, activityId: self.activityId, viewId: self.viewId)
+            MVS.initialize(realm: self.realmInstance, activityId: self.activityId, viewId: self.viewId)
             loadFromRealm()
             
             observeView()
@@ -279,7 +279,7 @@ struct CurvedLineDrawingManaged: View {
     
     func observeView() {
         observeFromRealm()
-        MVS?.start()
+        MVS.start()
     }
     
     func observeFromRealm() {
@@ -298,7 +298,7 @@ struct CurvedLineDrawingManaged: View {
                         DispatchQueue.main.async {
                             if self.isDragging {return}
                             if activityId != temp.boardId { activityId = temp.boardId }
-                            self.MVS?.isDeleted = temp.isDeleted
+                            self.MVS.isDeleted = temp.isDeleted
                             if lifeWidth != Double(temp.width) {lifeWidth = Double(temp.width)}
                             if lifeLineDash != Double(temp.lineDash) {lifeLineDash = Double(temp.lineDash)}
                             
@@ -359,7 +359,7 @@ struct CurvedLineDrawingManaged: View {
                             mv.endY = Double(end?.y ?? CGFloat(lifeEndY))
                         }
                         
-                        MVS?.updateFirebase(mv: mv)
+                        MVS.updateFirebase(mv: mv)
                     }
                 } catch {
                     print("Realm error: \(error)")
@@ -419,7 +419,7 @@ struct CurvedLineDrawingManaged: View {
             guard let tMV = mv else { return }
             r.create(ManagedView.self, value: tMV, update: .modified)
             // TODO: Firebase Users ONLY
-            MVS?.updateFirebase(mv: mv)
+            MVS.updateFirebase(mv: mv)
         }
     }
     

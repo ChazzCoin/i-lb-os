@@ -65,35 +65,33 @@ class ManagedViewService: ObservableObject {
     private var nofityToken: NotificationToken? = nil
     private var managedViewNotificationToken: NotificationToken? = nil
     
-    init(realm: Realm, activityId:String, viewId:String) {
+    func initialize(realm: Realm, activityId:String, viewId:String) {
         self.realmInstance = realm
         self.activityId = activityId
         self.viewId = viewId
-        
-        self.reference = reference
         verifyLoginStatus()
         observeUser()
     }
     
     func verifyLoginStatus() {
-        self.isLoggedIn = realmInstance.userIsLoggedIn()
+        self.isLoggedIn = isLoggedIntoFirebase()
     }
 
     func start() {
         if !self.isLoggedIn {return}
         guard !isObserving else { return }
         observerHandle = reference.child(self.activityId).child(self.viewId).observe(.value, with: { snapshot in
-                let _ = snapshot.toLudiObject(ManagedView.self, realm: self.realmInstance)
-            })
+            let _ = snapshot.toLudiObject(ManagedView.self, realm: self.realmInstance)
+        })
         reference.child(self.activityId).child(self.viewId).observe(.childRemoved, with: { snapshot in
-               if let mv = self.realmInstance.findByField(ManagedView.self, value: self.viewId) {
-                   if self.isDeleted {return}
-                   self.isDeleted = true
-                   self.realmInstance.safeWrite { r in
-                       mv.isDeleted = true
-                   }
+           if let mv = self.realmInstance.findByField(ManagedView.self, value: self.viewId) {
+               if self.isDeleted {return}
+               self.isDeleted = true
+               self.realmInstance.safeWrite { r in
+                   mv.isDeleted = true
                }
-           })
+           }
+       })
         isObserving = true
     }
     
@@ -129,12 +127,12 @@ class ManagedViewService: ObservableObject {
     }
     
     func shouldDenyWriteRequest() -> Bool {
-        if self.activityId.isEmpty || self.viewId.isEmpty {
-            print("Denying MVS Request: Empty Activity/View")
+        if self.isWriting {
+            print("Denying MVS Request: Writing")
             return true
         }
-        if !self.isLoggedIn || self.isWriting {
-            print("Denying MVS Request: Login/Writing")
+        if !isLoggedIntoFirebase() {
+            print("Denying MVS Request: Login")
             return true
         }
         print("Allowing MVS Request")

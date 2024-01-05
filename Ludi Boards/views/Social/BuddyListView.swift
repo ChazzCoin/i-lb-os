@@ -9,21 +9,22 @@ import Foundation
 import SwiftUI
 
 struct BuddyListView: View {
-    @State private var buddies: [Buddy] = getSampleBuddies()
+    @State private var buddies: [SolUser] = []
     @State private var showingAddBuddyView = false
+    @State var realmInstance = realm()
 
     var body: some View {
-        List($buddies) { $buddy in
+        List($buddies, id: \.userId) { $buddy in
             
             NavigationLink(destination: BuddyProfileView()) { // Replace DestinationView with your desired destination view
                 HStack {
                     Circle()
-                        .fill(buddy.status == "Online" ? Color.green : Color.gray)
+                        .fill(buddy.isLoggedIn ? Color.green : Color.gray)
                         .frame(width: 10, height: 10)
-                    Text(buddy.userName ?? "No Name")
+                    Text(buddy.userName)
                         .font(.system(size: 14))
                     Spacer()
-                    Text(buddy.status ?? "Away")
+                    Text(buddy.isLoggedIn ? "Online" : "Away")
                         .font(.system(size: 12))
                         .foregroundColor(.gray)
                 }
@@ -42,11 +43,34 @@ struct BuddyListView: View {
         .sheet(isPresented: $showingAddBuddyView) {
             AddBuddyView(isPresented: $showingAddBuddyView)
         }
+        .onAppear() {
+            
+        }
+    }
+}
+struct BuddyRequestListView: View {
+    @Binding var requests: [Request]
+    @State private var showingAddBuddyView = false
+    
+    var body: some View {
+        List($requests, id: \.id) { $r in
+            if r.toUserId == getFirebaseUserId() {
+                NavigationLink(destination: BuddyProfileView()) { // Replace DestinationView with your desired destination view
+                    HStack {
+                        Circle()
+                            .fill(r.status != "pending" ? Color.green : Color.gray)
+                            .frame(width: 10, height: 10)
+                        Text(r.fromUserName)
+                            .font(.system(size: 14))
+                        Spacer()
+                        Text(r.status != "pending" ? "Friends" : "Not Friends")
+                            .font(.system(size: 12))
+                            .foregroundColor(.gray)
+                    }
+            }
+            
+            }
+        }
     }
 }
 
-struct BuddyListView_Previews: PreviewProvider {
-    static var previews: some View {
-        BuddyListView()
-    }
-}

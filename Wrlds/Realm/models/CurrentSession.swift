@@ -31,28 +31,6 @@ let CURRENT_USER_ID = "SOL"
     }
 }
 
-@objcMembers class SolUser: Object, Identifiable {
-    dynamic var id: String = CURRENT_USER_ID
-    dynamic var userId: String = UUID().uuidString
-    dynamic var userName: String = ""
-    dynamic var email: String = ""
-    dynamic var imgUrl: String = ""
-    dynamic var dateCreated: String = getTimeStamp()
-    dynamic var dateUpdated: String = getTimeStamp()
-    dynamic var sessionId: String = ""
-    dynamic var activityId: String = ""
-    dynamic var membership: Int = 0
-    dynamic var isLoggedIn: Bool = false
-    dynamic var hasInternet: Bool = true
-    dynamic var isOpen: Bool = false
-    dynamic var isLive: Bool = false
-    dynamic var status: Bool = false
-
-    override static func primaryKey() -> String {
-        return "id"
-    }
-}
-
 extension Realm {
     
     func setCurrentSolUserId(newId:String) {
@@ -63,11 +41,11 @@ extension Realm {
         }
     }
     
-    func getCurrentSolUser() -> CurrentSolUser? {
+    func getCurrentSolUserId() -> CurrentSolUser? {
         return self.findByField(CurrentSolUser.self, value: CURRENT_USER_ID)
     }
     
-    func getCurrentSolUser(action: @escaping (CurrentSolUser) -> Void) {
+    func loadGetCurrentSolUser(action: (CurrentSolUser) -> Void) {
         if let temp = self.findByField(CurrentSolUser.self, value: CURRENT_USER_ID) {
             action(temp)
         }

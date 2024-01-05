@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import RealmSwift
 import FirebaseAuth
 import FirebaseFirestore
 import FirebaseDatabase
@@ -33,12 +34,17 @@ func syncUserFromFirebaseDb(_ email: String, completion: @escaping (Bool) -> Voi
 
     usersRef.queryOrdered(byChild: "email").queryEqual(toValue: email)
         .observeSingleEvent(of: .value) { snapshot in
+            
             if snapshot.exists() {
-                print("User Does Exist.")
+//                print("User Does Exist.")
                 let temp = snapshot.toHashMap()
                 let tempp = temp.first?.value as? [String:Any?]
                 realm().updateGetCurrentSolUser { u in
+                    u.userId = tempp?["userId"] as? String ?? ""
                     u.userName = tempp?["userName"] as? String ?? ""
+                    u.membership = tempp?["membership"] as? Int ?? 0
+                    u.email = tempp?["email"] as? String ?? ""
+                    u.imgUrl = tempp?["imgUrl"] as? String ?? ""
                 }
                 completion(true)
             } else {
@@ -48,25 +54,35 @@ func syncUserFromFirebaseDb(_ email: String, completion: @escaping (Bool) -> Voi
         }
 }
 
-func saveUserToRealtimeDatabase(user: CurrentSolUser, onComplete: @escaping (Bool) -> Void) {
-    let dbRef = Database.database().reference()
-    let usersRef = dbRef.child("users").child(user.userId)
-
-    usersRef.setValue(user.toDict()) { error, _ in
-        if let error = error {
-            // Handle any errors here
-            print("Error writing document: \(error)")
-            onComplete(false)
-        } else {
-            // Data successfully written
-            print("Data successfully written!")
-            onComplete(true)
+func saveUserToRealtimeDatabase(user: CurrentSolUser?=nil, onComplete: @escaping (Bool) -> Void) {
+    
+    var u = user
+    if user == nil {
+        realm().getCurrentSolUser() { ser in
+            u = ser
         }
     }
+    
+    if let us = u {
+        let dbRef = Database.database().reference()
+        let usersRef = dbRef.child("users").child(us.userId)
+        usersRef.updateChildValues(us.toDict()) { error, _ in
+            if let error = error {
+                // Handle any errors here
+                print("Error writing document: \(error)")
+                onComplete(false)
+            } else {
+                // Data successfully written
+                print("Data successfully written!")
+                onComplete(true)
+            }
+        }
+    }
+    
 }
 
 
-func signUpWithEmail(email: String, password: String, completion: @escaping (Result<AuthDataResult, Error>) -> Void) {
+func signUpWithEmail(email: String, password: String, userName:String="", realmInstance: Realm=realm(), completion: @escaping (Result<AuthDataResult, Error>) -> Void) {
     Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
         if let error = error {
             completion(.failure(error))
@@ -74,6 +90,18 @@ func signUpWithEmail(email: String, password: String, completion: @escaping (Res
         }
 
         if let authResult = authResult {
+            
+            let user = authResult.user
+            realmInstance.updateGetCurrentSolUser { u in
+                u.userId = user.uid
+                u.userName = userName
+                u.email = email
+                u.imgUrl = user.photoURL?.absoluteString ?? ""
+                u.isLoggedIn = true
+                saveUserToRealtimeDatabase(user: u) { result in
+                    print(result)
+                }
+            }
             completion(.success(authResult))
         } else {
             // This case is unlikely, but it's good to handle a situation where authResult is nil
@@ -82,8 +110,29 @@ func signUpWithEmail(email: String, password: String, completion: @escaping (Res
     }
 }
 
+func quickSyncFireUser(updateRealtimeDb:Bool=false) {
+    let user = Auth.auth().currentUser
+    let r = realm()
+    r.updateGetCurrentSolUser { u in
+        u.userId = user?.uid ?? ""
+        u.email = user?.email ?? ""
+        u.imgUrl = user?.photoURL?.absoluteString ?? ""
+        u.isLoggedIn = true
+        if updateRealtimeDb {
+            saveUserToRealtimeDatabase(user: u) { result in
+                print(result)
+            }
+        }
+    }
+    r.invalidate()
+}
+
 func getFirebaseUser() -> FirebaseAuth.User? {
     return Auth.auth().currentUser
+}
+
+func getFirebaseUserId() -> String? {
+    return Auth.auth().currentUser?.uid
 }
 
 func isLoggedIntoFirebase() -> Bool {
@@ -101,16 +150,8 @@ func loginUser(withEmail email: String, password: String, completion: @escaping 
             completion(.failure(error))
             return
         }
-        realm().updateGetCurrentSolUser { u in
-            if let user = Auth.auth().currentUser {
-                u.userId = user.uid
-                u.email = user.email ?? ""
-                u.imgUrl = user.photoURL?.absoluteString ?? ""
-                u.isLoggedIn = true
-                saveUserToRealtimeDatabase(user: u) { result in
-                    print(result)
-                }
-            }
+        syncUserFromFirebaseDb(email) { result in
+            print(result)
         }
         completion(.success(()))
     }

@@ -98,10 +98,10 @@ class BoardEngineObject : ObservableObject {
         return CGVector(dx: dx, dy: dy)
     }
     func loadUser() {
-        self.realmInstance.loadGetCurrentSolUser { su in
-            userId = su.userId
-            userName = su.userName
-            isLoggedIn = su.isLoggedIn
+        self.realmInstance.getCurrentSolUser { su in
+            self.userId = su.userId
+            self.userName = su.userName
+            self.isLoggedIn = su.isLoggedIn
         }
     }
     

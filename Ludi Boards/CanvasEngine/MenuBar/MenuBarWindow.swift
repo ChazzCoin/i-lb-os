@@ -10,6 +10,7 @@ import SwiftUI
 
 struct MenuBarStatic: View {
     var onClick: () -> Void
+    @StateObject private var rcl = RealmObserver<CurrentSolUser>()
     @State private var showIcons = false
     @State private var iconStates = Array(repeating: false, count: 8)
     @Environment(\.colorScheme) var colorScheme
@@ -38,7 +39,8 @@ struct MenuBarStatic: View {
         MenuBarProvider.chat,
         MenuBarProvider.profile
     ]
-    
+    let timer = Timer.publish(every: 10.0, on: .main, in: .common).autoconnect()
+
     @State var icons: [IconProvider] = []
 
     var body: some View {
@@ -79,15 +81,28 @@ struct MenuBarStatic: View {
                         .transition(.opacity)
                 }
             }
-        }.background(Color.clear)
-            .onAppear() {
+        }
+        .background(Color.clear)
+        .onAppear() {
+            if isLoggedIntoFirebase() {
+                icons = iconsLoggedIn
+            } else {
+                icons = iconsLoggedOut
+            }
+            iconStates = Array(repeating: false, count: icons.count)
+            
+            rcl.observeId(id: "SOL") { _ in
                 if isLoggedIntoFirebase() {
                     icons = iconsLoggedIn
                 } else {
                     icons = iconsLoggedOut
                 }
                 iconStates = Array(repeating: false, count: icons.count)
+                showIcons = true
+                animateIcons()
             }
+            
+        }
     }
     
     private func animateIcons() {

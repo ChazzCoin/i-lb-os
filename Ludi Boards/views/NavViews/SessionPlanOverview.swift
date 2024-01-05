@@ -65,12 +65,12 @@ struct SessionPlanOverview: View {
 
         }
         .onAppear() {
-            if realmInstance.userIsLoggedIn() {
+            if isLoggedIntoFirebase() {
                 self.isLoggedIn = true
                 fireGetLiveDemoAsync()
                 getShares()
                 observeSessions()
-//                observeSharedSessions()
+                observeSharedSessions()
                 return
             }
             observeSessions()
@@ -81,7 +81,7 @@ struct SessionPlanOverview: View {
             SessionPlanView(sessionId: "new", isShowing: $showNewPlanSheet, isMasterWindow: false)
         }
         .refreshable {
-            if realmInstance.userIsLoggedIn() {
+            if isLoggedIntoFirebase() {
                 self.isLoggedIn = true
                 fireGetLiveDemoAsync(realm: self.realmInstance)
                 getShares()

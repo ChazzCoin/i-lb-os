@@ -22,7 +22,7 @@ struct LineDrawingManaged: View {
     
     let realmInstance = realm()
     @State private var managedViewNotificationToken: NotificationToken? = nil
-    @State private var MVS: ManagedViewService? = nil
+    @State private var MVS: ManagedViewService = ManagedViewService()
     @State private var isDisabled = false
     @State private var lifeIsLocked = false
     @State private var lifeDateUpdated = Int(Date().timeIntervalSince1970)
@@ -62,7 +62,7 @@ struct LineDrawingManaged: View {
     
     // Functions
     func isDisabledChecker() -> Bool { return isDisabled }
-    func isDeletedChecker() -> Bool { return self.MVS?.isDeleted ?? false }
+    func isDeletedChecker() -> Bool { return self.MVS.isDeleted }
 
     private var lineLength: CGFloat {
         sqrt(pow(lifeEndX - lifeStartX, 2) + pow(lifeEndY - lifeStartY, 2))-100
@@ -133,7 +133,7 @@ struct LineDrawingManaged: View {
         .gesture(dragGestureDuo())
         .onAppear() {
         
-            MVS = ManagedViewService(realm: self.realmInstance, activityId: self.activityId, viewId: self.viewId)
+            MVS.initialize(realm: self.realmInstance, activityId: self.activityId, viewId: self.viewId)
             loadFromRealm()
             
             observeView()
@@ -282,14 +282,14 @@ struct LineDrawingManaged: View {
     
     func observeView() {
         observeFromRealm()
-        MVS?.start()
+        MVS.start()
     }
     
     func observeFromRealm() {
         if isDisabledChecker() {return}
         if isDeletedChecker() {return}
         
-        MVS?.observeManagedView() { mv in
+        MVS.observeManagedView() { mv in
             print("!!ManagedToolView!!")
             guard let temp = mv else {
                 self.isDisabled = true
@@ -302,7 +302,7 @@ struct LineDrawingManaged: View {
             DispatchQueue.main.async {
                 if self.isDragging {return}
                 if activityId != temp.boardId { activityId = temp.boardId }
-                self.MVS?.isDeleted = temp.isDeleted
+                self.MVS.isDeleted = temp.isDeleted
                 if lifeWidth != Double(temp.width) {lifeWidth = Double(temp.width)}
                 if lifeLineDash != Double(temp.lineDash) {lifeLineDash = Double(temp.lineDash)}
                 
@@ -352,7 +352,7 @@ struct LineDrawingManaged: View {
                             mv.endY = Double(end?.y ?? CGFloat(lifeEndY))
                         }
                         
-                        MVS?.updateFirebase(mv: mv)
+                        MVS.updateFirebase(mv: mv)
                     }
                 } catch {
                     print("Realm error: \(error)")
@@ -410,7 +410,7 @@ struct LineDrawingManaged: View {
             guard let tMV = mv else { return }
             r.create(ManagedView.self, value: tMV, update: .modified)
             // TODO: Firebase Users ONLY
-            MVS?.updateFirebase(mv: mv)
+            MVS.updateFirebase(mv: mv)
         }
     }
     

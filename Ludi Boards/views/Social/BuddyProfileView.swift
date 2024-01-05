@@ -7,11 +7,22 @@
 
 import Foundation
 import SwiftUI
+import RealmSwift
 
 struct BuddyProfileView: View {
     @EnvironmentObject var BEO: BoardEngineObject
-    @State private var username: String = "User123"
-    @State private var status: String = "Online"
+    @StateObject var realmObserver = RealmObserver<CurrentSolUser>()
+    @State private var realmInstance = realm()
+    
+    @LiveDataObject(CurrentSolUser.self) var currentUser
+    @LiveDataList(SolUser.self) var solUsers
+    
+    
+    @LiveDataList(Request.self) var solRequests
+    
+//    @State private var username: String = "User123"
+//    @State private var userId: String = ""
+//    @State private var status: String = "Online"
     @State private var aboutMe: String = "Just enjoying the world of coding and tech!"
     @State private var email: String = "email@example.com"
     @State private var phoneNumber: String = "123-456-7890"
@@ -25,6 +36,9 @@ struct BuddyProfileView: View {
     @State private var showAddBuddyButton = true
     @State private var showShareActivityButton = true
     
+    @State private var friends: [SolUser] = []
+//    @State private var requests: [Request] = []
+    
     var body: some View {
         LoadingForm() { runLoading in
             Group() {
@@ -34,26 +48,30 @@ struct BuddyProfileView: View {
                     .frame(width: 120, height: 120)
                     .padding(.top, 30)
                 
-                Text(username)
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-
-                Text(status)
-                    .font(.subheadline)
-                    .foregroundColor(status == "online" ? .green : .gray)
-
-                Divider()
-                    .padding(.horizontal)
+                HStack {
+                    Text(currentUser?.userName ?? "")
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
+                    
+                    Text("Online")
+                        .font(.subheadline)
+                        .foregroundColor(.green)
+                }
                 
-                // Additional Info
-//                Group {
-//                    profileInfoRow(title: "Membership Type", value: String(membershipType))
-//                    profileInfoRow(title: "Account Created", value: accountCreationDate)
-//                    profileInfoRow(title: "Visibility", value: visibility)
-//                }
-//                .padding(.horizontal)
+                Text(currentUser?.userId ?? "")
+                    .font(.subheadline)
+                    .fontWeight(.bold)
+                Text(currentUser?.email ?? "")
+                    .font(.subheadline)
+                    .fontWeight(.bold)
+                
+                Section(header: Text("Friend Requests")) {
+                    BuddyRequestListView(requests: $solRequests)
+                }
+                
                 solButton(title: "Sign Out", action: {
                     runLoading()
+                    
                     logoutUser() { result in
                         print("User Logged Out. \(result)")
                     }
@@ -79,28 +97,16 @@ struct BuddyProfileView: View {
                     .buttonStyle(ActionButtonStyle())
                 }
                 
-//                if showChatButton {
-//                    Button("Chat") {
-//                        // Chat action
-//                    }
-//                    .buttonStyle(ActionButtonStyle())
-//                }
-
-//                if showShareActivityButton {
-//                    Button("Share Activity") {
-//                        // Share activity action
-//                    }
-//                    .buttonStyle(ActionButtonStyle())
-//                }
-//                Spacer()
             }
             .padding(.bottom, 20)
         }
         .refreshable {
             loadUser()
+            loadFriendRequests()
         }
         .onAppear() {
             loadUser()
+            loadFriendRequests()
         }
         .navigationBarTitle("Profile", displayMode: .inline)
         .sheet(isPresented: $showNewPlanSheet) {
@@ -115,15 +121,19 @@ struct BuddyProfileView: View {
         }
     }
     
-    func loadUser() {
-        syncUserFromFirebaseDb(email) { result in
-            print(result)
-            if let user = self.BEO.realmInstance.getCurrentSolUserId() {
-                username = user.userName
-                email = user.email
-                status = "online"
-            }
+    func loadFriendRequests() {
+        if let uId = getFirebaseUserId() {
+            _solRequests.startFirebaseObservation(block: { db in
+                return db
+                    .child("friendRequests")
+                    .queryOrdered(byChild: "toUserId")
+                    .queryEqual(toValue: uId)
+            })
         }
+    }
+    
+    func loadUser() {
+        _currentUser.loadByPrimaryKey(id: "SOL", realm: self.realmInstance)
     }
     
     private func profileInfoRow(title: String, value: String) -> some View {

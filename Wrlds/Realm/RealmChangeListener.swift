@@ -9,40 +9,6 @@ import Foundation
 import RealmSwift
 import Combine
 
-class RealmChangeListener<T:Object>: ObservableObject {
-    private var realmInstance: Realm = realm()
-    private var results: Results<T>
-    private var notificationToken: NotificationToken?
-
-    init() {
-        results = realmInstance.objects(T.self)
-    }
-
-    func observeAll(onInitial: @escaping (Array<T>) -> Void={_ in}, onChange: @escaping (Array<T>) -> Void) {
-        // Observe Results Notifications
-        notificationToken = results.observe { [weak self] (changes: RealmCollectionChange) in
-            guard let self = self else { return }
-            switch changes {
-                case .initial(let results):
-                    // Results are now populated and can be accessed without blocking the UI
-                    onChange(Array(results))
-                case .update(let results, _, _, _):
-                    // Query results have changed
-                    onChange(Array(results))
-                case .error(let error):
-                    // An error occurred while opening the Realm file on the background worker thread
-                    fatalError("\(error)")  // Handle errors appropriately in production code
-            }
-        }
-    }
-
-    deinit {
-        // Invalidate the notification token when the view model is deinitialized
-        notificationToken?.invalidate()
-    }
-}
-
-
 class ManagedViewListViewModel: ObservableObject {
     private var realm: Realm
     private var results: Results<ManagedView>

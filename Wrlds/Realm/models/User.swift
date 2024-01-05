@@ -8,7 +8,29 @@
 import Foundation
 import RealmSwift
 
+class SolKnight: Object, Identifiable {
+    @objc dynamic var id: String = "1" // Primary key
+    @objc dynamic var tempId: String = ""
+    @objc dynamic var username: String = ""
+    @objc dynamic var isLoggedIn: Bool = false
+    @objc dynamic var status: String = "away"
+    
+    override static func primaryKey() -> String? {
+        return "tempId"
+    }
+}
 
+
+class SolUser: Object, Identifiable {
+    @objc dynamic var id: String = "" // Primary key
+    @objc dynamic var tempId: String = ""
+    @objc dynamic var username: String = ""
+    @objc dynamic var status: String = "away"
+    
+    override static func primaryKey() -> String? {
+        return "id"
+    }
+}
 
 class User: Object, Identifiable {
     @objc dynamic var id: String = "" // Primary key
