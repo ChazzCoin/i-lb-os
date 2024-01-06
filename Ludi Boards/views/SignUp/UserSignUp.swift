@@ -50,7 +50,7 @@ struct SignUpView: View {
     var body: some View {
         
         if self.BEO.isLoggedIn {
-            BuddyProfileView().environmentObject(self.BEO)
+            ProfileView().environmentObject(self.BEO)
         } else {
             LoadingForm(isLoading: $isLoading, showCompletion: $showCompletion) { runLoading in
                 

@@ -129,7 +129,7 @@ struct LiveDataList<Object: RealmSwift.Object>: DynamicProperty {
             guard !isObserving else { return }
             self.query = query
             firebaseSubscription = query.observe(.value, with: { snapshot in
-                let objs = snapshot.toLudiObjects(Object.self, realm: realmInstance)
+                let _ = snapshot.toLudiObjects(Object.self, realm: realmInstance)
             })
             isObserving = true
         }
@@ -137,7 +137,7 @@ struct LiveDataList<Object: RealmSwift.Object>: DynamicProperty {
             guard !isObserving else { return }
             self.ref = query
             firebaseSubscription = query.observe(.value, with: { snapshot in
-                let objs = snapshot.toLudiObjects(Object.self, realm: realmInstance)
+                let _ = snapshot.toLudiObjects(Object.self, realm: realmInstance)
             })
             isObserving = true
         }
@@ -159,40 +159,46 @@ struct LiveDataList<Object: RealmSwift.Object>: DynamicProperty {
 
 }
 
-
-
 @propertyWrapper
-struct LiveDataObject<Object: RealmSwift.Object>: DynamicProperty {
-    @ObservedObject private var observer: RealmObserver<Object>
+struct LiveDataObject<Object: RealmSwift.Object>: DynamicProperty where Object: Identifiable {
+    @StateObject private var realmObjectObserver = RealmObjectObserver<Object>()
+    @StateObject private var firebaseObserver = FirebaseObserver<Object>()
+    private var objectType: Object.Type?
+    private var realmInstance: Realm = realm()
 
     init(_ objectType: Object.Type) {
-        self.observer = RealmObserver<Object>()
+        self.objectType = objectType
     }
 
     var wrappedValue: Object? {
-        self.observer.object
-    }
-    
-    var projectedValue: Binding<Object?> {
-        Binding<Object?>(
-            get: { self.observer.object },
-            set: { newValue in
-                // Handle updates if needed
-            }
-        )
-    }
-    
-    func loadByPrimaryKey(id:String, realm:Realm) {
-        self.observer.startObserver(Object.self, primaryKey: id, realm: realm)
+        realmObjectObserver.object
     }
 
-    private class RealmObserver<O: RealmSwift.Object>: ObservableObject {
-        @Published var object: O? = nil
-        private var notificationToken: NotificationToken? = nil
+    var projectedValue: LiveDataObject<Object> {
+        get { self }
+        set { self = newValue }
+    }
 
-        func startObserver(_ objectType: O.Type, primaryKey: String, realm:Realm) {
+    func load(primaryKey: String) {
+        realmObjectObserver.load(objectType: objectType, primaryKey: primaryKey, realm: self.realmInstance)
+    }
+    
+    func load(field: String, value: String) {
+        realmObjectObserver.load(objectType: objectType, field: field, value: value, realm: self.realmInstance)
+    }
+    
+    func startFirebaseObservation(block: @escaping (DatabaseReference) -> DatabaseReference) {
+        firebaseObserver.startObserving(query: block(firebaseObserver.reference), realm: self.realmInstance)
+    }
+
+    private class RealmObjectObserver<O: RealmSwift.Object>: ObservableObject where O: Identifiable {
+        @Published var object: O?
+        @Published var notificationToken: NotificationToken? = nil
+        
+        func load(objectType: O.Type?, primaryKey: String, realm: Realm) {
+            guard let objectType = objectType else { return }
+
             self.object = realm.object(ofType: objectType, forPrimaryKey: primaryKey)
-            // Setting up the observer
             notificationToken = self.object?.observe { [weak self] change in
                 switch change {
                 case .change:
@@ -202,9 +208,113 @@ struct LiveDataObject<Object: RealmSwift.Object>: DynamicProperty {
                 }
             }
         }
+        
+        func load(objectType: O.Type?, field: String, value: String, realm: Realm) {
+            guard let objectType = objectType else { return }
+
+            self.object = realm.findByField(objectType.self, field: field, value: value)
+            notificationToken = self.object?.observe { [weak self] change in
+                switch change {
+                case .change:
+                    self?.objectWillChange.send()
+                case .deleted, .error:
+                    break
+                }
+            }
+        }
+        
+        func stop() {
+            notificationToken?.invalidate()
+        }
+
 
         deinit {
             notificationToken?.invalidate()
         }
     }
+    
+    private class FirebaseObserver<O: RealmSwift.Object>: ObservableObject where O: Identifiable {
+        @Published var object: O?
+        @Published var notificationToken: NotificationToken? = nil
+        @Published var firebaseSubscription: DatabaseHandle? = nil
+        @Published var reference: DatabaseReference = Database
+            .database()
+            .reference()
+
+        func startObserving(query: DatabaseReference, realm: Realm) {
+            reference = query
+            firebaseSubscription = query.observe(.value, with: { snapshot in
+                let _ = snapshot.toLudiObject(Object.self, realm: realm)
+            })
+        }
+
+        func stopObserving() {
+            if let subscription = firebaseSubscription {
+                reference.removeObserver(withHandle: subscription)
+                firebaseSubscription = nil
+            }
+        }
+
+        deinit {
+            notificationToken?.invalidate()
+            stopObserving()
+        }
+    }
+    
+    
 }
+
+
+//
+//@propertyWrapper
+//struct LiveDataObject<Object: RealmSwift.Object>: DynamicProperty {
+//    @ObservedObject private var observer: RealmObserver<Object>
+//
+//    init(_ objectType: Object.Type) {
+//        self.observer = RealmObserver<Object>()
+//    }
+//
+//    var wrappedValue: Object? {
+//        self.observer.object
+//    }
+//    
+//    var projectedValue: Binding<Object?> {
+//        Binding<Object?>(
+//            get: { self.observer.object },
+//            set: { newValue in
+//                // Handle updates if needed
+//            }
+//        )
+//    }
+//    
+//    func loadByPrimaryKey(id:String, realm:Realm) {
+//        self.observer.startObserver(Object.self, primaryKey: id, realm: realm)
+//    }
+//
+//    private class RealmObserver<O: RealmSwift.Object>: ObservableObject {
+//        @Published var object: O? = nil
+//        private var notificationToken: NotificationToken? = nil
+//
+//        
+//        func getObject() {
+//            
+//        }
+//        func startObserver(_ objectType: O.Type, primaryKey: String, realm:Realm) {
+//            self.object = realm.object(ofType: objectType, forPrimaryKey: primaryKey)
+//            // Setting up the observer
+//            notificationToken = self.object?.observe { [weak self] change in
+//                switch change {
+//                    case .change:
+//                        print("LiveDataObject: onChange")
+//                        self?.objectWillChange.send()
+//                    case .deleted, .error:
+//                        break
+//                }
+//            }
+//        }
+//
+//        deinit {
+//            notificationToken?.invalidate()
+//        }
+//    }
+//}

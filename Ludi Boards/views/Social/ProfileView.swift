@@ -9,18 +9,22 @@ import Foundation
 import SwiftUI
 import RealmSwift
 
-struct BuddyProfileView: View {
-    @State var solUserId: String
-    @State var friendStatus: String
+struct ProfileView: View {
     @EnvironmentObject var BEO: BoardEngineObject
-    
-//    @StateObject var realmObserver = RealmObserver<CurrentSolUser>()
+    @StateObject var realmObserver = RealmObserver<CurrentSolUser>()
     @State private var realmInstance = realm()
     
-    @LiveDataObject(SolUser.self) var solUser
+    @LiveDataObject(CurrentSolUser.self) var currentUser
+    @LiveDataList(SolUser.self) var solUsers
+    
+    
     @LiveDataList(Request.self) var solRequests
     
+//    @State private var username: String = "User123"
+//    @State private var userId: String = ""
+//    @State private var status: String = "Online"
     @State private var aboutMe: String = "Just enjoying the world of coding and tech!"
+    @State private var email: String = "email@example.com"
     @State private var phoneNumber: String = "123-456-7890"
     @State private var membershipType: Int = 0
     @State private var accountCreationDate: String = "Jan 1, 2020"
@@ -28,10 +32,9 @@ struct BuddyProfileView: View {
     @State private var photoUrl: String = "default_image_url"
     
     @State private var showNewPlanSheet = false
-    @State private var showChatButton = false
-    @State private var showAddBuddyButton = false
-    @State private var showAcceptBuddyButton = false
-    @State private var showShareActivityButton = false
+    @State private var showChatButton = true
+    @State private var showAddBuddyButton = true
+    @State private var showShareActivityButton = true
     
     @State private var friends: [SolUser] = []
 //    @State private var requests: [Request] = []
@@ -46,7 +49,7 @@ struct BuddyProfileView: View {
                     .padding(.top, 30)
                 
                 HStack {
-                    Text(solUser?.userName ?? "")
+                    Text(currentUser?.userName ?? "")
                         .font(.largeTitle)
                         .fontWeight(.bold)
                     
@@ -55,23 +58,39 @@ struct BuddyProfileView: View {
                         .foregroundColor(.green)
                 }
                 
-                Text(solUser?.userId ?? "")
+                Text(currentUser?.userId ?? "")
                     .font(.subheadline)
                     .fontWeight(.bold)
-                Text(solUser?.email ?? "")
+                Text(currentUser?.email ?? "")
                     .font(.subheadline)
                     .fontWeight(.bold)
+                
+                Section(header: Text("Friend Requests")) {
+                    BuddyRequestListView(requests: $solRequests)
+                }
+                
+                solButton(title: "Sign Out", action: {
+                    runLoading()
+                    
+                    logoutUser() { result in
+                        print("User Logged Out. \(result)")
+                    }
+                    if let user = self.BEO.realmInstance.findByField(CurrentSolUser.self, value: CURRENT_USER_ID) {
+                        self.BEO.realmInstance.safeWrite { r in
+                            user.userId = ""
+                            user.userName = ""
+                            user.email = ""
+                            user.imgUrl = ""
+                            user.isLoggedIn = false
+                        }
+                    }
+                    self.BEO.userId = nil
+                    self.BEO.userName = nil
+                    self.BEO.isLoggedIn = false
+                }, isEnabled: true)
                 
                 if showAddBuddyButton {
                     Button("Add Buddy") {
-                        // Add buddy action
-                        showNewPlanSheet = true
-                    }
-                    .buttonStyle(ActionButtonStyle())
-                }
-                
-                if showAcceptBuddyButton {
-                    Button("Accept Buddy Request") {
                         // Add buddy action
                         showNewPlanSheet = true
                     }
@@ -88,17 +107,6 @@ struct BuddyProfileView: View {
         .onAppear() {
             loadUser()
             loadFriendRequests()
-            
-            switch (friendStatus) {
-                case "pending": self.showAcceptBuddyButton = true
-                case "friends":  self.showAddBuddyButton = false
-                default: self.showAddBuddyButton = true
-            }
-            
-            if friendStatus == "pending" {
-                self.showAddBuddyButton = true
-            }
-            
         }
         .navigationBarTitle("Profile", displayMode: .inline)
         .sheet(isPresented: $showNewPlanSheet) {
@@ -114,15 +122,19 @@ struct BuddyProfileView: View {
     }
     
     func loadFriendRequests() {
-        
+        if let uId = getFirebaseUserId() {
+            _solRequests.startFirebaseObservation(block: { db in
+                return db
+                    .child("friendRequests")
+                    .queryOrdered(byChild: "toUserId")
+                    .queryEqual(toValue: uId)
+            })
+        }
     }
     
     func loadUser() {
-        _solUser.load(field: "userId", value: self.solUserId)
-        _solUser.startFirebaseObservation() { db in
-            return db.child("users").child(self.solUserId)
-        }
-//        fireGetSolUserAsync(userId: self.solUserId, realm: self.realmInstance)
+        _currentUser.load(primaryKey: "SOL")
+        print("Current User: \(String(describing: currentUser))")
     }
     
     private func profileInfoRow(title: String, value: String) -> some View {
@@ -137,18 +149,18 @@ struct BuddyProfileView: View {
 }
 
 
-struct ActionButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .frame(maxWidth: .infinity)
-            .padding()
-            .background(Color.blue)
-            .foregroundColor(.white)
-            .cornerRadius(10)
-            .padding(.horizontal)
-            .scaleEffect(configuration.isPressed ? 0.95 : 1)
-    }
-}
+//struct ActionButtonStyle: ButtonStyle {
+//    func makeBody(configuration: Configuration) -> some View {
+//        configuration.label
+//            .frame(maxWidth: .infinity)
+//            .padding()
+//            .background(Color.blue)
+//            .foregroundColor(.white)
+//            .cornerRadius(10)
+//            .padding(.horizontal)
+//            .scaleEffect(configuration.isPressed ? 0.95 : 1)
+//    }
+//}
 
 //struct BuddyProfileView_Previews: PreviewProvider {
 //    static var previews: some View {

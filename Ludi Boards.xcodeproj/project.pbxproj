@@ -109,6 +109,8 @@
 		FB881A3C2B47CD4400C16198 /* UserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB881A3B2B47CD4400C16198 /* UserView.swift */; };
 		FB881A3E2B48732400C16198 /* RealmState.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB881A3D2B48732400C16198 /* RealmState.swift */; };
 		FB881A402B48775800C16198 /* FirebaseSocial.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB881A3F2B48775800C16198 /* FirebaseSocial.swift */; };
+		FB881A422B48C36400C16198 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB881A412B48C36400C16198 /* ProfileView.swift */; };
+		FB881A442B48C61400C16198 /* BuddyRequestListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB881A432B48C61400C16198 /* BuddyRequestListView.swift */; };
 		FB93BB172B033E2000864CB2 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FB93BB162B033E2000864CB2 /* GoogleService-Info.plist */; };
 		FB93BB1B2B03471C00864CB2 /* FireData.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB93BB1A2B03471C00864CB2 /* FireData.swift */; };
 		FB982F912B19D1B900C0DA03 /* FirebaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB982F902B19D1B900C0DA03 /* FirebaseService.swift */; };
@@ -260,6 +262,8 @@
 		FB881A3B2B47CD4400C16198 /* UserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserView.swift; sourceTree = "<group>"; };
 		FB881A3D2B48732400C16198 /* RealmState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmState.swift; sourceTree = "<group>"; };
 		FB881A3F2B48775800C16198 /* FirebaseSocial.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseSocial.swift; sourceTree = "<group>"; };
+		FB881A412B48C36400C16198 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
+		FB881A432B48C61400C16198 /* BuddyRequestListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuddyRequestListView.swift; sourceTree = "<group>"; };
 		FB93BB162B033E2000864CB2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
 		FB93BB1A2B03471C00864CB2 /* FireData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireData.swift; sourceTree = "<group>"; };
 		FB982F902B19D1B900C0DA03 /* FirebaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseService.swift; sourceTree = "<group>"; };
@@ -721,10 +725,12 @@
 			isa = PBXGroup;
 			children = (
 				FB3E02C02B0C9A6D00D8558C /* BuddyProfileView.swift */,
+				FB881A412B48C36400C16198 /* ProfileView.swift */,
 				FB3E02BE2B0C948A00D8558C /* AddBuddyView.swift */,
 				FB3E02BC2B0C90E600D8558C /* BuddyListView.swift */,
 				FBDF0DC42B21811000FADE44 /* SharedSessionsView.swift */,
 				FB881A3B2B47CD4400C16198 /* UserView.swift */,
+				FB881A432B48C61400C16198 /* BuddyRequestListView.swift */,
 			);
 			path = Social;
 			sourceTree = "<group>";
@@ -959,6 +965,7 @@
 				FBD9AFCB2B00843F005F8620 /* BoardSession.swift in Sources */,
 				FBE2C61C2B1AF961004C0116 /* BoardBackgrounder.swift in Sources */,
 				FB9F1DD42B15307E00FD9078 /* UserSignUp.swift in Sources */,
+				FB881A422B48C36400C16198 /* ProfileView.swift in Sources */,
 				FBE2C6282B1C26BF004C0116 /* StandardButton.swift in Sources */,
 				FBDF0DC72B224D2600FADE44 /* ActivityPlanService.swift in Sources */,
 				FBBAD3BC2B1F8ECC004A4332 /* Timer.swift in Sources */,
@@ -1017,6 +1024,7 @@
 				FBABDAC72B20456700321A00 /* ToolBarSettings.swift in Sources */,
 				FBB450022B052B180096F8EB /* FireLiveData.swift in Sources */,
 				FBBAD3BE2B1FBF58004A4332 /* NavPad.swift in Sources */,
+				FB881A442B48C61400C16198 /* BuddyRequestListView.swift in Sources */,
 				FBA4FB572B15AA2700BF409E /* GlobalPositioning.swift in Sources */,
 				FB9F1DD02B1528FC00FD9078 /* Extensions.swift in Sources */,
 				FBE2C62E2B1C3FDE004C0116 /* LoadingForm.swift in Sources */,
