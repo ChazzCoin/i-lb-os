@@ -28,23 +28,19 @@ func checkUsernameExists(_ username: String, completion: @escaping (Bool) -> Voi
         }
 }
 
-func syncUserFromFirebaseDb(_ email: String, completion: @escaping (Bool) -> Void) {
+func syncUserFromFirebaseDb(_ email: String, realmInstance: Realm=realm(), completion: @escaping (Bool) -> Void) {
     let dbRef = Database.database().reference()
     let usersRef = dbRef.child("users")
 
     usersRef.queryOrdered(byChild: "email").queryEqual(toValue: email)
         .observeSingleEvent(of: .value) { snapshot in
-            
             if snapshot.exists() {
-//                print("User Does Exist.")
-                let temp = snapshot.toHashMap()
-                let tempp = temp.first?.value as? [String:Any?]
-                realm().updateGetCurrentSolUser { u in
-                    u.userId = tempp?["userId"] as? String ?? ""
-                    u.userName = tempp?["userName"] as? String ?? ""
-                    u.membership = tempp?["membership"] as? Int ?? 0
-                    u.email = tempp?["email"] as? String ?? ""
-                    u.imgUrl = tempp?["imgUrl"] as? String ?? ""
+                snapshot.parseSingleObject { obj in
+                    let result = CurrentSolUser(dictionary: obj as [String : Any])
+                    try? realmInstance.write {
+                        let r = realmInstance.create(CurrentSolUser.self, value: result, update: .all)
+                        print("Successful CurrentSolUser Parsing: [ \(r) ]")
+                    }
                 }
                 completion(true)
             } else {

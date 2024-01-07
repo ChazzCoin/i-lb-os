@@ -66,6 +66,7 @@ func fireGetSolUserAsync(userId: String, realm: Realm?=nil) {
     firebaseDatabase(collection: DatabasePaths.users.rawValue) { ref in
         ref.queryOrdered(byChild: "userId").queryEqual(toValue: userId)
             .observeSingleEvent(of: .value) { snapshot, _ in
+                
                 var obj = snapshot.toLudiObjects(SolUser.self, realm: realm)
                 print("SolUser: \(obj)")
             }

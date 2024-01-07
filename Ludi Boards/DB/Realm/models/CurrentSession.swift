@@ -25,6 +25,7 @@ let CURRENT_USER_ID = "SOL"
     dynamic var hasInternet: Bool = true
     dynamic var isOpen: Bool = false
     dynamic var isLive: Bool = false
+    dynamic var status: Bool = false
 
     override static func primaryKey() -> String {
         return "id"
@@ -49,7 +50,7 @@ let CURRENT_USER_ID = "SOL"
     dynamic var status: Bool = false
 
     override static func primaryKey() -> String {
-        return "id"
+        return "userId"
     }
 }
 

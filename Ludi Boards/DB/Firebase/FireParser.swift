@@ -30,6 +30,14 @@ extension DataSnapshot {
         }
         return list.isEmpty ? nil : list
     }
+    
+    func parseSingleObject(onComplete: ([String:Any?]) -> Void) {
+        let temp = self.toHashMap()
+        let tempp = temp.first?.value as? [String:Any?]
+        if let tryme = tempp {
+           onComplete(tryme)
+        }
+    }
 
     // Master toHashMap Helper Function
     func toHashMap() -> [String: Any] {

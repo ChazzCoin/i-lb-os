@@ -14,15 +14,10 @@ struct ProfileView: View {
     @StateObject var realmObserver = RealmObserver<CurrentSolUser>()
     @State private var realmInstance = realm()
     
-    @LiveDataObject(CurrentSolUser.self) var currentUser
-    @LiveDataList(SolUser.self) var solUsers
+    @LiveCurrentUser var currentUser
+    @LiveStateObjects(SolUser.self) var solUsers
+    @LiveStateObjects(Connection.self) var solRequests
     
-    
-    @LiveDataList(Request.self) var solRequests
-    
-//    @State private var username: String = "User123"
-//    @State private var userId: String = ""
-//    @State private var status: String = "Online"
     @State private var aboutMe: String = "Just enjoying the world of coding and tech!"
     @State private var email: String = "email@example.com"
     @State private var phoneNumber: String = "123-456-7890"
@@ -69,6 +64,10 @@ struct ProfileView: View {
                     BuddyRequestListView(requests: $solRequests)
                 }
                 
+                Section(header: Text("Friends")) {
+                    BuddyConnectionListView()
+                }
+                
                 solButton(title: "Sign Out", action: {
                     runLoading()
                     
@@ -90,7 +89,7 @@ struct ProfileView: View {
                 }, isEnabled: true)
                 
                 if showAddBuddyButton {
-                    Button("Add Buddy") {
+                    Button("Search Buddy") {
                         // Add buddy action
                         showNewPlanSheet = true
                     }
@@ -125,15 +124,25 @@ struct ProfileView: View {
         if let uId = getFirebaseUserId() {
             _solRequests.startFirebaseObservation(block: { db in
                 return db
-                    .child("friendRequests")
-                    .queryOrdered(byChild: "toUserId")
+                    .child("connections")
+                    .queryOrdered(byChild: "userTwoId")
                     .queryEqual(toValue: uId)
             })
         }
     }
     
+    
+    
     func loadUser() {
-        _currentUser.load(primaryKey: "SOL")
+        _currentUser.loadByPrimaryKey(id: "SOL", realm: self.realmInstance)
+        
+//        if let uid = getFirebaseUserId() {
+//            _currentUser.refreshFromFirebase { db in
+//                return db.child("users").child(uid)
+//            }
+//        }
+        
+        
         print("Current User: \(String(describing: currentUser))")
     }
     

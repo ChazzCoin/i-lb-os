@@ -182,6 +182,10 @@
 		FBE2C62A2B1C2B67004C0116 /* SharedPrefs.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C6292B1C2B67004C0116 /* SharedPrefs.swift */; };
 		FBE2C62C2B1C3DBD004C0116 /* LoadingPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C62B2B1C3DBD004C0116 /* LoadingPopup.swift */; };
 		FBE2C62E2B1C3FDE004C0116 /* LoadingForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C62D2B1C3FDE004C0116 /* LoadingForm.swift */; };
+		FBE385502B4B32950090901C /* BuddyConnectionListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE3854F2B4B32950090901C /* BuddyConnectionListView.swift */; };
+		FBEBEF942B49504D00B8BA32 /* LiveConnections.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBEBEF932B49504D00B8BA32 /* LiveConnections.swift */; };
+		FBEBEF962B49506800B8BA32 /* LiveChat.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBEBEF952B49506800B8BA32 /* LiveChat.swift */; };
+		FBEBEF982B49507500B8BA32 /* LiveCurrentUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBEBEF972B49507500B8BA32 /* LiveCurrentUser.swift */; };
 		FBF3902E2B2D78CF00C0508A /* TipProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF3902D2B2D78CF00C0508A /* TipProvider.swift */; };
 		FBF404432B19304700FA0545 /* BorderedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF404422B19304700FA0545 /* BorderedView.swift */; };
 /* End PBXBuildFile section */
@@ -314,6 +318,10 @@
 		FBE2C6292B1C2B67004C0116 /* SharedPrefs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedPrefs.swift; sourceTree = "<group>"; };
 		FBE2C62B2B1C3DBD004C0116 /* LoadingPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingPopup.swift; sourceTree = "<group>"; };
 		FBE2C62D2B1C3FDE004C0116 /* LoadingForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingForm.swift; sourceTree = "<group>"; };
+		FBE3854F2B4B32950090901C /* BuddyConnectionListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuddyConnectionListView.swift; sourceTree = "<group>"; };
+		FBEBEF932B49504D00B8BA32 /* LiveConnections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveConnections.swift; sourceTree = "<group>"; };
+		FBEBEF952B49506800B8BA32 /* LiveChat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveChat.swift; sourceTree = "<group>"; };
+		FBEBEF972B49507500B8BA32 /* LiveCurrentUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveCurrentUser.swift; sourceTree = "<group>"; };
 		FBF3902D2B2D78CF00C0508A /* TipProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TipProvider.swift; sourceTree = "<group>"; };
 		FBF404422B19304700FA0545 /* BorderedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BorderedView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -606,6 +614,7 @@
 		FBD9AFA62AFF00BF005F8620 /* Ludi Boards */ = {
 			isa = PBXGroup;
 			children = (
+				FBEBEF902B494DA600B8BA32 /* DB */,
 				FB829F152B3D4DE100FAC6E0 /* Extensions */,
 				FB15DD2B2B07448B00A21290 /* CanvasEngine */,
 				FB15DD282B07442600A21290 /* BoardEngine */,
@@ -613,8 +622,6 @@
 				FB93BB162B033E2000864CB2 /* GoogleService-Info.plist */,
 				FBD9AFD32B008F5C005F8620 /* Providers */,
 				FBD9AFCE2B008A6C005F8620 /* ManagedViews */,
-				FBD9AFBE2B008167005F8620 /* Firebase */,
-				FBD9AFBD2B008159005F8620 /* Realm */,
 				FBD9AFA72AFF00BF005F8620 /* LudiBoardsApp.swift */,
 				FBD9AFA92AFF00BF005F8620 /* ContentView.swift */,
 				FBD9AFAB2AFF00BF005F8620 /* Assets.xcassets */,
@@ -639,8 +646,6 @@
 				FBD9AFC12B0081C1005F8620 /* RealmInstance.swift */,
 				FB58E8812B030F1D00FD9E2E /* RealmFind.swift */,
 				FBE2C6212B1B1490004C0116 /* RealmChangeListener.swift */,
-				FB881A372B47397600C16198 /* RealmObserver.swift */,
-				FB881A3D2B48732400C16198 /* RealmState.swift */,
 			);
 			path = Realm;
 			sourceTree = "<group>";
@@ -652,9 +657,7 @@
 				FB58E8752B01F3D200FD9E2E /* FireParser.swift */,
 				FB58E8772B01F40300FD9E2E /* FireCore.swift */,
 				FB93BB1A2B03471C00864CB2 /* FireData.swift */,
-				FBB450012B052B180096F8EB /* FireLiveData.swift */,
 				FBDF0DC62B224D2600FADE44 /* ActivityPlanService.swift */,
-				FB982F902B19D1B900C0DA03 /* FirebaseService.swift */,
 				FB881A3F2B48775800C16198 /* FirebaseSocial.swift */,
 			);
 			path = Firebase;
@@ -730,7 +733,40 @@
 				FB3E02BC2B0C90E600D8558C /* BuddyListView.swift */,
 				FBDF0DC42B21811000FADE44 /* SharedSessionsView.swift */,
 				FB881A3B2B47CD4400C16198 /* UserView.swift */,
+				FBE3854F2B4B32950090901C /* BuddyConnectionListView.swift */,
 				FB881A432B48C61400C16198 /* BuddyRequestListView.swift */,
+			);
+			path = Social;
+			sourceTree = "<group>";
+		};
+		FBEBEF902B494DA600B8BA32 /* DB */ = {
+			isa = PBXGroup;
+			children = (
+				FBEBEF912B494DD300B8BA32 /* LiveData */,
+				FBD9AFBE2B008167005F8620 /* Firebase */,
+				FBD9AFBD2B008159005F8620 /* Realm */,
+			);
+			path = DB;
+			sourceTree = "<group>";
+		};
+		FBEBEF912B494DD300B8BA32 /* LiveData */ = {
+			isa = PBXGroup;
+			children = (
+				FBEBEF922B49503800B8BA32 /* Social */,
+				FB881A3D2B48732400C16198 /* RealmState.swift */,
+				FB881A372B47397600C16198 /* RealmObserver.swift */,
+				FB982F902B19D1B900C0DA03 /* FirebaseService.swift */,
+				FBB450012B052B180096F8EB /* FireLiveData.swift */,
+			);
+			path = LiveData;
+			sourceTree = "<group>";
+		};
+		FBEBEF922B49503800B8BA32 /* Social */ = {
+			isa = PBXGroup;
+			children = (
+				FBEBEF932B49504D00B8BA32 /* LiveConnections.swift */,
+				FBEBEF952B49506800B8BA32 /* LiveChat.swift */,
+				FBEBEF972B49507500B8BA32 /* LiveCurrentUser.swift */,
 			);
 			path = Social;
 			sourceTree = "<group>";
@@ -943,6 +979,7 @@
 				FBDF0DC92B224EB500FADE44 /* ManagedViewsService.swift in Sources */,
 				FBE2C6242B1B2E01004C0116 /* SessionPlanOverview.swift in Sources */,
 				FBD9AFC92B008435005F8620 /* ManagedViewAction.swift in Sources */,
+				FBE385502B4B32950090901C /* BuddyConnectionListView.swift in Sources */,
 				FB9F1DD92B1533C400FD9078 /* FirebaseLogin.swift in Sources */,
 				FB9F1E402B159F6A00FD9078 /* OrientationInfo.swift in Sources */,
 				FBDF0DC52B21811000FADE44 /* SharedSessionsView.swift in Sources */,
@@ -957,6 +994,7 @@
 				FBD9AFD92B01CB91005F8620 /* SoccerToolProvider.swift in Sources */,
 				FBD9AFA82AFF00BF005F8620 /* LudiBoardsApp.swift in Sources */,
 				FBE2C62A2B1C2B67004C0116 /* SharedPrefs.swift in Sources */,
+				FBEBEF942B49504D00B8BA32 /* LiveConnections.swift in Sources */,
 				FB15DD302B0745DF00A21290 /* MenuBarIcon.swift in Sources */,
 				FBE2C6202B1AFD20004C0116 /* SessionPlanThumbView.swift in Sources */,
 				FB93BB1B2B03471C00864CB2 /* FireData.swift in Sources */,
@@ -1005,6 +1043,7 @@
 				FB829F172B3D4DF500FAC6E0 /* DispatchQueue.swift in Sources */,
 				FB5094262B058215000AEA96 /* LazyRow.swift in Sources */,
 				FB3E02C92B0D2D8D00D8558C /* ExpandingTextEditor.swift in Sources */,
+				FBEBEF982B49507500B8BA32 /* LiveCurrentUser.swift in Sources */,
 				FB881A3C2B47CD4400C16198 /* UserView.swift in Sources */,
 				FB3E02C72B0D2C3100D8558C /* InputSwitch.swift in Sources */,
 				FB10AE072B0DCDB500295F4B /* FloatingEmoji.swift in Sources */,
@@ -1012,6 +1051,7 @@
 				FB3E02C52B0D2A8500D8558C /* ThumbnailListView.swift in Sources */,
 				FBE2C62C2B1C3DBD004C0116 /* LoadingPopup.swift in Sources */,
 				FBE2C61A2B1AF7D5004C0116 /* FootballFieldView.swift in Sources */,
+				FBEBEF962B49506800B8BA32 /* LiveChat.swift in Sources */,
 				FBD9AFD52B008F6F005F8620 /* Channels.swift in Sources */,
 				FB982F912B19D1B900C0DA03 /* FirebaseService.swift in Sources */,
 				FB829F192B3D540100FAC6E0 /* ManagedWindowObjects.swift in Sources */,

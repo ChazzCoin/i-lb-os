@@ -50,13 +50,15 @@ struct UserView: View {
 
     func friendRequestAction() {
         realmInstance.getCurrentSolUser(action: { cur in
-            let request = Request()
-            request.fromUserId = cur.userId
-            request.fromUserName = cur.userName
-            request.toUserId = user.userId
+            let request = Connection()
+            request.userOneId = cur.userId
+            request.userOneName = cur.userName
+            request.userTwoId = user.userId
+            request.userTwoName = user.userName
+            request.connectionId = cur.userId + ":"
             
             firebaseDatabase { db in
-                db.child("friendRequests").child(request.id).setValue(request.toDict())
+                db.child("connections").child(request.id).setValue(request.toDict())
             }
             friendIconImage = "hourglass"
         })

@@ -17,8 +17,9 @@ struct BuddyProfileView: View {
 //    @StateObject var realmObserver = RealmObserver<CurrentSolUser>()
     @State private var realmInstance = realm()
     
-    @LiveDataObject(SolUser.self) var solUser
-    @LiveDataList(Request.self) var solRequests
+    @LiveStateObject(SolUser.self) var solUser
+    @LiveStateObject(Connection.self) var solRequest
+    @LiveStateObjects(Connection.self) var solRequests
     
     @State private var aboutMe: String = "Just enjoying the world of coding and tech!"
     @State private var phoneNumber: String = "123-456-7890"
@@ -73,7 +74,17 @@ struct BuddyProfileView: View {
                 if showAcceptBuddyButton {
                     Button("Accept Buddy Request") {
                         // Add buddy action
-                        showNewPlanSheet = true
+                        runLoading()
+                        if let obj = self.realmInstance.findByField(Connection.self, field: "userOneId", value: self.solUserId) {
+                            self.realmInstance.safeWrite { _ in
+                                obj.status = "Accepted"
+                                obj.connectionId = obj.connectionId + self.solUserId
+                                firebaseDatabase { db in
+                                    db.child("connections").child(obj.id).setValue(obj.toDict())
+                                }
+                            }
+                        }
+                        
                     }
                     .buttonStyle(ActionButtonStyle())
                 }
@@ -83,11 +94,9 @@ struct BuddyProfileView: View {
         }
         .refreshable {
             loadUser()
-            loadFriendRequests()
         }
         .onAppear() {
             loadUser()
-            loadFriendRequests()
             
             switch (friendStatus) {
                 case "pending": self.showAcceptBuddyButton = true
@@ -113,16 +122,19 @@ struct BuddyProfileView: View {
         }
     }
     
-    func loadFriendRequests() {
-        
-    }
-    
     func loadUser() {
-        _solUser.load(field: "userId", value: self.solUserId)
+        _solUser.load(primaryKey: self.solUserId)
         _solUser.startFirebaseObservation() { db in
             return db.child("users").child(self.solUserId)
         }
-//        fireGetSolUserAsync(userId: self.solUserId, realm: self.realmInstance)
+        print("Sol Buddy: [ \(String(describing: solUser)) ]")
+        _solRequest.load(field: "userOneId", value: self.solUserId)
+        _solRequest.startFirebaseObservation() { db in
+            return db
+                .child("connections")
+                .queryOrdered(byChild: "userOneId")
+                .queryEqual(toValue: self.solUserId)
+        }
     }
     
     private func profileInfoRow(title: String, value: String) -> some View {
@@ -150,8 +162,3 @@ struct ActionButtonStyle: ButtonStyle {
     }
 }
 
-//struct BuddyProfileView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        BuddyProfileView()
-//    }
-//}

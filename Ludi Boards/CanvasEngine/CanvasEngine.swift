@@ -114,7 +114,7 @@ struct CanvasEngine: View {
         self.showMenuBar = true
     }
     
-    @State var menuIsOpen = false
+    @State var menuIsOpen = true
     
     var body: some View {
         
@@ -131,7 +131,7 @@ struct CanvasEngine: View {
 //            }
             
             MenuBarStatic(){
-                menuIsOpen = !menuIsOpen
+//                menuIsOpen = !menuIsOpen
             }
             .frame(width: 60, height: menuIsOpen ? (gps.screenSize.height - 100) : 60)
             .position(using: gps, at: .topLeft, offsetX: 50, offsetY: menuIsOpen ? ((gps.screenSize.height - 100) / 2) : 30)

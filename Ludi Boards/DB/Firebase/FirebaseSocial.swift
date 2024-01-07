@@ -10,7 +10,7 @@ import RealmSwift
 import FirebaseDatabase
 
 
-func getFriendRequests(realmInstance: Realm=realm(), completion: @escaping (List<Request>?) -> Void={_ in}) {
+func getFriendRequests(realmInstance: Realm=realm(), completion: @escaping (List<Friendship>?) -> Void={_ in}) {
     let dbRef = Database.database().reference()
     let usersRef = dbRef.child("friendRequests")
     
@@ -19,7 +19,7 @@ func getFriendRequests(realmInstance: Realm=realm(), completion: @escaping (List
             .observeSingleEvent(of: .value) { snapshot in
                 
                 if snapshot.exists() {
-                    let objs = snapshot.toLudiObjects(Request.self, realm: realmInstance)
+                    let objs = snapshot.toLudiObjects(Friendship.self, realm: realmInstance)
                     completion(objs)
                 } else {
                     print("No Friend Requests Found")

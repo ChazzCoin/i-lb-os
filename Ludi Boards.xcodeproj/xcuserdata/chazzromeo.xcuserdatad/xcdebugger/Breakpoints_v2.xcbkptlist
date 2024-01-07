@@ -419,5 +419,404 @@
             </Locations>
          </BreakpointContent>
       </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "03589849-C0F1-4DCF-9A29-E3B5D9A4DC02"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ludi Boards/CanvasEngine/MenuBar/MenuBarWindow.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "65"
+            endingLineNumber = "65"
+            landmarkName = "body"
+            landmarkType = "24">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "79A200D1-E1F4-4F0E-8D68-3F9BDEEE11AF"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ludi Boards/CanvasEngine/MenuBar/MenuBarWindow.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "70"
+            endingLineNumber = "70"
+            landmarkName = "body"
+            landmarkType = "24">
+            <Locations>
+               <Location
+                  uuid = "79A200D1-E1F4-4F0E-8D68-3F9BDEEE11AF - 5e16ba7853e23571"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; () in closure #2 () -&gt; () in closure #1 () -&gt; SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.onTapAnimation(perform: () -&gt; ()) -&gt; some&gt;&gt;.0, SwiftUI.ForEach&lt;Swift.Range&lt;Swift.Int&gt;, Swift.Int, Swift.Optional&lt;&lt;&lt;opaque return type of SwiftUI.View.transition(SwiftUI.AnyTransition) -&gt; some&gt;&gt;.0&gt;&gt;)&gt; in Ludi_Boards.MenuBarStatic.body.getter : some"
+                  moduleName = "Ludi Boards"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/CanvasEngine/MenuBar/MenuBarWindow.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "70"
+                  endingLineNumber = "70"
+                  offsetFromSymbolStart = "28">
+               </Location>
+               <Location
+                  uuid = "79A200D1-E1F4-4F0E-8D68-3F9BDEEE11AF - d031e7e5c1c3e64f"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 () -&gt; () in closure #1 () -&gt; SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.onTapAnimation(perform: () -&gt; ()) -&gt; some&gt;&gt;.0, SwiftUI.ForEach&lt;Swift.Range&lt;Swift.Int&gt;, Swift.Int, Swift.Optional&lt;&lt;&lt;opaque return type of SwiftUI.View.transition(SwiftUI.AnyTransition) -&gt; some&gt;&gt;.0&gt;&gt;)&gt; in Ludi_Boards.MenuBarStatic.body.getter : some"
+                  moduleName = "Ludi Boards"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/CanvasEngine/MenuBar/MenuBarWindow.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "76"
+                  endingLineNumber = "76"
+                  offsetFromSymbolStart = "336">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "6FA52421-3067-429E-9F67-F8ECA78467A4"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ludi Boards/CanvasEngine/MenuBar/MenuBarWindow.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "66"
+            endingLineNumber = "66"
+            landmarkName = "body"
+            landmarkType = "24">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "C40F22E9-445B-4424-AF2E-8A4EFEA84C99"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ludi Boards/CanvasEngine/MenuBar/MenuBarWindow.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "114"
+            endingLineNumber = "114"
+            landmarkName = "animateIcons()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "14175011-0B5F-4478-B120-BED9051B89A7"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ludi Boards/CanvasEngine/MenuBar/MenuBarWindow.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "123"
+            endingLineNumber = "123"
+            landmarkName = "animateIcons()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "73DDEBDD-8554-4519-BD2D-6C7F73F35DA9"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ludi Boards/CanvasEngine/MenuBar/MenuBarWindow.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "69"
+            endingLineNumber = "69"
+            landmarkName = "body"
+            landmarkType = "24">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "772FB66C-621A-4992-A9B5-5EB5321780FF"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ludi Boards/CanvasEngine/CanvasEngine.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "134"
+            endingLineNumber = "134"
+            landmarkName = "body"
+            landmarkType = "24">
+            <Locations>
+               <Location
+                  uuid = "772FB66C-621A-4992-A9B5-5EB5321780FF - 364337bca359780f"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; () in closure #1 (SwiftUI.GeometryProxy, Ludi_Boards.GlobalPositioningSystem) -&gt; SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.position(using: Ludi_Boards.GlobalPositioningSystem, at: Ludi_Boards.ScreenArea, offsetX: CoreGraphics.CGFloat, offsetY: CoreGraphics.CGFloat) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of SwiftUI.View.position(using: Ludi_Boards.GlobalPositioningSystem, at: Ludi_Boards.ScreenArea, offsetX: CoreGraphics.CGFloat, offsetY: CoreGraphics.CGFloat) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of SwiftUI.View.zIndex(Swift.Double) -&gt; some&gt;&gt;.0, Swift.Optional&lt;&lt;&lt;opaque return type of SwiftUI.View.position(using: Ludi_Boards.GlobalPositioningSystem, at: Ludi_Boards.ScreenArea, offsetX: CoreGraphics.CGFloat, offsetY: CoreGraphics.CGFloat) -&gt; some&gt;&gt;.0&gt;, Swift.Optional&lt;&lt;&lt;opaque return type of SwiftUI.View.position(using: Ludi_Boards.GlobalPositioningSystem, at: Ludi_Boards.ScreenArea, offsetX: CoreGraphics.CGFloat, offsetY: CoreGraphics.CGFloat) -&gt; some&gt;&gt;.0&gt;)&gt; in Ludi_Boards.CanvasEngine.body.getter : some"
+                  moduleName = "Ludi Boards"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/CanvasEngine/CanvasEngine.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "134"
+                  endingLineNumber = "134"
+                  offsetFromSymbolStart = "36">
+               </Location>
+               <Location
+                  uuid = "772FB66C-621A-4992-A9B5-5EB5321780FF - 364337bca35978ec"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; () in closure #1 (SwiftUI.GeometryProxy, Ludi_Boards.GlobalPositioningSystem) -&gt; SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.position(using: Ludi_Boards.GlobalPositioningSystem, at: Ludi_Boards.ScreenArea, offsetX: CoreGraphics.CGFloat, offsetY: CoreGraphics.CGFloat) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of SwiftUI.View.position(using: Ludi_Boards.GlobalPositioningSystem, at: Ludi_Boards.ScreenArea, offsetX: CoreGraphics.CGFloat, offsetY: CoreGraphics.CGFloat) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of SwiftUI.View.zIndex(Swift.Double) -&gt; some&gt;&gt;.0, Swift.Optional&lt;&lt;&lt;opaque return type of SwiftUI.View.position(using: Ludi_Boards.GlobalPositioningSystem, at: Ludi_Boards.ScreenArea, offsetX: CoreGraphics.CGFloat, offsetY: CoreGraphics.CGFloat) -&gt; some&gt;&gt;.0&gt;, Swift.Optional&lt;&lt;&lt;opaque return type of SwiftUI.View.position(using: Ludi_Boards.GlobalPositioningSystem, at: Ludi_Boards.ScreenArea, offsetX: CoreGraphics.CGFloat, offsetY: CoreGraphics.CGFloat) -&gt; some&gt;&gt;.0&gt;)&gt; in Ludi_Boards.CanvasEngine.body.getter : some"
+                  moduleName = "Ludi Boards"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/CanvasEngine/CanvasEngine.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "135"
+                  endingLineNumber = "135"
+                  offsetFromSymbolStart = "0">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "BC3C524C-BDD5-49E1-9F4D-C7B26978B6D1"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ludi Boards/views/Social/ProfileView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "141"
+            endingLineNumber = "141"
+            landmarkName = "loadUser()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "BC3C524C-BDD5-49E1-9F4D-C7B26978B6D1 - 61ccec68d312a40e"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (__C.FIRDatabaseReference) -&gt; __C.FIRDatabaseReference in Ludi_Boards.ProfileView.loadUser() -&gt; ()"
+                  moduleName = "Ludi Boards"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/views/Social/ProfileView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "138"
+                  endingLineNumber = "138"
+                  offsetFromSymbolStart = "68">
+               </Location>
+               <Location
+                  uuid = "BC3C524C-BDD5-49E1-9F4D-C7B26978B6D1 - 25817311957431d9"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Ludi_Boards.ProfileView.loadUser() -&gt; ()"
+                  moduleName = "Ludi Boards"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/views/Social/ProfileView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "143"
+                  endingLineNumber = "143"
+                  offsetFromSymbolStart = "216">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "3801E630-2C51-4423-B7ED-F2DB19D05402"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ludi Boards/Realm/RealmState.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "213"
+            endingLineNumber = "213"
+            landmarkName = "refreshFromFirebase(block:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "3801E630-2C51-4423-B7ED-F2DB19D05402 - 3d3fccf1700e1f61"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (__C.FIRDataSnapshot) -&gt; () in closure #1 (__C.FIRDatabaseReference) -&gt; () in Ludi_Boards.LiveStateObject.refreshFromFirebase(block: (__C.FIRDatabaseReference) -&gt; __C.FIRDatabaseReference) -&gt; ()"
+                  moduleName = "Ludi Boards"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/Realm/RealmState.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "209"
+                  endingLineNumber = "209"
+                  offsetFromSymbolStart = "212">
+               </Location>
+               <Location
+                  uuid = "3801E630-2C51-4423-B7ED-F2DB19D05402 - 3d3fccf1700e1f61"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (__C.FIRDataSnapshot) -&gt; () in closure #1 (__C.FIRDatabaseReference) -&gt; () in Ludi_Boards.LiveStateObject.refreshFromFirebase(block: (__C.FIRDatabaseReference) -&gt; __C.FIRDatabaseReference) -&gt; ()"
+                  moduleName = "Ludi Boards"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/Realm/RealmState.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "209"
+                  endingLineNumber = "209"
+                  offsetFromSymbolStart = "112">
+               </Location>
+               <Location
+                  uuid = "3801E630-2C51-4423-B7ED-F2DB19D05402 - 3d3fccf1700e1fe5"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (__C.FIRDataSnapshot) -&gt; () in closure #1 (__C.FIRDatabaseReference) -&gt; () in Ludi_Boards.LiveStateObject.refreshFromFirebase(block: (__C.FIRDatabaseReference) -&gt; __C.FIRDatabaseReference) -&gt; ()"
+                  moduleName = "Ludi Boards"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/Realm/RealmState.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "213"
+                  endingLineNumber = "213"
+                  offsetFromSymbolStart = "112">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "85A7AE98-60A8-4177-90FD-C06CDC13DFC8"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ludi Boards/Realm/RealmState.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "261"
+            endingLineNumber = "261"
+            landmarkName = "load(primaryKey:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "2F5FEBD3-8444-4279-BAAE-46013B16A30A"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ludi Boards/Realm/RealmState.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "274"
+            endingLineNumber = "274"
+            landmarkName = "load(field:value:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "050DFE75-A759-42C2-9D1B-121166DB5262"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ludi Boards/Firebase/FireParser.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "55"
+            endingLineNumber = "55"
+            landmarkName = "toRealmObject(_:realmParameter:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "17019D64-28E3-4531-9818-83E82ACE1503"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ludi Boards/Firebase/FireParser.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "64"
+            endingLineNumber = "64"
+            landmarkName = "toRealmObject(_:realmParameter:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "801FE07C-A755-413F-92C1-878A4502FE46"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ludi Boards/Firebase/FireParser.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "65"
+            endingLineNumber = "65"
+            landmarkName = "toRealmObject(_:realmParameter:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "97B1D8ED-F675-4357-87C1-8B80811D5369"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ludi Boards/Firebase/FireParser.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "56"
+            endingLineNumber = "56"
+            landmarkName = "toRealmObject(_:realmParameter:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "88C7B2FF-60C8-49D1-81C5-DA621FF7552B"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ludi Boards/views/Social/UserView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "55"
+            endingLineNumber = "55"
+            landmarkName = "friendRequestAction()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
    </Breakpoints>
 </Bucket>

@@ -30,7 +30,7 @@ struct AddBuddyView: View {
                                 .onTapGesture {
                                     // Handle tap event for each user
                                     print("Tapped on \(user.userName)")
-                                    
+//                                    BuddyProfileView(solUserId: user.userId, friendStatus: "pending")
                                     
                                 }
                         }
@@ -53,7 +53,11 @@ struct AddBuddyView: View {
     
     func searchForUser(userName: String) {
         firebaseDatabase { db in
-            db.child(DatabasePaths.users.rawValue).queryOrdered(byChild: "userName").queryEqual(toValue: userName).observeSingleEvent(of: .value) { snapshot, _ in
+            db
+            .child(DatabasePaths.users.rawValue)
+            .queryOrdered(byChild: "userName")
+            .queryEqual(toValue: userName)
+            .observeSingleEvent(of: .value) { snapshot, _ in
                 let _ = snapshot.toLudiObjects(SolUser.self)
                 let map = snapshot.toHashMap()
                 for (_,v) in map {
