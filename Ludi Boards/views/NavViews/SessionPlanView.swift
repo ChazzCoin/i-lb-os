@@ -23,6 +23,8 @@ struct SessionPlanView: View {
     @State private var showNewActivity = false
     @State private var showShareSheet = false
     
+    @State private var shareIds: [String] = []
+    
     @EnvironmentObject var BEO: BoardEngineObject
     @State private var isLoading = false
     @State private var showCompletion = false
@@ -109,15 +111,18 @@ struct SessionPlanView: View {
                         self.isShowing = false
                     }, isEnabled: self.isShowing)
                 } else {
-                    solButton(title: "Share Session", action: {
-                        self.showShareSheet = true
-                    }, isEnabled: true)
                     
-                    if sessionId != "SOL-LIVE-DEMO" {
-                        solButton(title: "Delete", action: {
-                            runLoading()
-                            deleteSessionPlan()
-                        })
+                    if !self.shareIds.contains(self.sessionId) {
+                        solButton(title: "Share Session", action: {
+                            self.showShareSheet = true
+                        }, isEnabled: true)
+                        
+                        if sessionId != "SOL-LIVE-DEMO" {
+                            solButton(title: "Delete", action: {
+                                runLoading()
+                                deleteSessionPlan()
+                            })
+                        }
                     }
                 }                
             }.clearSectionBackground()
@@ -126,6 +131,7 @@ struct SessionPlanView: View {
             if self.sessionId != "new" {
                 fetchSessionPlan()
             }
+            getShareIds()
         }
         
         .navigationBarTitle(isCurrentPlan ? "Current Plan" : "Session Plan", displayMode: .inline)
@@ -152,6 +158,15 @@ struct SessionPlanView: View {
             if self.sessionId != "new" {
                 runLoadingProcess()
                 fetchSessionPlan()
+            }
+        }
+    }
+    
+    func getShareIds() {
+        safeFirebaseUserId() { userId in
+            let umvs = realmInstance.objects(UserToSession.self).filter("guestId == %@", userId)
+            for i in umvs {
+                self.shareIds.append(i.sessionId)
             }
         }
     }

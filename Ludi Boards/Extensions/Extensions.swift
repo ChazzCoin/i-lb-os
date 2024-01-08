@@ -11,8 +11,8 @@ import UIKit
 
 
 
-extension Array where Element: Share {
-    mutating func safeAdd(_ item: Share) {
+extension Array where Element: UserToSession {
+    mutating func safeAdd(_ item: UserToSession) {
         if self.firstIndex(where: { $0.id == item.id }) != nil {
             // Item found, remove it
             return

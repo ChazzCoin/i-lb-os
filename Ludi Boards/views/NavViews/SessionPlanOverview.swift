@@ -13,7 +13,7 @@ struct SessionPlanOverview: View {
     @State var userId: String = "temp"
     @LiveSessionPlans(shared: false) var sessionPlans
     @LiveSessionPlans(shared: true) var sessionPlansShared
-    @State var shares: [Share] = []
+    @State var shares: [UserToSession] = []
     @State var sharedIds: [String] = []
     
     @State var sharedPrefs = SharedPrefs.shared
@@ -70,13 +70,10 @@ struct SessionPlanOverview: View {
             if isLoggedIntoFirebase() {
                 self.isLoggedIn = true
                 _sessionPlansShared.start()
-//                fireGetLiveDemoAsync()
-//                getShares()
-//                observeSessions()
-//                observeSharedSessions()
+                getShareIds()
                 return
             }
-//            observeSessions()
+            
         }
         .loading(isShowing: $isLoading)
         .navigationBarTitle("Session Plans", displayMode: .inline)
@@ -84,52 +81,22 @@ struct SessionPlanOverview: View {
             SessionPlanView(sessionId: "new", isShowing: $showNewPlanSheet, isMasterWindow: false)
         }
         .refreshable {
+            _sessionPlans.start()
             if isLoggedIntoFirebase() {
                 self.isLoggedIn = true
-                fireGetLiveDemoAsync(realm: self.realmInstance)
-//                getShares()
-//                observeSessions()
-//                observeSharedSessions()
+                _sessionPlansShared.start()
+                getShareIds()
                 return
             }
-//            observeSessions()
         }
     }
 
     
-    func getShares() {
-                
-        fireGetSessionSharesAsync(userId: self.userId, realm: self.realmInstance)
-        
-        let umvs = realmInstance.objects(Share.self)
-        sharesNotificationToken = umvs.observe { (changes: RealmCollectionChange) in
-            isLoading = true
-            switch changes {
-                case .initial(let results):
-                    print("Realm Listener: initial")
-                    for i in results {
-                        shares.safeAdd(i)
-                        if !sharedIds.contains(i.sharedId) {
-                            sharedIds.append(i.sharedId)
-                        }
-                    }
-                    isLoading = false
-                case .update(let results, let de, _, _):
-                    print("Realm Listener: update")
-                    for i in results {
-                        shares.safeAdd(i)
-                        if !sharedIds.contains(i.sharedId) {
-                            sharedIds.append(i.sharedId)
-                        }
-                    }
-                    for d in de {
-                        shares.remove(at: d)
-                    }
-                    isLoading = false
-                case .error(let error):
-                    print("Realm Listener: error")
-                    isLoading = false
-                    fatalError("\(error)")  // Handle errors appropriately in production code
+    func getShareIds() {
+        safeFirebaseUserId() { userId in
+            let umvs = realmInstance.objects(UserToSession.self).filter("guestId == %@", userId)
+            for i in umvs {
+                sharedIds.append(i.sessionId)
             }
         }
     }
