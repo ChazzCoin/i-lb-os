@@ -180,7 +180,6 @@ struct BoardEngine: View {
         .reference()
         .child(DatabasePaths.managedViews.rawValue))
     
-    
     @State private var drawingStartPoint: CGPoint = .zero
     @State private var drawingEndPoint: CGPoint = .zero
     
@@ -377,6 +376,20 @@ struct BoardEngine: View {
         basicTools = []
     }
     
+    func savePlansToFirebase() {
+        if !isLoggedIntoFirebase() { return }
+        if let sessionPlan = self.realmIntance.findByField(SessionPlan.self, field: "id", value: self.sessionID) {
+            firebaseDatabase { db in
+                db.child(DatabasePaths.sessionPlan.rawValue).child(self.sessionID).setValue(sessionPlan.toDict())
+            }
+        }
+        if let activityPlan = self.realmIntance.findByField(ActivityPlan.self, field: "id", value: self.activityID) {
+            firebaseDatabase { db in
+                db.child(DatabasePaths.activityPlan.rawValue).child(self.activityID).setValue(activityPlan.toDict())
+            }
+        }
+    }
+    
     func loadSessionPlan() {
         let tempBoard = self.realmIntance.findByField(SessionPlan.self, field: "id", value: self.sessionID)
         if tempBoard == nil { return }
@@ -491,10 +504,9 @@ struct BoardEngine: View {
         }
         
         // Firebase
-        fireGetSessionPlanAsync(sessionId: self.sessionID, realm: self.realmIntance)
-//        if self.BEO.isLoggedIn {
-//            fireGetSessionPlanAsync(sessionId: self.sessionID, realm: self.realmIntance)
-//        }
+        if isLoggedIntoFirebase() {
+            fireGetSessionPlanAsync(sessionId: self.sessionID, realm: self.realmIntance)
+        }
     }
     
     func observeActivityPlan() {
@@ -522,10 +534,9 @@ struct BoardEngine: View {
         }
         
         // Firebase
-        fireGetSessionPlanAsync(sessionId: self.sessionID, realm: self.realmIntance)
-//        if self.BEO.isLoggedIn {
-//            fireGetSessionPlanAsync(sessionId: self.sessionID, realm: self.realmIntance)
-//        }
+        if isLoggedIntoFirebase() {
+            fireGetSessionPlanAsync(sessionId: self.sessionID, realm: self.realmIntance)
+        }
     }
     
     func loadManagedViewTools() {
@@ -558,10 +569,10 @@ struct BoardEngine: View {
         }
         
         // Firebase
-        startObserving()
-//        if self.BEO.isLoggedIn {
-//            startObserving()
-//        }
+        if isLoggedIntoFirebase() {
+            startObserving()
+            savePlansToFirebase()
+        }
         self.BEO.isLoading = false
     }
     

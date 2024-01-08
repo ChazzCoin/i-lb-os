@@ -131,6 +131,12 @@ func getFirebaseUserId() -> String? {
     return Auth.auth().currentUser?.uid
 }
 
+func safeFirebaseUserId(safe: (String) -> Void) {
+    if let userId = Auth.auth().currentUser?.uid {
+        safe(userId)
+    }
+}
+
 func isLoggedIntoFirebase() -> Bool {
     
     if let _ = Auth.auth().currentUser {

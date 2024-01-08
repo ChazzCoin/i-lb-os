@@ -35,6 +35,8 @@ struct ActivityPlanView: View {
     
     @State private var fieldRotation = 0.0
     
+    @State var showShareSheet = false
+    
     @State var cancellables = Set<AnyCancellable>()
     @State private var sessionNotificationToken: NotificationToken? = nil
 
@@ -208,6 +210,16 @@ struct ActivityPlanView: View {
             // BUTTONS
             Section {
                 // LOAD BUTTON
+                
+                solButton(
+                    title: "Share Activity",
+                    action: {
+                        self.showShareSheet = true
+                    },
+                    isEnabled: true
+                )
+                
+                
                 if self.boardId != "new" {
                     solConfirmButton(
                         title: "Load Activity onto Board",
@@ -280,6 +292,9 @@ struct ActivityPlanView: View {
                 startLoadingProcess()
                 fetchSessionPlan()
             }
+        }
+        .sheet(isPresented: self.$showShareSheet) {
+            AddBuddyView(isPresented: self.$showShareSheet, sessionId: self.activityPlan.sessionId)
         }
         .navigationBarTitle(isCurrentPlan ? "Current Activity" : "Activity Plan", displayMode: .inline)
     }

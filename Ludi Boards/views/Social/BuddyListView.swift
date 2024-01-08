@@ -41,7 +41,7 @@ struct BuddyListView: View {
             }
         }
         .sheet(isPresented: $showingAddBuddyView) {
-            AddBuddyView(isPresented: $showingAddBuddyView)
+            AddBuddyView(isPresented: $showingAddBuddyView, sessionId: "")
         }
         .onAppear() {
             

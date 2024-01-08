@@ -115,6 +115,7 @@ struct CanvasEngine: View {
     }
     
     @State var menuIsOpen = true
+    @State var sessionPlan = SessionPlan()
     
     var body: some View {
         

@@ -11,6 +11,8 @@ import Combine
 
 struct UserView: View {
     @State var user: SolUser
+    @State var sessionId: String
+    @EnvironmentObject var BEO: BoardEngineObject
     @State var realmInstance = realm()
     @State var friendIconImage = "person.badge.plus"
 
@@ -40,12 +42,33 @@ struct UserView: View {
 
             Spacer()
 
+            Button(action: { shareSessionAction() }) {
+                Image(systemName: friendIconImage)
+            }
+            .buttonStyle(FriendshipButtonStyle())
+            
             Button(action: { friendRequestAction() }) {
                 Image(systemName: friendIconImage)
             }
             .buttonStyle(FriendshipButtonStyle())
         }
         .padding()
+    }
+    
+    func shareSessionAction() {
+        realmInstance.getCurrentSolUser(action: { cur in
+            let request = UserToSession()
+            request.hostId = cur.userId
+            request.hostUserName = cur.userName
+            request.guestId = user.userId
+            request.guestUserName = user.userName
+            request.sessionId = self.sessionId
+            
+            firebaseDatabase { db in
+                db.child("userToActivity").child(request.id).setValue(request.toDict())
+            }
+            friendIconImage = "hourglass"
+        })
     }
 
     func friendRequestAction() {

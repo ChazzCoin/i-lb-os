@@ -53,7 +53,7 @@ func fireGetLiveDemoAsync(realm: Realm?=nil) {
 
 // GET Share Session
 func fireGetSessionSharesAsync(userId: String, realm: Realm?=nil) {
-    firebaseDatabase(collection: DatabasePaths.userToSession.rawValue) { ref in
+    firebaseDatabase(collection: DatabasePaths.userToActivity.rawValue) { ref in
         ref.queryOrdered(byChild: "guestId").queryEqual(toValue: userId)
             .observeSingleEvent(of: .value) { snapshot, _ in
                 var _ = snapshot.toLudiObjects(Share.self, realm: realm)
@@ -66,7 +66,6 @@ func fireGetSolUserAsync(userId: String, realm: Realm?=nil) {
     firebaseDatabase(collection: DatabasePaths.users.rawValue) { ref in
         ref.queryOrdered(byChild: "userId").queryEqual(toValue: userId)
             .observeSingleEvent(of: .value) { snapshot, _ in
-                
                 var obj = snapshot.toLudiObjects(SolUser.self, realm: realm)
                 print("SolUser: \(obj)")
             }

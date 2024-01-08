@@ -65,8 +65,8 @@ struct SharedSessionsView: View {
     var body: some View {
         
         Section(header: Text("Shared Sessions")) {
-            List(sessions) { sessionPlan in
-                NavigationLink(destination: SessionPlanView(sessionId: sessionPlan.id, isShowing: .constant(true), isMasterWindow: false)) {
+            List($sessions) { $sessionPlan in
+                NavigationLink(destination: SessionPlanView(sessionId: $sessionPlan.id, isShowing: .constant(true), isMasterWindow: false)) {
                     SessionPlanThumbView(sessionPlan: sessionPlan)
                 }
                 Spacer()

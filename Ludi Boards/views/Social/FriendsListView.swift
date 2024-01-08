@@ -8,38 +8,34 @@
 import Foundation
 import SwiftUI
 
-struct BuddyConnectionListView: View {
+struct FriendsListView: View {
     @LiveConnections(friends: true) var connections
+    @State var currentUserId = ""
     
     var body: some View {
         List($connections, id: \.id) { $r in
-            NavigationLink(destination: BuddyProfileView(solUserId: r.userOneId, friendStatus: "friends")) {
+            NavigationLink(destination: BuddyProfileView(
+                solUserId: currentUserId == r.userOneId ? r.userTwoId : r.userOneId,
+                friendStatus: "friends"
+            )) {
                 HStack {
                     Circle()
                         .fill(Color.green)
                         .frame(width: 10, height: 10)
-                    Text(r.userOneName)
+                    Text(currentUserId == r.userOneId ? r.userTwoName : r.userOneName)
                         .font(.system(size: 14))
                     Spacer()
-                    Text("Friends")
+                    Text("Friend")
                         .font(.system(size: 12))
                         .foregroundColor(.gray)
                 }
             }
-        }.onAppear() {
-//            loadFriends()
+        }
+        .task {
+            if let uid = getFirebaseUserId() {
+                currentUserId = uid
+            }
         }
     }
-    
-//    func loadFriends() {
-//        if let uId = getFirebaseUserId() {
-//            _connections.startFirebaseObservation(block: { db in
-//                return db
-//                    .child("connections")
-//                    .queryOrdered(byChild: "userTwoId")
-//                    .queryEqual(toValue: uId)
-//            })
-//        }
-//    }
 }
 

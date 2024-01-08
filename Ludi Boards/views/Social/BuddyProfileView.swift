@@ -17,7 +17,7 @@ struct BuddyProfileView: View {
 //    @StateObject var realmObserver = RealmObserver<CurrentSolUser>()
     @State private var realmInstance = realm()
     
-    @LiveStateObject(SolUser.self) var solUser
+    @LiveSolUser var solUser
     @LiveStateObject(Connection.self) var solRequest
     @LiveStateObjects(Connection.self) var solRequests
     
@@ -35,7 +35,6 @@ struct BuddyProfileView: View {
     @State private var showShareActivityButton = false
     
     @State private var friends: [SolUser] = []
-//    @State private var requests: [Request] = []
     
     var body: some View {
         LoadingForm() { runLoading in
@@ -111,7 +110,7 @@ struct BuddyProfileView: View {
         }
         .navigationBarTitle("Profile", displayMode: .inline)
         .sheet(isPresented: $showNewPlanSheet) {
-            AddBuddyView(isPresented: $showNewPlanSheet)
+            AddBuddyView(isPresented: $showNewPlanSheet, sessionId: "")
         }
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
@@ -123,18 +122,18 @@ struct BuddyProfileView: View {
     }
     
     func loadUser() {
-        _solUser.load(primaryKey: self.solUserId)
-        _solUser.startFirebaseObservation() { db in
-            return db.child("users").child(self.solUserId)
-        }
+        _solUser.loadByUserId(id: self.solUserId)
+//        _solUser.startFirebaseObservation() { db in
+//            return db.child("users").child(self.solUserId)
+//        }
         print("Sol Buddy: [ \(String(describing: solUser)) ]")
-        _solRequest.load(field: "userOneId", value: self.solUserId)
-        _solRequest.startFirebaseObservation() { db in
-            return db
-                .child("connections")
-                .queryOrdered(byChild: "userOneId")
-                .queryEqual(toValue: self.solUserId)
-        }
+//        _solRequest.load(field: "userOneId", value: self.solUserId)
+//        _solRequest.startFirebaseObservation() { db in
+//            return db
+//                .child("connections")
+//                .queryOrdered(byChild: "userOneId")
+//                .queryEqual(toValue: self.solUserId)
+//        }
     }
     
     private func profileInfoRow(title: String, value: String) -> some View {

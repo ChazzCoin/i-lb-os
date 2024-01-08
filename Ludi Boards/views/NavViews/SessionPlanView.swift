@@ -21,7 +21,8 @@ struct SessionPlanView: View {
     @State private var isOpen = true
     @State private var activities: [ActivityPlan] = []
     @State private var showNewActivity = false
-
+    @State private var showShareSheet = false
+    
     @EnvironmentObject var BEO: BoardEngineObject
     @State private var isLoading = false
     @State private var showCompletion = false
@@ -83,6 +84,11 @@ struct SessionPlanView: View {
             
             // Save button at the bottom
             Section {
+                
+                solButton(title: "Share Session", action: {
+                    self.showShareSheet = true
+                }, isEnabled: true)
+                
                 if self.sessionId != "new" {
                     solButton(title: "Load Session", action: {
                         runLoading()
@@ -126,8 +132,11 @@ struct SessionPlanView: View {
                     .frame(width: 30, height: 30)
             }
         })
-        .sheet(isPresented: $showNewActivity) {
+        .sheet(isPresented: self.$showNewActivity) {
             ActivityPlanView(boardId: "new", sessionId: sessionId, isShowing: $showNewActivity)
+        }
+        .sheet(isPresented: self.$showShareSheet) {
+            AddBuddyView(isPresented: self.$showShareSheet, sessionId: self.sessionId)
         }
         .refreshable {
             if self.sessionId != "new" {
@@ -242,51 +251,6 @@ struct SessionPlanView: View {
     }
     
 
-    
-//    func checkCurrentSessionId() {
-//        if let umvs = realmInstance.findByField(CurrentSession.self, value: "SOL") {
-//            if self.sessionId == umvs.sessionId {
-//                self.isCurrentPlan = true
-//            }
-//        }
-//    }
-//    
-//    func loadFromCurrentSession() {
-//        if let umvs = realmInstance.findByField(CurrentSession.self, value: "SOL") {
-//            self.sessionId = umvs.sessionId
-//            self.isCurrentPlan = true
-//            self.fetchSessionPlan()
-//        }
-//    }
-    
-//    func observeCurrentSession() {
-//        if let umvs = realmInstance.findByField(CurrentSession.self, value: "SOL") {
-//            sessionNotificationToken = umvs.observe { change in
-//                switch change {
-//                    case .change(let obj, _):
-//                        let temp = obj as! CurrentSession
-//                        if self.isMasterWindow {
-//                            self.sessionId = temp.sessionId
-//                            self.isCurrentPlan = true
-//                            self.fetchSessionPlan()
-//                            break
-//                        }
-//                        if temp.sessionId == self.sessionId {
-//                            self.isCurrentPlan = true
-//                            self.fetchSessionPlan()
-//                            break
-//                        }
-//                        break
-//                    case .deleted:
-//                        // Handle deletion
-//                        break
-//                    case .error(let error):
-//                        // Handle error
-//                        print(error)
-//                }
-//            }
-//        } 
-//    }
 }
 
 struct ClearBackgroundModifier: ViewModifier {

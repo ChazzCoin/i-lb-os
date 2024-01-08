@@ -17,6 +17,7 @@ struct ProfileView: View {
     @LiveCurrentUser var currentUser
     @LiveStateObjects(SolUser.self) var solUsers
     @LiveStateObjects(Connection.self) var solRequests
+    @LiveConnections(friends: true) var connections
     
     @State private var aboutMe: String = "Just enjoying the world of coding and tech!"
     @State private var email: String = "email@example.com"
@@ -61,11 +62,19 @@ struct ProfileView: View {
                     .fontWeight(.bold)
                 
                 Section(header: Text("Friend Requests")) {
-                    BuddyRequestListView(requests: $solRequests)
+                    BuddyRequestListView()
                 }
                 
                 Section(header: Text("Friends")) {
-                    BuddyConnectionListView()
+                    FriendsListView()
+                }
+                
+                if showAddBuddyButton {
+                    Button("Search Buddy") {
+                        // Add buddy action
+                        showNewPlanSheet = true
+                    }
+                    .buttonStyle(ActionButtonStyle())
                 }
                 
                 solButton(title: "Sign Out", action: {
@@ -88,28 +97,29 @@ struct ProfileView: View {
                     self.BEO.isLoggedIn = false
                 }, isEnabled: true)
                 
-                if showAddBuddyButton {
-                    Button("Search Buddy") {
-                        // Add buddy action
-                        showNewPlanSheet = true
-                    }
-                    .buttonStyle(ActionButtonStyle())
-                }
-                
             }
             .padding(.bottom, 20)
         }
+        .task {
+            _connections.refreshOnce()
+            if let uId = getFirebaseUserId() {
+                _solRequests.startFirebaseObservation(block: { db in
+                    return db
+                        .child("connections")
+                        .queryOrdered(byChild: "userTwoId")
+                        .queryEqual(toValue: uId)
+                })
+            }
+        }
         .refreshable {
             loadUser()
-            loadFriendRequests()
         }
         .onAppear() {
             loadUser()
-            loadFriendRequests()
         }
         .navigationBarTitle("Profile", displayMode: .inline)
         .sheet(isPresented: $showNewPlanSheet) {
-            AddBuddyView(isPresented: $showNewPlanSheet)
+            AddBuddyView(isPresented: $showNewPlanSheet, sessionId: "")
         }
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
@@ -134,13 +144,6 @@ struct ProfileView: View {
     
     
     func loadUser() {
-        _currentUser.loadByPrimaryKey(id: "SOL", realm: self.realmInstance)
-        
-//        if let uid = getFirebaseUserId() {
-//            _currentUser.refreshFromFirebase { db in
-//                return db.child("users").child(uid)
-//            }
-//        }
         
         
         print("Current User: \(String(describing: currentUser))")

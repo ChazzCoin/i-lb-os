@@ -11,10 +11,11 @@ import RealmSwift
 
 struct SessionPlanOverview: View {
     @State var userId: String = "temp"
-    @State var sessionPlans: [SessionPlan] = []
+    @LiveStateObjects(SessionPlan.self) var sessionPlans
+    @LiveSessionPlans(shared: true) var sessionPlansShared
     @State var shares: [Share] = []
     @State var sharedIds: [String] = []
-    @State var sessionPlansShared: [SessionPlan] = []
+    
     @State var sharedPrefs = SharedPrefs.shared
     let realmInstance = realm()
     
@@ -37,7 +38,7 @@ struct SessionPlanOverview: View {
                 })
             }.clearSectionBackground()
             Section(header: Text("Sessions")) {
-                List(sessionPlans) { sessionPlan in
+                List($sessionPlans, id: \.self) { $sessionPlan in
                     NavigationLink(destination: SessionPlanView(sessionId: sessionPlan.id, isShowing: .constant(true), isMasterWindow: false)) {
                         SessionPlanThumbView(sessionPlan: sessionPlan)
                     }
@@ -51,7 +52,7 @@ struct SessionPlanOverview: View {
 //            }.clearSectionBackground()
             if self.isLoggedIn {
                 Section(header: Text("Shared Sessions")) {
-                    List(sessionPlansShared) { sessionPlan in
+                    List($sessionPlansShared, id: \.self) { $sessionPlan in
                         
                         NavigationLink(destination: SessionPlanView(sessionId: sessionPlan.id, isShowing: .constant(true), isMasterWindow: false)) {
                             SessionPlanThumbView(sessionPlan: sessionPlan)
@@ -67,29 +68,30 @@ struct SessionPlanOverview: View {
         .onAppear() {
             if isLoggedIntoFirebase() {
                 self.isLoggedIn = true
+                _sessionPlansShared.start()
                 fireGetLiveDemoAsync()
-                getShares()
-                observeSessions()
-                observeSharedSessions()
+//                getShares()
+//                observeSessions()
+//                observeSharedSessions()
                 return
             }
-            observeSessions()
+//            observeSessions()
         }
         .loading(isShowing: $isLoading)
         .navigationBarTitle("Session Plans", displayMode: .inline)
         .sheet(isPresented: $showNewPlanSheet) {
-            SessionPlanView(sessionId: "new", isShowing: $showNewPlanSheet, isMasterWindow: false)
+//            SessionPlanView(sessionId: "new", isShowing: $showNewPlanSheet, isMasterWindow: false)
         }
         .refreshable {
             if isLoggedIntoFirebase() {
                 self.isLoggedIn = true
                 fireGetLiveDemoAsync(realm: self.realmInstance)
-                getShares()
-                observeSessions()
-                observeSharedSessions()
+//                getShares()
+//                observeSessions()
+//                observeSharedSessions()
                 return
             }
-            observeSessions()
+//            observeSessions()
         }
     }
 
@@ -131,70 +133,70 @@ struct SessionPlanOverview: View {
         }
     }
     
-    func observeSessions() {
-        fireGetLiveDemoAsync(realm: self.realmInstance)
-        let umvs = realmInstance.objects(SessionPlan.self)
-        sessionNotificationToken = umvs.observe { (changes: RealmCollectionChange) in
-            sessionPlansShared.removeAll()
-            switch changes {
-                case .initial(let results):
-                    print("Realm Listener: initial")
-                    for i in results {
-                        if i.ownerId == "SOL" {
-                            sessionPlansShared.safeAdd(i)
-                            continue
-                        }
-                        sessionPlans.safeAdd(i)
-                    }
-                    isLoading = false
-                case .update(let results, let de, _, _):
-                    print("Realm Listener: update")
-                    for i in results {
-                        if i.ownerId == "SOL" {
-                            sessionPlansShared.safeAdd(i)
-                            continue
-                        }
-                        sessionPlans.safeAdd(i)
-                    }
-                    for d in de {
-                        sessionPlans.remove(at: d)
-                    }
-                    isLoading = false
-                case .error(let error):
-                    print("Realm Listener: error")
-                    isLoading = false
-                    fatalError("\(error)")  // Handle errors appropriately in production code
-            }
-        }
-    }
-    
-    func observeSharedSessions() {
-        if let umvs = realmInstance.findAllNotByField(SessionPlan.self, field: "ownerId", value: self.userId) {
-            sessionSharesNotificationToken = umvs.observe { (changes: RealmCollectionChange) in
-                switch changes {
-                    case .initial(let results):
-                        for i in results {
-                            if i.ownerId == self.userId {
-                                continue
-                            }
-                            sessionPlansShared.safeAdd(i)
-                        }
-                    case .update(let results, let de, _, _):
-                        for i in results {
-                            if i.ownerId == self.userId {
-                                continue
-                            }
-                            sessionPlansShared.safeAdd(i)
-                        }
-                        for d in de {
-                            sessionPlansShared.remove(at: d)
-                        }
-                    case .error(let error):
-                        print("\(error)")  // Handle errors appropriately in production code
-                }
-            }
-        }
-        
-    }
+//    func observeSessions() {
+//        fireGetLiveDemoAsync(realm: self.realmInstance)
+//        let umvs = realmInstance.objects(SessionPlan.self)
+//        sessionNotificationToken = umvs.observe { (changes: RealmCollectionChange) in
+//            sessionPlansShared.removeAll()
+//            switch changes {
+//                case .initial(let results):
+//                    print("Realm Listener: initial")
+//                    for i in results {
+//                        if i.ownerId == "SOL" {
+//                            sessionPlansShared.safeAdd(i)
+//                            continue
+//                        }
+//                        sessionPlans.safeAdd(i)
+//                    }
+//                    isLoading = false
+//                case .update(let results, let de, _, _):
+//                    print("Realm Listener: update")
+//                    for i in results {
+//                        if i.ownerId == "SOL" {
+//                            sessionPlansShared.safeAdd(i)
+//                            continue
+//                        }
+//                        sessionPlans.safeAdd(i)
+//                    }
+//                    for d in de {
+//                        sessionPlans.remove(at: d)
+//                    }
+//                    isLoading = false
+//                case .error(let error):
+//                    print("Realm Listener: error")
+//                    isLoading = false
+//                    fatalError("\(error)")  // Handle errors appropriately in production code
+//            }
+//        }
+//    }
+//    
+//    func observeSharedSessions() {
+//        if let umvs = realmInstance.findAllNotByField(SessionPlan.self, field: "ownerId", value: self.userId) {
+//            sessionSharesNotificationToken = umvs.observe { (changes: RealmCollectionChange) in
+//                switch changes {
+//                    case .initial(let results):
+//                        for i in results {
+//                            if i.ownerId == self.userId {
+//                                continue
+//                            }
+//                            sessionPlansShared.safeAdd(i)
+//                        }
+//                    case .update(let results, let de, _, _):
+//                        for i in results {
+//                            if i.ownerId == self.userId {
+//                                continue
+//                            }
+//                            sessionPlansShared.safeAdd(i)
+//                        }
+//                        for d in de {
+//                            sessionPlansShared.remove(at: d)
+//                        }
+//                    case .error(let error):
+//                        print("\(error)")  // Handle errors appropriately in production code
+//                }
+//            }
+//        }
+//        
+//    }
     
 }

@@ -11,67 +11,56 @@ import RealmSwift
 import FirebaseDatabase
 
 @propertyWrapper
-struct LiveConnections: DynamicProperty {
+struct LiveActivityPlans: DynamicProperty {
     @ObservedObject private var observer: RealmObserver
     @ObservedObject private var firebaseObserver = FirebaseObserver()
-    private var objects: Results<Connection>? = nil
-    private var realmInstance: Realm
-    var filterFriendsOnly = false
-    var filterRequestsOnly = false
+    @State var objects: Results<ActivityPlan>? = nil
+    var realmInstance: Realm
+    @State var filterBySession = false
+    @State var sessionId = ""
 
-    init(realmInstance: Realm = realm(), friends:Bool=false, requests:Bool=false) {
+    init(realmInstance: Realm = realm()) {
         self.realmInstance = realmInstance
-        self.filterFriendsOnly = friends
-        self.filterRequestsOnly = requests
         self.observer = RealmObserver(realm: self.realmInstance)
-        self.objects = self.observer.objects
     }
 
-    var wrappedValue: Results<Connection>? {
-        get { 
-            if filterFriendsOnly {
-                return toFriends()
-            }
-            if filterRequestsOnly {
-                return toRequests()
+    var wrappedValue: Results<ActivityPlan>? {
+        get {
+            if self.filterBySession {
+                return filterSessions()
             }
             return objects
         }
         set { objects = newValue }
     }
     
-    var projectedValue: Binding<[Connection]> {
-        Binding<[Connection]>(
+    var projectedValue: Binding<[ActivityPlan]> {
+        Binding<[ActivityPlan]>(
             get: {
-                if filterFriendsOnly {
-                    return toFriends()?.toArray() ?? []
-                }
-                if filterRequestsOnly {
-                    return toRequests()?.toArray() ?? []
+                if self.filterBySession {
+                    return filterSessions()?.toArray() ?? []
                 }
                 return objects?.toArray() ?? []
-                
             },
-            set: { newValue in
-                // Handle updates if needed
-                // Note: This might be complex depending on how you intend to sync changes back to Realm
-            }
+            set: { newValue in }
         )
     }
     
-    func toArray() -> [Connection?] {
+    func toArray() -> [ActivityPlan?] {
         if let obj = objects {
             return Array(obj)
         }
         return []
     }
     
-    func toFriends() -> Results<Connection>? {
-        self.objects?.filter("status == %@", "Accepted")
+    func filterSessions() -> Results<ActivityPlan>? {
+        self.objects?.filter("sessionId == '\(self.sessionId)'")
     }
     
-    func toRequests() -> Results<Connection>? {
-        self.objects?.filter("status == %@", "pending")
+    func loadSessionById(sessionId: String) {
+        self.sessionId = sessionId
+        self.filterBySession = true
+        self.objects = self.observer.objects
     }
     
     func startFirebaseObservation(block: @escaping (DatabaseReference) -> DatabaseReference) {
@@ -85,42 +74,13 @@ struct LiveConnections: DynamicProperty {
     func stopFirebaseObservation() {
         firebaseObserver.stopObserving()
     }
-    
-    func refreshOnce() {
-        if let uId = getFirebaseUserId() {
-            firebaseObserver
-                .reference
-                .queryOrdered(byChild: "userTwoId")
-                .queryEqual(toValue: uId)
-                .observeSingleEvent(of: .value) { snapshot in
-                    if snapshot.exists() {
-                        let objs = snapshot.toLudiObjects(Connection.self, realm: self.realmInstance)
-                        print("Refreshed LiveConnections: \(String(describing: objs))")
-                    } else {
-                        print("LiveConnections: Nothing Found")
-                    }
-                }
-            firebaseObserver
-                .reference
-                .queryOrdered(byChild: "userOneId")
-                .queryEqual(toValue: uId)
-                .observeSingleEvent(of: .value) { snapshot in
-                    if snapshot.exists() {
-                        let objs = snapshot.toLudiObjects(Connection.self, realm: self.realmInstance)
-                        print("Refreshed LiveConnections: \(String(describing: objs))")
-                    } else {
-                        print("LiveConnections: Nothing Found")
-                    }
-                }
-        }
-    }
 
     private class RealmObserver: ObservableObject {
-        @Published var objects: Results<Connection>
+        @Published var objects: Results<ActivityPlan>
         private var notificationToken: NotificationToken?
 
         init(realm: Realm) {
-            self.objects = realm.objects(Connection.self)
+            self.objects = realm.objects(ActivityPlan.self)
 
             // Setting up the observer
             notificationToken = self.objects.observe { [weak self] (changes: RealmCollectionChange) in
@@ -128,14 +88,14 @@ struct LiveConnections: DynamicProperty {
                 switch changes {
                     case .initial(_):
                         // Results are now populated and can be accessed without blocking the UI
-                        print("LiveConnections: Initial")
+                        print("LiveActivityPlans: Initial")
                         self.objectWillChange.send()
                     case .update(_, _, _, _):
-                        print("LiveConnections: Update")
+                        print("LiveActivityPlans: Update")
                         self.objectWillChange.send()
                     case .error(let error):
                         // An error occurred while opening the Realm file on the background worker thread
-                        print("LiveConnections: \(error)")
+                        print("LiveActivityPlans: \(error)")
                 }
             }
         }
@@ -154,13 +114,13 @@ struct LiveConnections: DynamicProperty {
         @Published var reference: DatabaseReference = Database
             .database()
             .reference()
-            .child("connections")
+            .child(DatabasePaths.activityPlan.rawValue)
 
         func startObserving(query: DatabaseQuery, realmInstance: Realm) {
             guard !isObserving else { return }
             self.query = query
             firebaseSubscription = query.observe(.value, with: { snapshot in
-                let _ = snapshot.toLudiObjects(Connection.self, realm: realmInstance)
+                let _ = snapshot.toLudiObjects(ActivityPlan.self, realm: realmInstance)
             })
             isObserving = true
         }
@@ -168,7 +128,7 @@ struct LiveConnections: DynamicProperty {
             guard !isObserving else { return }
             self.ref = query
             firebaseSubscription = query.observe(.value, with: { snapshot in
-                let _ = snapshot.toLudiObjects(Connection.self, realm: realmInstance)
+                let _ = snapshot.toLudiObjects(ActivityPlan.self, realm: realmInstance)
             })
             isObserving = true
         }
@@ -187,5 +147,9 @@ struct LiveConnections: DynamicProperty {
             stopObserving()
         }
     }
+    
+    //
+    
+    
 
 }

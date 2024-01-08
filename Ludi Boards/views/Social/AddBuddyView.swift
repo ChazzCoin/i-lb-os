@@ -10,6 +10,8 @@ import SwiftUI
 
 struct AddBuddyView: View {
     @Binding var isPresented: Bool
+    @State var sessionId: String
+    @EnvironmentObject var BEO: BoardEngineObject
     @State private var buddyName: String = ""
     @State private var buddyStatus: String = ""
     @State private var searchResults: [SolUser] = []
@@ -26,7 +28,7 @@ struct AddBuddyView: View {
                 if !searchResults.isEmpty {
                     Section(header: Text("Search Results")) {
                         List($searchResults, id: \.userId) { $user in
-                            UserView(user: user)
+                            UserView(user: user, sessionId: self.sessionId)
                                 .onTapGesture {
                                     // Handle tap event for each user
                                     print("Tapped on \(user.userName)")

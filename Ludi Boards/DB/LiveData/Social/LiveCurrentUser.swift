@@ -40,7 +40,7 @@ struct LiveCurrentUser: DynamicProperty {
 
     private class RealmObserver: ObservableObject {
         @Published var object: CurrentSolUser? = nil
-        private var notificationToken: NotificationToken? = nil
+        @Published var notificationToken: NotificationToken? = nil
 
         func startObserver(primaryKey: String, realm:Realm) {
             self.object = realm.object(ofType: CurrentSolUser.self, forPrimaryKey: primaryKey)

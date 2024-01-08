@@ -9,11 +9,11 @@ import Foundation
 import SwiftUI
 
 struct BuddyRequestListView: View {
-    @Binding var requests: [Connection]
+    @LiveConnections(requests: true) var connections
     @State private var showingAddBuddyView = false
     
     var body: some View {
-        List($requests, id: \.id) { $r in
+        List($connections, id: \.id) { $r in
             if r.userTwoId == getFirebaseUserId() {
                 NavigationLink(destination: BuddyProfileView(solUserId: r.userOneId, friendStatus: "pending")) { 
                     // Replace DestinationView with your desired destination view
