@@ -11,7 +11,7 @@ import RealmSwift
 
 struct SessionPlanOverview: View {
     @State var userId: String = "temp"
-    @LiveStateObjects(SessionPlan.self) var sessionPlans
+    @LiveSessionPlans(shared: false) var sessionPlans
     @LiveSessionPlans(shared: true) var sessionPlansShared
     @State var shares: [Share] = []
     @State var sharedIds: [String] = []
@@ -66,10 +66,11 @@ struct SessionPlanOverview: View {
 
         }
         .onAppear() {
+            _sessionPlans.start()
             if isLoggedIntoFirebase() {
                 self.isLoggedIn = true
                 _sessionPlansShared.start()
-                fireGetLiveDemoAsync()
+//                fireGetLiveDemoAsync()
 //                getShares()
 //                observeSessions()
 //                observeSharedSessions()
@@ -80,7 +81,7 @@ struct SessionPlanOverview: View {
         .loading(isShowing: $isLoading)
         .navigationBarTitle("Session Plans", displayMode: .inline)
         .sheet(isPresented: $showNewPlanSheet) {
-//            SessionPlanView(sessionId: "new", isShowing: $showNewPlanSheet, isMasterWindow: false)
+            SessionPlanView(sessionId: "new", isShowing: $showNewPlanSheet, isMasterWindow: false)
         }
         .refreshable {
             if isLoggedIntoFirebase() {

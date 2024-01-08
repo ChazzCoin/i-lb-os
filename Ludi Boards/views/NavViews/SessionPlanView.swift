@@ -85,10 +85,6 @@ struct SessionPlanView: View {
             // Save button at the bottom
             Section {
                 
-                solButton(title: "Share Session", action: {
-                    self.showShareSheet = true
-                }, isEnabled: true)
-                
                 if self.sessionId != "new" {
                     solButton(title: "Load Session", action: {
                         runLoading()
@@ -107,13 +103,23 @@ struct SessionPlanView: View {
                     }
                     isShowing = false
                 })
-                if sessionId != "SOL-LIVE-DEMO" {
-                    solButton(title: "Delete", action: {
-                        runLoading()
-                        deleteSessionPlan()
-                    })
-                }
                 
+                if self.sessionId == "new" {
+                    solButton(title: "Cancel", action: {
+                        self.isShowing = false
+                    }, isEnabled: self.isShowing)
+                } else {
+                    solButton(title: "Share Session", action: {
+                        self.showShareSheet = true
+                    }, isEnabled: true)
+                    
+                    if sessionId != "SOL-LIVE-DEMO" {
+                        solButton(title: "Delete", action: {
+                            runLoading()
+                            deleteSessionPlan()
+                        })
+                    }
+                }                
             }.clearSectionBackground()
         }
         .onAppear {
@@ -121,17 +127,21 @@ struct SessionPlanView: View {
                 fetchSessionPlan()
             }
         }
+        
         .navigationBarTitle(isCurrentPlan ? "Current Plan" : "Session Plan", displayMode: .inline)
-        .navigationBarItems(trailing: HStack {
-            Button(action: {
-                print("Minimize")
-                CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: MenuBarProvider.boardDetails.tool.title, stateAction: "close"))
-            }) {
-                Image(systemName: "minus")
-                    .resizable()
-                    .frame(width: 30, height: 30)
-            }
-        })
+//        .navigationBarItems(trailing: Button("Cancel") {
+//            isShowing = false
+//        })
+//        .navigationBarItems(trailing: HStack {
+//            Button(action: {
+//                print("Minimize")
+//                CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: MenuBarProvider.boardDetails.tool.title, stateAction: "close"))
+//            }) {
+//                Image(systemName: "minus")
+//                    .resizable()
+//                    .frame(width: 30, height: 30)
+//            }
+//        })
         .sheet(isPresented: self.$showNewActivity) {
             ActivityPlanView(boardId: "new", sessionId: sessionId, isShowing: $showNewActivity)
         }

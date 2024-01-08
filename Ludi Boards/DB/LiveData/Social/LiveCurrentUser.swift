@@ -12,7 +12,7 @@ import RealmSwift
 @propertyWrapper
 struct LiveCurrentUser: DynamicProperty {
     let realmInstance: Realm = realm()
-    @ObservedObject private var observer: RealmObserver = RealmObserver()
+    @ObservedObject private var observer: RealmCurrentUserObserver = RealmCurrentUserObserver()
 
     var wrappedValue: CurrentSolUser? {
         get {
@@ -38,27 +38,28 @@ struct LiveCurrentUser: DynamicProperty {
         self.observer.startObserver(primaryKey: id, realm: realm)
     }
 
-    private class RealmObserver: ObservableObject {
-        @Published var object: CurrentSolUser? = nil
-        @Published var notificationToken: NotificationToken? = nil
+    
+}
+class RealmCurrentUserObserver: ObservableObject {
+    @Published var object: CurrentSolUser? = nil
+    @Published var notificationToken: NotificationToken? = nil
 
-        func startObserver(primaryKey: String, realm:Realm) {
-            self.object = realm.object(ofType: CurrentSolUser.self, forPrimaryKey: primaryKey)
-            // Setting up the observer
-            notificationToken = self.object?.observe { [weak self] change in
-                guard let self = self else { return }
-                switch change {
-                    case .change:
-                        print("LiveCurrentUser: onChange")
-                        self.objectWillChange.send()
-                    case .deleted, .error:
-                        break
-                }
+    func startObserver(primaryKey: String, realm:Realm) {
+        self.object = realm.object(ofType: CurrentSolUser.self, forPrimaryKey: primaryKey)
+        // Setting up the observer
+        notificationToken = self.object?.observe { [weak self] change in
+            guard let self = self else { return }
+            switch change {
+                case .change:
+                    print("LiveCurrentUser: onChange")
+                    self.objectWillChange.send()
+                case .deleted, .error:
+                    break
             }
         }
+    }
 
-        deinit {
-            notificationToken?.invalidate()
-        }
+    deinit {
+        notificationToken?.invalidate()
     }
 }

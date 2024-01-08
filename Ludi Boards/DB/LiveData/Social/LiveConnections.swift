@@ -25,6 +25,7 @@ struct LiveConnections: DynamicProperty {
         self.filterRequestsOnly = requests
         self.observer = RealmObserver(realm: self.realmInstance)
         self.objects = self.observer.objects
+//        self.refreshOnce()
     }
 
     var wrappedValue: Results<Connection>? {
@@ -74,14 +75,6 @@ struct LiveConnections: DynamicProperty {
         self.objects?.filter("status == %@", "pending")
     }
     
-    func startFirebaseObservation(block: @escaping (DatabaseReference) -> DatabaseReference) {
-        firebaseObserver.startObserving(query: block(firebaseObserver.reference), realmInstance: self.realmInstance)
-    }
-    
-    func startFirebaseObservation(block: @escaping (DatabaseReference) -> DatabaseQuery) {
-        firebaseObserver.startObserving(query: block(firebaseObserver.reference), realmInstance: self.realmInstance)
-    }
-
     func stopFirebaseObservation() {
         firebaseObserver.stopObserving()
     }

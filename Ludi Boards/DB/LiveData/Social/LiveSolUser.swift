@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import RealmSwift
+import FirebaseDatabase
 
 @propertyWrapper
 struct LiveSolUser: DynamicProperty {
@@ -45,7 +46,8 @@ struct LiveSolUser: DynamicProperty {
         firebaseDatabase(collection: DatabasePaths.users.rawValue) { ref in
             ref.queryOrdered(byChild: "userId").queryEqual(toValue: self.userId)
                 .observeSingleEvent(of: .value) { snapshot, _ in
-                    let results = snapshot.toLudiObjects(SolUser.self, realm: self.realmInstance)
+                    print("Sol User Incoming: [ \(snapshot) ]")
+                    let _ = snapshot.toLudiObjects(SolUser.self, realm: self.realmInstance)
                 }
         }
     }
@@ -72,5 +74,48 @@ struct LiveSolUser: DynamicProperty {
         deinit {
             notificationToken?.invalidate()
         }
+    }
+}
+
+class FirebaseSolUserService: ObservableObject {
+    private var firebaseSubscription: DatabaseHandle?
+    @Published var isObserving = false
+    private var query: DatabaseQuery? = nil
+    private var ref: DatabaseReference? = nil
+    
+    @Published var reference: DatabaseReference = Database
+        .database()
+        .reference()
+        .child("users")
+
+    func startObserving(query: DatabaseQuery, realmInstance: Realm) {
+        guard !isObserving else { return }
+        self.query = query
+        firebaseSubscription = query.observe(.value, with: { snapshot in
+            let _ = snapshot.toLudiObjects(Connection.self, realm: realmInstance)
+        })
+        isObserving = true
+    }
+    func startObserving(query: DatabaseReference, realmInstance: Realm) {
+        guard !isObserving else { return }
+        self.ref = query
+        firebaseSubscription = query.observe(.value, with: { snapshot in
+            let _ = snapshot.toLudiObjects(Connection.self, realm: realmInstance)
+        })
+        isObserving = true
+    }
+
+    func stopObserving() {
+        if let subscription = firebaseSubscription {
+            query?.removeObserver(withHandle: subscription)
+            ref?.removeObserver(withHandle: subscription)
+            reference.removeObserver(withHandle: subscription)
+            firebaseSubscription = nil
+        }
+        isObserving = false
+    }
+    
+    deinit {
+        stopObserving()
     }
 }

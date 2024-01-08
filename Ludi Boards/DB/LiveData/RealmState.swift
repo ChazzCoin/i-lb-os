@@ -14,14 +14,14 @@ import FirebaseDatabase
 
 @propertyWrapper
 struct LiveStateObjects<Object: RealmSwift.Object>: DynamicProperty {
-    @ObservedObject private var observer: RealmObserver<Object>
-    @ObservedObject private var firebaseObserver = FirebaseObserver()
+    @ObservedObject private var observer: RealmLiveStateObjectsObserver<Object>
+    @ObservedObject private var firebaseObserver = FirebaseLiveStateObjectsObserver<Object>()
     private var objects: Results<Object>? = nil
     private var realmInstance: Realm
 
     init(_ objectType: Object.Type, realmInstance: Realm = realm()) {
         self.realmInstance = realmInstance
-        self.observer = RealmObserver(objectType, realm: self.realmInstance)
+        self.observer = RealmLiveStateObjectsObserver(objectType, realm: self.realmInstance)
         self.objects = self.observer.objects
     }
 
@@ -85,79 +85,87 @@ struct LiveStateObjects<Object: RealmSwift.Object>: DynamicProperty {
         }
     }
 
-    private class RealmObserver<O: RealmSwift.Object>: ObservableObject {
-        @Published var objects: Results<O>
-        private var notificationToken: NotificationToken?
+}
 
-        init(_ objectType: O.Type, realm: Realm) {
-            self.objects = realm.objects(O.self)
+// Realm Live Objects
+class RealmLiveStateObjectsObserver<O: RealmSwift.Object>: ObservableObject {
+    @Published var objects: Results<O>
+    @Published var notificationToken: NotificationToken?
 
-            // Setting up the observer
-            notificationToken = self.objects.observe { [weak self] (changes: RealmCollectionChange) in
-                guard let self = self else { return }
-                switch changes {
-                    case .initial(_):
-                        // Results are now populated and can be accessed without blocking the UI
-                        print("RealmListState: Initial")
-                        self.objectWillChange.send()
-                    case .update(_, _, _, _):
-                        print("RealmListState: Update")
-                        self.objectWillChange.send()
-                    case .error(let error):
-                        // An error occurred while opening the Realm file on the background worker thread
-                        print("RealmListState: \(error)")
-                }
+    init(_ objectType: O.Type, realm: Realm) {
+        self.objects = realm.objects(O.self)
+
+        // Setting up the observer
+        notificationToken = self.objects.observe { [weak self] (changes: RealmCollectionChange) in
+            guard let self = self else { return }
+            switch changes {
+                case .initial(_):
+                    // Results are now populated and can be accessed without blocking the UI
+                    print("RealmListState: Initial")
+                    self.objectWillChange.send()
+                case .update(_, _, _, _):
+                    print("RealmListState: Update")
+                    self.objectWillChange.send()
+                case .error(let error):
+                    // An error occurred while opening the Realm file on the background worker thread
+                    print("RealmListState: \(error)")
             }
         }
+    }
 
-        deinit {
-            notificationToken?.invalidate()
+    deinit {
+        notificationToken?.invalidate()
+    }
+}
+
+// Firebase Live Objects Observer
+
+class FirebaseLiveStateObjectsObserver<O: RealmSwift.Object>: ObservableObject {
+    private var firebaseSubscription: DatabaseHandle?
+    @Published var isObserving = false
+    private var query: DatabaseQuery? = nil
+    private var ref: DatabaseReference? = nil
+    
+    @Published var reference: DatabaseReference = Database
+        .database()
+        .reference()
+
+    func startObserving(query: DatabaseQuery, realmInstance: Realm) {
+        guard !isObserving else { return }
+        self.query = query
+        firebaseSubscription = query.observe(.value, with: { snapshot in
+            if !snapshot.exists() { return }
+            let _ = snapshot.toLudiObjects(O.self, realm: realmInstance)
+        })
+        isObserving = true
+    }
+    func startObserving(query: DatabaseReference, realmInstance: Realm) {
+        guard !isObserving else { return }
+        self.ref = query
+        firebaseSubscription = query.observe(.value, with: { snapshot in
+            if !snapshot.exists() { return }
+            let _ = snapshot.toLudiObjects(O.self, realm: realmInstance)
+        })
+        isObserving = true
+    }
+
+    func stopObserving() {
+        if let subscription = firebaseSubscription {
+            query?.removeObserver(withHandle: subscription)
+            ref?.removeObserver(withHandle: subscription)
+            reference.removeObserver(withHandle: subscription)
+            firebaseSubscription = nil
         }
+        isObserving = false
     }
     
-    private class FirebaseObserver: ObservableObject {
-        private var firebaseSubscription: DatabaseHandle?
-        @Published var isObserving = false
-        private var query: DatabaseQuery? = nil
-        private var ref: DatabaseReference? = nil
-        
-        @Published var reference: DatabaseReference = Database
-            .database()
-            .reference()
-
-        func startObserving(query: DatabaseQuery, realmInstance: Realm) {
-            guard !isObserving else { return }
-            self.query = query
-            firebaseSubscription = query.observe(.value, with: { snapshot in
-                let _ = snapshot.toLudiObjects(Object.self, realm: realmInstance)
-            })
-            isObserving = true
-        }
-        func startObserving(query: DatabaseReference, realmInstance: Realm) {
-            guard !isObserving else { return }
-            self.ref = query
-            firebaseSubscription = query.observe(.value, with: { snapshot in
-                let _ = snapshot.toLudiObjects(Object.self, realm: realmInstance)
-            })
-            isObserving = true
-        }
-
-        func stopObserving() {
-            if let subscription = firebaseSubscription {
-                query?.removeObserver(withHandle: subscription)
-                ref?.removeObserver(withHandle: subscription)
-                reference.removeObserver(withHandle: subscription)
-                firebaseSubscription = nil
-            }
-            isObserving = false
-        }
-        
-        deinit {
-            stopObserving()
-        }
+    deinit {
+        stopObserving()
     }
-
 }
+
+
+
 
 // Working - but not updating in real-time
 @propertyWrapper
