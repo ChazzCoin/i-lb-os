@@ -110,7 +110,7 @@ struct BuddyProfileView: View {
         }
         .navigationBarTitle("Profile", displayMode: .inline)
         .sheet(isPresented: $showNewPlanSheet) {
-            AddBuddyView(isPresented: $showNewPlanSheet, sessionId: "")
+            AddBuddyView(isPresented: $showNewPlanSheet, sessionId: .constant(""))
         }
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {

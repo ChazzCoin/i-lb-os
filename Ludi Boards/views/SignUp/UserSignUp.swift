@@ -31,6 +31,8 @@ struct SignUpView: View {
     @State var isLoggedIn: Bool = false
     @State private var showCompletion = false
     
+    @State var showSignInFailedAlert = false
+    
     @State var isLoginValid = false
     @State private var isUsernameAvailable: Bool? = nil
     @State var keyboardOffset: Double = 0.0
@@ -163,13 +165,25 @@ struct SignUpView: View {
                     solButton(title: "Login", action: {
                         runLoading()
                         loginUser(withEmail: emailLogin, password: passLogin) { result in
-                            print("User LogIn: \(result)")
-                            self.BEO.isLoggedIn = true
-//                            self.BEO.loadUser()
+                            if result {
+                                print("User LogIn: \(result)")
+                                self.BEO.isLoggedIn = true
+                            } else {
+                                // 
+                                self.showSignInFailedAlert = true
+                            }
+                          
                         }
                     }, isEnabled: true)
                 }
                 
+            }
+            .alert("Login Failed.", isPresented: $showSignInFailedAlert) {
+                Button("OK", role: .none) {
+                    showSignInFailedAlert = false
+                }
+            } message: {
+                Text("Unable to Login.")
             }
             .navigationBarTitle("Sign Up/Login")
             .onAppear() {

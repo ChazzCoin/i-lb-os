@@ -24,8 +24,8 @@ import RealmSwift
     dynamic var centerY: Double = 0.0
     dynamic var endX: Double = 0.0
     dynamic var endY: Double = 0.0
-    dynamic var width: Int = 0
-    dynamic var height: Int = 0
+    dynamic var width: Int = 150
+    dynamic var height: Int = 150
     dynamic var rotation: Double = 0.0
     dynamic var lineDash: Int = 5
     dynamic var translationX: Double = 0.0

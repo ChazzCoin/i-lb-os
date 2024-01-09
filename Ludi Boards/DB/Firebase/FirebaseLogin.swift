@@ -146,16 +146,16 @@ func isLoggedIntoFirebase() -> Bool {
     
 }
 
-func loginUser(withEmail email: String, password: String, completion: @escaping (Result<Void, Error>) -> Void) {
+func loginUser(withEmail email: String, password: String, completion: @escaping (Bool) -> Void) {
     Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
         if let error = error {
-            completion(.failure(error))
+            completion(false)
             return
         }
         syncUserFromFirebaseDb(email) { result in
             print(result)
         }
-        completion(.success(()))
+        completion(true)
     }
 }
 

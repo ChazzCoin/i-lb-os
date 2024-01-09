@@ -62,8 +62,10 @@ class ManagedViewService: ObservableObject {
     @Published var isLoggedIn: Bool = false
     @Published var isWriting: Bool = false
     
+//    @Published var onChange: () -> Void = {}
+    
     private var nofityToken: NotificationToken? = nil
-    private var managedViewNotificationToken: NotificationToken? = nil
+    @Published var managedViewNotificationToken: NotificationToken? = nil
     
     func initialize(realm: Realm, activityId:String, viewId:String) {
         self.realmInstance = realm
@@ -71,6 +73,7 @@ class ManagedViewService: ObservableObject {
         self.viewId = viewId
         verifyLoginStatus()
         observeUser()
+        start()
     }
     
     func verifyLoginStatus() {
@@ -78,8 +81,11 @@ class ManagedViewService: ObservableObject {
     }
 
     func start() {
-        if !self.isLoggedIn {return}
+//        if !self.isLoggedIn {return}
         guard !isObserving else { return }
+        
+        if self.activityId.isEmpty || self.viewId.isEmpty {return}
+        
         observerHandle = reference.child(self.activityId).child(self.viewId).observe(.value, with: { snapshot in
             let _ = snapshot.toLudiObject(ManagedView.self, realm: self.realmInstance)
         })
@@ -156,10 +162,16 @@ class ManagedViewService: ObservableObject {
         }
     }
     
+    func onChange() -> () -> Void {
+        return {
+            
+        }
+    }
+    
     // Observe From Realm
     func observeManagedView(onChange: @escaping (ManagedView?) -> Void) {
-        if let mv = realmInstance.object(ofType: ManagedView.self, forPrimaryKey: self.viewId) {
-            managedViewNotificationToken = mv.observe { change in
+        if let mv = self.realmInstance.object(ofType: ManagedView.self, forPrimaryKey: self.viewId) {
+            self.managedViewNotificationToken = mv.observe { change in
                 switch change {
                     case .change(let obj, _):
                         let temp = obj as! ManagedView

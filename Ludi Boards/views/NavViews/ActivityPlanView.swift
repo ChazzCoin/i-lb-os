@@ -294,7 +294,7 @@ struct ActivityPlanView: View {
             }
         }
         .sheet(isPresented: self.$showShareSheet) {
-            AddBuddyView(isPresented: self.$showShareSheet, sessionId: self.activityPlan.sessionId)
+//            AddBuddyView(isPresented: self.$showShareSheet, sessionId: self.activityPlan.$sessionId)
         }
         .navigationBarTitle(isCurrentPlan ? "Current Activity" : "Activity Plan", displayMode: .inline)
     }

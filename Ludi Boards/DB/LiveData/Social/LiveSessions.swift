@@ -170,6 +170,7 @@ class RealmUserToSessionObserver: ObservableObject {
                     }
                     print("Shared Ids = [ \(sharedIds) ]")
                     fireGetSessionSharesAsync(realm: realm)
+                    fireGetActivityPlansAsync(realm: realm)
                     self.objectWillChange.send()
                 case .update(let results, let de, _, _):
                     print("RealmUserToSessionObserver: Update")
@@ -183,6 +184,7 @@ class RealmUserToSessionObserver: ObservableObject {
                         sharedIds.remove(at: d)
                     }
                     fireGetSessionSharesAsync(realm: realm)
+                    fireGetActivityPlansAsync(realm: realm)
                     self.objectWillChange.send()
                 case .error(let error):
                     // An error occurred while opening the Realm file on the background worker thread
@@ -195,6 +197,17 @@ class RealmUserToSessionObserver: ObservableObject {
         firebaseDatabase(collection: DatabasePaths.sessionPlan.rawValue) { ref in
             for i in self.sharedIds {
                 ref.queryOrdered(byChild: "id").queryEqual(toValue: i)
+                    .observeSingleEvent(of: .value) { snapshot, _ in
+                        let _ = snapshot.toLudiObjects(SessionPlan.self, realm: realm)
+                    }
+            }
+        }
+    }
+    
+    func fireGetActivityPlansAsync(realm: Realm?=nil) {
+        firebaseDatabase(collection: DatabasePaths.activityPlan.rawValue) { ref in
+            for i in self.sharedIds {
+                ref.queryOrdered(byChild: "sessionId").queryEqual(toValue: i)
                     .observeSingleEvent(of: .value) { snapshot, _ in
                         let _ = snapshot.toLudiObjects(SessionPlan.self, realm: realm)
                     }

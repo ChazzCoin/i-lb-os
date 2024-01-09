@@ -261,7 +261,7 @@ struct BoardEngine: View {
                     }
                     
                     // TODO: Firebase Users ONLY
-                    firebaseDatabase(safeFlag: self.BEO.isLoggedIn) { fdb in
+                    firebaseDatabase(safeFlag: isLoggedIntoFirebase()) { fdb in
                         fdb.child(DatabasePaths.managedViews.rawValue)
                             .child(self.activityID)
                             .child(newTool.id)
@@ -332,7 +332,7 @@ struct BoardEngine: View {
                 }
                 
                 // TODO: Firebase Users ONLY
-                firebaseDatabase(safeFlag: self.BEO.isLoggedIn) { fdb in
+                firebaseDatabase(safeFlag: isLoggedIntoFirebase()) { fdb in
                     fdb.child(DatabasePaths.managedViews.rawValue)
                         .child(self.activityID)
                         .child(newTool.id)
@@ -580,7 +580,7 @@ struct BoardEngine: View {
         observerHandle = reference.child(DatabasePaths.managedViews.rawValue)
             .child(self.activityID).observe(.childAdded, with: { snapshot in
                 
-                let mv = ManagedView(dictionary: snapshot.toHashMap())
+                let mv = ManagedView(dictionary: snapshot.value as! [String:Any])
                 if basicTools.hasView(mv) {
                     return
                 }

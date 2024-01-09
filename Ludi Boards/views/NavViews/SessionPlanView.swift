@@ -152,7 +152,7 @@ struct SessionPlanView: View {
             ActivityPlanView(boardId: "new", sessionId: sessionId, isShowing: $showNewActivity)
         }
         .sheet(isPresented: self.$showShareSheet) {
-            AddBuddyView(isPresented: self.$showShareSheet, sessionId: self.sessionId)
+            AddBuddyView(isPresented: self.$showShareSheet, sessionId: self.$sessionId)
         }
         .refreshable {
             if self.sessionId != "new" {
