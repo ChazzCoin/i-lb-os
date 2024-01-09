@@ -140,15 +140,17 @@ func safeFirebaseUserId(safe: (String) -> Void) {
 func isLoggedIntoFirebase() -> Bool {
     
     if let _ = Auth.auth().currentUser {
+        print("User IS Logged In")
         return true
     }
+    print("User Is NOT Logged In")
     return false
     
 }
 
 func loginUser(withEmail email: String, password: String, completion: @escaping (Bool) -> Void) {
     Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
-        if let error = error {
+        if let _ = error {
             completion(false)
             return
         }
@@ -162,6 +164,7 @@ func loginUser(withEmail email: String, password: String, completion: @escaping 
 func logoutUser(completion: @escaping (Result<Void, Error>) -> Void) {
     do {
         try Auth.auth().signOut()
+        CodiChannel.ON_LOG_IN_OUT.send(value: "logout")
         completion(.success(()))
     } catch let signOutError as NSError {
         completion(.failure(signOutError))

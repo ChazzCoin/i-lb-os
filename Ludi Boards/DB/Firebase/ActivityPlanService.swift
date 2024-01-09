@@ -20,6 +20,7 @@ class ActivityPlanService: ObservableObject {
     }
 
     func startObserving(activityId: String) {
+        if !isLoggedIntoFirebase() { return }
         guard !isObserving else { return }
         observerHandle = reference.child(DatabasePaths.activityPlan.rawValue)
             .child(activityId).observe(.value, with: { snapshot in

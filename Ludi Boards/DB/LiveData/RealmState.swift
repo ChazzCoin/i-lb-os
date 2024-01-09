@@ -16,13 +16,31 @@ import FirebaseDatabase
 struct LiveStateObjects<Object: RealmSwift.Object>: DynamicProperty {
     @ObservedObject private var observer: RealmLiveStateObjectsObserver<Object>
     @ObservedObject private var firebaseObserver = FirebaseLiveStateObjectsObserver<Object>()
-    private var objects: Results<Object>? = nil
+    @State var objects: Results<Object>? = nil
     private var realmInstance: Realm
+    
+    @ObservedObject var logoutObserver = LogoutObserver()
 
     init(_ objectType: Object.Type, realmInstance: Realm = realm()) {
         self.realmInstance = realmInstance
         self.observer = RealmLiveStateObjectsObserver(objectType, realm: self.realmInstance)
         self.objects = self.observer.objects
+        self.logoutListener()
+    }
+    
+    func logoutListener() {
+        self.logoutObserver.onLogout = {
+            print("LiveStateObjects: Logout Observer!!!!")
+            self.destroy()
+        }
+    }
+    
+    func destroy() {
+        print("LiveStateObjects: Destroying Thyself")
+        self.observer.destroy(deleteObjects: true)
+        self.firebaseObserver.stopObserving()
+        self.objects = nil
+        self.logoutObserver.destroy()
     }
 
     var wrappedValue: Results<Object>? {
@@ -60,7 +78,7 @@ struct LiveStateObjects<Object: RealmSwift.Object>: DynamicProperty {
     }
     
     func refreshFromFirebase(block: @escaping (DatabaseReference) -> DatabaseReference) {
-        firebaseDatabase { db in
+        firebaseDatabase(safeFlag: isLoggedIntoFirebase()){ db in
             block(db).observeSingleEvent(of: .value) { snapshot in
                 if snapshot.exists() {
                     let objs = snapshot.toLudiObjects(Object.self, realm: self.realmInstance)
@@ -73,7 +91,7 @@ struct LiveStateObjects<Object: RealmSwift.Object>: DynamicProperty {
     }
     
     func refreshFromFirebase(block: @escaping (DatabaseReference) -> DatabaseQuery) {
-        firebaseDatabase { db in
+        firebaseDatabase(safeFlag: isLoggedIntoFirebase()) { db in
             block(db).observeSingleEvent(of: .value) { snapshot in
                 if snapshot.exists() {
                     let objs = snapshot.toLudiObjects(Object.self, realm: self.realmInstance)
@@ -112,6 +130,19 @@ class RealmLiveStateObjectsObserver<O: RealmSwift.Object>: ObservableObject {
             }
         }
     }
+    
+    func destroy(deleteObjects:Bool=false) {
+        notificationToken?.invalidate()
+        if deleteObjects {
+            deleteAll()
+        }
+    }
+    
+    func deleteAll() {
+        realm().safeWrite { r in
+            r.delete(self.objects)
+        }
+    }
 
     deinit {
         notificationToken?.invalidate()
@@ -131,6 +162,7 @@ class FirebaseLiveStateObjectsObserver<O: RealmSwift.Object>: ObservableObject {
         .reference()
 
     func startObserving(query: DatabaseQuery, realmInstance: Realm) {
+        if !isLoggedIntoFirebase() { return }
         guard !isObserving else { return }
         self.query = query
         firebaseSubscription = query.observe(.value, with: { snapshot in
@@ -140,6 +172,7 @@ class FirebaseLiveStateObjectsObserver<O: RealmSwift.Object>: ObservableObject {
         isObserving = true
     }
     func startObserving(query: DatabaseReference, realmInstance: Realm) {
+        if !isLoggedIntoFirebase() { return }
         guard !isObserving else { return }
         self.ref = query
         firebaseSubscription = query.observe(.value, with: { snapshot in
@@ -170,25 +203,40 @@ class FirebaseLiveStateObjectsObserver<O: RealmSwift.Object>: ObservableObject {
 // Working - but not updating in real-time
 @propertyWrapper
 struct LiveStateObject<Object: RealmSwift.Object>: DynamicProperty {
-    @ObservedObject var realmObjectObserver: RealmObjectObserver<Object>
-    @ObservedObject var firebaseObserver: FirebaseObserver<Object>
-    private var objectType: Object.Type
+    @ObservedObject var observer = RealmObjectObserver<Object>()
+    @ObservedObject var firebaseObserver = FirebaseObserver<Object>()
+    @State var objectType: Object.Type
     private var realmInstance: Realm = realm()
+    
+    @ObservedObject var logoutObserver = LogoutObserver()
 
     init(_ objectType: Object.Type) {
         self.objectType = objectType
-        self._realmObjectObserver = ObservedObject(wrappedValue: RealmObjectObserver<Object>(realm: realmInstance))
-        self._firebaseObserver = ObservedObject(wrappedValue: FirebaseObserver<Object>())
+        self.logoutListener()
+    }
+    
+    func logoutListener() {
+        self.logoutObserver.onLogout = {
+            print("LiveStateObject: Logout Observer!!!!")
+            self.destroy()
+        }
+    }
+    
+    func destroy() {
+        print("LiveStateObject: Destroying Thyself")
+        self.observer.destroy(deleteObjects: true)
+        self.firebaseObserver.stopObserving()
+        self.logoutObserver.destroy()
     }
 
     var wrappedValue: Object? {
-        get { self.realmObjectObserver.object }
-        set { self.realmObjectObserver.object = newValue }
+        get { self.observer.object }
+        set { self.observer.object = newValue }
     }
 
     var projectedValue: Binding<Object?> {
         Binding<Object?>(
-            get: { self.realmObjectObserver.object },
+            get: { self.observer.object },
             set: { newValue in
                 // Handle updates if needed
             }
@@ -196,11 +244,15 @@ struct LiveStateObject<Object: RealmSwift.Object>: DynamicProperty {
     }
 
     func load(primaryKey: String) {
-        self.realmObjectObserver.start(realm: self.realmInstance, primaryKey: primaryKey)
+        DispatchQueue.main.async {
+            self.observer.start(realm: self.realmInstance, primaryKey: primaryKey)
+        }
     }
     
     func load(field: String, value: String) {
-        self.realmObjectObserver.start(realm: self.realmInstance, field: field, value: value)
+        DispatchQueue.main.async {
+            self.observer.start(realm: self.realmInstance, field: field, value: value)
+        }
     }
     
     func startFirebaseObservation(block: @escaping (DatabaseReference) -> DatabaseReference) {
@@ -283,8 +335,19 @@ struct LiveStateObject<Object: RealmSwift.Object>: DynamicProperty {
             }
         }
         
-        func stop() {
+        func destroy(deleteObjects:Bool=false) {
             notificationToken?.invalidate()
+            if deleteObjects {
+                deleteAll()
+            }
+        }
+        
+        func deleteAll() {
+            if let obj = self.object {
+                realm().safeWrite { r in
+                    r.delete(obj)
+                }
+            }
         }
 
 
@@ -295,7 +358,6 @@ struct LiveStateObject<Object: RealmSwift.Object>: DynamicProperty {
     
     class FirebaseObserver<O: RealmSwift.Object>: ObservableObject {
         @Published var object: O?
-        @Published var notificationToken: NotificationToken? = nil
         @Published var firebaseSubscription: DatabaseHandle? = nil
         @Published var query: DatabaseQuery? = nil
         @Published var reference: DatabaseReference = Database
@@ -303,6 +365,7 @@ struct LiveStateObject<Object: RealmSwift.Object>: DynamicProperty {
             .reference()
 
         func startObserving(query: DatabaseReference, realm: Realm) {
+            if !isLoggedIntoFirebase() { return }
             self.reference = query
             firebaseSubscription = query.observe(.value, with: { snapshot in
                 let _ = snapshot.toLudiObject(Object.self, realm: realm)
@@ -310,6 +373,7 @@ struct LiveStateObject<Object: RealmSwift.Object>: DynamicProperty {
         }
         
         func startObserving(query: DatabaseQuery, realm: Realm) {
+            if !isLoggedIntoFirebase() { return }
             self.query = query
             firebaseSubscription = query.observe(.value, with: { snapshot in
                 let _ = snapshot.toLudiObject(Object.self, realm: realm)
@@ -325,7 +389,6 @@ struct LiveStateObject<Object: RealmSwift.Object>: DynamicProperty {
         }
 
         deinit {
-            notificationToken?.invalidate()
             stopObserving()
         }
     }

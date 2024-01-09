@@ -69,7 +69,7 @@ struct SessionPlanView: View {
                 
             }
 
-            Section(header: Text("Activities")) {
+            Section(header: Text("Activities")) {    
                 ActivityPlanListView(activityPlans: $activities).environmentObject(self.BEO)
                 
                 if self.sessionId != "new" {
@@ -133,21 +133,10 @@ struct SessionPlanView: View {
             }
             getShareIds()
         }
-        
+        .onDisappear() {
+            self.sessionNotificationToken = nil
+        }
         .navigationBarTitle(isCurrentPlan ? "Current Plan" : "Session Plan", displayMode: .inline)
-//        .navigationBarItems(trailing: Button("Cancel") {
-//            isShowing = false
-//        })
-//        .navigationBarItems(trailing: HStack {
-//            Button(action: {
-//                print("Minimize")
-//                CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: MenuBarProvider.boardDetails.tool.title, stateAction: "close"))
-//            }) {
-//                Image(systemName: "minus")
-//                    .resizable()
-//                    .frame(width: 30, height: 30)
-//            }
-//        })
         .sheet(isPresented: self.$showNewActivity) {
             ActivityPlanView(boardId: "new", sessionId: sessionId, isShowing: $showNewActivity)
         }
@@ -197,7 +186,7 @@ struct SessionPlanView: View {
         newSP.sessionDetails = description
         newSP.objectiveDetails = objective
         newSP.isOpen = isOpen
-        newSP.ownerId = CURRENT_USER_ID
+        newSP.ownerId = getFirebaseUserId() ?? CURRENT_USER_ID
         // New Activity
         let newAP = ActivityPlan()
         newAP.sessionId = newSP.id

@@ -14,10 +14,12 @@ import FirebaseDatabase
 struct LiveConnections: DynamicProperty {
     @ObservedObject private var observer: RealmObserver
     @ObservedObject private var firebaseObserver = FirebaseObserver()
-    private var objects: Results<Connection>? = nil
+    @State var objects: Results<Connection>? = nil
     private var realmInstance: Realm
     var filterFriendsOnly = false
     var filterRequestsOnly = false
+    
+    @ObservedObject var logoutObserver = LogoutObserver()
 
     init(realmInstance: Realm = realm(), friends:Bool=false, requests:Bool=false) {
         self.realmInstance = realmInstance
@@ -25,7 +27,21 @@ struct LiveConnections: DynamicProperty {
         self.filterRequestsOnly = requests
         self.observer = RealmObserver(realm: self.realmInstance)
         self.objects = self.observer.objects
-//        self.refreshOnce()
+        self.logoutListener()
+    }
+    
+    func logoutListener() {
+        self.logoutObserver.onLogout = {
+            print("LiveConnection: Logout Observer!!!!")
+            self.destroy()
+        }
+    }
+    
+    func destroy() {
+        print("LiveConnection: Destroying Thyself")
+        self.observer.destroy(deleteObjects: true)
+        self.firebaseObserver.stopObserving()
+        self.objects = nil
     }
 
     var wrappedValue: Results<Connection>? {
@@ -114,10 +130,13 @@ struct LiveConnections: DynamicProperty {
 
         init(realm: Realm) {
             self.objects = realm.objects(Connection.self)
-
             // Setting up the observer
             notificationToken = self.objects.observe { [weak self] (changes: RealmCollectionChange) in
                 guard let self = self else { return }
+                if !isLoggedIntoFirebase() {
+                    destroy()
+                    return
+                }
                 switch changes {
                     case .initial(_):
                         // Results are now populated and can be accessed without blocking the UI
@@ -133,6 +152,18 @@ struct LiveConnections: DynamicProperty {
             }
         }
 
+        func destroy(deleteObjects:Bool=false) {
+            notificationToken?.invalidate()
+            if deleteObjects {
+                deleteAll()
+            }
+        }
+        
+        func deleteAll() {
+            realm().safeWrite { r in
+                r.delete(self.objects)
+            }
+        }
         deinit {
             notificationToken?.invalidate()
         }
@@ -150,6 +181,7 @@ struct LiveConnections: DynamicProperty {
             .child("connections")
 
         func startObserving(query: DatabaseQuery, realmInstance: Realm) {
+            if !isLoggedIntoFirebase() { return }
             guard !isObserving else { return }
             self.query = query
             firebaseSubscription = query.observe(.value, with: { snapshot in
@@ -158,6 +190,7 @@ struct LiveConnections: DynamicProperty {
             isObserving = true
         }
         func startObserving(query: DatabaseReference, realmInstance: Realm) {
+            if !isLoggedIntoFirebase() { return }
             guard !isObserving else { return }
             self.ref = query
             firebaseSubscription = query.observe(.value, with: { snapshot in

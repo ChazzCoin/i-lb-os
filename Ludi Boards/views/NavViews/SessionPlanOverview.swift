@@ -73,7 +73,10 @@ struct SessionPlanOverview: View {
                 getShareIds()
                 return
             }
-            
+        }
+        .onDisappear() {
+            _sessionPlans.destroy()
+            _sessionPlansShared.destroy()
         }
         .loading(isShowing: $isLoading)
         .navigationBarTitle("Session Plans", displayMode: .inline)

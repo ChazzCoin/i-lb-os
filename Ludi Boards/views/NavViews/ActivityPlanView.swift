@@ -209,16 +209,7 @@ struct ActivityPlanView: View {
             
             // BUTTONS
             Section {
-                // LOAD BUTTON
-                
-                solButton(
-                    title: "Share Activity",
-                    action: {
-                        self.showShareSheet = true
-                    },
-                    isEnabled: true
-                )
-                
+                // LOAD BUTTON                
                 
                 if self.boardId != "new" {
                     solConfirmButton(
@@ -287,6 +278,9 @@ struct ActivityPlanView: View {
                 }
             }.store(in: &cancellables)
         }
+        .onDisappear() {
+            self.sessionNotificationToken = nil
+        }
         .refreshable {
             if self.boardId != "new" {
                 startLoadingProcess()
@@ -331,6 +325,8 @@ struct ActivityPlanView: View {
         let newAP = ActivityPlan()
         newAP.sessionId = sessionId
         newAP.orderIndex = 0
+        
+        newAP.ownerId = getFirebaseUserId() ?? "SOL"
         
         newAP.title = self.activityPlan.title
         newAP.subTitle = self.activityPlan.subTitle

@@ -165,6 +165,7 @@ struct BoardEngine: View {
     @EnvironmentObject var BEO: BoardEngineObject
     @StateObject var PMO = PopupMenuObject()
     @State var MVS: ManagedViewsService? = nil
+    @State var SPS: SessionPlanService? = nil
     @State var APS: ActivityPlanService? = nil
     @State var cancellables = Set<AnyCancellable>()
     
@@ -285,6 +286,9 @@ struct BoardEngine: View {
                 } : nil
         )
         .onAppear {
+           
+            SPS = SessionPlanService(realm: self.realmIntance)
+            APS = ActivityPlanService(realm: self.realmIntance)
             MVS = ManagedViewsService(realm: self.realmIntance)
             
             self.loadAllSessionPlans()
@@ -355,6 +359,7 @@ struct BoardEngine: View {
             self.realmIntance.safeWrite { r in
                 let newSession = SessionPlan()
                 newSession.id = self.sessionID
+                newSession.ownerId = getFirebaseUserId() ?? CURRENT_USER_ID
                 self.BEO.currentSessionId = self.sessionID
                 r.add(newSession)
             }
@@ -432,11 +437,7 @@ struct BoardEngine: View {
                 }
                 
                 // Firebase
-                if self.realmIntance.userIsLoggedIn() {
-                    APS = ActivityPlanService(realm: self.realmIntance)
-                    APS?.startObserving(activityId: self.activityID)
-                }
-                
+                APS?.startObserving(activityId: self.activityID)
             }
             loadManagedViewTools()
             return
@@ -467,6 +468,7 @@ struct BoardEngine: View {
         // CREATE NEW ACTIVITY
         let newActivity = ActivityPlan()
         self.activityID = newActivity.id
+        newActivity.ownerId = getFirebaseUserId() ?? CURRENT_USER_ID
         newActivity.sessionId = self.sessionID
         self.BEO.currentActivityId = self.activityID
         self.BEO.setColor(colorIn: Color.green.opacity(0.75))
@@ -502,11 +504,8 @@ struct BoardEngine: View {
                     print("Realm Listener: error")
             }
         }
-        
-        // Firebase
-        if isLoggedIntoFirebase() {
-            fireGetSessionPlanAsync(sessionId: self.sessionID, realm: self.realmIntance)
-        }
+        SPS?.startObserving()
+        fireGetSessionPlanAsync(sessionId: self.sessionID, realm: self.realmIntance)
     }
     
     func observeActivityPlan() {
@@ -532,11 +531,7 @@ struct BoardEngine: View {
                     print("Realm Listener: \(error)")
             }
         }
-        
-        // Firebase
-        if isLoggedIntoFirebase() {
-            fireGetSessionPlanAsync(sessionId: self.sessionID, realm: self.realmIntance)
-        }
+        fireGetSessionPlanAsync(sessionId: self.sessionID, realm: self.realmIntance)
     }
     
     func loadManagedViewTools() {
@@ -567,12 +562,8 @@ struct BoardEngine: View {
                     fatalError("\(error)")  // Handle errors appropriately in production code
             }
         }
-        
-        // Firebase
-        if isLoggedIntoFirebase() {
-            startObserving()
-            savePlansToFirebase()
-        }
+        startObserving()
+        savePlansToFirebase()
         self.BEO.isLoading = false
     }
     
@@ -591,6 +582,7 @@ struct BoardEngine: View {
                 basicTools.safeAdd(mv)
             })
         
+        if !isLoggedIntoFirebase() { return }
         observerHandle = reference.child(DatabasePaths.managedViews.rawValue)
             .child(self.activityID).observe(.childRemoved, with: { snapshot in
                 let temp = snapshot.toHashMap()
@@ -622,8 +614,7 @@ struct BoardEngine: View {
             line.dateUpdated = Int(Date().timeIntervalSince1970)
             r.create(ManagedView.self, value: line, update: .all)
             
-            // TODO: Firebase Users ONLY
-            firebaseDatabase(safeFlag: self.BEO.isLoggedIn) { fdb in
+            firebaseDatabase(safeFlag: isLoggedIntoFirebase()) { fdb in
                 fdb.child(DatabasePaths.managedViews.rawValue)
                     .child(self.activityID)
                     .child(line.id)

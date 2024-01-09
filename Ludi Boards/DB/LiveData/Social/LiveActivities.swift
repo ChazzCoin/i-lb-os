@@ -18,10 +18,27 @@ struct LiveActivityPlans: DynamicProperty {
     var realmInstance: Realm
     @State var filterBySession = false
     @State var sessionId = ""
+    
+    @ObservedObject var logoutObserver = LogoutObserver()
 
     init(realmInstance: Realm = realm()) {
         self.realmInstance = realmInstance
         self.observer = RealmObserver(realm: self.realmInstance)
+        self.logoutListener()
+    }
+    
+    func logoutListener() {
+        self.logoutObserver.onLogout = {
+            print("LiveActivityPlans: Logout Observer!!!!")
+            self.destroy()
+        }
+    }
+    
+    func destroy() {
+        print("LiveActivityPlans: Destroying Thyself")
+        self.observer.destroy(deleteObjects: true)
+        self.firebaseObserver.stopObserving()
+        self.objects = nil
     }
 
     var wrappedValue: Results<ActivityPlan>? {
@@ -99,6 +116,20 @@ struct LiveActivityPlans: DynamicProperty {
                 }
             }
         }
+        
+        
+        func destroy(deleteObjects:Bool=false) {
+            notificationToken?.invalidate()
+            if deleteObjects {
+                deleteAll()
+            }
+        }
+        
+        func deleteAll() {
+            realm().safeWrite { r in
+                r.delete(self.objects)
+            }
+        }
 
         deinit {
             notificationToken?.invalidate()
@@ -117,6 +148,7 @@ struct LiveActivityPlans: DynamicProperty {
             .child(DatabasePaths.activityPlan.rawValue)
 
         func startObserving(query: DatabaseQuery, realmInstance: Realm) {
+            if !isLoggedIntoFirebase() { return }
             guard !isObserving else { return }
             self.query = query
             firebaseSubscription = query.observe(.value, with: { snapshot in
@@ -125,6 +157,7 @@ struct LiveActivityPlans: DynamicProperty {
             isObserving = true
         }
         func startObserving(query: DatabaseReference, realmInstance: Realm) {
+            if !isLoggedIntoFirebase() { return }
             guard !isObserving else { return }
             self.ref = query
             firebaseSubscription = query.observe(.value, with: { snapshot in

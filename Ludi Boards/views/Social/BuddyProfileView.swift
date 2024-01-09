@@ -108,6 +108,11 @@ struct BuddyProfileView: View {
             }
             
         }
+        .onDisappear() {
+            _solUser.destroy()
+            _solRequest.destroy()
+            _solRequests.destroy()
+        }
         .navigationBarTitle("Profile", displayMode: .inline)
         .sheet(isPresented: $showNewPlanSheet) {
             AddBuddyView(isPresented: $showNewPlanSheet, sessionId: .constant(""))

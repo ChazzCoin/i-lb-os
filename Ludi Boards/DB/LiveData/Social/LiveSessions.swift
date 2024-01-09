@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import RealmSwift
 import FirebaseDatabase
+import Combine
 
 @propertyWrapper
 struct LiveSessionPlans: DynamicProperty {
@@ -20,6 +21,8 @@ struct LiveSessionPlans: DynamicProperty {
     @State var realmInstance: Realm
     @State var filterSharedOnly = false
     @State var userId = ""
+    
+    @ObservedObject var logoutObserver = LogoutObserver()
 
     init(realmInstance: Realm = realm(), shared:Bool=false) {
         self.realmInstance = realmInstance
@@ -27,6 +30,22 @@ struct LiveSessionPlans: DynamicProperty {
         self.observer = RealmSessionPlanObserver()
         self.sharedObserver = RealmUserToSessionObserver()
         self.objects = self.observer.objects
+        self.logoutListener()
+    }
+    
+    func logoutListener() {
+        self.logoutObserver.onLogout = {
+            print("LiveSessionPlans: Logout Observer!!!!")
+            self.destroy()
+        }
+    }
+    
+    func destroy() {
+        print("LiveSessionPlans: Destroying Thyself")
+        self.observer.destroy(deleteObjects: false)
+        self.sharedObserver.destroy(deleteObjects: false)
+        self.firebaseObserver.stopObserving()
+        self.objects = nil
     }
 
     var wrappedValue: Results<SessionPlan>? {
@@ -124,6 +143,7 @@ class RealmSessionPlanObserver: ObservableObject {
     @Published var notificationToken: NotificationToken? = nil
 
     func startObserver(realm: Realm) {
+        if !isLoggedIntoFirebase() { return }
         self.objects = realm.objects(SessionPlan.self)
         // Setting up the observer
         notificationToken = self.objects?.observe { [weak self] (changes: RealmCollectionChange) in
@@ -143,6 +163,21 @@ class RealmSessionPlanObserver: ObservableObject {
             }
         }
     }
+    
+    func destroy(deleteObjects:Bool=false) {
+        notificationToken?.invalidate()
+        if deleteObjects {
+            deleteAll()
+        }
+    }
+    
+    func deleteAll() {
+        if let objs = self.objects {
+            realm().safeWrite { r in
+                r.delete(objs)
+            }
+        }
+    }
 
     deinit {
         notificationToken?.invalidate()
@@ -155,6 +190,7 @@ class RealmUserToSessionObserver: ObservableObject {
     @Published var notificationToken: NotificationToken? = nil
     
     func startObserver(realm: Realm) {
+        if !isLoggedIntoFirebase() { return }
         self.shares = realm.objects(UserToSession.self)
 
         // Setting up the observer
@@ -172,7 +208,7 @@ class RealmUserToSessionObserver: ObservableObject {
                     fireGetSessionSharesAsync(realm: realm)
                     fireGetActivityPlansAsync(realm: realm)
                     self.objectWillChange.send()
-                case .update(let results, let de, _, _):
+                case .update(let results, _, _, _):
                     print("RealmUserToSessionObserver: Update")
                     for i in results {
                         if !sharedIds.contains(i.sessionId) {
@@ -180,9 +216,9 @@ class RealmUserToSessionObserver: ObservableObject {
                         }
                     }
                     print("Shared Ids = [ \(sharedIds) ]")
-                    for d in de {
-                        sharedIds.remove(at: d)
-                    }
+//                    for d in de {
+//                        sharedIds.remove(at: d)
+//                    }
                     fireGetSessionSharesAsync(realm: realm)
                     fireGetActivityPlansAsync(realm: realm)
                     self.objectWillChange.send()
@@ -191,9 +227,26 @@ class RealmUserToSessionObserver: ObservableObject {
                     print("RealmUserToSessionObserver: \(error)")
             }
         }
+        
+    }
+    
+    func destroy(deleteObjects:Bool=false) {
+        notificationToken?.invalidate()
+        if deleteObjects {
+            deleteAll()
+        }
+    }
+    
+    func deleteAll() {
+        if let objs = self.shares {
+            newRealm().safeWrite { r in
+                r.delete(objs)
+            }
+        }
     }
     
     func fireGetSessionSharesAsync(realm: Realm?=nil) {
+        if !isLoggedIntoFirebase() { return }
         firebaseDatabase(collection: DatabasePaths.sessionPlan.rawValue) { ref in
             for i in self.sharedIds {
                 ref.queryOrdered(byChild: "id").queryEqual(toValue: i)
@@ -205,6 +258,7 @@ class RealmUserToSessionObserver: ObservableObject {
     }
     
     func fireGetActivityPlansAsync(realm: Realm?=nil) {
+        if !isLoggedIntoFirebase() { return }
         firebaseDatabase(collection: DatabasePaths.activityPlan.rawValue) { ref in
             for i in self.sharedIds {
                 ref.queryOrdered(byChild: "sessionId").queryEqual(toValue: i)
@@ -213,6 +267,10 @@ class RealmUserToSessionObserver: ObservableObject {
                     }
             }
         }
+    }
+    
+    func destroy() {
+        notificationToken?.invalidate()
     }
 
     deinit {
@@ -235,6 +293,7 @@ class FirebaseSessionPlanObserver: ObservableObject {
         .child(DatabasePaths.sessionPlan.rawValue)
 
     func startObserving(query: DatabaseQuery, realmInstance: Realm) {
+        if !isLoggedIntoFirebase() { return }
         guard !isObserving else { return }
         self.query = query
         firebaseSubscription = query.observe(.value, with: { snapshot in
@@ -243,6 +302,7 @@ class FirebaseSessionPlanObserver: ObservableObject {
         isObserving = true
     }
     func startObserving(query: DatabaseReference, realmInstance: Realm) {
+        if !isLoggedIntoFirebase() { return }
         guard !isObserving else { return }
         self.ref = query
         firebaseSubscription = query.observe(.value, with: { snapshot in

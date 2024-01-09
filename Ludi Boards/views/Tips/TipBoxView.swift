@@ -151,6 +151,7 @@ struct TipBoxViewFlasher: View {
 
 struct TipBoxViewStatic: View {
     var tips: [String]
+    var subTitle: String
     var disableCallback: () -> Void
     @State private var isExpanded = true
 
@@ -166,7 +167,7 @@ struct TipBoxViewStatic: View {
                             }
                         }
                     
-                    Text("Line Drawing Mode")
+                    Text(subTitle)
                         .font(.subheadline)
                         .foregroundColor(.gray)
                 }

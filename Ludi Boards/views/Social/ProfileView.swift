@@ -11,7 +11,6 @@ import RealmSwift
 
 struct ProfileView: View {
     @EnvironmentObject var BEO: BoardEngineObject
-    @StateObject var realmObserver = RealmObserver<CurrentSolUser>()
     @State private var realmInstance = realm()
     
     @LiveCurrentUser var currentUser
@@ -116,6 +115,12 @@ struct ProfileView: View {
         }
         .onAppear() {
             loadUser()
+        }
+        .onDisappear() {
+            _solUsers.destroy()
+            _solRequests.destroy()
+            _connections.destroy()
+            _currentUser.destroy()
         }
         .navigationBarTitle("Profile", displayMode: .inline)
         .sheet(isPresented: $showNewPlanSheet) {

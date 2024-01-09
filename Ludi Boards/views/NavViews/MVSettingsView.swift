@@ -49,7 +49,7 @@ struct SettingsView: View {
     
     let tips = [
         "Double Tap to Toggle Settings.",
-        "Single Tap Line's for Resize.",
+        "Hold down on line for Anchors.",
         "Red Box Tools are 'Live Drawing'.",
         "Yellow Box Tools are 'Basic Tools'."
     ]
@@ -57,21 +57,9 @@ struct SettingsView: View {
     var body: some View {
         LoadingForm(isLoading: $isLoading, showCompletion: $showCompletion) { runLoading in
             
-            Section(header: Text("Tips and Tricks").font(.headline)) {
-                ForEach(tips, id: \.self) { tip in
-                    HStack(alignment: .top) {
-                        Image(systemName: "circle.fill")
-                            .font(.system(size: 6))
-                            .frame(width: 12, height: 12)
-                            .foregroundColor(.blue)
-                            .padding(.top, 5)
-
-                        Text(tip)
-                            .font(.body)
-                            .foregroundColor(.secondary)
-                            .multilineTextAlignment(.leading)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
+            if isLoggedIntoFirebase() {
+                Section(header: Text("Connection Status").font(.headline)) {
+                    InternetSpeedChecker()
                 }
             }
             
@@ -164,6 +152,24 @@ struct SettingsView: View {
                             }
                         }
                     }.padding()
+                }
+            }
+            
+            Section(header: Text("Tips and Tricks").font(.headline)) {
+                ForEach(tips, id: \.self) { tip in
+                    HStack(alignment: .top) {
+                        Image(systemName: "circle.fill")
+                            .font(.system(size: 6))
+                            .frame(width: 12, height: 12)
+                            .foregroundColor(.blue)
+                            .padding(.top, 5)
+
+                        Text(tip)
+                            .font(.body)
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.leading)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                 }
             }
         }

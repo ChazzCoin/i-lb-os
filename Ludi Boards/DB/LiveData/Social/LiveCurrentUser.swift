@@ -13,6 +13,7 @@ import RealmSwift
 struct LiveCurrentUser: DynamicProperty {
     let realmInstance: Realm = realm()
     @ObservedObject private var observer: RealmCurrentUserObserver = RealmCurrentUserObserver()
+    @ObservedObject var logoutObserver = LogoutObserver()
 
     var wrappedValue: CurrentSolUser? {
         get {
@@ -36,6 +37,18 @@ struct LiveCurrentUser: DynamicProperty {
     
     func loadByPrimaryKey(id:String, realm:Realm) {
         self.observer.startObserver(primaryKey: id, realm: realm)
+        self.logoutListener()
+    }
+    
+    func logoutListener() {
+        self.logoutObserver.onLogout = {
+            print("LiveCurrentUser: Logout Observer!!!!")
+            self.destroy()
+        }
+    }
+    
+    func destroy() {
+        self.observer.destroy()
     }
 
     
@@ -55,6 +68,21 @@ class RealmCurrentUserObserver: ObservableObject {
                     self.objectWillChange.send()
                 case .deleted, .error:
                     break
+            }
+        }
+    }
+    
+    func destroy(deleteObjects:Bool=false) {
+        notificationToken?.invalidate()
+        if deleteObjects {
+            deleteAll()
+        }
+    }
+    
+    func deleteAll() {
+        if let obj = self.object {
+            realm().safeWrite { r in
+                r.delete(obj)
             }
         }
     }

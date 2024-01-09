@@ -9,13 +9,15 @@ import Foundation
 import SwiftUI
 import RealmSwift
 import FirebaseDatabase
+import Combine
 
 @propertyWrapper
 struct LiveSolUser: DynamicProperty {
     let realmInstance: Realm = realm()
     @ObservedObject private var observer: RealmObserver = RealmObserver()
     @State var userId: String = ""
-
+    @ObservedObject var logoutObserver = LogoutObserver()
+    
     var wrappedValue: SolUser? {
         get {
             return self.realmInstance.findByField(SolUser.self, field: "userId", value: self.userId)
@@ -40,6 +42,19 @@ struct LiveSolUser: DynamicProperty {
         self.userId = id
         self.observer.startObserver(primaryKey: id, realm: self.realmInstance)
         fireGetSolUserAsync()
+        self.logoutListener()
+    }
+    
+    func logoutListener() {
+        self.logoutObserver.onLogout = {
+            print("LiveSolUser: Logout Observer!!!!")
+            self.destroy()
+        }
+    }
+    
+    func destroy() {
+        print("LiveSolUser: Destroying Thyself")
+        self.observer.destroy(deleteObjects: true)
     }
     
     func fireGetSolUserAsync() {
@@ -70,7 +85,22 @@ struct LiveSolUser: DynamicProperty {
                 }
             }
         }
-
+        
+        func destroy(deleteObjects:Bool=false) {
+            notificationToken?.invalidate()
+            if deleteObjects {
+                deleteAll()
+            }
+        }
+        
+        func deleteAll() {
+            if let obj = self.object {
+                realm().safeWrite { r in
+                    r.delete(obj)
+                }
+            }
+        }
+        
         deinit {
             notificationToken?.invalidate()
         }
@@ -89,6 +119,7 @@ class FirebaseSolUserService: ObservableObject {
         .child("users")
 
     func startObserving(query: DatabaseQuery, realmInstance: Realm) {
+        if !isLoggedIntoFirebase() { return }
         guard !isObserving else { return }
         self.query = query
         firebaseSubscription = query.observe(.value, with: { snapshot in
@@ -97,6 +128,7 @@ class FirebaseSolUserService: ObservableObject {
         isObserving = true
     }
     func startObserving(query: DatabaseReference, realmInstance: Realm) {
+        if !isLoggedIntoFirebase() { return }
         guard !isObserving else { return }
         self.ref = query
         firebaseSubscription = query.observe(.value, with: { snapshot in

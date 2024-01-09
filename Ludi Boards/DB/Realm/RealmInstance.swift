@@ -18,6 +18,10 @@ func realm() -> Realm {
     return RealmInstance.instance
 }
 
+func newRealm() -> Realm {
+    return RealmInstance.instance
+}
+
 func isRealmObjectValid(_ object: Object) -> Bool {
     return !object.isInvalidated
 }

@@ -67,7 +67,9 @@ struct SessionPlanListView: View {
 
     var body: some View {
         List(sessionPlans) { sessionPlan in
-            SessionPlanThumbView(sessionPlan: sessionPlan)
+            if !sessionPlan.isInvalidated {
+                SessionPlanThumbView(sessionPlan: sessionPlan)
+            }
         }.onAppear() {
             let results = realmInstance.objects(SessionPlan.self)
             if results.isEmpty {return}
@@ -75,6 +77,9 @@ struct SessionPlanListView: View {
             for i in results {
                 sessionPlans.append(i)
             }
+        }
+        .onDisappear() {
+            sessionPlans.removeAll()
         }
     }
 }

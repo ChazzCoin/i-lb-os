@@ -10,11 +10,13 @@ import FirebaseDatabase
 import RealmSwift
 
 func firebaseDatabase(block: @escaping (DatabaseReference) -> Void) {
+    if !isLoggedIntoFirebase() { return }
     let reference = Database.database().reference()
     block(reference)
 }
 
 func firebaseDatabaseSET(obj: RealmSwift.Object, block: @escaping (DatabaseReference) -> DatabaseReference) {
+    if !isLoggedIntoFirebase() { return }
     let reference = Database.database().reference()
     block(reference).setValue(obj.toDict()) { (error: Error?, ref: DatabaseReference) in
         if let error = error { print("Error updating Firebase: \(error)") }
@@ -35,6 +37,7 @@ func firebaseDatabase(collection: String, block: @escaping (DatabaseReference) -
 
 // GET ManagedViews
 func fireManagedViewsAsync(activityId: String, realm: Realm) {
+    if !isLoggedIntoFirebase() { return }
     firebaseDatabase(collection: DatabasePaths.managedViews.rawValue) { ref in
         ref.child(activityId).observeSingleEvent(of: .value) { snapshot, _ in
             var _ = snapshot.toLudiObjects(ManagedView.self)
@@ -44,6 +47,7 @@ func fireManagedViewsAsync(activityId: String, realm: Realm) {
 
 // GET Live Demo
 func fireGetLiveDemoAsync(realm: Realm?=nil) {
+    if !isLoggedIntoFirebase() { return }
     firebaseDatabase(collection: DatabasePaths.sessionPlan.rawValue) { ref in
         ref.child("SOL-LIVE-DEMO").observeSingleEvent(of: .value) { snapshot, _ in
             var _ = snapshot.toLudiObject(SessionPlan.self, realm: realm)
@@ -53,6 +57,7 @@ func fireGetLiveDemoAsync(realm: Realm?=nil) {
 
 // GET Share Session
 func fireGetSessionSharesAsync(userId: String, realm: Realm?=nil) {
+    if !isLoggedIntoFirebase() { return }
     firebaseDatabase(collection: DatabasePaths.userToActivity.rawValue) { ref in
         ref.queryOrdered(byChild: "guestId").queryEqual(toValue: userId)
             .observeSingleEvent(of: .value) { snapshot, _ in
@@ -63,6 +68,7 @@ func fireGetSessionSharesAsync(userId: String, realm: Realm?=nil) {
 
 // GET Share Session
 func fireGetSolUserAsync(userId: String, realm: Realm?=nil) {
+    if !isLoggedIntoFirebase() { return }
     firebaseDatabase(collection: DatabasePaths.users.rawValue) { ref in
         ref.queryOrdered(byChild: "userId").queryEqual(toValue: userId)
             .observeSingleEvent(of: .value) { snapshot, _ in
@@ -75,6 +81,7 @@ func fireGetSolUserAsync(userId: String, realm: Realm?=nil) {
 
 // GET Sessions
 func fireGetSessionPlanAsync(sessionId: String, realm: Realm) {
+    if !isLoggedIntoFirebase() { return }
     firebaseDatabase(collection: DatabasePaths.sessionPlan.rawValue) { ref in
         ref.child(sessionId).observeSingleEvent(of: .value) { snapshot, _ in
             var _ = snapshot.toLudiObjects(SessionPlan.self, realm: realm)
@@ -83,6 +90,7 @@ func fireGetSessionPlanAsync(sessionId: String, realm: Realm) {
 }
 
 func fireGetSessionsAsync(withIds ids: [String], completion: @escaping ([SessionPlan]?) -> Void) {
+    if !isLoggedIntoFirebase() { return }
     for id in ids {
         let reference = Database.database().reference().child(DatabasePaths.sessionPlan.rawValue).child(id)
         reference.observeSingleEvent(of: .value) { snapshot, _ in
@@ -93,6 +101,7 @@ func fireGetSessionsAsync(withIds ids: [String], completion: @escaping ([Session
 
 // GET Activities
 func fireActivityPlanAsync(activityId: String, realm: Realm) {
+    if !isLoggedIntoFirebase() { return }
     firebaseDatabase(collection: DatabasePaths.activityPlan.rawValue) { ref in
         ref.child(activityId).observeSingleEvent(of: .value) { snapshot, _ in
             var _ = snapshot.toLudiObjects(ActivityPlan.self, realm: realm)
@@ -100,6 +109,7 @@ func fireActivityPlanAsync(activityId: String, realm: Realm) {
     }
 }
 func fireGetActivitiesBySessionId(sessionId: String, realm: Realm?=nil) {
+    if !isLoggedIntoFirebase() { return }
     firebaseDatabase(collection: DatabasePaths.activityPlan.rawValue) { ref in
         ref.queryOrdered(byChild: "sessionId").queryEqual(toValue: sessionId)
             .observeSingleEvent(of: .value) { snapshot, _ in
@@ -109,6 +119,7 @@ func fireGetActivitiesBySessionId(sessionId: String, realm: Realm?=nil) {
 }
 
 func fireGetActivitiesAsync(withIds ids: [String], completion: @escaping ([ActivityPlan]?) -> Void) {
+    if !isLoggedIntoFirebase() { return }
     for id in ids {
         let reference = Database.database().reference().child(DatabasePaths.activityPlan.rawValue).child(id)
         reference.observeSingleEvent(of: .value) { snapshot, _ in

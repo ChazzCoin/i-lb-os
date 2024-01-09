@@ -17,9 +17,8 @@ let TipLineDrawing = [
 ]
 
 let TipLineGestures = [
-    "Gestures work best overall when you tap and/or drag from the center of the lines.",
-    "SINGLE TAP to toggle its anchors.",
-    "DOUBLE TAP to toggle its settings.",
+    "DOUBLE TAP for Tool Settings.",
+    "HOLD DOWN to toggle Line anchors.",
     "Anchors allow more fine tuning to the lines.",
     "STRAIGHT LINES can be freely dragged around with your finger.",
     "CURVED LINES can NOT be freely dragged. Instead, utilize its 3 anchors to adjust its position.",

@@ -131,9 +131,7 @@ struct CanvasEngine: View {
 //                    .position(using: gps, at: .center)
 //            }
             
-            MenuBarStatic(){
-//                menuIsOpen = !menuIsOpen
-            }
+            MenuBarStatic(){}
             .frame(width: 60, height: menuIsOpen ? (gps.screenSize.height - 100) : 60)
             .position(using: gps, at: .topLeft, offsetX: 50, offsetY: menuIsOpen ? ((gps.screenSize.height - 100) / 2) : 30)
             
@@ -178,15 +176,15 @@ struct CanvasEngine: View {
                 .position(using: gps, at: .topRight, offsetX: 150, offsetY: 0)
             }
             
-//            if self.BEO.showTipViewStatic {
-//                GeometryReader { geo in
-//                    TipBoxViewStatic(tips: TipLineGestures){
-//                        self.BEO.showTipViewStatic = false
-//                    }
-//                }
-//                .frame(width: 300)
-//                .position(using: gps, at: .topRight, offsetX: 150, offsetY: 0)
-//            }
+            if self.BEO.showTipViewStatic {
+                GeometryReader { geo in
+                    TipBoxViewStatic(tips: TipLineGestures, subTitle: "General Tips"){
+                        self.BEO.showTipViewStatic = false
+                    }
+                }
+                .frame(width: 300)
+                .position(using: gps, at: .topRight, offsetX: 150, offsetY: 0)
+            }
             
             
 //            FloatingEmojiView()

@@ -31,6 +31,8 @@ struct BuddyRequestListView: View {
             }
             
             }
+        }.onDisappear() {
+            _connections.destroy()
         }
     }
 }

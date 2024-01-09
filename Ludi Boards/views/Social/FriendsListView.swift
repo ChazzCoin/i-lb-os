@@ -36,6 +36,9 @@ struct FriendsListView: View {
                 currentUserId = uid
             }
         }
+        .onDisappear() {
+            _connections.destroy()
+        }
     }
 }
 
