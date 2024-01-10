@@ -54,7 +54,7 @@ struct LiveSolUser: DynamicProperty {
     
     func destroy() {
         print("LiveSolUser: Destroying Thyself")
-        self.observer.destroy(deleteObjects: true)
+        self.observer.destroy(deleteObjects: false)
     }
     
     func fireGetSolUserAsync() {
@@ -79,8 +79,13 @@ struct LiveSolUser: DynamicProperty {
                 switch change {
                     case .change:
                         print("LiveSolUser: onChange")
+                        if ((self.object?.isInvalidated) != nil) {
+                            destroy()
+                            return
+                        }
                         self.objectWillChange.send()
                     case .deleted, .error:
+                        destroy()
                         break
                 }
             }

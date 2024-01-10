@@ -17,6 +17,7 @@ struct LiveSessionPlans: DynamicProperty {
     @ObservedObject var sharedObserver: RealmUserToSessionObserver
     @ObservedObject var firebaseObserver = FirebaseSessionPlanObserver()
     @State var objects: Results<SessionPlan>? = nil
+    @State var sharedSess: Results<UserToSession>? = nil
     @State var sharedIds: [String] = []
     @State var realmInstance: Realm
     @State var filterSharedOnly = false
@@ -82,31 +83,48 @@ struct LiveSessionPlans: DynamicProperty {
     }
     
     func start() {
-        
-        DispatchQueue.main.async {
-            safeFirebaseUserId() { id in
-                self.userId = id
-                self.observer.startObserver(realm: self.realmInstance)
-                self.sharedObserver.startObserver(realm: self.realmInstance)
-                fireGetSessionSharesAsync(id: id, realm: self.realmInstance)
-                
-                let sharedSess = self.realmInstance.objects(UserToSession.self)
-                for i in sharedSess {
-                    if id == i.guestId {
+        safeFirebaseUserId() { id in
+            self.userId = id
+            self.observer.startObserver(realm: self.realmInstance)
+            self.sharedObserver.startObserver(realm: self.realmInstance)
+            fireGetSessionSharesAsync(id: id, realm: self.realmInstance)
+            
+            
+            DispatchQueue.main.async {
+                self.sharedSess = self.realmInstance.objects(UserToSession.self).filter("guestId == %@", id)
+                if let temp = self.sharedSess {
+                    for i in temp {
                         self.sharedIds.append(i.sessionId)
                     }
                 }
             }
         }
+        
     }
     
     func toNotShared() -> Results<SessionPlan>? {
+//        DispatchQueue.main.async {
+//            self.sharedSess = self.realmInstance.objects(UserToSession.self).filter("guestId == %@", self.userId)
+//            if let temp = self.sharedSess {
+//                for i in temp {
+//                    self.sharedIds.append(i.sessionId)
+//                }
+//            }
+//        }
         let obj = self.realmInstance.objects(SessionPlan.self).filter("NOT id IN %@", self.sharedIds)
         print("UserId: [ \(self.userId) ], Not Shared Ids: [ \(self.sharedIds) ], Not Shared Objs: [ \(obj) ]")
         return obj
     }
     
     func toShared() -> Results<SessionPlan>? {
+//        DispatchQueue.main.async {
+//            self.sharedSess = self.realmInstance.objects(UserToSession.self).filter("guestId == %@", self.userId)
+//            if let temp = self.sharedSess {
+//                for i in temp {
+//                    self.sharedIds.append(i.sessionId)
+//                }
+//            }
+//        }
         let obj = self.realmInstance.objects(SessionPlan.self).filter("id IN %@", self.sharedIds)
         print("UserId: [ \(self.userId) ], Shared Ids: [ \(self.sharedIds) ], Shared Objs: [ \(obj) ]")
         return obj
@@ -150,16 +168,19 @@ class RealmSessionPlanObserver: ObservableObject {
             guard let self = self else { return }
             switch changes {
                 case .initial(_):
-//                    self.watchedObjects = results
                     print("LiveSessionPlans: Initial")
-                    self.objectWillChange.send()
+                    DispatchQueue.main.async {
+                        self.objectWillChange.send()
+                    }
+                    
                 case .update(_, _, _, _):
-//                    self.watchedObjects = results
                     print("LiveSessionPlans: Update")
-                    self.objectWillChange.send()
+                    DispatchQueue.main.async {
+                        self.objectWillChange.send()
+                    }
                 case .error(let error):
-                    // An error occurred while opening the Realm file on the background worker thread
                     print("LiveSessionPlans: \(error)")
+                    destroy()
             }
         }
     }
@@ -206,8 +227,10 @@ class RealmUserToSessionObserver: ObservableObject {
                     }
                     print("Shared Ids = [ \(sharedIds) ]")
                     fireGetSessionSharesAsync(realm: realm)
-                    fireGetActivityPlansAsync(realm: realm)
-                    self.objectWillChange.send()
+//                    fireGetActivityPlansAsync(realm: realm)
+                    DispatchQueue.main.async {
+                        self.objectWillChange.send()
+                    }
                 case .update(let results, _, _, _):
                     print("RealmUserToSessionObserver: Update")
                     for i in results {
@@ -216,15 +239,14 @@ class RealmUserToSessionObserver: ObservableObject {
                         }
                     }
                     print("Shared Ids = [ \(sharedIds) ]")
-//                    for d in de {
-//                        sharedIds.remove(at: d)
-//                    }
                     fireGetSessionSharesAsync(realm: realm)
-                    fireGetActivityPlansAsync(realm: realm)
-                    self.objectWillChange.send()
+//                    fireGetActivityPlansAsync(realm: realm)
+                    DispatchQueue.main.async {
+                        self.objectWillChange.send()
+                    }
                 case .error(let error):
-                    // An error occurred while opening the Realm file on the background worker thread
                     print("RealmUserToSessionObserver: \(error)")
+                    destroy()
             }
         }
         
@@ -263,7 +285,7 @@ class RealmUserToSessionObserver: ObservableObject {
             for i in self.sharedIds {
                 ref.queryOrdered(byChild: "sessionId").queryEqual(toValue: i)
                     .observeSingleEvent(of: .value) { snapshot, _ in
-                        let _ = snapshot.toLudiObjects(SessionPlan.self, realm: realm)
+                        let _ = snapshot.toLudiObjects(ActivityPlan.self, realm: realm)
                     }
             }
         }

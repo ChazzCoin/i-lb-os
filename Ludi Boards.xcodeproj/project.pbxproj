@@ -170,6 +170,7 @@
 		FBDE4F572B4CF883007FE880 /* LogoutObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDE4F562B4CF883007FE880 /* LogoutObserver.swift */; };
 		FBDE4F592B4D0C12007FE880 /* SessionPlanService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDE4F582B4D0C12007FE880 /* SessionPlanService.swift */; };
 		FBDE4F5B2B4D1038007FE880 /* InternetProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDE4F5A2B4D1038007FE880 /* InternetProvider.swift */; };
+		FBDE4F5D2B4E2345007FE880 /* LiveRooms.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDE4F5C2B4E2345007FE880 /* LiveRooms.swift */; };
 		FBDF0DC52B21811000FADE44 /* SharedSessionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDF0DC42B21811000FADE44 /* SharedSessionsView.swift */; };
 		FBDF0DC72B224D2600FADE44 /* ActivityPlanService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDF0DC62B224D2600FADE44 /* ActivityPlanService.swift */; };
 		FBDF0DC92B224EB500FADE44 /* ManagedViewsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDF0DC82B224EB500FADE44 /* ManagedViewsService.swift */; };
@@ -312,6 +313,7 @@
 		FBDE4F562B4CF883007FE880 /* LogoutObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogoutObserver.swift; sourceTree = "<group>"; };
 		FBDE4F582B4D0C12007FE880 /* SessionPlanService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionPlanService.swift; sourceTree = "<group>"; };
 		FBDE4F5A2B4D1038007FE880 /* InternetProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InternetProvider.swift; sourceTree = "<group>"; };
+		FBDE4F5C2B4E2345007FE880 /* LiveRooms.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveRooms.swift; sourceTree = "<group>"; };
 		FBDF0DC42B21811000FADE44 /* SharedSessionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedSessionsView.swift; sourceTree = "<group>"; };
 		FBDF0DC62B224D2600FADE44 /* ActivityPlanService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityPlanService.swift; sourceTree = "<group>"; };
 		FBDF0DC82B224EB500FADE44 /* ManagedViewsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedViewsService.swift; sourceTree = "<group>"; };
@@ -771,6 +773,7 @@
 			isa = PBXGroup;
 			children = (
 				FBEBEF932B49504D00B8BA32 /* LiveConnections.swift */,
+				FBDE4F5C2B4E2345007FE880 /* LiveRooms.swift */,
 				FBE385512B4B89F80090901C /* LiveSessions.swift */,
 				FBE385532B4BB7540090901C /* LiveActivities.swift */,
 				FBEBEF952B49506800B8BA32 /* LiveChat.swift */,
@@ -1077,6 +1080,7 @@
 				FB15DD2A2B07443600A21290 /* BoardEngineView.swift in Sources */,
 				FB9F1DD22B1529E400FD9078 /* LoadingView.swift in Sources */,
 				FBABDAC72B20456700321A00 /* ToolBarSettings.swift in Sources */,
+				FBDE4F5D2B4E2345007FE880 /* LiveRooms.swift in Sources */,
 				FBB450022B052B180096F8EB /* FireLiveData.swift in Sources */,
 				FBBAD3BE2B1FBF58004A4332 /* NavPad.swift in Sources */,
 				FB881A442B48C61400C16198 /* BuddyRequestListView.swift in Sources */,
@@ -1284,7 +1288,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_ASSET_PATHS = "\"Ludi Boards/Preview Content\"";
 				DEVELOPMENT_TEAM = 248J2GKL56;
 				ENABLE_PREVIEWS = YES;
@@ -1300,7 +1304,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2;
+				MARKETING_VERSION = 1.3;
 				PRODUCT_BUNDLE_IDENTIFIER = io.ludi.sol;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1317,7 +1321,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_ASSET_PATHS = "\"Ludi Boards/Preview Content\"";
 				DEVELOPMENT_TEAM = 248J2GKL56;
 				ENABLE_PREVIEWS = YES;
@@ -1333,7 +1337,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2;
+				MARKETING_VERSION = 1.3;
 				PRODUCT_BUNDLE_IDENTIFIER = io.ludi.sol;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

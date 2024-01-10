@@ -37,7 +37,7 @@ struct LiveStateObjects<Object: RealmSwift.Object>: DynamicProperty {
     
     func destroy() {
         print("LiveStateObjects: Destroying Thyself")
-        self.observer.destroy(deleteObjects: true)
+        self.observer.destroy(deleteObjects: false)
         self.firebaseObserver.stopObserving()
         self.objects = nil
         self.logoutObserver.destroy()
@@ -224,7 +224,7 @@ struct LiveStateObject<Object: RealmSwift.Object>: DynamicProperty {
     
     func destroy() {
         print("LiveStateObject: Destroying Thyself")
-        self.observer.destroy(deleteObjects: true)
+        self.observer.destroy(deleteObjects: false)
         self.firebaseObserver.stopObserving()
         self.logoutObserver.destroy()
     }

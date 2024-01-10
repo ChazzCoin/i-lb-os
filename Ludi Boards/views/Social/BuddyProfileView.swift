@@ -18,8 +18,8 @@ struct BuddyProfileView: View {
     @State private var realmInstance = realm()
     
     @LiveSolUser var solUser
-    @LiveStateObject(Connection.self) var solRequest
-    @LiveStateObjects(Connection.self) var solRequests
+//    @LiveStateObject(Connection.self) var solRequest
+//    @LiveStateObjects(Connection.self) var solRequests
     
     @State private var aboutMe: String = "Just enjoying the world of coding and tech!"
     @State private var phoneNumber: String = "123-456-7890"
@@ -37,6 +37,7 @@ struct BuddyProfileView: View {
     @State private var friends: [SolUser] = []
     
     var body: some View {
+    
         LoadingForm() { runLoading in
             Group() {
                 Image(systemName: "person.crop.circle.fill")
@@ -110,8 +111,8 @@ struct BuddyProfileView: View {
         }
         .onDisappear() {
             _solUser.destroy()
-            _solRequest.destroy()
-            _solRequests.destroy()
+//            _solRequest.destroy()
+//            _solRequests.destroy()
         }
         .navigationBarTitle("Profile", displayMode: .inline)
         .sheet(isPresented: $showNewPlanSheet) {

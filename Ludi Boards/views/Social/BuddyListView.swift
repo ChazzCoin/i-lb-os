@@ -15,18 +15,19 @@ struct BuddyListView: View {
 
     var body: some View {
         List($buddies, id: \.userId) { $buddy in
-            
-            NavigationLink(destination: BuddyProfileView(solUserId: buddy.userId, friendStatus: "friends")) { // Replace DestinationView with your desired destination view
-                HStack {
-                    Circle()
-                        .fill(buddy.isLoggedIn ? Color.green : Color.gray)
-                        .frame(width: 10, height: 10)
-                    Text(buddy.userName)
-                        .font(.system(size: 14))
-                    Spacer()
-                    Text(buddy.isLoggedIn ? "Online" : "Away")
-                        .font(.system(size: 12))
-                        .foregroundColor(.gray)
+            if !buddy.isInvalidated {
+                NavigationLink(destination: BuddyProfileView(solUserId: buddy.userId, friendStatus: "friends")) { // Replace DestinationView with your desired destination view
+                    HStack {
+                        Circle()
+                            .fill(buddy.isLoggedIn ? Color.green : Color.gray)
+                            .frame(width: 10, height: 10)
+                        Text(buddy.userName)
+                            .font(.system(size: 14))
+                        Spacer()
+                        Text(buddy.isLoggedIn ? "Online" : "Away")
+                            .font(.system(size: 12))
+                            .foregroundColor(.gray)
+                    }
                 }
             }
         }

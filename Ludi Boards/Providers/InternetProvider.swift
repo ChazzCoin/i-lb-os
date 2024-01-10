@@ -208,24 +208,55 @@ struct WirelessSignalStrengthBars: View {
     }
 }
 
+struct WifiSignalChecker: View {
+    @State private var wifiStrength = 0.0
 
-//struct WirelessSignalStrengthBars: View {
-//    var strength: Double
-//    private let totalBars = 10
-//
-//    private func barHeight(index: Int) -> CGFloat {
-//        // Calculate height of each bar based on connection strength
-//        let threshold = (Double(index + 1) / Double(totalBars)) * 100.0
-//        return strength >= threshold ? CGFloat(20 + index * 10) : 20.0
-//    }
-//
-//    var body: some View {
-//        HStack(spacing: 3) {
-//            ForEach(0..<totalBars, id: \.self) { index in
-//                Rectangle()
-//                    .frame(width: 8, height: barHeight(index: index))
-//                    .foregroundColor(strength >= (Double(index + 1) / Double(totalBars)) * 100.0 ? .green : .gray)
-//            }
-//        }
-//    }
-//}
+    var body: some View {
+        HStack {
+            Text("Wifi Signal")
+            WirelessSignalStrengthBars(strength: wifiStrength)
+            
+            
+        }.onAppear() {
+            wifiStrength = Double.random(in: 1...5)
+        }
+    }
+}
+
+
+struct WifiSignalChecker_Previews: PreviewProvider {
+    static var previews: some View {
+        WifiSignalChecker()
+    }
+}
+
+
+struct WifiConnectionIndicator: View {
+    @State private var isConnectedToWifi = false
+
+    var body: some View {
+        VStack {
+            Image(systemName: isConnectedToWifi ? "wifi" : "wifi.slash")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 50, height: 50)
+                .foregroundColor(isConnectedToWifi ? .green : .red)
+
+            Text(isConnectedToWifi ? "Connected to Wi-Fi" : "Not Connected to Wi-Fi")
+                .padding()
+        }
+        .onAppear(perform: checkWifiConnection)
+    }
+
+    private func checkWifiConnection() {
+        let monitor = NWPathMonitor()
+        monitor.pathUpdateHandler = { path in
+            DispatchQueue.main.async {
+                isConnectedToWifi = path.usesInterfaceType(.wifi)
+            }
+        }
+        let queue = DispatchQueue(label: "Monitor")
+        monitor.start(queue: queue)
+    }
+}
+

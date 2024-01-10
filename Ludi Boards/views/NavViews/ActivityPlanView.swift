@@ -224,17 +224,17 @@ struct ActivityPlanView: View {
                     )
                 }
                 
-                if self.activityPlan.sessionId != "SOL-LIVE-DEMO" {
+                if self.activityPlan.sessionId != "SOL-LIVE-DEMO" && self.activityPlan.sessionId != "SOL"{
                     // Delete BUTTON
                     solConfirmButton(
                         title: "Delete",
                         message: "Would you like to delete this plan?",
                         action: {
                             startLoadingProcess()
-                            if let _ = realmInstance.findByField(ActivityPlan.self, field: "id", value: self.boardId) {
+                            if let item = realmInstance.findByField(ActivityPlan.self, field: "id", value: self.boardId) {
                                 activityPlan = ActivityPlan()
                                 realmInstance.safeWrite { r in
-//                                    r.delete(temp)
+                                    item.isDeleted = true
                                 }
                                 // TODO: FIREBASE ONLY
                                 deleteActivityPlanFromFirebase(apId: self.boardId)

@@ -14,20 +14,26 @@ struct LiveCurrentUser: DynamicProperty {
     let realmInstance: Realm = realm()
     @ObservedObject private var observer: RealmCurrentUserObserver = RealmCurrentUserObserver()
     @ObservedObject var logoutObserver = LogoutObserver()
+    
+    init() {
+        self.observer.startObserver(primaryKey: "SOL", realm: self.realmInstance)
+        self.logoutListener()
+    }
 
     var wrappedValue: CurrentSolUser? {
         get {
-            return self.realmInstance.findByField(CurrentSolUser.self, value: "SOL")
+            return self.observer.object
         }
         set {
-            print("LiveCurrentUser: setting value = [ \(String(describing: self.observer.object)) ]")
             self.observer.object = newValue
         }
     }
     
     var projectedValue: Binding<CurrentSolUser?> {
         Binding<CurrentSolUser?>(
-            get: { self.realmInstance.findByField(CurrentSolUser.self, value: "SOL") },
+            get: {
+                return self.observer.object
+            },
             set: { newValue in
                 // Handle updates if needed
                 print("LiveCurrentUser: newValue = [ \(String(describing: newValue)) ]")
@@ -50,8 +56,13 @@ struct LiveCurrentUser: DynamicProperty {
     func destroy() {
         self.observer.destroy()
     }
-
     
+    func refreshFromFirebase() {
+        syncUserFromFirebaseDb() { _ in
+            print("User Updated")
+        }
+    }
+
 }
 class RealmCurrentUserObserver: ObservableObject {
     @Published var object: CurrentSolUser? = nil
@@ -65,8 +76,15 @@ class RealmCurrentUserObserver: ObservableObject {
             switch change {
                 case .change:
                     print("LiveCurrentUser: onChange")
-                    self.objectWillChange.send()
+                    if ((self.object?.isInvalidated) != nil) {
+                        destroy()
+                        break
+                    }
+                    DispatchQueue.main.async {
+                        self.objectWillChange.send()
+                    }
                 case .deleted, .error:
+                    destroy()
                     break
             }
         }

@@ -8,12 +8,14 @@
 import Foundation
 import FirebaseDatabase
 import RealmSwift
+import SwiftUI
 
 class ActivityPlanService: ObservableObject {
-    let realmInstance: Realm
-    var reference: DatabaseReference = Database.database().reference()
-    private var observerHandle: DatabaseHandle?
-    private var isObserving = false
+    @Published var activityId: String = ""
+    @State var realmInstance: Realm
+    @Published var reference: DatabaseReference = Database.database().reference()
+    @Published var observerHandle: DatabaseHandle?
+    @Published var isObserving = false
 
     init(realm: Realm) {
         self.realmInstance = realm
@@ -22,6 +24,8 @@ class ActivityPlanService: ObservableObject {
     func startObserving(activityId: String) {
         if !isLoggedIntoFirebase() { return }
         guard !isObserving else { return }
+        self.activityId = activityId
+        enterRoom()
         observerHandle = reference.child(DatabasePaths.activityPlan.rawValue)
             .child(activityId).observe(.value, with: { snapshot in
                 print("New Activity Arriving...")
@@ -33,8 +37,22 @@ class ActivityPlanService: ObservableObject {
 
     func stopObserving() {
         guard isObserving, let handle = observerHandle else { return }
+        leaveRoom()
         reference.removeObserver(withHandle: handle)
         isObserving = false
         observerHandle = nil
     }
+    
+    func enterRoom() {
+        FirebaseRoomService.enterRoom(roomId: self.activityId)
+    }
+    
+    func leaveRoom() {
+        FirebaseRoomService.leaveRoom(roomId: self.activityId)
+    }
+    
+    deinit {
+        stopObserving()
+    }
+    
 }

@@ -39,7 +39,7 @@ struct LiveConnections: DynamicProperty {
     
     func destroy() {
         print("LiveConnection: Destroying Thyself")
-        self.observer.destroy(deleteObjects: true)
+        self.observer.destroy(deleteObjects: false)
         self.firebaseObserver.stopObserving()
         self.objects = nil
     }
@@ -66,7 +66,7 @@ struct LiveConnections: DynamicProperty {
                 if filterRequestsOnly {
                     return toRequests()?.toArray() ?? []
                 }
-                return objects?.toArray() ?? []
+                return self.realmInstance.objects(Connection.self).toArray()
                 
             },
             set: { newValue in
@@ -84,11 +84,11 @@ struct LiveConnections: DynamicProperty {
     }
     
     func toFriends() -> Results<Connection>? {
-        self.objects?.filter("status == %@", "Accepted")
+        return self.realmInstance.objects(Connection.self).filter("status == %@", "Accepted")
     }
     
     func toRequests() -> Results<Connection>? {
-        self.objects?.filter("status == %@", "pending")
+        return self.realmInstance.objects(Connection.self).filter("status == %@", "pending")
     }
     
     func stopFirebaseObservation() {
@@ -125,31 +125,55 @@ struct LiveConnections: DynamicProperty {
     }
 
     private class RealmObserver: ObservableObject {
-        @Published var objects: Results<Connection>
-        private var notificationToken: NotificationToken?
-
+        @Published var objects: Results<Connection>? = nil
+        @Published var notificationToken: NotificationToken? = nil
+        @Published var realmInstance: Realm
         init(realm: Realm) {
-            self.objects = realm.objects(Connection.self)
+            self.realmInstance = realm
+            start()
+        }
+        
+        func start() {
+           
+            self.objects = self.realmInstance.objects(Connection.self)
+            
             // Setting up the observer
-            notificationToken = self.objects.observe { [weak self] (changes: RealmCollectionChange) in
+            self.notificationToken = self.objects?.observe { [weak self] (changes: RealmCollectionChange) in
                 guard let self = self else { return }
                 if !isLoggedIntoFirebase() {
                     destroy()
                     return
                 }
                 switch changes {
-                    case .initial(_):
-                        // Results are now populated and can be accessed without blocking the UI
+                    case .initial(let results):
                         print("LiveConnections: Initial")
+                        for item in results {
+                            if item.isInvalidated {
+                                start()
+                                break
+                            }
+                        }
                         self.objectWillChange.send()
-                    case .update(_, _, _, _):
+                    case .update(let results, _, _, _):
                         print("LiveConnections: Update")
+                        for item in results {
+                            if item.isInvalidated {
+                                start()
+                                break
+                            }
+                        }
                         self.objectWillChange.send()
                     case .error(let error):
-                        // An error occurred while opening the Realm file on the background worker thread
                         print("LiveConnections: \(error)")
+                        destroy()
                 }
             }
+        }
+        
+        func restart() {
+            notificationToken?.invalidate()
+            self.objects = nil
+            start()
         }
 
         func destroy(deleteObjects:Bool=false) {
@@ -160,8 +184,15 @@ struct LiveConnections: DynamicProperty {
         }
         
         func deleteAll() {
-            realm().safeWrite { r in
-                r.delete(self.objects)
+            do {
+                let realm = try Realm()
+                try realm.write {
+                    if let objs = self.objects {
+                        realm.delete(objs)
+                    }
+                }
+            } catch {
+                print("Error deleting all objects: \(error)")
             }
         }
         deinit {

@@ -26,6 +26,7 @@ extension Color {
 struct ChatView: View {
     @EnvironmentObject var boardEngineObject: BoardEngineObject
     @State var chatId: String = ""
+    @State var currentUserId: String = ""
     @State private var messageText = ""
     @State private var messages: [String: Chat?] = [:]
     @State private var lastMessageId: String?
@@ -38,7 +39,9 @@ struct ChatView: View {
     
     @State private var isReloading = false
     @State var cancellables = Set<AnyCancellable>()
-    let chatRef = fireGetReference(dbPath: DatabasePaths.chat)
+    @State var chatRef = fireGetReference(dbPath: DatabasePaths.chat)
+    
+    @LiveStateObjects(Chat.self) var chatMessages
     
     func observeChat() {
         self.chatRef.child(boardEngineObject.currentActivityId).fireObserver { snapshot in
@@ -67,7 +70,6 @@ struct ChatView: View {
                 //TODO: LOADING VIEW!!
                 reloader()
             }
-            
             
         }.store(in: &cancellables)
         
@@ -150,7 +152,15 @@ struct ChatView: View {
             Image(systemName: "line.horizontal.3")
         })
         .onAppear() {
+            
+            safeFirebaseUserId { uId in
+                self.currentUserId = uId
+            }
+            
+            _chatMessages
+            
             observeLudiChat()
+            
         }
     }
     
@@ -160,7 +170,7 @@ struct ChatView: View {
         let newMessage = Chat()
         newMessage.chatId = boardEngineObject.currentActivityId
         newMessage.messageText = messageText
-        newMessage.senderId = "me"
+        newMessage.senderId = self.currentUserId
         newMessage.timestamp = getTimeStamp()
         firebaseDatabase { db in
             db.child(DatabasePaths.chat.rawValue).child(chatId).child(newMessage.id).setValue(newMessage.toDictionary())
@@ -262,9 +272,9 @@ struct MessageBubbleView: View {
 }
 
 
-struct ChatView_Previews: PreviewProvider {
-    static var previews: some View {
-        MessageBubbleView(text: "Hey hey", isCurrentUser: false, userName: "Chazz Romeo", dateTime: "3:22pm")
-    }
-}
+//struct ChatView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        MessageBubbleView(text: "Hey hey", isCurrentUser: false, userName: "Chazz Romeo", dateTime: "3:22pm")
+//    }
+//}
 

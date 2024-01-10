@@ -15,7 +15,7 @@ struct ActivityPlanListView: View {
         
         if !activityPlans.isEmpty {
             List(activityPlans) { activityPlan in
-                if !activityPlan.isInvalidated {
+                if !activityPlan.isInvalidated && !activityPlan.isDeleted {
                     NavigationLink(destination: ActivityPlanView(boardId: activityPlan.id, sessionId: activityPlan.sessionId, isShowing: .constant(true)).environmentObject(self.BEO)) {
                         ActivityPlanThumbView(activityPlan: activityPlan)
                     }
@@ -27,9 +27,3 @@ struct ActivityPlanListView: View {
         
     }
 }
-
-//struct ActivityPlanListView_Preview: PreviewProvider {
-//    static var previews: some View {
-//        ActivityPlanListView(activityPlans: [ActivityPlan()])
-//    }
-//}

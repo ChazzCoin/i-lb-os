@@ -112,17 +112,19 @@ struct SessionPlanView: View {
                     }, isEnabled: self.isShowing)
                 } else {
                     
-                    if !self.shareIds.contains(self.sessionId) {
+                    if !self.shareIds.contains(self.sessionId) && sessionId != "SOL-LIVE-DEMO" && sessionId != "SOL"  {
                         solButton(title: "Share Session", action: {
                             self.showShareSheet = true
                         }, isEnabled: true)
                         
-                        if sessionId != "SOL-LIVE-DEMO" {
-                            solButton(title: "Delete", action: {
+                        solConfirmButton(
+                            title: "Delete",
+                            message: "Are you sure you want to delete this session?",
+                            action: {
                                 runLoading()
                                 deleteSessionPlan()
-                            })
-                        }
+                            }
+                        )
                     }
                 }                
             }.clearSectionBackground()

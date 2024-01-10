@@ -24,6 +24,21 @@ import RealmSwift
     }
 }
 
+
+@objcMembers class Room: Object, Identifiable {
+    dynamic var id: String = UUID().uuidString
+    dynamic var dateCreated: String = getTimeStamp()
+    dynamic var dateUpdated: String = getTimeStamp()
+    dynamic var roomId: String = ""
+    dynamic var userId: String = ""
+    dynamic var status: String = ""
+
+    override static func primaryKey() -> String? {
+        return "id"
+    }
+}
+
+
 @objcMembers class Friendship: Object, Identifiable {
     dynamic var id: String = UUID().uuidString
     dynamic var dateCreated: String = getTimeStamp()

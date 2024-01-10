@@ -285,6 +285,11 @@ struct BoardEngine: View {
                     saveLineData(start: value.startLocation, end: value.location)
                 } : nil
         )
+        .onDisappear() {
+            SPS?.stopObserving()
+            APS?.stopObserving()
+            MVS?.stopObserving()
+        }
         .onAppear {
            
             SPS = SessionPlanService(realm: self.realmIntance)
@@ -300,6 +305,11 @@ struct BoardEngine: View {
                 
                 if let newSID = temp.sessionId {
                     if self.sessionID != newSID {
+                        
+                        SPS?.stopObserving()
+                        APS?.stopObserving()
+                        MVS?.stopObserving()
+                        
                         self.sessionID = newSID
                         self.BEO.currentSessionId = newSID
                         sessionDidChange = true
@@ -308,6 +318,8 @@ struct BoardEngine: View {
                 
                 if let newAID = temp.activityId {
                     if self.activityID != newAID && !newAID.isEmpty {
+                        APS?.stopObserving()
+                        MVS?.stopObserving()
                         self.activityID = newAID
                         self.BEO.currentActivityId = newAID
                         activityDidChange = true
@@ -384,11 +396,13 @@ struct BoardEngine: View {
     func savePlansToFirebase() {
         if !isLoggedIntoFirebase() { return }
         if let sessionPlan = self.realmIntance.findByField(SessionPlan.self, field: "id", value: self.sessionID) {
+            if sessionPlan.id == "SOL" {return}
             firebaseDatabase { db in
                 db.child(DatabasePaths.sessionPlan.rawValue).child(self.sessionID).setValue(sessionPlan.toDict())
             }
         }
         if let activityPlan = self.realmIntance.findByField(ActivityPlan.self, field: "id", value: self.activityID) {
+            if activityPlan.id == "SOL" {return}
             firebaseDatabase { db in
                 db.child(DatabasePaths.activityPlan.rawValue).child(self.activityID).setValue(activityPlan.toDict())
             }
@@ -467,7 +481,8 @@ struct BoardEngine: View {
         
         // CREATE NEW ACTIVITY
         let newActivity = ActivityPlan()
-        self.activityID = newActivity.id
+        newActivity.id = "SOL"
+        self.activityID = "SOL"
         newActivity.ownerId = getFirebaseUserId() ?? CURRENT_USER_ID
         newActivity.sessionId = self.sessionID
         self.BEO.currentActivityId = self.activityID

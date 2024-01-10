@@ -32,7 +32,6 @@ struct ProfileView: View {
     @State private var showShareActivityButton = true
     
     @State private var friends: [SolUser] = []
-//    @State private var requests: [Request] = []
     
     var body: some View {
         LoadingForm() { runLoading in
@@ -59,6 +58,12 @@ struct ProfileView: View {
                 Text(currentUser?.email ?? "")
                     .font(.subheadline)
                     .fontWeight(.bold)
+                
+                if isLoggedIntoFirebase() {
+                    Section(header: Text("Connection Status")) {
+                        InternetSpeedChecker()
+                    }
+                }
                 
                 Section(header: Text("Friend Requests")) {
                     BuddyRequestListView()
@@ -99,18 +104,19 @@ struct ProfileView: View {
             }
             .padding(.bottom, 20)
         }
-        .task {
-            _connections.refreshOnce()
-            if let uId = getFirebaseUserId() {
-                _solRequests.startFirebaseObservation(block: { db in
-                    return db
-                        .child("connections")
-                        .queryOrdered(byChild: "userTwoId")
-                        .queryEqual(toValue: uId)
-                })
-            }
-        }
+//        .task {
+//            _connections.refreshOnce()
+//            if let uId = getFirebaseUserId() {
+//                _solRequests.startFirebaseObservation(block: { db in
+//                    return db
+//                        .child("connections")
+//                        .queryOrdered(byChild: "userTwoId")
+//                        .queryEqual(toValue: uId)
+//                })
+//            }
+//        }
         .refreshable {
+            _currentUser.refreshFromFirebase()
             loadUser()
         }
         .onAppear() {
@@ -135,7 +141,8 @@ struct ProfileView: View {
         }
     }
     
-    func loadFriendRequests() {
+    func loadUser() {
+        _connections.refreshOnce()
         if let uId = getFirebaseUserId() {
             _solRequests.startFirebaseObservation(block: { db in
                 return db
@@ -144,13 +151,6 @@ struct ProfileView: View {
                     .queryEqual(toValue: uId)
             })
         }
-    }
-    
-    
-    
-    func loadUser() {
-        
-        
         print("Current User: \(String(describing: currentUser))")
     }
     

@@ -196,7 +196,7 @@ struct CanvasEngine: View {
             
             // Board/Canvas Level
             ZStack() {
-                DrawGridLines().zIndex(1.0)
+//                DrawGridLines().zIndex(1.0)
                 BoardEngine()
                     .zIndex(2.0)
                     .environmentObject(self.BEO)

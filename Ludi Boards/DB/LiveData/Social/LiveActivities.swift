@@ -36,7 +36,7 @@ struct LiveActivityPlans: DynamicProperty {
     
     func destroy() {
         print("LiveActivityPlans: Destroying Thyself")
-        self.observer.destroy(deleteObjects: true)
+        self.observer.destroy(deleteObjects: false)
         self.firebaseObserver.stopObserving()
         self.objects = nil
     }

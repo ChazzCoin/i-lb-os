@@ -25,6 +25,7 @@ import RealmSwift
     dynamic var ownerId: String = ""
     dynamic var isHost: Bool = false
     dynamic var isOpen: Bool = false
+    dynamic var isDeleted: Bool = false
     dynamic var orderIndex: Int = 0
     
     dynamic var width: Int = 3000

@@ -50,6 +50,31 @@ func syncUserFromFirebaseDb(_ email: String, realmInstance: Realm=realm(), compl
         }
 }
 
+func syncUserFromFirebaseDb(realmInstance: Realm=realm(), completion: @escaping (Bool) -> Void) {
+    
+    safeFirebaseUserId() { uId in
+        let dbRef = Database.database().reference()
+        let usersRef = dbRef.child("users")
+
+        usersRef.child(uId).observeSingleEvent(of: .value) { snapshot in
+            if snapshot.exists() {
+                let result = CurrentSolUser(dictionary: snapshot.value as! [String : Any])
+                try? realmInstance.write {
+                    let r = realmInstance.create(CurrentSolUser.self, value: result, update: .all)
+                    print("Successful CurrentSolUser Parsing: [ \(r) ]")
+                }
+                
+                completion(true)
+            } else {
+                print("User Does Not Exist.")
+                completion(false)
+            }
+        }
+    }
+    
+    
+}
+
 func saveUserToRealtimeDatabase(user: CurrentSolUser?=nil, onComplete: @escaping (Bool) -> Void) {
     
     var u = user
