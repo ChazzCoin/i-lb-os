@@ -9,6 +9,76 @@ import Foundation
 import FirebaseDatabase
 import RealmSwift
 
+// Firebase Extensions
+extension Object {
+    
+    func fireRef(block: (DatabaseReference) -> Void) {
+        if let path = DatabasePaths.path(forObjectType: Self.self) {
+            block(
+                Database
+                    .database()
+                    .reference()
+                    .child(path.rawValue)
+                )
+        }
+    }
+    
+    func fireRef(id:String, block: (DatabaseReference) -> Void) {
+        if let path = DatabasePaths.path(forObjectType: Self.self) {
+            block(Database
+                .database()
+                .reference()
+                .child(path.rawValue)
+                .child(id))
+        }
+    }
+    
+    func fireSave(id:String) {
+        fireRef(id: id, block: { db in
+            db.save(obj: self)
+        })
+    }
+    
+    func fireGet(id:String) {
+        fireRef(id: id, block: { db in
+            db.get { snapshot in
+                let _ = snapshot.toLudiObjects(Self.self)
+            }
+        })
+    }
+    
+    func fireObserve(id:String, block: (DatabaseHandle) -> Void) {
+        fireRef(id: id, block: { db in
+            block(db.fireObserver(completion: { snapshot in
+                let _ = snapshot.toLudiObjects(Self.self)
+            }))
+        })
+    }
+    
+}
+
+extension DatabaseReference {
+    
+    func get(onSnapshot: @escaping (DataSnapshot) -> Void) {
+        self.observeSingleEvent(of: .value) { snapshot, _ in
+            onSnapshot(snapshot)
+        }
+    }
+    
+    func save(obj: Object) {
+        self.setValue(obj.toDict())
+    }
+    
+    func save(id: String, obj: Object) {
+        self.child(id).setValue(obj.toDict())
+    }
+    
+    func save(collection: String, id: String, obj: Object) {
+        self.child(collection).child(id).setValue(obj.toDict())
+    }
+    
+}
+
 func firebaseDatabase(block: @escaping (DatabaseReference) -> Void) {
     if !isLoggedIntoFirebase() { return }
     let reference = Database.database().reference()

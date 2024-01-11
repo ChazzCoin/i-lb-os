@@ -23,13 +23,11 @@ class FirebaseService {
         observerHandle = reference.observe(.value, with: { snapshot in
             completion(snapshot)
         })
-
         isObserving = true
     }
 
     func stopObserving() {
         guard isObserving, let handle = observerHandle else { return }
-
         reference.removeObserver(withHandle: handle)
         isObserving = false
         observerHandle = nil

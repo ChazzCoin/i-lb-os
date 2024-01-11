@@ -6,7 +6,7 @@
 //
 
 import Foundation
-
+import RealmSwift
 
 
 enum DatabasePaths: String {
@@ -36,6 +36,35 @@ enum DatabasePaths: String {
     case timer = "timer"
     case userToSession = "userToSession"
     case userToActivity = "userToActivity"
+    case connections = "connections"
+    case rooms = "rooms"
+    
+    // Function to map object type to DatabasePaths
+    static func path(forObjectType objectType: Object.Type) -> DatabasePaths? {
+        switch objectType {
+            case is SessionPlan.Type:
+                return .sessionPlan
+            case is ActivityPlan.Type:
+                return .activityPlan
+            case is ManagedView.Type:
+                return .managedViews
+            case is UserToSession.Type:
+                return .userToSession
+            case is Chat.Type:
+                return .chat
+            case is UserToSession.Type:
+                return .userToSession
+            case is SolUser.Type:
+                return .users
+            case is Connection.Type:
+                return .connections
+            case is Room.Type:
+                return .rooms
+            default:
+                return nil
+        }
+    }
+    
 }
 
 //func coreFirebaseUser() -> FirebaseAuth.User? {

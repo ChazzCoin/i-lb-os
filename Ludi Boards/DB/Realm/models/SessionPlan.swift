@@ -7,9 +7,10 @@
 
 import Foundation
 import RealmSwift
+import FirebaseDatabase
 
 class SessionPlan: Object, ObjectKeyIdentifiable {
-    @Persisted var id: String = UUID().uuidString
+    @Persisted(primaryKey: true) var id: String = UUID().uuidString
     @Persisted var dateCreated: String = getTimeStamp()
     @Persisted var dateUpdated: String = getTimeStamp()
     @Persisted var dateOf: String = getTimeStamp()
@@ -23,10 +24,6 @@ class SessionPlan: Object, ObjectKeyIdentifiable {
     @Persisted var ownerId: String = "temp"
     @Persisted var isHost: Bool = false
     @Persisted var isOpen: Bool = false
-    
-    override static func primaryKey() -> String {
-        return "id"
-    }
     
 }
 

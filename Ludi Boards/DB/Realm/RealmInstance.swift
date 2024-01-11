@@ -26,11 +26,6 @@ func isRealmObjectValid(_ object: Object) -> Bool {
     return !object.isInvalidated
 }
 
-extension Object {
-    func isRealmObjectValid() -> Bool {
-        return !self.isInvalidated
-    }
-}
 
 func safeAccess<T>(to object: T, action: (T) -> Void) where T: Object {
     guard !object.isInvalidated else {
@@ -84,22 +79,17 @@ extension Object {
     }
     
     
-//    func updateFieldsAndSave(newObject: Object, realm: Realm) {
-//        do {
-//            try realm.write {
-//                let fields = Mirror(reflecting: self).children.compactMap { $0.label }
-//                for field in fields {
-//                    if field != "id" {
-//                        let newValue = newObject.value(forKey: field)
-//                        self.setValue(newValue, forKey: field)
-//                    }
-//                }
-//                realm.add(self, update: .modified)
-//            }
-//        } catch {
-//            print("Error updating fields and saving object: \(error)")
-//        }
-//    }
+    func isRealmObjectValid() -> Bool {
+        return !self.isInvalidated
+    }
+    
+    func update(block: @escaping (Realm) -> Void) {
+        newRealm().safeWrite { r in
+            block(r)
+            r.invalidate()
+        }
+    }
+    
 }
 
 

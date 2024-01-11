@@ -186,7 +186,6 @@ struct CanvasEngine: View {
                 .position(using: gps, at: .topRight, offsetX: 150, offsetY: 0)
             }
             
-            
 //            FloatingEmojiView()
 //                .position(using: gps, at: .topLeft, offsetX: 200, offsetY: 0)
         }
@@ -211,8 +210,8 @@ struct CanvasEngine: View {
         }
         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
         .blur(radius: self.BEO.isLoading ? 10 : 0)
+        .background(Color.white.opacity(0.001))
         .gesture(self.BEO.gesturesAreLocked ? nil : dragAngleGestures.simultaneously(with: scaleGestures))
-        .background(Color.clear)
         .zIndex(0.0)
         .onAppear() {
             self.BEO.loadUser()
@@ -349,11 +348,5 @@ struct CanvasEngine: View {
         managedWindowsObject.safelyAddItem(key: caller, item: buddies)
     }
 }
-
-//struct LargeCanvasView2_Previews: PreviewProvider {
-//    static var previews: some View {
-//        CanvasEngine()
-//    }
-//}
 
 

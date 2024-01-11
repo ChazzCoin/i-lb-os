@@ -171,7 +171,7 @@ class FirebaseRoomService: ObservableObject {
             let tempRealm = newRealm()
             if let item = tempRealm.findByField(Room.self, field: "roomId", value: roomId) {
                 tempRealm.safeWrite { _ in
-                    item.status = "IN"
+                    item.status = status
                 }
                 firebaseDatabase { db in
                     db.child("rooms").child(roomId).setValue(item.toDict())

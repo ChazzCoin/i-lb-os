@@ -16,16 +16,16 @@ func fireGetReference(dbPath: DatabasePaths) -> DatabaseReference {
         .child(dbPath.rawValue)
 }
 
-func fireObserver(ref: DatabaseReference, completion: @escaping (DataSnapshot) -> Void) {
-    ref.observe(.value, with: { snapshot in
+func fireObserver(ref: DatabaseReference, completion: @escaping (DataSnapshot) -> Void) -> DatabaseHandle {
+    return ref.observe(.value, with: { snapshot in
         completion(snapshot)
     })
 }
 
 extension DatabaseReference {
     
-    func fireObserver(completion: @escaping (DataSnapshot) -> Void) {
-        self.observe(.value, with: { snapshot in
+    func fireObserver(completion: @escaping (DataSnapshot) -> Void) -> DatabaseHandle {
+        return self.observe(.value, with: { snapshot in
             completion(snapshot)
         })
     }
