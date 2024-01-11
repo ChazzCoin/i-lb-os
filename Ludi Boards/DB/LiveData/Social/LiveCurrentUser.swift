@@ -10,6 +10,38 @@ import SwiftUI
 import RealmSwift
 
 @propertyWrapper
+struct LiveUser: DynamicProperty {
+    @State var object: CurrentSolUser?=nil
+    
+    init() {
+        if let user = newRealm().findByField(CurrentSolUser.self, value: "SOL") {
+            self.object = user
+        }
+    }
+    
+    var wrappedValue: CurrentSolUser? {
+        get {
+            return self.object
+        }
+        set {
+            self.object = newValue
+        }
+    }
+    
+    var projectedValue: Binding<CurrentSolUser?> {
+        Binding<CurrentSolUser?>(
+            get: {
+                return self.object
+            },
+            set: { newValue in
+                // Handle updates if needed
+                print("LiveCurrentUser: newValue = [ \(String(describing: newValue)) ]")
+            }
+        )
+    }
+}
+
+@propertyWrapper
 struct LiveCurrentUser: DynamicProperty {
     let realmInstance: Realm = realm()
     @ObservedObject private var observer: RealmCurrentUserObserver = RealmCurrentUserObserver()

@@ -7,13 +7,20 @@
 
 import Foundation
 import SwiftUI
+import RealmSwift
 
 struct FriendsListView: View {
-    @LiveConnections(friends: true) var connections
-    @State var currentUserId = ""
+    
+    @ObservedResults(Connection.self) var connections
+    
+    var friends: Results<Connection> {
+        return self.connections.filter("status == %@", "Accepted")
+    }
+    
+    @State var currentUserId = getFirebaseUserId() ?? ""
     
     var body: some View {
-        List($connections, id: \.id) { $r in
+        List(friends) { r in
             if !r.isInvalidated {
                 NavigationLink(destination: BuddyProfileView(
                     solUserId: currentUserId == r.userOneId ? r.userTwoId : r.userOneId,
@@ -35,7 +42,7 @@ struct FriendsListView: View {
             
         }
         .refreshable {
-            _connections.refreshOnce()
+            
         }
         .onAppear() {
             if let uid = getFirebaseUserId() {
@@ -43,7 +50,7 @@ struct FriendsListView: View {
             }
         }
         .onDisappear() {
-            _connections.destroy()
+         
         }
     }
 }

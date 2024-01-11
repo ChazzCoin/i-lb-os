@@ -14,9 +14,15 @@ struct ProfileView: View {
     @State private var realmInstance = realm()
     
     @LiveCurrentUser var currentUser
-    @LiveStateObjects(SolUser.self) var solUsers
-    @LiveStateObjects(Connection.self) var solRequests
-    @LiveConnections(friends: true) var connections
+    @ObservedResults(SolUser.self) var solUsers
+    @ObservedResults(Connection.self) var connections
+    
+    var friends: Results<Connection> {
+        return self.connections.filter("status == %@", "Accepted")
+    }
+    var friendRequests: Results<Connection> {
+        return self.connections.filter("status == %@", "pending")
+    }
     
     @State private var aboutMe: String = "Just enjoying the world of coding and tech!"
     @State private var email: String = "email@example.com"
@@ -30,8 +36,6 @@ struct ProfileView: View {
     @State private var showChatButton = true
     @State private var showAddBuddyButton = true
     @State private var showShareActivityButton = true
-    
-    @State private var friends: [SolUser] = []
     
     var body: some View {
         LoadingForm() { runLoading in
@@ -123,10 +127,7 @@ struct ProfileView: View {
             loadUser()
         }
         .onDisappear() {
-            _solUsers.destroy()
-            _solRequests.destroy()
-            _connections.destroy()
-            _currentUser.destroy()
+            
         }
         .navigationBarTitle("Profile", displayMode: .inline)
         .sheet(isPresented: $showNewPlanSheet) {
@@ -142,15 +143,8 @@ struct ProfileView: View {
     }
     
     func loadUser() {
-        _connections.refreshOnce()
-        if let uId = getFirebaseUserId() {
-            _solRequests.startFirebaseObservation(block: { db in
-                return db
-                    .child("connections")
-                    .queryOrdered(byChild: "userTwoId")
-                    .queryEqual(toValue: uId)
-            })
-        }
+        FirebaseConnectionsService.refreshOnce()
+       
         print("Current User: \(String(describing: currentUser))")
     }
     

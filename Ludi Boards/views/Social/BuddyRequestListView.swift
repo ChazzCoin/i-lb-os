@@ -7,13 +7,18 @@
 
 import Foundation
 import SwiftUI
+import RealmSwift
 
 struct BuddyRequestListView: View {
-    @LiveConnections(requests: true) var connections
+    @ObservedResults(Connection.self) var connections
+    
+    var requests: Results<Connection> {
+        return self.connections.filter("status == %@", "pending")
+    }
     @State private var showingAddBuddyView = false
     
     var body: some View {
-        List($connections, id: \.id) { $r in
+        List(requests) { r in
             if r.userTwoId == getFirebaseUserId() {
                 NavigationLink(destination: BuddyProfileView(solUserId: r.userOneId, friendStatus: "pending")) { 
                     // Replace DestinationView with your desired destination view
@@ -32,7 +37,7 @@ struct BuddyRequestListView: View {
             
             }
         }.onDisappear() {
-            _connections.destroy()
+            
         }
     }
 }

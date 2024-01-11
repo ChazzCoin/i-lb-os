@@ -156,14 +156,23 @@ struct BoardEngine: View {
     var body: some View {
          ZStack() {
              
+             Text("under the bunk radio")
+                 .font(.system(size: 1000))
+                 .frame(maxWidth: .infinity)
+                 .position(CGPoint(x: 15000.0, y: -5000.0))
+             
              if self.BEO.boardRefreshFlag {
-                 
+                 MusicPlayerView()
+                     .frame(width: 500, height: 500)
+                     .scaleEffect(7.0)
+                     .background(Color.white)
+//                     .position()
              }
             
         }
         .frame(width: self.BEO.boardWidth, height: self.BEO.boardHeight)
         .background(
-            Color.red
+            UtbBgOne()
         )
         .onDrop(of: [.text], isTargeted: nil) { providers in
             providers.first?.loadObject(ofClass: NSString.self) { (droppedString, error) in

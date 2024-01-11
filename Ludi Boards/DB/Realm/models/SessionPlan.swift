@@ -8,21 +8,21 @@
 import Foundation
 import RealmSwift
 
-@objcMembers class SessionPlan: Object, Identifiable {
-    dynamic var id: String = UUID().uuidString
-    dynamic var dateCreated: String = getTimeStamp()
-    dynamic var dateUpdated: String = getTimeStamp()
-    dynamic var dateOf: String = getTimeStamp()
-    dynamic var timePeriod: String = "24/7"
-    dynamic var duration: String = "24/7"
-    dynamic var ageLevel: String = "Any Age?"
-    dynamic var title: String = "SOL Demo Plan"
-    dynamic var subTitle: String = "A Basic Session"
-    dynamic var objectiveDetails: String = "To show off SOL!"
-    dynamic var sessionDetails: String = "Add some details here!"
-    dynamic var ownerId: String = "temp"
-    dynamic var isHost: Bool = false
-    dynamic var isOpen: Bool = false
+class SessionPlan: Object, ObjectKeyIdentifiable {
+    @Persisted var id: String = UUID().uuidString
+    @Persisted var dateCreated: String = getTimeStamp()
+    @Persisted var dateUpdated: String = getTimeStamp()
+    @Persisted var dateOf: String = getTimeStamp()
+    @Persisted var timePeriod: String = "24/7"
+    @Persisted var duration: String = "24/7"
+    @Persisted var ageLevel: String = "Any Age?"
+    @Persisted var title: String = "SOL Demo Plan"
+    @Persisted var subTitle: String = "A Basic Session"
+    @Persisted var objectiveDetails: String = "To show off SOL!"
+    @Persisted var sessionDetails: String = "Add some details here!"
+    @Persisted var ownerId: String = "temp"
+    @Persisted var isHost: Bool = false
+    @Persisted var isOpen: Bool = false
     
     override static func primaryKey() -> String {
         return "id"

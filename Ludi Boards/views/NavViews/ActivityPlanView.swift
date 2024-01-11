@@ -38,7 +38,6 @@ struct ActivityPlanView: View {
     @State var showShareSheet = false
     
     @State var cancellables = Set<AnyCancellable>()
-    @State private var sessionNotificationToken: NotificationToken? = nil
 
     var body: some View {
         
@@ -266,7 +265,7 @@ struct ActivityPlanView: View {
         .onAppear {
             
             if self.boardId != "new" {
-                fetchSessionPlan()
+                fetchActivityPlan()
             }
             
             CodiChannel.SESSION_ON_ID_CHANGE.receive(on: RunLoop.main) { sc in
@@ -279,12 +278,12 @@ struct ActivityPlanView: View {
             }.store(in: &cancellables)
         }
         .onDisappear() {
-            self.sessionNotificationToken = nil
+            
         }
         .refreshable {
             if self.boardId != "new" {
                 startLoadingProcess()
-                fetchSessionPlan()
+                fetchActivityPlan()
             }
         }
         .sheet(isPresented: self.$showShareSheet) {
@@ -293,7 +292,7 @@ struct ActivityPlanView: View {
         .navigationBarTitle(isCurrentPlan ? "Current Activity" : "Activity Plan", displayMode: .inline)
     }
     
-    private func fetchSessionPlan() {
+    private func fetchActivityPlan() {
         if let ap = realmInstance.findByField(ActivityPlan.self, value: self.boardId) {
             self.activityPlan = ap
             self.boardId = ap.id

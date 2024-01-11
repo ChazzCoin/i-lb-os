@@ -25,7 +25,6 @@ class ActivityPlanService: ObservableObject {
         if !isLoggedIntoFirebase() { return }
         guard !isObserving else { return }
         self.activityId = activityId
-        enterRoom()
         observerHandle = reference.child(DatabasePaths.activityPlan.rawValue)
             .child(activityId).observe(.value, with: { snapshot in
                 print("New Activity Arriving...")
@@ -37,7 +36,6 @@ class ActivityPlanService: ObservableObject {
 
     func stopObserving() {
         guard isObserving, let handle = observerHandle else { return }
-        leaveRoom()
         reference.removeObserver(withHandle: handle)
         isObserving = false
         observerHandle = nil

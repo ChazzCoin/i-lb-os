@@ -13,28 +13,17 @@ struct BuddyProfileView: View {
     @State var solUserId: String
     @State var friendStatus: String
     @EnvironmentObject var BEO: BoardEngineObject
-    
-//    @StateObject var realmObserver = RealmObserver<CurrentSolUser>()
     @State private var realmInstance = realm()
     
-    @LiveSolUser var solUser
-//    @LiveStateObject(Connection.self) var solRequest
-//    @LiveStateObjects(Connection.self) var solRequests
-    
-    @State private var aboutMe: String = "Just enjoying the world of coding and tech!"
-    @State private var phoneNumber: String = "123-456-7890"
-    @State private var membershipType: Int = 0
-    @State private var accountCreationDate: String = "Jan 1, 2020"
-    @State private var visibility: String = "closed"
-    @State private var photoUrl: String = "default_image_url"
-    
+    @ObservedResults(SolUser.self) var users
+    var solUser: SolUser? {
+        return self.users.filter("userId == %@", self.solUserId).first
+    }
+        
     @State private var showNewPlanSheet = false
-    @State private var showChatButton = false
+//    @State private var showChatButton = false
     @State private var showAddBuddyButton = false
     @State private var showAcceptBuddyButton = false
-    @State private var showShareActivityButton = false
-    
-    @State private var friends: [SolUser] = []
     
     var body: some View {
     
@@ -110,9 +99,6 @@ struct BuddyProfileView: View {
             
         }
         .onDisappear() {
-            _solUser.destroy()
-//            _solRequest.destroy()
-//            _solRequests.destroy()
         }
         .navigationBarTitle("Profile", displayMode: .inline)
         .sheet(isPresented: $showNewPlanSheet) {
@@ -128,18 +114,7 @@ struct BuddyProfileView: View {
     }
     
     func loadUser() {
-        _solUser.loadByUserId(id: self.solUserId)
-//        _solUser.startFirebaseObservation() { db in
-//            return db.child("users").child(self.solUserId)
-//        }
         print("Sol Buddy: [ \(String(describing: solUser)) ]")
-//        _solRequest.load(field: "userOneId", value: self.solUserId)
-//        _solRequest.startFirebaseObservation() { db in
-//            return db
-//                .child("connections")
-//                .queryOrdered(byChild: "userOneId")
-//                .queryEqual(toValue: self.solUserId)
-//        }
     }
     
     private func profileInfoRow(title: String, value: String) -> some View {

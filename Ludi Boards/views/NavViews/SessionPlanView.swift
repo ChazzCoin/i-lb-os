@@ -19,7 +19,12 @@ struct SessionPlanView: View {
     @State private var description = ""
     @State private var objective = ""
     @State private var isOpen = true
-    @State private var activities: [ActivityPlan] = []
+    
+    @ObservedResults(ActivityPlan.self) var allActivities
+    var activities: Results<ActivityPlan> {
+        return self.allActivities.filter("sessionId == %@", self.sessionId)
+    }
+    
     @State private var showNewActivity = false
     @State private var showShareSheet = false
     
@@ -70,7 +75,7 @@ struct SessionPlanView: View {
             }
 
             Section(header: Text("Activities")) {    
-                ActivityPlanListView(activityPlans: $activities).environmentObject(self.BEO)
+                ActivityPlanListView(sessionId: self.sessionId).environmentObject(self.BEO)
                 
                 if self.sessionId != "new" {
                     solButton(title: "New Activity", action: {
@@ -256,14 +261,14 @@ struct SessionPlanView: View {
                 self.BEO.isShared = true
             }
         }
-        if let acts = realmInstance.findAllByField(ActivityPlan.self, field: "sessionId", value: self.sessionId) {
-            if acts.isEmpty {return}
-            var temp: [ActivityPlan] = []
-            for i in acts {
-                temp.append(i)
-            }
-            activities = temp
-        }
+//        if let acts = realmInstance.findAllByField(ActivityPlan.self, field: "sessionId", value: self.sessionId) {
+//            if acts.isEmpty {return}
+//            var temp: [ActivityPlan] = []
+//            for i in acts {
+//                temp.append(i)
+//            }
+//            activities = temp
+//        }
     }
     
 

@@ -91,26 +91,25 @@ struct CanvasEngine: View {
             }
     }
     
-    @State var menuIsOpen = false
     
     var body: some View {
         
         GlobalPositioningZStack { geo, gps in
                         
-           
+//            MusicPlayerView()
+//                .frame(width: 500, height: 500)
+//                .background(Color.white)
+//                .position(gps.getCoordinate(for: .center))
             
         }
         .zIndex(3.0)
         
         ZStack() {
-            
             // Board/Canvas Level
             ZStack() {
-                DrawGridLines().zIndex(1.0)
                 BoardEngine()
                     .zIndex(2.0)
                     .environmentObject(self.BEO)
-                
             }
             .frame(width: 20000, height: 20000)
             .offset(x: self.BEO.canvasOffset.x, y: self.BEO.canvasOffset.y)
@@ -120,12 +119,11 @@ struct CanvasEngine: View {
             
         }
         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-        .blur(radius: self.BEO.isLoading ? 10 : 0)
+        .background(Color.white.opacity(0.001))
         .gesture(self.BEO.gesturesAreLocked ? nil : dragAngleGestures.simultaneously(with: scaleGestures))
-        .background(Color.clear)
         .zIndex(0.0)
         .onAppear() {
-
+            
         }
         
     }

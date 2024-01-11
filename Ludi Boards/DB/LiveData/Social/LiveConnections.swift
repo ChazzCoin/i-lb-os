@@ -13,7 +13,7 @@ import FirebaseDatabase
 @propertyWrapper
 struct LiveConnections: DynamicProperty {
     @ObservedObject private var observer: RealmObserver
-    @ObservedObject private var firebaseObserver = FirebaseObserver()
+    @ObservedObject private var firebaseObserver = FirebaseConnectionsService()
     @State var objects: Results<Connection>? = nil
     private var realmInstance: Realm
     var filterFriendsOnly = false
@@ -95,34 +95,7 @@ struct LiveConnections: DynamicProperty {
         firebaseObserver.stopObserving()
     }
     
-    func refreshOnce() {
-        if let uId = getFirebaseUserId() {
-            firebaseObserver
-                .reference
-                .queryOrdered(byChild: "userTwoId")
-                .queryEqual(toValue: uId)
-                .observeSingleEvent(of: .value) { snapshot in
-                    if snapshot.exists() {
-                        let objs = snapshot.toLudiObjects(Connection.self, realm: self.realmInstance)
-                        print("Refreshed LiveConnections: \(String(describing: objs))")
-                    } else {
-                        print("LiveConnections: Nothing Found")
-                    }
-                }
-            firebaseObserver
-                .reference
-                .queryOrdered(byChild: "userOneId")
-                .queryEqual(toValue: uId)
-                .observeSingleEvent(of: .value) { snapshot in
-                    if snapshot.exists() {
-                        let objs = snapshot.toLudiObjects(Connection.self, realm: self.realmInstance)
-                        print("Refreshed LiveConnections: \(String(describing: objs))")
-                    } else {
-                        print("LiveConnections: Nothing Found")
-                    }
-                }
-        }
-    }
+    
 
     private class RealmObserver: ObservableObject {
         @Published var objects: Results<Connection>? = nil
@@ -200,49 +173,87 @@ struct LiveConnections: DynamicProperty {
         }
     }
     
-    private class FirebaseObserver: ObservableObject {
-        private var firebaseSubscription: DatabaseHandle?
-        @Published var isObserving = false
-        private var query: DatabaseQuery? = nil
-        private var ref: DatabaseReference? = nil
-        
-        @Published var reference: DatabaseReference = Database
-            .database()
-            .reference()
-            .child("connections")
+    
 
-        func startObserving(query: DatabaseQuery, realmInstance: Realm) {
-            if !isLoggedIntoFirebase() { return }
-            guard !isObserving else { return }
-            self.query = query
-            firebaseSubscription = query.observe(.value, with: { snapshot in
-                let _ = snapshot.toLudiObjects(Connection.self, realm: realmInstance)
-            })
-            isObserving = true
-        }
-        func startObserving(query: DatabaseReference, realmInstance: Realm) {
-            if !isLoggedIntoFirebase() { return }
-            guard !isObserving else { return }
-            self.ref = query
-            firebaseSubscription = query.observe(.value, with: { snapshot in
-                let _ = snapshot.toLudiObjects(Connection.self, realm: realmInstance)
-            })
-            isObserving = true
-        }
+}
 
-        func stopObserving() {
-            if let subscription = firebaseSubscription {
-                query?.removeObserver(withHandle: subscription)
-                ref?.removeObserver(withHandle: subscription)
-                reference.removeObserver(withHandle: subscription)
-                firebaseSubscription = nil
-            }
-            isObserving = false
-        }
-        
-        deinit {
-            stopObserving()
-        }
+class FirebaseConnectionsService: ObservableObject {
+    private var firebaseSubscription: DatabaseHandle?
+    @Published var isObserving = false
+    private var query: DatabaseQuery? = nil
+    private var ref: DatabaseReference? = nil
+    
+    @Published var reference: DatabaseReference = Database
+        .database()
+        .reference()
+        .child("connections")
+
+    func startObserving(query: DatabaseQuery, realmInstance: Realm) {
+        if !isLoggedIntoFirebase() { return }
+        guard !isObserving else { return }
+        self.query = query
+        firebaseSubscription = query.observe(.value, with: { snapshot in
+            let _ = snapshot.toLudiObjects(Connection.self, realm: realmInstance)
+        })
+        isObserving = true
+    }
+    func startObserving(query: DatabaseReference, realmInstance: Realm) {
+        if !isLoggedIntoFirebase() { return }
+        guard !isObserving else { return }
+        self.ref = query
+        firebaseSubscription = query.observe(.value, with: { snapshot in
+            let _ = snapshot.toLudiObjects(Connection.self, realm: realmInstance)
+        })
+        isObserving = true
     }
 
+    func stopObserving() {
+        if let subscription = firebaseSubscription {
+            query?.removeObserver(withHandle: subscription)
+            ref?.removeObserver(withHandle: subscription)
+            reference.removeObserver(withHandle: subscription)
+            firebaseSubscription = nil
+        }
+        isObserving = false
+    }
+    
+    deinit {
+        stopObserving()
+    }
+    
+    static func refreshOnce() {
+        if let uId = getFirebaseUserId() {
+            
+            firebaseDatabase(safeFlag: true) { db in
+                db.child("connections")
+                    .queryOrdered(byChild: "userTwoId")
+                    .queryEqual(toValue: uId)
+                    .observeSingleEvent(of: .value) { snapshot  in
+                        if snapshot.exists() {
+                            let objs = snapshot.toLudiObjects(Connection.self, realm: newRealm())
+                            print("Refreshed LiveConnections: \(String(describing: objs))")
+                        } else {
+                            print("LiveConnections: Nothing Found")
+                        }
+                    }
+                
+            }
+            firebaseDatabase(safeFlag: true) { db in
+                db.child("connections")
+                    .queryOrdered(byChild: "userOneId")
+                    .queryEqual(toValue: uId)
+                    .observeSingleEvent(of: .value) { snapshot in
+                        if snapshot.exists() {
+                            let objs = snapshot.toLudiObjects(Connection.self, realm: newRealm())
+                            print("Refreshed LiveConnections: \(String(describing: objs))")
+                        } else {
+                            print("LiveConnections: Nothing Found")
+                        }
+                    }
+            }
+                
+        }
+    }
+    
+    
 }

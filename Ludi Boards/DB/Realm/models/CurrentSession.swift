@@ -10,44 +10,44 @@ import RealmSwift
 
 let CURRENT_USER_ID = "SOL"
 
-@objcMembers class CurrentSolUser: Object, Identifiable {
-    dynamic var id: String = CURRENT_USER_ID
-    dynamic var userId: String = UUID().uuidString
-    dynamic var userName: String = ""
-    dynamic var email: String = ""
-    dynamic var imgUrl: String = ""
-    dynamic var dateCreated: String = getTimeStamp()
-    dynamic var dateUpdated: String = getTimeStamp()
-    dynamic var sessionId: String = ""
-    dynamic var activityId: String = ""
-    dynamic var membership: Int = 0
-    dynamic var isLoggedIn: Bool = false
-    dynamic var hasInternet: Bool = true
-    dynamic var isOpen: Bool = false
-    dynamic var isLive: Bool = false
-    dynamic var status: Bool = false
+class CurrentSolUser: Object, ObjectKeyIdentifiable {
+    @Persisted var id: String = CURRENT_USER_ID
+    @Persisted var userId: String = UUID().uuidString
+    @Persisted var userName: String = ""
+    @Persisted var email: String = ""
+    @Persisted var imgUrl: String = ""
+    @Persisted var dateCreated: String = getTimeStamp()
+    @Persisted var dateUpdated: String = getTimeStamp()
+    @Persisted var sessionId: String = ""
+    @Persisted var activityId: String = ""
+    @Persisted var membership: Int = 0
+    @Persisted var isLoggedIn: Bool = false
+    @Persisted var hasInternet: Bool = true
+    @Persisted var isOpen: Bool = false
+    @Persisted var isLive: Bool = false
+    @Persisted var status: Bool = false
 
     override static func primaryKey() -> String {
         return "id"
     }
 }
 
-@objcMembers class SolUser: Object, Identifiable {
-    dynamic var id: String = CURRENT_USER_ID
-    dynamic var userId: String = UUID().uuidString
-    dynamic var userName: String = ""
-    dynamic var email: String = ""
-    dynamic var imgUrl: String = ""
-    dynamic var dateCreated: String = getTimeStamp()
-    dynamic var dateUpdated: String = getTimeStamp()
-    dynamic var sessionId: String = ""
-    dynamic var activityId: String = ""
-    dynamic var membership: Int = 0
-    dynamic var isLoggedIn: Bool = false
-    dynamic var hasInternet: Bool = true
-    dynamic var isOpen: Bool = false
-    dynamic var isLive: Bool = false
-    dynamic var status: Bool = false
+class SolUser: Object, ObjectKeyIdentifiable {
+    @Persisted var id: String = CURRENT_USER_ID
+    @Persisted var userId: String = UUID().uuidString
+    @Persisted var userName: String = ""
+    @Persisted var email: String = ""
+    @Persisted var imgUrl: String = ""
+    @Persisted var dateCreated: String = getTimeStamp()
+    @Persisted var dateUpdated: String = getTimeStamp()
+    @Persisted var sessionId: String = ""
+    @Persisted var activityId: String = ""
+    @Persisted var membership: Int = 0
+    @Persisted var isLoggedIn: Bool = false
+    @Persisted var hasInternet: Bool = true
+    @Persisted var isOpen: Bool = false
+    @Persisted var isLive: Bool = false
+    @Persisted var status: Bool = false
 
     override static func primaryKey() -> String {
         return "userId"

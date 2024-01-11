@@ -46,7 +46,6 @@
 		FB58A1B42B17D1420024B9A2 /* ToolBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58A1B32B17D1420024B9A2 /* ToolBarView.swift */; };
 		FB58A1B62B1804C80024B9A2 /* FlashingLight.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58A1B52B1804C80024B9A2 /* FlashingLight.swift */; };
 		FB58E8762B01F3D200FD9E2E /* FireParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58E8752B01F3D200FD9E2E /* FireParser.swift */; };
-		FB58E8782B01F40300FD9E2E /* FireCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58E8772B01F40300FD9E2E /* FireCore.swift */; };
 		FB58E87E2B02B21700FD9E2E /* CoreMods.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58E87D2B02B21700FD9E2E /* CoreMods.swift */; };
 		FB58E8802B02B26C00FD9E2E /* DragAndDrop.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58E87F2B02B26C00FD9E2E /* DragAndDrop.swift */; };
 		FB58E8822B030F1D00FD9E2E /* RealmFind.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58E8812B030F1D00FD9E2E /* RealmFind.swift */; };
@@ -171,6 +170,16 @@
 		FBDE4F592B4D0C12007FE880 /* SessionPlanService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDE4F582B4D0C12007FE880 /* SessionPlanService.swift */; };
 		FBDE4F5B2B4D1038007FE880 /* InternetProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDE4F5A2B4D1038007FE880 /* InternetProvider.swift */; };
 		FBDE4F5D2B4E2345007FE880 /* LiveRooms.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDE4F5C2B4E2345007FE880 /* LiveRooms.swift */; };
+		FBDE4F5F2B4F722D007FE880 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FBDE4F5E2B4F722D007FE880 /* GoogleService-Info.plist */; };
+		FBDE4F612B4F734C007FE880 /* MediaPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDE4F602B4F734C007FE880 /* MediaPlayerView.swift */; };
+		FBDE4F632B4F73C2007FE880 /* Song.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDE4F622B4F73C2007FE880 /* Song.swift */; };
+		FBDE4F652B4F75B4007FE880 /* DocumentPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDE4F642B4F75B4007FE880 /* DocumentPickerView.swift */; };
+		FBDE4F662B4F7724007FE880 /* FireCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58E8772B01F40300FD9E2E /* FireCore.swift */; };
+		FBDE4F682B4F7736007FE880 /* FireData.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDE4F672B4F7736007FE880 /* FireData.swift */; };
+		FBDE4F6A2B4F773A007FE880 /* FireCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDE4F692B4F7739007FE880 /* FireCore.swift */; };
+		FBDE4F6C2B4F846C007FE880 /* FireParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDE4F6B2B4F846C007FE880 /* FireParser.swift */; };
+		FBDE4F6E2B4F9D28007FE880 /* UtbBgOne.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDE4F6D2B4F9D28007FE880 /* UtbBgOne.swift */; };
+		FBDE4F702B4FA831007FE880 /* RecordShapeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDE4F6F2B4FA831007FE880 /* RecordShapeView.swift */; };
 		FBDF0DC52B21811000FADE44 /* SharedSessionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDF0DC42B21811000FADE44 /* SharedSessionsView.swift */; };
 		FBDF0DC72B224D2600FADE44 /* ActivityPlanService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDF0DC62B224D2600FADE44 /* ActivityPlanService.swift */; };
 		FBDF0DC92B224EB500FADE44 /* ManagedViewsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDF0DC82B224EB500FADE44 /* ManagedViewsService.swift */; };
@@ -314,6 +323,15 @@
 		FBDE4F582B4D0C12007FE880 /* SessionPlanService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionPlanService.swift; sourceTree = "<group>"; };
 		FBDE4F5A2B4D1038007FE880 /* InternetProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InternetProvider.swift; sourceTree = "<group>"; };
 		FBDE4F5C2B4E2345007FE880 /* LiveRooms.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveRooms.swift; sourceTree = "<group>"; };
+		FBDE4F5E2B4F722D007FE880 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		FBDE4F602B4F734C007FE880 /* MediaPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaPlayerView.swift; sourceTree = "<group>"; };
+		FBDE4F622B4F73C2007FE880 /* Song.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Song.swift; sourceTree = "<group>"; };
+		FBDE4F642B4F75B4007FE880 /* DocumentPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentPickerView.swift; sourceTree = "<group>"; };
+		FBDE4F672B4F7736007FE880 /* FireData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireData.swift; sourceTree = "<group>"; };
+		FBDE4F692B4F7739007FE880 /* FireCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireCore.swift; sourceTree = "<group>"; };
+		FBDE4F6B2B4F846C007FE880 /* FireParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireParser.swift; sourceTree = "<group>"; };
+		FBDE4F6D2B4F9D28007FE880 /* UtbBgOne.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UtbBgOne.swift; sourceTree = "<group>"; };
+		FBDE4F6F2B4FA831007FE880 /* RecordShapeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordShapeView.swift; sourceTree = "<group>"; };
 		FBDF0DC42B21811000FADE44 /* SharedSessionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedSessionsView.swift; sourceTree = "<group>"; };
 		FBDF0DC62B224D2600FADE44 /* ActivityPlanService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityPlanService.swift; sourceTree = "<group>"; };
 		FBDF0DC82B224EB500FADE44 /* ManagedViewsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedViewsService.swift; sourceTree = "<group>"; };
@@ -440,6 +458,7 @@
 				FB58A1B32B17D1420024B9A2 /* ToolBarView.swift */,
 				FBBAD3BD2B1FBF58004A4332 /* NavPad.swift */,
 				FBABDAC62B20456700321A00 /* ToolBarSettings.swift */,
+				FB881A412B48C36400C16198 /* ProfileView.swift */,
 			);
 			path = NavViews;
 			sourceTree = "<group>";
@@ -512,6 +531,10 @@
 		FB829F082B36A83300FAC6E0 /* Wrlds */ = {
 			isa = PBXGroup;
 			children = (
+				FBDE4F6B2B4F846C007FE880 /* FireParser.swift */,
+				FBDE4F672B4F7736007FE880 /* FireData.swift */,
+				FB58E8772B01F40300FD9E2E /* FireCore.swift */,
+				FBDE4F5E2B4F722D007FE880 /* GoogleService-Info.plist */,
 				FB8819FF2B464D9700C16198 /* TimeProvider.swift */,
 				FB8819E12B464CA100C16198 /* Realm */,
 				FB8819DF2B464B2200C16198 /* GlobalPositioning.swift */,
@@ -522,6 +545,10 @@
 				FB829F0B2B36A83300FAC6E0 /* ContentView.swift */,
 				FB829F0D2B36A83400FAC6E0 /* Assets.xcassets */,
 				FB829F0F2B36A83400FAC6E0 /* Preview Content */,
+				FBDE4F602B4F734C007FE880 /* MediaPlayerView.swift */,
+				FBDE4F642B4F75B4007FE880 /* DocumentPickerView.swift */,
+				FBDE4F6D2B4F9D28007FE880 /* UtbBgOne.swift */,
+				FBDE4F6F2B4FA831007FE880 /* RecordShapeView.swift */,
 			);
 			path = Wrlds;
 			sourceTree = "<group>";
@@ -564,6 +591,7 @@
 		FB8819E52B464CA200C16198 /* models */ = {
 			isa = PBXGroup;
 			children = (
+				FBDE4F622B4F73C2007FE880 /* Song.swift */,
 				FB8819E72B464CA200C16198 /* CurrentSession.swift */,
 				FB8819EC2B464CA200C16198 /* ManagedViewAction.swift */,
 				FB8819ED2B464CA200C16198 /* UserToActivity.swift */,
@@ -659,9 +687,9 @@
 		FBD9AFBE2B008167005F8620 /* Firebase */ = {
 			isa = PBXGroup;
 			children = (
+				FBDE4F692B4F7739007FE880 /* FireCore.swift */,
 				FB9F1DD82B1533C400FD9078 /* FirebaseLogin.swift */,
 				FB58E8752B01F3D200FD9E2E /* FireParser.swift */,
-				FB58E8772B01F40300FD9E2E /* FireCore.swift */,
 				FB93BB1A2B03471C00864CB2 /* FireData.swift */,
 				FBDF0DC62B224D2600FADE44 /* ActivityPlanService.swift */,
 				FBDE4F582B4D0C12007FE880 /* SessionPlanService.swift */,
@@ -736,7 +764,6 @@
 			isa = PBXGroup;
 			children = (
 				FB3E02C02B0C9A6D00D8558C /* BuddyProfileView.swift */,
-				FB881A412B48C36400C16198 /* ProfileView.swift */,
 				FB3E02BE2B0C948A00D8558C /* AddBuddyView.swift */,
 				FB3E02BC2B0C90E600D8558C /* BuddyListView.swift */,
 				FBDF0DC42B21811000FADE44 /* SharedSessionsView.swift */,
@@ -933,6 +960,7 @@
 			files = (
 				FB829F112B36A83400FAC6E0 /* Preview Assets.xcassets in Resources */,
 				FB829F0E2B36A83400FAC6E0 /* Assets.xcassets in Resources */,
+				FBDE4F5F2B4F722D007FE880 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -956,12 +984,17 @@
 				FB8819E02B464B2300C16198 /* GlobalPositioning.swift in Sources */,
 				FB8819F12B464CA200C16198 /* RealmInstance.swift in Sources */,
 				FB8819D52B464A9B00C16198 /* GridLines.swift in Sources */,
+				FBDE4F682B4F7736007FE880 /* FireData.swift in Sources */,
 				FB8819F22B464CA200C16198 /* SessionPlan.swift in Sources */,
+				FBDE4F702B4FA831007FE880 /* RecordShapeView.swift in Sources */,
 				FB8819F92B464CA200C16198 /* RealmChangeListener.swift in Sources */,
 				FB8819FC2B464CA200C16198 /* BoardSession.swift in Sources */,
 				FB881A002B464D9700C16198 /* TimeProvider.swift in Sources */,
 				FB8819FB2B464CA200C16198 /* Stopwatch.swift in Sources */,
+				FBDE4F6C2B4F846C007FE880 /* FireParser.swift in Sources */,
+				FBDE4F612B4F734C007FE880 /* MediaPlayerView.swift in Sources */,
 				FB829F0C2B36A83300FAC6E0 /* ContentView.swift in Sources */,
+				FBDE4F632B4F73C2007FE880 /* Song.swift in Sources */,
 				FB8819D32B4649CC00C16198 /* BoardEngineView.swift in Sources */,
 				FB8819F42B464CA200C16198 /* CurrentSession.swift in Sources */,
 				FB829F0A2B36A83300FAC6E0 /* WrldsApp.swift in Sources */,
@@ -969,11 +1002,14 @@
 				FB8819FE2B464CA200C16198 /* ManagedViewAction.swift in Sources */,
 				FB8819F82B464CA200C16198 /* Chat.swift in Sources */,
 				FB8819D12B46436300C16198 /* CanvasEngine.swift in Sources */,
+				FBDE4F662B4F7724007FE880 /* FireCore.swift in Sources */,
 				FB8819F72B464CA200C16198 /* ManagedView.swift in Sources */,
+				FBDE4F652B4F75B4007FE880 /* DocumentPickerView.swift in Sources */,
 				FB8819F62B464CA200C16198 /* Buddy.swift in Sources */,
 				FB8819FD2B464CA200C16198 /* ActivityPlan.swift in Sources */,
 				FB8819FA2B464CA200C16198 /* UserToActivity.swift in Sources */,
 				FB8819F52B464CA200C16198 /* User.swift in Sources */,
+				FBDE4F6E2B4F9D28007FE880 /* UtbBgOne.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1024,7 +1060,6 @@
 				FBBAD3BC2B1F8ECC004A4332 /* Timer.swift in Sources */,
 				FBD9AFC22B0081C1005F8620 /* RealmInstance.swift in Sources */,
 				FB48409C2B1EBE8B0003377A /* StopWatch.swift in Sources */,
-				FB58E8782B01F40300FD9E2E /* FireCore.swift in Sources */,
 				FB3E02B52B0C6B6000D8558C /* ActivityPlanView.swift in Sources */,
 				FBDE4F572B4CF883007FE880 /* LogoutObserver.swift in Sources */,
 				FBE2C6222B1B1490004C0116 /* RealmChangeListener.swift in Sources */,
@@ -1070,6 +1105,7 @@
 				FBE2C61A2B1AF7D5004C0116 /* FootballFieldView.swift in Sources */,
 				FBEBEF962B49506800B8BA32 /* LiveChat.swift in Sources */,
 				FBD9AFD52B008F6F005F8620 /* Channels.swift in Sources */,
+				FBDE4F6A2B4F773A007FE880 /* FireCore.swift in Sources */,
 				FB982F912B19D1B900C0DA03 /* FirebaseService.swift in Sources */,
 				FB829F192B3D540100FAC6E0 /* ManagedWindowObjects.swift in Sources */,
 				FB3E02BF2B0C948A00D8558C /* AddBuddyView.swift in Sources */,
@@ -1111,6 +1147,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Wrlds;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -1142,6 +1179,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Wrlds;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -1153,7 +1191,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = io.ludi.Wrlds;
+				PRODUCT_BUNDLE_IDENTIFIER = io.rpgs.wthn;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;

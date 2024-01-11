@@ -8,16 +8,16 @@
 import Foundation
 import RealmSwift
 
-class UserToSession: Object {
-    @objc dynamic var id: String = UUID().uuidString
-    @objc dynamic var sessionId: String = "null"
-    @objc dynamic var hostId: String = "null"
-    @objc dynamic var hostUserName: String = "null"
-    @objc dynamic var guestId: String = "null"
-    @objc dynamic var guestUserName: String = "null"
-    @objc dynamic var status: String = "pending"
-    @objc dynamic var isConnected: Bool = false
-    @objc dynamic var authLevel: String = "guest"
+class UserToSession: Object, ObjectKeyIdentifiable {
+    @Persisted var id: String = UUID().uuidString
+    @Persisted var sessionId: String = "null"
+    @Persisted var hostId: String = "null"
+    @Persisted var hostUserName: String = "null"
+    @Persisted var guestId: String = "null"
+    @Persisted var guestUserName: String = "null"
+    @Persisted var status: String = "pending"
+    @Persisted var isConnected: Bool = false
+    @Persisted var authLevel: String = "guest"
 
     override static func primaryKey() -> String? {
         return "id"
