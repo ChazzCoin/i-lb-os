@@ -82,7 +82,7 @@ struct LiveRooms: DynamicProperty {
             self.objects = self.realmInstance.objects(Room.self).filter("roomId == %@ AND status == %@", roomId, "IN")
             self.notificationToken = self.objects?.observe { [weak self] (changes: RealmCollectionChange) in
                 guard let self = self else { return }
-                if !isLoggedIntoFirebase() {
+                if !userIsVerifiedToProceed() {
                     destroy()
                     return
                 }
@@ -132,7 +132,7 @@ enum RoomStatus {
 class FirebaseRoomService: ObservableObject {
     private var firebaseSubscription: DatabaseHandle?
     @Published var isObserving = false
-    private var query: DatabaseQuery? = nil
+    @Published var rooms: [Room] = []
     private var ref: DatabaseReference? = nil
     
     @Published var reference: DatabaseReference = Database
@@ -141,17 +141,23 @@ class FirebaseRoomService: ObservableObject {
         .child("rooms")
 
     func startObserving(roomId: String, realmInstance: Realm) {
-        if !isLoggedIntoFirebase() { return }
+        if !userIsVerifiedToProceed() { return }
         guard !isObserving else { return }
         firebaseSubscription = self.reference.child(roomId).observe(.value, with: { snapshot in
-            let _ = snapshot.toLudiObjects(Room.self, realm: realmInstance)
+            var tempRooms: [Room] = []
+            if let results = snapshot.toLudiObjects(Room.self, realm: realmInstance) {
+                for item in results {
+                    if item.roomId != roomId || item.status == "OUT" {continue}
+                    tempRooms.append(item)
+                }
+                self.rooms = tempRooms
+            }
         })
         isObserving = true
     }
 
     func stopObserving() {
         if let subscription = firebaseSubscription {
-            query?.removeObserver(withHandle: subscription)
             ref?.removeObserver(withHandle: subscription)
             reference.removeObserver(withHandle: subscription)
             firebaseSubscription = nil
@@ -165,8 +171,12 @@ class FirebaseRoomService: ObservableObject {
     static func leaveRoom(roomId:String) {
         toggleRoomStatus(roomId: roomId, status: "OUT")
     }
+    static func awayRoom(roomId:String) {
+        toggleRoomStatus(roomId: roomId, status: "AWAY")
+    }
     
     static func toggleRoomStatus(roomId:String, status:String) {
+        if roomId == "SOL" || roomId.isEmpty { return }
         safeFirebaseUserId { uid in
             let tempRealm = newRealm()
             if let item = tempRealm.findByField(Room.self, field: "roomId", value: roomId) {
@@ -174,7 +184,7 @@ class FirebaseRoomService: ObservableObject {
                     item.status = status
                 }
                 firebaseDatabase { db in
-                    db.child("rooms").child(roomId).setValue(item.toDict())
+                    db.child("rooms").child(roomId).child(item.id).setValue(item.toDict())
                 }
                 return
             }
@@ -187,18 +197,12 @@ class FirebaseRoomService: ObservableObject {
                 r.create(Room.self, value: roomPresence, update: .all)
             }
             firebaseDatabase { db in
-                db.child("rooms").child(roomId).setValue(roomPresence.toDict())
+                db.child("rooms").child(roomId).child(roomPresence.id).setValue(roomPresence.toDict())
             }
             
         }
         
     }
-    
-    static func leaveRoom() {
-        
-    }
-    
-    
     
     deinit {
         stopObserving()

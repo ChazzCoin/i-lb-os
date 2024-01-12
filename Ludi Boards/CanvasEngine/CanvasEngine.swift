@@ -201,18 +201,18 @@ struct CanvasEngine: View {
                     .environmentObject(self.BEO)
                 
             }
+            .zIndex(1.0)
             .frame(width: 20000, height: 20000)
             .offset(x: self.BEO.canvasOffset.x, y: self.BEO.canvasOffset.y)
             .scaleEffect(self.BEO.canvasScale)
             .rotationEffect(Angle(degrees: self.BEO.canvasRotation))
-            .zIndex(1.0)
             
         }
+        .zIndex(0.0)
         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
         .blur(radius: self.BEO.isLoading ? 10 : 0)
         .background(Color.white.opacity(0.001))
         .gesture(self.BEO.gesturesAreLocked ? nil : dragAngleGestures.simultaneously(with: scaleGestures))
-        .zIndex(0.0)
         .onAppear() {
             self.BEO.loadUser()
             

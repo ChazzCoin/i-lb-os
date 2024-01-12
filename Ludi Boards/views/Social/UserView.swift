@@ -116,8 +116,9 @@ struct UserView: View {
                 self.realmInstance.create(UserToSession.self, value: request, update: .all)
             }
             
+            request.fireSave(id: request.id)
             firebaseDatabase { db in
-                db.child("userToActivity").child(request.id).setValue(request.toDict())
+                db.child(DatabasePaths.userToActivity.rawValue).child(request.id).setValue(request.toDict())
             }
             sharedIconImage = "checkmark.circle.fill"
         })
@@ -135,9 +136,11 @@ struct UserView: View {
                 self.realmInstance.create(UserToSession.self, value: request, update: .all)
             }
             
-            firebaseDatabase { db in
-                db.child("connections").child(request.id).setValue(request.toDict())
-            }
+            request.fireSave(id: request.id)
+            
+//            firebaseDatabase { db in
+//                db.child(DatabasePaths.connections.rawValue).child(request.id).setValue(request.toDict())
+//            }
             friendIconImage = "hourglass"
         })
     }

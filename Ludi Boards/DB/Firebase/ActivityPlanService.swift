@@ -22,7 +22,7 @@ class ActivityPlanService: ObservableObject {
     }
 
     func startObserving(activityId: String) {
-        if !isLoggedIntoFirebase() { return }
+        if !userIsVerifiedToProceed() { return }
         guard !isObserving else { return }
         self.activityId = activityId
         observerHandle = reference.child(DatabasePaths.activityPlan.rawValue)
@@ -41,13 +41,13 @@ class ActivityPlanService: ObservableObject {
         observerHandle = nil
     }
     
-    func enterRoom() {
-        FirebaseRoomService.enterRoom(roomId: self.activityId)
-    }
-    
-    func leaveRoom() {
-        FirebaseRoomService.leaveRoom(roomId: self.activityId)
-    }
+//    func enterRoom() {
+//        FirebaseRoomService.enterRoom(roomId: self.activityId)
+//    }
+//    
+//    func leaveRoom() {
+//        FirebaseRoomService.leaveRoom(roomId: self.activityId)
+//    }
     
     deinit {
         stopObserving()

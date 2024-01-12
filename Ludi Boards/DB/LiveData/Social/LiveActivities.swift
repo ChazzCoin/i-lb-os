@@ -148,7 +148,7 @@ struct LiveActivityPlans: DynamicProperty {
             .child(DatabasePaths.activityPlan.rawValue)
 
         func startObserving(query: DatabaseQuery, realmInstance: Realm) {
-            if !isLoggedIntoFirebase() { return }
+            if !userIsVerifiedToProceed() { return }
             guard !isObserving else { return }
             self.query = query
             firebaseSubscription = query.observe(.value, with: { snapshot in
@@ -157,7 +157,7 @@ struct LiveActivityPlans: DynamicProperty {
             isObserving = true
         }
         func startObserving(query: DatabaseReference, realmInstance: Realm) {
-            if !isLoggedIntoFirebase() { return }
+            if !userIsVerifiedToProceed() { return }
             guard !isObserving else { return }
             self.ref = query
             firebaseSubscription = query.observe(.value, with: { snapshot in

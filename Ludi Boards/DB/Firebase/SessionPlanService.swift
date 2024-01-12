@@ -20,7 +20,7 @@ class SessionPlanService: ObservableObject {
     }
 
     func startObserving(sessionId: String) {
-        if !isLoggedIntoFirebase() { return }
+        if !userIsVerifiedToProceed() { return }
         guard !isObserving else { return }
         observerHandle = reference.child(DatabasePaths.sessionPlan.rawValue)
             .child(sessionId).observe(.value, with: { snapshot in

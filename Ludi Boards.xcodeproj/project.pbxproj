@@ -26,7 +26,7 @@
 		FB3E02B72B0C70D100D8558C /* InputField.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02B62B0C70D100D8558C /* InputField.swift */; };
 		FB3E02B92B0C724A00D8558C /* BoardBgProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02B82B0C724A00D8558C /* BoardBgProvider.swift */; };
 		FB3E02BB2B0C90D700D8558C /* Buddy.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02BA2B0C90D700D8558C /* Buddy.swift */; };
-		FB3E02BD2B0C90E600D8558C /* BuddyListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02BC2B0C90E600D8558C /* BuddyListView.swift */; };
+		FB3E02BD2B0C90E600D8558C /* RoomUserList.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02BC2B0C90E600D8558C /* RoomUserList.swift */; };
 		FB3E02BF2B0C948A00D8558C /* AddBuddyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02BE2B0C948A00D8558C /* AddBuddyView.swift */; };
 		FB3E02C12B0C9A6D00D8558C /* BuddyProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02C02B0C9A6D00D8558C /* BuddyProfileView.swift */; };
 		FB3E02C32B0D19A300D8558C /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02C22B0D19A300D8558C /* User.swift */; };
@@ -226,7 +226,7 @@
 		FB3E02B62B0C70D100D8558C /* InputField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputField.swift; sourceTree = "<group>"; };
 		FB3E02B82B0C724A00D8558C /* BoardBgProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardBgProvider.swift; sourceTree = "<group>"; };
 		FB3E02BA2B0C90D700D8558C /* Buddy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Buddy.swift; sourceTree = "<group>"; };
-		FB3E02BC2B0C90E600D8558C /* BuddyListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuddyListView.swift; sourceTree = "<group>"; };
+		FB3E02BC2B0C90E600D8558C /* RoomUserList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomUserList.swift; sourceTree = "<group>"; };
 		FB3E02BE2B0C948A00D8558C /* AddBuddyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddBuddyView.swift; sourceTree = "<group>"; };
 		FB3E02C02B0C9A6D00D8558C /* BuddyProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuddyProfileView.swift; sourceTree = "<group>"; };
 		FB3E02C22B0D19A300D8558C /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
@@ -765,7 +765,7 @@
 			children = (
 				FB3E02C02B0C9A6D00D8558C /* BuddyProfileView.swift */,
 				FB3E02BE2B0C948A00D8558C /* AddBuddyView.swift */,
-				FB3E02BC2B0C90E600D8558C /* BuddyListView.swift */,
+				FB3E02BC2B0C90E600D8558C /* RoomUserList.swift */,
 				FBDF0DC42B21811000FADE44 /* SharedSessionsView.swift */,
 				FB881A3B2B47CD4400C16198 /* UserView.swift */,
 				FBE3854F2B4B32950090901C /* FriendsListView.swift */,
@@ -1040,7 +1040,7 @@
 				FB581BEB2B1EF39C00F5C90F /* Stopwatch.swift in Sources */,
 				FB4840962B1D43AD0003377A /* BarListPicker.swift in Sources */,
 				FB3E02B12B0C6B1D00D8558C /* ActivityPlan.swift in Sources */,
-				FB3E02BD2B0C90E600D8558C /* BuddyListView.swift in Sources */,
+				FB3E02BD2B0C90E600D8558C /* RoomUserList.swift in Sources */,
 				FBD9AFD22B008CAB005F8620 /* MenuBarProvider.swift in Sources */,
 				FBD9AFD92B01CB91005F8620 /* SoccerToolProvider.swift in Sources */,
 				FBD9AFA82AFF00BF005F8620 /* LudiBoardsApp.swift in Sources */,

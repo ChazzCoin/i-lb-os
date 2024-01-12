@@ -364,6 +364,9 @@ struct ActivityPlanView: View {
     
     func updateInFirebase(newAP: ActivityPlan) {
         // TODO: Firebase Users ONLY
+        self.realmInstance.safeWrite { _ in
+            newAP.ownerId = getFirebaseUserId() ?? "SOL"
+        }
         firebaseDatabase { db in
             db.child(DatabasePaths.activityPlan.rawValue)
                 .child(newAP.id)
@@ -373,6 +376,7 @@ struct ActivityPlanView: View {
     
     func updateActivityPlan() {
         realmInstance.safeWrite { r in
+            self.activityPlan.ownerId = getFirebaseUserId() ?? "SOL"
             r.create(ActivityPlan.self, value: self.activityPlan, update: .all)
         }
         //TODO: FIREBASE ONLY

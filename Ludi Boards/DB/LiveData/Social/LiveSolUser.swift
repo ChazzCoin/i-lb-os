@@ -124,7 +124,7 @@ class FirebaseSolUserService: ObservableObject {
         .child("users")
 
     func startObserving(query: DatabaseQuery, realmInstance: Realm) {
-        if !isLoggedIntoFirebase() { return }
+        if !userIsVerifiedToProceed() { return }
         guard !isObserving else { return }
         self.query = query
         firebaseSubscription = query.observe(.value, with: { snapshot in
@@ -133,7 +133,7 @@ class FirebaseSolUserService: ObservableObject {
         isObserving = true
     }
     func startObserving(query: DatabaseReference, realmInstance: Realm) {
-        if !isLoggedIntoFirebase() { return }
+        if !userIsVerifiedToProceed() { return }
         guard !isObserving else { return }
         self.ref = query
         firebaseSubscription = query.observe(.value, with: { snapshot in

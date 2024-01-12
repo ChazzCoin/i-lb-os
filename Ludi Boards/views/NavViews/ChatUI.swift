@@ -129,7 +129,7 @@ struct ChatView: View {
         }
     }
     var sidebarView: some View {
-        BuddyListView()
+        RoomUserList().environmentObject(self.boardEngineObject)
     }
     var body: some View {
         
@@ -156,8 +156,6 @@ struct ChatView: View {
             safeFirebaseUserId { uId in
                 self.currentUserId = uId
             }
-            
-            _chatMessages
             
             observeLudiChat()
             

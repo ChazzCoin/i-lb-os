@@ -45,14 +45,14 @@ struct SessionPlanOverview: View {
                 })
             }.clearSectionBackground()
             Section(header: Text("Sessions")) {
-                List(hostedSessionPlans) { sessionPlan in
+                List(sessionPlans) { sessionPlan in
                     NavigationLink(destination: SessionPlanView(sessionId: sessionPlan.id, isShowing: .constant(true), isMasterWindow: false)) {
                         SessionPlanThumbView(sessionPlan: sessionPlan)
                     }
                 }
             }.clearSectionBackground()
 
-            if self.isLoggedIn {
+            if userIsVerifiedToProceed() {
                 Section(header: Text("Shared Sessions")) {
                     List(sharedSessionPlans, id: \.self) { sessionPlan in
                         
@@ -66,10 +66,7 @@ struct SessionPlanOverview: View {
             
         }
         .onAppear() {
-            if isLoggedIntoFirebase() {
-                self.isLoggedIn = true
-                return
-            }
+            fetchAllSessionsFromFirebase()
         }
         .onDisappear() {
             
@@ -80,11 +77,12 @@ struct SessionPlanOverview: View {
             SessionPlanView(sessionId: "new", isShowing: $showNewPlanSheet, isMasterWindow: false)
         }
         .refreshable {
-            if isLoggedIntoFirebase() {
-                self.isLoggedIn = true
-                return
-            }
+            fetchAllSessionsFromFirebase()
         }
+    }
+    
+    func fetchAllSessionsFromFirebase() {
+        FirebaseSessionPlanService.runFullFetchProcess(realm: self.realmInstance)
     }
     
 }

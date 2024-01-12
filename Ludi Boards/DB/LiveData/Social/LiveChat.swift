@@ -102,7 +102,7 @@ class RealmChatObserver: ObservableObject {
     @Published var notificationToken: NotificationToken? = nil
 
     func startObserver(chatId: String, realm: Realm) {
-        if !isLoggedIntoFirebase() { return }
+        if !userIsVerifiedToProceed() { return }
         self.objects = realm.objects(Chat.self).filter("chatId == %@", chatId)
         notificationToken = self.objects?.observe { [weak self] (changes: RealmCollectionChange) in
             guard let self = self else { return }
@@ -154,7 +154,7 @@ class FirebaseChatObserver: ObservableObject {
         .child(DatabasePaths.chat.rawValue)
 
     func startObserving(chatId: String, realmInstance: Realm) {
-        if !isLoggedIntoFirebase() { return }
+        if !userIsVerifiedToProceed() { return }
         guard !isObserving else { return }
         firebaseSubscription = self.reference.child(chatId).observe(.value, with: { snapshot in
             let _ = snapshot.toLudiObjects(Chat.self, realm: realmInstance)

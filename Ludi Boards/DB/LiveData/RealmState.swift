@@ -78,7 +78,7 @@ struct LiveStateObjects<Object: RealmSwift.Object>: DynamicProperty {
     }
     
     func refreshFromFirebase(block: @escaping (DatabaseReference) -> DatabaseReference) {
-        firebaseDatabase(safeFlag: isLoggedIntoFirebase()){ db in
+        firebaseDatabase(safeFlag: userIsVerifiedToProceed()){ db in
             block(db).observeSingleEvent(of: .value) { snapshot in
                 if snapshot.exists() {
                     let objs = snapshot.toLudiObjects(Object.self, realm: self.realmInstance)
@@ -91,7 +91,7 @@ struct LiveStateObjects<Object: RealmSwift.Object>: DynamicProperty {
     }
     
     func refreshFromFirebase(block: @escaping (DatabaseReference) -> DatabaseQuery) {
-        firebaseDatabase(safeFlag: isLoggedIntoFirebase()) { db in
+        firebaseDatabase(safeFlag: userIsVerifiedToProceed()) { db in
             block(db).observeSingleEvent(of: .value) { snapshot in
                 if snapshot.exists() {
                     let objs = snapshot.toLudiObjects(Object.self, realm: self.realmInstance)
@@ -162,7 +162,7 @@ class FirebaseLiveStateObjectsObserver<O: RealmSwift.Object>: ObservableObject {
         .reference()
 
     func startObserving(query: DatabaseQuery, realmInstance: Realm) {
-        if !isLoggedIntoFirebase() { return }
+        if !userIsVerifiedToProceed() { return }
         guard !isObserving else { return }
         self.query = query
         firebaseSubscription = query.observe(.value, with: { snapshot in
@@ -172,7 +172,7 @@ class FirebaseLiveStateObjectsObserver<O: RealmSwift.Object>: ObservableObject {
         isObserving = true
     }
     func startObserving(query: DatabaseReference, realmInstance: Realm) {
-        if !isLoggedIntoFirebase() { return }
+        if !userIsVerifiedToProceed() { return }
         guard !isObserving else { return }
         self.ref = query
         firebaseSubscription = query.observe(.value, with: { snapshot in
@@ -365,7 +365,7 @@ struct LiveStateObject<Object: RealmSwift.Object>: DynamicProperty {
             .reference()
 
         func startObserving(query: DatabaseReference, realm: Realm) {
-            if !isLoggedIntoFirebase() { return }
+            if !userIsVerifiedToProceed() { return }
             self.reference = query
             firebaseSubscription = query.observe(.value, with: { snapshot in
                 let _ = snapshot.toLudiObject(Object.self, realm: realm)
@@ -373,7 +373,7 @@ struct LiveStateObject<Object: RealmSwift.Object>: DynamicProperty {
         }
         
         func startObserving(query: DatabaseQuery, realm: Realm) {
-            if !isLoggedIntoFirebase() { return }
+            if !userIsVerifiedToProceed() { return }
             self.query = query
             firebaseSubscription = query.observe(.value, with: { snapshot in
                 let _ = snapshot.toLudiObject(Object.self, realm: realm)

@@ -14,12 +14,11 @@ import FirebaseDatabase
 class BoardEngineObject : ObservableObject {
 
     @Environment(\.colorScheme) var colorScheme
-    @Environment(\.scenePhase) var deviceState
 
     @ObservedResults(SessionPlan.self) var allSessionPlans
     @ObservedResults(ActivityPlan.self) var allActivityPlans
     
-    @State var realmInstance = realm()
+    let realmInstance = realm()
     @Published var boards = Sports()
     @Published var boardRefreshFlag = true
     
@@ -70,6 +69,82 @@ class BoardEngineObject : ObservableObject {
     @Published var boardFieldLineAlpha: Double = 0.75
     @Published var boardFeildLineStroke: Double = 10
     @Published var boardFeildRotation: Double = 0
+    
+    init() {
+//        startObservingRoom()
+    }
+    
+    // Current Session / Activity
+    func changeSession(sessionId:String) {
+        self.currentSessionId = sessionId
+    }
+    
+    func changeActivity(activityId:String) {
+        FirebaseRoomService.leaveRoom(roomId: self.currentActivityId)
+        self.currentActivityId = activityId
+        self.loadRoom()
+    }
+    
+    // Rooms
+//    @ObservedObject var roomFireService = FirebaseRoomService()
+    @ObservedResults(Room.self) var rooms
+    @Published var currentRoom: Room? = nil
+    @Published var usersInRoom: [Room] = []
+    @State private var inRoom: [Room] = []
+    var usersInRoomTemp: Results<Room> {
+        let results = self.rooms.filter("roomId == %@ AND status == %@", self.currentActivityId, "IN")
+        var difference: [Room] = []
+        
+        for item in results {
+            if !inRoom.contains(item) {
+                difference.append(item)
+            }
+        }
+        
+        for item in difference {
+            toggleUserPresence(user: item)
+        }
+        
+        inRoom.removeAll()
+        for item in results {
+            inRoom.append(item)
+        }
+        
+        usersInRoom = results.toArray()
+        return results
+    }
+    
+    func toggleUserPresence(user: Room) {
+        if user.status == "IN" {
+            userHasEnteredRoom()
+        } else if user.status == "OUT" {
+            userHasLeftRoom()
+        }
+    }
+    
+    func userHasEnteredRoom() {
+        print("User has Entered Room: \(self.currentActivityId)")
+    }
+    func userHasLeftRoom() {
+        print("User has Left Room: \(self.currentActivityId)")
+    }
+    
+//    func startObservingRoom() {
+//        roomFireService.startObserving(roomId: self.currentActivityId, realmInstance: self.realmInstance)
+//    }
+//    
+//    func stopObservingRoom() {
+//        roomFireService.stopObserving()
+//    }
+    
+    private func loadRoom() {
+        if !userIsVerifiedToProceed() { return }
+//        startObservingRoom()
+        FirebaseRoomService.enterRoom(roomId: self.currentActivityId)
+        self.currentRoom = self.realmInstance.findByField(Room.self, field: "roomId", value: self.currentActivityId)
+    }
+    
+    // Navigation
     
     func navRight() {
         let adjustedOffset = calculateAdjustedOffset(angle: canvasRotation, x: -100, y: 0)
@@ -164,7 +239,7 @@ class BoardEngineObject : ObservableObject {
 }
 
 struct BoardEngine: View {
-    
+    @Environment(\.scenePhase) var deviceState
     @EnvironmentObject var BEO: BoardEngineObject
     @StateObject var PMO = PopupMenuObject()
     @State var MVS: ManagedViewsService? = nil
@@ -268,7 +343,7 @@ struct BoardEngine: View {
                     }
                     
                     // TODO: Firebase Users ONLY
-                    firebaseDatabase(safeFlag: isLoggedIntoFirebase()) { fdb in
+                    firebaseDatabase(safeFlag: userIsVerifiedToProceed()) { fdb in
                         fdb.child(DatabasePaths.managedViews.rawValue)
                             .child(self.activityID)
                             .child(newTool.id)
@@ -291,14 +366,14 @@ struct BoardEngine: View {
                     saveLineData(start: value.startLocation, end: value.location)
                 } : nil
         )
-        .onChange(of: self.BEO.deviceState) { newScenePhase in
+        .onChange(of: self.deviceState) { newScenePhase in
             switch newScenePhase {
                 case .active:
                     print("App is in foreground")
                     FirebaseRoomService.enterRoom(roomId: self.BEO.currentActivityId)
                 case .inactive:
                     print("App is inactive")
-                    // Handle becoming inactive (could be transitioning to background or foreground)
+                    FirebaseRoomService.awayRoom(roomId: self.BEO.currentActivityId)
                 case .background:
                     print("App is in background")
                     FirebaseRoomService.leaveRoom(roomId: self.BEO.currentActivityId)
@@ -339,7 +414,7 @@ struct BoardEngine: View {
                     r.create(ManagedView.self, value: newTool, update: .all)
                 }
                 
-                if isLoggedIntoFirebase() {
+                if userIsVerifiedToProceed() {
                     newTool.fireSave(id: newTool.id)
                 }
                 
@@ -358,13 +433,7 @@ struct BoardEngine: View {
         }
         
         if self.BEO.allSessionPlans.isEmpty {
-            self.realmIntance.safeWrite { r in
-                let newSession = SessionPlan()
-                newSession.id = self.sessionID
-                newSession.ownerId = getFirebaseUserId() ?? CURRENT_USER_ID
-                self.BEO.currentSessionId = self.sessionID
-                r.add(newSession)
-            }
+            createNewSessionPlan()
         } else {
             let temp = self.BEO.allSessionPlans.first
             if temp?.id != nil && !temp!.id.isEmpty {
@@ -378,17 +447,14 @@ struct BoardEngine: View {
         twoLoadSessionPlan()
     }
     
-    func resetTools() {
-        basicTools.removeAll()
-        basicTools = []
-    }
-    
     func sixSavePlansToFirebase() {
-        if !isLoggedIntoFirebase() { return }
+        if !userIsVerifiedToProceed() { return }
+        if self.sessionID == "SOL" || self.sessionID.isEmpty {return}
         if let sessionPlan = self.realmIntance.findByField(SessionPlan.self, field: "id", value: self.sessionID) {
             if sessionPlan.id == "SOL" {return}
             sessionPlan.fireSave(id: sessionPlan.id)
         }
+        if self.activityID == "SOL" || self.activityID.isEmpty {return}
         if let activityPlan = self.realmIntance.findByField(ActivityPlan.self, field: "id", value: self.activityID) {
             if activityPlan.id == "SOL" {return}
             activityPlan.fireSave(id: activityPlan.id)
@@ -396,8 +462,13 @@ struct BoardEngine: View {
     }
     
     func twoLoadSessionPlan() {
+        
+        //TODO: GET ALL SESSIONS && SHARED SESSIONS
+        fireGetLiveDemoAsync(realm: self.realmIntance)
+        FirebaseSessionPlanService.runFullFetchProcess(realm: self.realmIntance)
+        
         if let tempBoard = self.realmIntance.findByField(SessionPlan.self, field: "id", value: self.sessionID) {
-            self.BEO.currentSessionId = self.sessionID
+            self.BEO.changeSession(sessionId: self.sessionID)
             // THREE
             threeLoadActivityPlan()
         }
@@ -458,7 +529,7 @@ struct BoardEngine: View {
                         self.BEO.boardBgName = i.backgroundView
                         self.BEO.boardFeildRotation = i.backgroundRotation
                         self.BEO.boardFeildLineStroke = i.backgroundLineStroke
-                        self.BEO.currentActivityId = self.activityID
+                        self.BEO.changeActivity(activityId: self.activityID)
                         hasBeenSet = true
                     }
                     self.activities.append(i)
@@ -468,20 +539,8 @@ struct BoardEngine: View {
             }
         }
         
-        // CREATE NEW ACTIVITY
-        let newActivity = ActivityPlan()
-        newActivity.id = "SOL"
-        self.activityID = "SOL"
-        newActivity.ownerId = getFirebaseUserId() ?? CURRENT_USER_ID
-        newActivity.sessionId = self.sessionID
-        self.BEO.currentActivityId = self.activityID
-        self.BEO.setColor(colorIn: Color.green.opacity(0.75))
-        self.BEO.setFieldLineColor(colorIn: Color(red: newActivity.backgroundRed, green: newActivity.backgroundGreen, blue: newActivity.backgroundBlue))
-        self.BEO.setBoardBgView(boardName: newActivity.backgroundView)
-        self.activities.append(newActivity)
-        self.realmIntance.safeWrite { r in
-            r.create(ActivityPlan.self, value: newActivity, update: .all)
-        }
+        // TODO: CREATE NEW ACTIVITY
+        createNewActivityPlan()
         fourLoadManagedViewTools()
     }
     
@@ -520,23 +579,25 @@ struct BoardEngine: View {
     }
     
     func fiveStartObservingManagedViews() {
+        if !userIsVerifiedToProceed() { return }
         observerHandleOne = reference
             .child(DatabasePaths.managedViews.rawValue)
             .child(self.activityID)
             .observe(.childAdded, with: { snapshot in
                 
-                let mv = ManagedView(dictionary: snapshot.value as! [String:Any])
-                if basicTools.hasView(mv) {
-                    return
-                }
-                self.realmIntance.safeWrite { r in
-                    r.create(ManagedView.self, value: mv, update: .all)
+                if let temp = snapshot.value as? [String:Any] {
+                    let mv = ManagedView(dictionary: temp)
+                    if basicTools.hasView(mv) {
+                        return
+                    }
+                    self.realmIntance.safeWrite { r in
+                        r.create(ManagedView.self, value: mv, update: .all)
+                    }
+                    basicTools.safeAdd(mv)
                 }
                 
-                basicTools.safeAdd(mv)
             })
         
-        if !isLoggedIntoFirebase() { return }
         observerHandleTwo = reference
             .child(DatabasePaths.managedViews.rawValue)
             .child(self.activityID)
@@ -567,17 +628,15 @@ struct BoardEngine: View {
             if self.sessionID != newSID {
                 SPS?.stopObserving()
                 self.sessionID = newSID
-                self.BEO.currentSessionId = newSID
+                self.BEO.changeSession(sessionId: newSID)
                 sessionDidChange = true
             }
         }
         
         if let newAID = temp.activityId {
             if self.activityID != newAID && !newAID.isEmpty {
-                FirebaseRoomService.leaveRoom(roomId: self.BEO.currentActivityId)
                 self.activityID = newAID
-                self.BEO.currentActivityId = newAID
-                FirebaseRoomService.enterRoom(roomId: self.BEO.currentActivityId)
+                self.BEO.changeActivity(activityId: newAID)
                 activityDidChange = true
             }
         }
@@ -587,6 +646,37 @@ struct BoardEngine: View {
         } else if activityDidChange {
             self.threeLoadActivityPlan(planId: self.activityID)
         }
+    }
+    
+    func createNewSessionPlan() {
+        self.realmIntance.safeWrite { r in
+            let newSession = SessionPlan()
+            newSession.id = self.sessionID
+            newSession.ownerId = getFirebaseUserId() ?? CURRENT_USER_ID
+            self.BEO.currentSessionId = self.sessionID
+            r.add(newSession)
+        }
+    }
+    
+    func createNewActivityPlan() {
+        let newActivity = ActivityPlan()
+        newActivity.id = "SOL"
+        self.activityID = "SOL"
+        newActivity.ownerId = getFirebaseUserId() ?? CURRENT_USER_ID
+        newActivity.sessionId = self.sessionID
+        self.BEO.currentActivityId = self.activityID
+        self.BEO.setColor(colorIn: Color.green.opacity(0.75))
+        self.BEO.setFieldLineColor(colorIn: Color(red: newActivity.backgroundRed, green: newActivity.backgroundGreen, blue: newActivity.backgroundBlue))
+        self.BEO.setBoardBgView(boardName: newActivity.backgroundView)
+        self.activities.append(newActivity)
+        self.realmIntance.safeWrite { r in
+            r.create(ActivityPlan.self, value: newActivity, update: .all)
+        }
+    }
+    
+    func resetTools() {
+        basicTools.removeAll()
+        basicTools = []
     }
     
     // Line/Drawing
@@ -606,15 +696,7 @@ struct BoardEngine: View {
             line.lineDash = self.BEO.isDrawing == "DOTTED-LINE" ? 55 : 1
             line.dateUpdated = Int(Date().timeIntervalSince1970)
             r.create(ManagedView.self, value: line, update: .all)
-            
-            firebaseDatabase(safeFlag: isLoggedIntoFirebase()) { fdb in
-                fdb.child(DatabasePaths.managedViews.rawValue)
-                    .child(self.activityID)
-                    .child(line.id)
-                    .setValue(line.toDict())
-            }
-            
-            
+            line.fireSave(id: line.id)
         }
     }
 }

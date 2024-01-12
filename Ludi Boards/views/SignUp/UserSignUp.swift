@@ -42,7 +42,7 @@ struct SignUpView: View {
     @State private var loginCode = ""
     
     func loginCheck() {
-        if isLoggedIntoFirebase() {
+        if userIsVerifiedToProceed() {
             self.BEO.isLoggedIn = true
         } else {
             self.BEO.isLoggedIn = false

@@ -197,6 +197,7 @@ struct SessionPlanView: View {
         // New Activity
         let newAP = ActivityPlan()
         newAP.sessionId = newSP.id
+        newAP.ownerId = getFirebaseUserId() ?? CURRENT_USER_ID
         newAP.title = "\(title) Activity"
         newAP.orderIndex = 0
         newAP.isOpen = isOpen
@@ -207,36 +208,20 @@ struct SessionPlanView: View {
         }
         
         // TODO: Firebase
-        saveSessionPlanToFirebase(sp: newSP)
-        saveActivityPlanToFirebase(ap: newAP)
-    }
-    
-    func saveSessionPlanToFirebase(sp: SessionPlan) {
-        firebaseDatabase { db in
-            db.child(DatabasePaths.sessionPlan.rawValue)
-                .child(sp.id)
-                .setValue(sp.toDict())
-        }
-    }
-    
-    func saveActivityPlanToFirebase(ap: ActivityPlan) {
-        firebaseDatabase { db in
-            db.child(DatabasePaths.activityPlan.rawValue)
-                .child(ap.id)
-                .setValue(ap.toDict())
-        }
+        newSP.fireSave(id: newSP.id)
+        newAP.fireSave(id: newAP.id)
     }
     
     func updateSessionPlan() {
         if let sp = realmInstance.findByField(SessionPlan.self, value: self.sessionId) {
             realmInstance.safeWrite { r in
+                sp.ownerId = getFirebaseUserId() ?? "SOL"
                 sp.title = title
                 sp.sessionDetails = description
                 sp.objectiveDetails = objective
                 sp.isOpen = isOpen
+                sp.fireSave(id: sp.id)
             }
-            saveSessionPlanToFirebase(sp: sp)
-            
         }
     }
     
@@ -261,16 +246,7 @@ struct SessionPlanView: View {
                 self.BEO.isShared = true
             }
         }
-//        if let acts = realmInstance.findAllByField(ActivityPlan.self, field: "sessionId", value: self.sessionId) {
-//            if acts.isEmpty {return}
-//            var temp: [ActivityPlan] = []
-//            for i in acts {
-//                temp.append(i)
-//            }
-//            activities = temp
-//        }
     }
-    
 
 }
 

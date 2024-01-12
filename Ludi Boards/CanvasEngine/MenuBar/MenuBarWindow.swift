@@ -84,7 +84,7 @@ struct MenuBarStatic: View {
         }
         .background(Color.clear)
         .onAppear() {
-            if isLoggedIntoFirebase() {
+            if userIsVerifiedToProceed() {
                 icons = iconsLoggedIn
             } else {
                 icons = iconsLoggedOut
@@ -92,7 +92,7 @@ struct MenuBarStatic: View {
             iconStates = Array(repeating: false, count: icons.count)
             
             rcl.observeId(id: "SOL") { _ in
-                if isLoggedIntoFirebase() {
+                if userIsVerifiedToProceed() {
                     icons = iconsLoggedIn
                 } else {
                     icons = iconsLoggedOut

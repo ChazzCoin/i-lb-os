@@ -63,7 +63,7 @@ struct ProfileView: View {
                     .font(.subheadline)
                     .fontWeight(.bold)
                 
-                if isLoggedIntoFirebase() {
+                if userIsVerifiedToProceed() {
                     Section(header: Text("Connection Status")) {
                         InternetSpeedChecker()
                     }

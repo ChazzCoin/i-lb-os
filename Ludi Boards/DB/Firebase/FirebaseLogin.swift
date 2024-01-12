@@ -11,6 +11,7 @@ import RealmSwift
 import FirebaseAuth
 import FirebaseFirestore
 import FirebaseDatabase
+//import FirebaseAnalytics
 
 func checkUsernameExists(_ username: String, completion: @escaping (Bool) -> Void) {
     let dbRef = Database.database().reference()
@@ -162,7 +163,12 @@ func safeFirebaseUserId(safe: (String) -> Void) {
     }
 }
 
-func isLoggedIntoFirebase() -> Bool {
+func userIsVerifiedToProceed(overrideFlag:Bool=false) -> Bool {
+    
+    if overrideFlag {
+        print("Overriding Verification Request")
+        return true
+    }
     
     if let _ = Auth.auth().currentUser {
         print("User IS Logged In")

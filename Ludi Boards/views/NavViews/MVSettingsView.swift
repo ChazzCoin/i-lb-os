@@ -57,7 +57,7 @@ struct SettingsView: View {
     var body: some View {
         LoadingForm(isLoading: $isLoading, showCompletion: $showCompletion) { runLoading in
             
-            if isLoggedIntoFirebase() {
+            if userIsVerifiedToProceed() {
                 Section(header: Text("Connection Status").font(.headline)) {
                     InternetSpeedChecker()
                 }
