@@ -131,33 +131,104 @@ enum RoomStatus {
 
 class FirebaseRoomService: ObservableObject {
     private var firebaseSubscription: DatabaseHandle?
+    @ObservedResults(SolUser.self) var allUsers
+    @ObservedResults(Room.self) var allRooms
     @Published var isObserving = false
     @Published var rooms: [Room] = []
+    @Published var currentRoomId = ""
+    @Published var objsInCurrentRoom: [Room] = []
+    @Published var usersInCurrentRoom: [SolUser] = []
+    @Published var inRoomSnapshot: [SolUser] = []
+    @State var realmInstance = newRealm()
     private var ref: DatabaseReference? = nil
     
     @Published var reference: DatabaseReference = Database
         .database()
         .reference()
         .child("rooms")
-
+    
+    
+    var getCurrentRoom: Results<Room> {
+        return self.allRooms.filter("roomId == %@", self.currentRoomId)
+    }
+    
+    var getCurrentRoomObjs: Results<Room> {
+        return self.allRooms.filter("roomId == %@ AND status != %@", self.currentRoomId, "OUT")
+    }
+    
     func startObserving(roomId: String, realmInstance: Realm) {
         if !userIsVerifiedToProceed() { return }
         guard !isObserving else { return }
+        self.realmInstance = realmInstance
+        self.currentRoomId = roomId
         firebaseSubscription = self.reference.child(roomId).observe(.value, with: { snapshot in
-            var tempRooms: [Room] = []
-            if let results = snapshot.toLudiObjects(Room.self, realm: realmInstance) {
-                for item in results {
-                    if item.roomId != roomId || item.status == "OUT" {continue}
-                    tempRooms.append(item)
+            if let allUserPresences = snapshot.toLudiObjects(Room.self, realm: self.realmInstance) {
+                self.inRoomSnapshot = self.usersInCurrentRoom
+                
+                // Assuming UserPresence has properties `roomId` and `status`
+                let inRoom = allUserPresences.filter { $0.roomId == roomId && $0.status != "OUT" }
+                
+                var inTemp: [SolUser] = []
+                var roomTemp: [Room] = []
+                for r in inRoom {
+                    if let user = self.realmInstance.findByField(SolUser.self, field: "userId", value: r.userId) {
+                        inTemp.safeAdd(user)
+                        roomTemp.safeAdd(r)
+                    } else {
+                        if r.userId.isEmpty {continue}
+                        fireGetSolUserAsync(userId: r.userId, realm: self.realmInstance)
+                    }
                 }
-                self.rooms = tempRooms
+                self.objsInCurrentRoom = roomTemp
+                
+                
+                for i in roomTemp {
+                    if let user = self.realmInstance.findByField(SolUser.self, field: "userId", value: i.userId) {
+                        inTemp.safeAdd(user)
+                    }
+                }
+                self.usersInCurrentRoom = inTemp
+                
+                
+                // Handling Users
+                var userChanges: [SolUser] = []
+                for item in self.usersInCurrentRoom {
+                    if !self.inRoomSnapshot.contains(item) {
+                        userChanges.safeAdd(item)
+                    }
+                }
+                for item in userChanges {
+                    self.toggleUserPresence(user: item)
+                }
+                
             }
         })
         isObserving = true
     }
+    
+    func toggleUserPresence(user: SolUser) {
+        let roomObj = self.allRooms.filter("roomId == %@ AND userId == %@", self.currentRoomId, user.userId)
+        for item in roomObj {
+            if item.status == "IN" {
+                userHasEnteredTheRoom()
+            } else if item.status == "OUT" {
+                userHasLeftTheRoom()
+            }
+        }
+    }
+    
+    func userHasLeftTheRoom() {
+        print("User has Entered Room: \(self.currentRoomId)")
+    }
+    
+    func userHasEnteredTheRoom() {
+        print("User has Left Room: \(self.currentRoomId)")
+    }
 
     func stopObserving() {
         if let subscription = firebaseSubscription {
+            self.currentRoomId = ""
+            self.usersInCurrentRoom.removeAll()
             ref?.removeObserver(withHandle: subscription)
             reference.removeObserver(withHandle: subscription)
             firebaseSubscription = nil
@@ -183,8 +254,11 @@ class FirebaseRoomService: ObservableObject {
                 tempRealm.safeWrite { _ in
                     item.status = status
                 }
+                print("User is about to be \(status) room \(roomId)")
                 firebaseDatabase { db in
-                    db.child("rooms").child(roomId).child(item.id).setValue(item.toDict())
+                    var temp = item.toDict()
+                    temp["status"] = status
+                    db.child("rooms").child(item.roomId).child(item.id).setValue(temp)
                 }
                 return
             }
@@ -196,6 +270,7 @@ class FirebaseRoomService: ObservableObject {
             tempRealm.safeWrite { r in
                 r.create(Room.self, value: roomPresence, update: .all)
             }
+            print("User is about to be \(status) room \(roomId)")
             firebaseDatabase { db in
                 db.child("rooms").child(roomId).child(roomPresence.id).setValue(roomPresence.toDict())
             }

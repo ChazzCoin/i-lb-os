@@ -40,14 +40,7 @@ class ActivityPlanService: ObservableObject {
         isObserving = false
         observerHandle = nil
     }
-    
-//    func enterRoom() {
-//        FirebaseRoomService.enterRoom(roomId: self.activityId)
-//    }
-//    
-//    func leaveRoom() {
-//        FirebaseRoomService.leaveRoom(roomId: self.activityId)
-//    }
+
     
     deinit {
         stopObserving()

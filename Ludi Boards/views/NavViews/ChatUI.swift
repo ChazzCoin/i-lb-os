@@ -129,7 +129,8 @@ struct ChatView: View {
         }
     }
     var sidebarView: some View {
-        RoomUserList().environmentObject(self.boardEngineObject)
+        RoomUserList()
+            .environmentObject(self.boardEngineObject)
     }
     var body: some View {
         
@@ -144,13 +145,13 @@ struct ChatView: View {
             }
         }
         .navigationBarTitle("SOL Chat", displayMode: .inline)
-        .navigationBarItems(leading: Button(action: {
-            withAnimation {
-                isSidebarVisible.toggle()
-            }
-        }) {
-            Image(systemName: "line.horizontal.3")
-        })
+//        .navigationBarItems(leading: Button(action: {
+//            withAnimation {
+//                isSidebarVisible.toggle()
+//            }
+//        }) {
+//            Image(systemName: "line.horizontal.3")
+//        })
         .onAppear() {
             
             safeFirebaseUserId { uId in

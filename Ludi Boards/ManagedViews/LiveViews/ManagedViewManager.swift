@@ -25,7 +25,7 @@ class ManagedViewListener : ObservableObject {
             if !umvs.isEmpty {
                 for i in umvs {
                     if i.isInvalidated {continue}
-                    self.basicTools.safeAdd(i)
+                    self.basicTools.safeAddManagedView(i)
                 }
             }
         }
@@ -53,7 +53,7 @@ class ManagedViewListener : ObservableObject {
                     print("Realm Listener: initial")
                     for i in results {
                         if i.isInvalidated {continue}
-                        self.basicTools.safeAdd(i)
+                        self.basicTools.safeAddManagedView(i)
                     }
                 case .update(let results, let de, _, _):
                     print("Realm Listener: update")
@@ -64,7 +64,7 @@ class ManagedViewListener : ObservableObject {
                     
                     for i in results {
                         if i.isInvalidated {continue}
-                        self.basicTools.safeAdd(i)
+                        self.basicTools.safeAddManagedView(i)
                     }
                 case .error(let error):
                     print("Realm Listener: error")

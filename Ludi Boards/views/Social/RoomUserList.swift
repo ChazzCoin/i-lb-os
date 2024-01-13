@@ -11,24 +11,23 @@ import RealmSwift
 
 struct RoomUserList: View {
     @EnvironmentObject var BEO: BoardEngineObject
-    @StateObject var roomFireService = FirebaseRoomService()
+    @StateObject var ROOM = FirebaseRoomService()
     @State private var showingAddBuddyView = false
 
     var body: some View {
-        List(self.roomFireService.rooms, id: \.id) { buddy in
-            if !buddy.isInvalidated {
-                NavigationLink(destination: BuddyProfileView(solUserId: buddy.userId, friendStatus: "unknown")) { // Replace DestinationView with your desired destination view
-                    HStack {
-                        Circle()
-                            .fill(buddy.status == "AWAY" ? Color.gray : Color.green)
-                            .frame(width: 10, height: 10)
-                        Text(buddy.userId)
-                            .font(.system(size: 14))
-                        Spacer()
-                        Text(buddy.status == "AWAY" ? "Away" : "Online")
-                            .font(.system(size: 12))
-                            .foregroundColor(.gray)
-                    }
+        
+        List(self.ROOM.usersInCurrentRoom) { buddy in
+            NavigationLink(destination: BuddyProfileView(solUserId: buddy.userId, friendStatus: "unknown")) { // Replace DestinationView with your desired destination view
+                HStack {
+                    Circle()
+                        .fill(Color.green)
+                        .frame(width: 10, height: 10)
+                    Text(buddy.userName)
+                        .font(.system(size: 14))
+                    Spacer()
+                    Text("Online")
+                        .font(.system(size: 12))
+                        .foregroundColor(.gray)
                 }
             }
         }
@@ -46,7 +45,10 @@ struct RoomUserList: View {
             AddBuddyView(isPresented: $showingAddBuddyView, sessionId: .constant("none"))
         }
         .onAppear() {
-            roomFireService.startObserving(roomId: self.BEO.currentActivityId, realmInstance: self.BEO.realmInstance)
+            self.ROOM.startObserving(roomId: self.BEO.currentActivityId, realmInstance: self.BEO.realmInstance)
+        }
+        .onDisappear() {
+            self.ROOM.stopObserving()
         }
     }
 }

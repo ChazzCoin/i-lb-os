@@ -40,16 +40,16 @@ struct SessionPlanThumbView: View {
         .cornerRadius(12)
         .shadow(radius: 3)
         .navigationBarTitle("SOL Sessions", displayMode: .inline)
-        .navigationBarItems(trailing: HStack {
-            Button(action: {
-                print("Minimize")
-                CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: MenuBarProvider.boardCreate.tool.title, stateAction: "close"))
-            }) {
-                Image(systemName: "minus")
-                    .resizable()
-                    .frame(width: 30, height: 30)
-            }
-        })
+//        .navigationBarItems(trailing: HStack {
+//            Button(action: {
+//                print("Minimize")
+//                CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: MenuBarProvider.boardCreate.tool.title, stateAction: "close"))
+//            }) {
+//                Image(systemName: "minus")
+//                    .resizable()
+//                    .frame(width: 30, height: 30)
+//            }
+//        })
     }
 }
 

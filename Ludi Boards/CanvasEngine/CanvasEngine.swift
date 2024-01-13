@@ -12,8 +12,8 @@ import Combine
 
 struct CanvasEngine: View {
     
-    @StateObject var BEO = BoardEngineObject()
-
+    @ObservedObject var BEO = BoardEngineObject()
+    
     @State var cancellables = Set<AnyCancellable>()
     @State var showMenuBar: Bool = true
     @State var popupIsVisible: Bool = true
@@ -35,7 +35,7 @@ struct CanvasEngine: View {
     let initialWidth: CGFloat = 6000
     let initialHeight: CGFloat = 6000
     
-    @ObservedObject var managedWindowsObject = ManagedViewWindows.shared
+    @StateObject var managedWindowsObject = ManagedViewWindows.shared
     
     var dragAngleGestures: some Gesture {
         DragGesture()
@@ -132,8 +132,8 @@ struct CanvasEngine: View {
 //            }
             
             MenuBarStatic(){}
-            .frame(width: 60, height: menuIsOpen ? (gps.screenSize.height - 100) : 60)
-            .position(using: gps, at: .topLeft, offsetX: 50, offsetY: menuIsOpen ? ((gps.screenSize.height - 100) / 2) : 30)
+                .frame(width: 60, height: menuIsOpen ? (gps.screenSize.height - 100) : 60)
+                .position(using: gps, at: .topLeft, offsetX: 50, offsetY: menuIsOpen ? ((gps.screenSize.height - 100) / 2) : 30)
             
             NavPadView()
                 .environmentObject(self.BEO)
@@ -278,7 +278,10 @@ struct CanvasEngine: View {
     }
     func handleChat() {
         let caller = MenuBarProvider.chat.tool.title
-        let temp = ManagedViewWindow(id: caller, viewBuilder: {NavStackWindow(id: caller, viewBuilder: {ChatView(chatId: "default-1").environmentObject(self.BEO)})})
+        let temp = ManagedViewWindow(id: caller, viewBuilder: {NavStackWindow(id: caller, viewBuilder: {
+            ChatView(chatId: "default-1")
+                .environmentObject(self.BEO)
+        })})
         temp.title = "Real-Time Chat"
         temp.windowId = caller
         managedWindowsObject.safelyAddItem(key: caller, item: temp)

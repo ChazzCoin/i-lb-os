@@ -160,12 +160,16 @@ func fireGetSessionSharesAsync(userId: String, realm: Realm?=nil) {
 }
 
 // GET Share Session
-func fireGetSolUserAsync(userId: String, realm: Realm?=nil) {
+func fireGetSolUserAsync(userId: String, realm: Realm?=nil, onCompletion: @escaping ([SolUser]) -> Void={ _ in }) {
     if !userIsVerifiedToProceed() { return }
     firebaseDatabase(collection: DatabasePaths.users.rawValue) { ref in
-        ref.queryOrdered(byChild: "userId").queryEqual(toValue: userId)
+        ref
+            .queryOrdered(byChild: "userId")
+            .queryEqual(toValue: userId)
             .observeSingleEvent(of: .value) { snapshot, _ in
-                let _ = snapshot.toLudiObjects(SolUser.self, realm: realm)
+                if let results = snapshot.toLudiObjects(SolUser.self, realm: realm) {
+                    onCompletion(Array(results))
+                }
             }
     }
 }

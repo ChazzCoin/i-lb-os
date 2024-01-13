@@ -15,6 +15,8 @@ struct MenuButtonIcon: View {
     @State private var isLocked = false
     @State private var lifeColor = Color.black
     
+    @State private var windowIsOpen = false
+    
     func setColorScheme() { lifeColor = foregroundColorForScheme(colorScheme) }
     
     func handleTap() {
@@ -34,6 +36,11 @@ struct MenuButtonIcon: View {
                 .onTapAnimation {
                     print("CodiChannel SendTopic: \(icon.tool.title)")
                     handleTap()
+                    
+//                    if windowIsOpen {
+//                        
+//                    }
+                    
                     CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: icon.tool.title, stateAction: "toggle"))
                 }.onAppear() {
                     setColorScheme()

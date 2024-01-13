@@ -9,6 +9,39 @@ import Foundation
 import SwiftUI
 import Combine
 
+struct BouncingValue {
+    var value: Double
+    let min: Double
+    let max: Double
+    private var incrementing = true
+    private let step: Double
+
+    init(initialValue: Double, min: Double, max: Double, step: Double = 0.1) {
+        self.value = initialValue
+        self.min = min
+        self.max = max
+        self.step = step
+    }
+
+    mutating func update() -> Double {
+        if incrementing {
+            if value < max {
+                value += step
+            } else {
+                incrementing = false
+                value -= step
+            }
+        } else {
+            if value > min {
+                value -= step
+            } else {
+                incrementing = true
+                value += step
+            }
+        }
+        return value
+    }
+}
 
 struct NavStackWindow : View {
     @State var id: String
@@ -32,20 +65,63 @@ struct NavStackWindow : View {
     @GestureState private var dragOffset = CGSize.zero
     @State private var isDragging = false
     
-    @State private var width = UIScreen.main.bounds.width * 0.5
+    @State private var width = UIScreen.main.bounds.width * 0.9
     @State private var height = UIScreen.main.bounds.height
     
     @State private var keyboardIsShowing = false
     @State private var keyboardHeight = 0.0
     
+    @State var currentScreenWidthModifier = 0.9
+    @State var currentPositionModifier = 0.05
+    @State var currentScreenSize = "full" // half, float
+    
+    func toggleWindowSize() {
+        if currentScreenSize == "half" {
+            fullScreenPosition()
+        } else {
+            halfScreenPosition()
+        }
+    }
+    
+    func fullScreenPosition() {
+        width = UIScreen.main.bounds.width * 0.9
+        height = UIScreen.main.bounds.height
+        position = gps.getCoordinate(for: .center, offsetX: width * 0.05)
+        currentScreenSize = "full"
+    }
+    
+    func halfScreenPosition() {
+        width = UIScreen.main.bounds.width * 0.5
+        height = UIScreen.main.bounds.height
+        position = gps.getCoordinate(for: .center, offsetX: width * 0.5)
+        currentScreenSize = "half"
+    }
     
     func resetPosition() {
-        position = gps.getCoordinate(for: .center, offsetX: width / 2)
+        position = gps.getCoordinate(for: .center, offsetX: width * 0.05)
     }
 
     var body: some View {
         NavigationStack {
-            viewBuilder().environmentObject(BEO)
+            viewBuilder()
+                .environmentObject(BEO)
+                .navigationBarItems(trailing: HStack {
+                    // Add buttons or icons here for minimize, maximize, close, etc.
+                    Button(action: {
+                        CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: self.id, stateAction: "close", viewId: "self"))
+                    }) {
+                        Image(systemName: "arrow.down.to.line.alt")
+                            .resizable()
+                            .frame(width: 30, height: 30)
+                    }
+                    Button(action: {
+                        toggleWindowSize()
+                    }) {
+                        Image(systemName: "arrow.up.left.and.down.right.magnifyingglass")
+                            .resizable()
+                            .frame(width: 30, height: 30)
+                    }
+                })
         }
         .frame(width: self.width, height: self.height)
         .opacity(isHidden ? 0 : 1)
@@ -80,14 +156,15 @@ struct NavStackWindow : View {
             }
         )
         .onDisappear() {
-            resetPosition()
+            fullScreenPosition()
         }
         .onAppear() {
-            resetPosition()
+            fullScreenPosition()
+//            resetPosition()
             CodiChannel.MENU_WINDOW_TOGGLER.receive(on: RunLoop.main) { windowType in
                 print(windowType)
                 if (windowType as! String) != self.id { return }
-                resetPosition()
+                fullScreenPosition()
                 if self.isHidden {
                     self.isHidden = false
                 } else {
@@ -98,8 +175,15 @@ struct NavStackWindow : View {
             CodiChannel.MENU_WINDOW_CONTROLLER.receive(on: RunLoop.main) { wc in
                 print(wc)
                 let temp = wc as! WindowController
-                if temp.windowId != self.id { return }
-                resetPosition()
+                if temp.windowId != self.id {
+                    if temp.stateAction == "toggle" {
+                        if !self.isHidden {
+                            self.isHidden = true
+                        }
+                    }
+                    return
+                }
+                fullScreenPosition()
                 if temp.stateAction == "toggle" {
                     if self.isHidden {
                         self.isHidden = false
