@@ -16,20 +16,20 @@ struct RoomUserList: View {
 
     var body: some View {
         
-//        if self.ROOM.usersInCurrentRoom.isEmpty {
-//            Text("This room seems to be empty.")
-//        }
+        if self.ROOM.objsInCurrentRoom.isEmpty {
+            Text("This room seems to be empty.")
+        }
         
         List(self.ROOM.objsInCurrentRoom) { buddy in
             NavigationLink(destination: BuddyProfileView(solUserId: buddy.userId, friendStatus: "unknown")) { // Replace DestinationView with your desired destination view
                 HStack {
                     Circle()
-                        .fill(Color.green)
+                        .fill(buddy.status == "IN" ? Color.green : Color.gray)
                         .frame(width: 10, height: 10)
-                    Text(buddy.userId)
+                    Text(buddy.userName)
                         .font(.system(size: 14))
                     Spacer()
-                    Text("Online")
+                    Text(buddy.status == "IN" ? "Online" : "Away")
                         .font(.system(size: 12))
                         .foregroundColor(.gray)
                 }

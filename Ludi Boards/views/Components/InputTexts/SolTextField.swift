@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-struct ModernTextField: View {
+struct SolTextField: View {
     @Binding var text: String
     var placeholder: String = ""
 
@@ -32,7 +32,7 @@ struct ModernTextField: View {
                             Button(action: { self.text = "" }) {
                                 Image(systemName: "multiply.circle.fill")
                                     .foregroundColor(.gray)
-                                    .padding(.trailing, 15)
+                                    .padding(.trailing, 15) 
                             }
                         }
                     }
@@ -52,6 +52,6 @@ struct ModernTextField: View {
 
 struct ModernTextField_Previews: PreviewProvider {
     static var previews: some View {
-        ModernTextField("Placeholder", text: .constant(""))
+        SolTextField("Placeholder", text: .constant(""))
     }
 }

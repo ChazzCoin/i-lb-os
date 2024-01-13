@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-struct ModernTextEditor: View {
+struct SolTextEditor: View {
     @Binding var text: String
     var placeholder: String
 
@@ -42,6 +42,6 @@ struct ModernTextEditor: View {
 
 struct ModernTextEditor_Previews: PreviewProvider {
     static var previews: some View {
-        ModernTextEditor("Enter text here...", text: .constant(""))
+        SolTextEditor("Enter text here...", text: .constant(""))
     }
 }

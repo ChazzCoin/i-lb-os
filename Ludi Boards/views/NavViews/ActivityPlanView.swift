@@ -45,21 +45,21 @@ struct ActivityPlanView: View {
             
             // Details Section
             Section(header: Text("Activity Details")) {
-                ModernTextField("Title", text: $activityPlan.title)
-                ModernTextField("Sub Title", text: $activityPlan.subTitle)
-                ModernTextField("Date", text: $activityPlan.dateOf)
-                ModernTextField("Time Period", text: $activityPlan.timePeriod)
-                ModernTextField("Duration", text: $activityPlan.duration)
-                ModernTextField("Age Level", text: $activityPlan.ageLevel)
+                SolTextField("Title", text: $activityPlan.title)
+                SolTextField("Sub Title", text: $activityPlan.subTitle)
+                SolTextField("Date", text: $activityPlan.dateOf)
+                SolTextField("Time Period", text: $activityPlan.timePeriod)
+                SolTextField("Duration", text: $activityPlan.duration)
+                SolTextField("Age Level", text: $activityPlan.ageLevel)
             }.clearSectionBackground()
 
             // Description Section
             Section(header: Text("Details")) {
                 
-                ModernTextEditor("Objective", text:$activityPlan.objectiveDetails)
+                SolTextEditor("Objective", text:$activityPlan.objectiveDetails)
                     .frame(minHeight: 100)
                 
-                ModernTextEditor("Description", text:$activityPlan.activityDetails)
+                SolTextEditor("Description", text:$activityPlan.activityDetails)
                     .frame(minHeight: 100)
                 
             }.clearSectionBackground()

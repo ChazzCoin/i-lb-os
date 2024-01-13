@@ -249,7 +249,8 @@ class FirebaseRoomService: ObservableObject {
     
     static func toggleRoomStatus(roomId:String, status:String) {
         if roomId == "SOL" || roomId.isEmpty { return }
-        safeFirebaseUserId { uid in
+        
+        newRealm().getCurrentSolUser() { currentUser in
             let tempRealm = newRealm()
             if let item = tempRealm.findByField(Room.self, field: "roomId", value: roomId) {
                 tempRealm.safeWrite { _ in
@@ -266,7 +267,9 @@ class FirebaseRoomService: ObservableObject {
             
             let roomPresence = Room()
             roomPresence.roomId = roomId
-            roomPresence.userId = uid
+            roomPresence.userId = currentUser.userId
+            roomPresence.userName = currentUser.userName
+            roomPresence.userImg = currentUser.imgUrl
             roomPresence.status = status
             tempRealm.safeWrite { r in
                 r.create(Room.self, value: roomPresence, update: .all)
@@ -275,8 +278,8 @@ class FirebaseRoomService: ObservableObject {
             firebaseDatabase { db in
                 db.child("rooms").child(roomId).child(roomPresence.id).setValue(roomPresence.toDict())
             }
-            
         }
+       
         
     }
     

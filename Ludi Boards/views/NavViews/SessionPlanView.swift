@@ -55,12 +55,12 @@ struct SessionPlanView: View {
         LoadingForm(isLoading: $isLoading, showCompletion: $showCompletion) { runLoading in
             
             Section(header: Text("Details")) {
-                ModernTextField("Title", text: $title)
+                SolTextField("Title", text: $title)
                 
-                ModernTextEditor("Description", text: $description)
+                SolTextEditor("Description", text: $description)
                     .frame(minHeight: 100)
                 
-                ModernTextEditor("Objective", text: $objective)
+                SolTextEditor("Objective", text: $objective)
                     .frame(minHeight: 100)
                 
             }.clearSectionBackground()
