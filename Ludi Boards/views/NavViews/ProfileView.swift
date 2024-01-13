@@ -13,7 +13,7 @@ struct ProfileView: View {
     @EnvironmentObject var BEO: BoardEngineObject
     @State private var realmInstance = realm()
     
-    @LiveCurrentUser var currentUser
+    @StateObject var currentUser = LiveCurrentUser()
     @ObservedResults(SolUser.self) var solUsers
     @ObservedResults(Connection.self) var connections
     
@@ -47,7 +47,7 @@ struct ProfileView: View {
                     .padding(.top, 30)
                 
                 HStack {
-                    Text(currentUser?.userName ?? "")
+                    Text(currentUser.object?.userName ?? "")
                         .font(.largeTitle)
                         .fontWeight(.bold)
                     
@@ -56,10 +56,10 @@ struct ProfileView: View {
                         .foregroundColor(.green)
                 }
                 
-                Text(currentUser?.userId ?? "")
+                Text(currentUser.object?.userId ?? "")
                     .font(.subheadline)
                     .fontWeight(.bold)
-                Text(currentUser?.email ?? "")
+                Text(currentUser.object?.email ?? "")
                     .font(.subheadline)
                     .fontWeight(.bold)
                 
@@ -120,14 +120,13 @@ struct ProfileView: View {
 //            }
 //        }
         .refreshable {
-            _currentUser.refreshFromFirebase()
             loadUser()
         }
         .onAppear() {
             loadUser()
         }
         .onDisappear() {
-            
+            currentUser.destroy()
         }
         .navigationBarTitle("Profile", displayMode: .inline)
         .sheet(isPresented: $showNewPlanSheet) {

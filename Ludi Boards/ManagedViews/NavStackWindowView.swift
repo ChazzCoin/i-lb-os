@@ -104,6 +104,8 @@ struct NavStackWindow : View {
     var body: some View {
         NavigationStack {
             viewBuilder()
+                .background(Image("sol_bg_big").opacity(0.3))
+//                .padding()
                 .environmentObject(BEO)
                 .navigationBarItems(trailing: HStack {
                     // Add buttons or icons here for minimize, maximize, close, etc.
@@ -156,11 +158,10 @@ struct NavStackWindow : View {
             }
         )
         .onDisappear() {
-            fullScreenPosition()
+//            fullScreenPosition()
         }
         .onAppear() {
             fullScreenPosition()
-//            resetPosition()
             CodiChannel.MENU_WINDOW_TOGGLER.receive(on: RunLoop.main) { windowType in
                 print(windowType)
                 if (windowType as! String) != self.id { return }

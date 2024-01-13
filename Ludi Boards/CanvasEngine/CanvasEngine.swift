@@ -278,17 +278,23 @@ struct CanvasEngine: View {
     }
     func handleChat() {
         let caller = MenuBarProvider.chat.tool.title
-        let temp = ManagedViewWindow(id: caller, viewBuilder: {NavStackWindow(id: caller, viewBuilder: {
-            ChatView(chatId: "default-1")
-                .environmentObject(self.BEO)
-        })})
+        let temp = ManagedViewWindow(id: caller, viewBuilder: {
+            NavStackWindow(id: caller, viewBuilder: {
+                ChatView(chatId: "default-1")
+                    .environmentObject(self.BEO)
+            })
+        })
         temp.title = "Real-Time Chat"
         temp.windowId = caller
         managedWindowsObject.safelyAddItem(key: caller, item: temp)
     }
     func handleTimeManagement() {
         let caller = MenuBarProvider.chat.tool.title
-        let temp = ManagedViewWindow(id: caller, viewBuilder: {NavStackWindow(id: caller, viewBuilder: {StopwatchView()})})
+        let temp = ManagedViewWindow(id: caller, viewBuilder: {
+            NavStackWindow(id: caller, viewBuilder: {
+                StopwatchView()
+            })
+        })
         temp.title = "Stop-Watch"
         temp.windowId = caller
         managedWindowsObject.safelyAddItem(key: caller, item: temp)
@@ -296,7 +302,9 @@ struct CanvasEngine: View {
     
     func handleNavPad() {
         let caller = MenuBarProvider.navHome.tool.title
-        let temp = ManagedViewWindow(id: caller, viewBuilder: {NavPadView()})
+        let temp = ManagedViewWindow(id: caller, viewBuilder: {
+            NavPadView()
+        })
         temp.title = "NavPad"
         temp.windowId = caller
         managedWindowsObject.safelyAddItem(key: caller, item: temp)
@@ -320,7 +328,9 @@ struct CanvasEngine: View {
 //    
     func handleSessionPlan() {
         let caller = MenuBarProvider.boardDetails.tool.title
-        let buddies = ManagedViewWindow(id: caller, viewBuilder: {NavStackWindow(id: caller, viewBuilder: {SessionPlanView(sessionId: "SOL", isShowing: .constant(true), isMasterWindow: true)})})
+        let buddies = ManagedViewWindow(id: caller, viewBuilder: {NavStackWindow(id: caller, viewBuilder: {
+            SessionPlanView(sessionId: "SOL", isShowing: .constant(true), isMasterWindow: true)
+        })})
         buddies.title = "Session Planner"
         buddies.windowId = caller
         managedWindowsObject.toggleItem(key: caller, item: buddies)
@@ -328,7 +338,11 @@ struct CanvasEngine: View {
 //    
     func handleSessionPlans() {
         let caller = MenuBarProvider.boardCreate.tool.title
-        let buddies = ManagedViewWindow(id: caller, viewBuilder: {NavStackWindow(id: caller, viewBuilder: {SessionPlanOverview()})})
+        let buddies = ManagedViewWindow(id: caller, viewBuilder: {
+            NavStackWindow(id: caller, viewBuilder: {
+                SessionPlanOverview()
+            })
+        })
         buddies.title = "SOL Sessions"
         buddies.windowId = caller
         managedWindowsObject.toggleItem(key: caller, item: buddies)
@@ -336,16 +350,22 @@ struct CanvasEngine: View {
 //    
     func handleShare() {
         let caller = MenuBarProvider.profile.tool.title
-        let buddies = ManagedViewWindow(id: caller, viewBuilder: {NavStackWindow(id: caller, viewBuilder: {
-            SignUpView().environmentObject(self.BEO)
-        })})
+        let buddies = ManagedViewWindow(id: caller, viewBuilder: {
+            NavStackWindow(id: caller, viewBuilder: {
+                SignUpView().environmentObject(self.BEO)
+            })
+        })
         buddies.title = "Sign Up"
         buddies.windowId = caller
         managedWindowsObject.toggleItem(key: caller, item: buddies)
     }
     func handleMVSettings() {
         let caller = "mv_settings"
-        let buddies = ManagedViewWindow(id: caller, viewBuilder: {NavStackFloatingWindow(id: caller, viewBuilder: {SettingsView(onDelete: {})})})
+        let buddies = ManagedViewWindow(id: caller, viewBuilder: {
+            NavStackFloatingWindow(id: caller, viewBuilder: {
+                SettingsView(onDelete: {})
+            })
+        })
         buddies.title = "Tool View Settings"
         buddies.windowId = caller
         managedWindowsObject.safelyAddItem(key: caller, item: buddies)

@@ -53,26 +53,17 @@ struct SessionPlanView: View {
     var body: some View {
         
         LoadingForm(isLoading: $isLoading, showCompletion: $showCompletion) { runLoading in
+            
             Section(header: Text("Details")) {
-                TextField("Title", text: $title)
-                Section(header: Text("Description")) {
-                    TextEditor(text: $description)
-                        .frame(minHeight: 100)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 5)
-                                .stroke(Color.gray, lineWidth: 1)
-                        )
-                }
-                Section(header: Text("Objective")) {
-                    TextEditor(text: $objective)
-                        .frame(minHeight: 100)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 5)
-                                .stroke(Color.gray, lineWidth: 1)
-                        )
-                }
+                ModernTextField("Title", text: $title)
                 
-            }
+                ModernTextEditor("Description", text: $description)
+                    .frame(minHeight: 100)
+                
+                ModernTextEditor("Objective", text: $objective)
+                    .frame(minHeight: 100)
+                
+            }.clearSectionBackground()
 
             Section(header: Text("Activities")) {    
                 ActivityPlanListView(sessionId: self.sessionId).environmentObject(self.BEO)
@@ -143,7 +134,7 @@ struct SessionPlanView: View {
         .onDisappear() {
             self.sessionNotificationToken = nil
         }
-        .navigationBarTitle(isCurrentPlan ? "Current Plan" : "Session Plan", displayMode: .inline)
+        .navigationBarTitle(isCurrentPlan ? "Current Session" : "Session Plan", displayMode: .inline)
         .sheet(isPresented: self.$showNewActivity) {
             ActivityPlanView(boardId: "new", sessionId: sessionId, isShowing: $showNewActivity)
         }

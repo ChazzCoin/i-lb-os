@@ -16,7 +16,7 @@ protocol Command {
 }
 
 class CommandController: ObservableObject {
-    private var commandManager = CommandManager()
+//    private var commandManager = CommandManager()
     
     @Published var realmInstance = realm()
     @StateObject var MVS: ManagedViewService = ManagedViewService()
@@ -300,20 +300,20 @@ class CommandController: ObservableObject {
         }
     }
     
-    // Your other view model properties and methods
-    func moveView(id: String, to newPosition: CGPoint) {
-        let command = MoveViewCommand(id: id, newPosition: newPosition)
-        commandManager.executeCommand(command)
-    }
-
-    func changeViewColor(id: String, to newColor: Color) {
-        let command = ChangeColorCommand(id: id, newColor: newColor)
-        commandManager.executeCommand(command)
-    }
-
-    func undoLastAction() {
-        commandManager.undoLastCommand()
-    }
+//    // Your other view model properties and methods
+//    func moveView(id: String, to newPosition: CGPoint) {
+//        let command = MoveViewCommand(id: id, newPosition: newPosition)
+//        commandManager.executeCommand(command)
+//    }
+//
+//    func changeViewColor(id: String, to newColor: Color) {
+//        let command = ChangeColorCommand(id: id, newColor: newColor)
+//        commandManager.executeCommand(command)
+//    }
+//
+//    func undoLastAction() {
+//        commandManager.undoLastCommand()
+//    }
 }
 
 class CommandManager {

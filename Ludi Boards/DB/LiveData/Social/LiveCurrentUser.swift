@@ -41,40 +41,59 @@ struct LiveUser: DynamicProperty {
     }
 }
 
-@propertyWrapper
-struct LiveCurrentUser: DynamicProperty {
+
+class LiveCurrentUser: ObservableObject {
     let realmInstance: Realm = realm()
-    @ObservedObject private var observer: RealmCurrentUserObserver = RealmCurrentUserObserver()
     @ObservedObject var logoutObserver = LogoutObserver()
+    @Published var object: CurrentSolUser? = nil
+    @Published var notificationToken: NotificationToken? = nil
     
     init() {
-        self.observer.startObserver(primaryKey: "SOL", realm: self.realmInstance)
+        self.startObserver(primaryKey: "SOL", realm: self.realmInstance)
+        refreshFromFirebase()
         self.logoutListener()
     }
 
-    var wrappedValue: CurrentSolUser? {
-        get {
-            return self.observer.object
-        }
-        set {
-            self.observer.object = newValue
+    func startObserver(primaryKey: String, realm:Realm) {
+        self.object = realm.object(ofType: CurrentSolUser.self, forPrimaryKey: primaryKey)
+        // Setting up the observer
+        notificationToken = self.object?.observe { [weak self] change in
+            guard let self = self else { return }
+            switch change {
+                case .change:
+                    print("LiveCurrentUser: onChange")
+                    if ((self.object?.isInvalidated) != nil) {
+                        destroy()
+                        break
+                    }
+                    DispatchQueue.main.async {
+                        self.objectWillChange.send()
+                    }
+                case .deleted, .error:
+                    destroy()
+                    break
+            }
         }
     }
     
-    var projectedValue: Binding<CurrentSolUser?> {
-        Binding<CurrentSolUser?>(
-            get: {
-                return self.observer.object
-            },
-            set: { newValue in
-                // Handle updates if needed
-                print("LiveCurrentUser: newValue = [ \(String(describing: newValue)) ]")
-            }
-        )
+    func destroy(deleteObjects:Bool=false) {
+        notificationToken?.invalidate()
+        if deleteObjects {
+            deleteAll()
+        }
     }
+    
+    func deleteAll() {
+        if let obj = self.object {
+            realm().safeWrite { r in
+                r.delete(obj)
+            }
+        }
+    }
+
     
     func loadByPrimaryKey(id:String, realm:Realm) {
-        self.observer.startObserver(primaryKey: id, realm: realm)
+        self.startObserver(primaryKey: id, realm: realm)
         self.logoutListener()
     }
     
@@ -85,12 +104,12 @@ struct LiveCurrentUser: DynamicProperty {
         }
     }
     
-    func destroy() {
-        self.observer.destroy()
-    }
-    
     func refreshFromFirebase() {
-        syncUserFromFirebaseDb() { _ in
+        syncUserFromFirebaseDb(realmInstance: self.realmInstance, onResult: { r in
+            print("User Updated INCOMING")
+            self.object = r
+        })
+        { _ in
             print("User Updated")
         }
     }

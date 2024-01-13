@@ -40,8 +40,26 @@ extension DataSnapshot {
     }
 
     // Master toHashMap Helper Function
+    func toHashMap1() -> [String: Any] {
+        var hashMap = [String: Any]()
+        print("!! Snapshot: \(self)")
+        print("!! Snapshot Child Count: \(self.childrenCount)")
+        print("!! Snapshot Has Child: \(self.hasChildren())")
+        for child in children {
+            let c = (child as? DataSnapshot)
+            if let key = c?.key {
+                hashMap[key] = c?.value
+            }
+        }
+        return hashMap
+    }
     func toHashMap() -> [String: Any] {
         var hashMap = [String: Any]()
+        
+        if self.childrenCount < 2 {
+            return self.value as? [String:Any] ?? hashMap
+        }
+        
         for child in children {
             let c = (child as? DataSnapshot)
             if let key = c?.key {

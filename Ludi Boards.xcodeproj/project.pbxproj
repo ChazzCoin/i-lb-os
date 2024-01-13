@@ -50,6 +50,9 @@
 		FB58E8802B02B26C00FD9E2E /* DragAndDrop.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58E87F2B02B26C00FD9E2E /* DragAndDrop.swift */; };
 		FB58E8822B030F1D00FD9E2E /* RealmFind.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58E8812B030F1D00FD9E2E /* RealmFind.swift */; };
 		FB58E8842B03169700FD9E2E /* TimeProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58E8832B03169700FD9E2E /* TimeProvider.swift */; };
+		FB6C0C4F2B525B2500163A6D /* ModernTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB6C0C4E2B525B2500163A6D /* ModernTextField.swift */; };
+		FB6C0C512B525E8500163A6D /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB6C0C502B525E8500163A6D /* LoginView.swift */; };
+		FB6C0C532B52706B00163A6D /* ModernTextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB6C0C522B52706B00163A6D /* ModernTextEditor.swift */; };
 		FB829F0A2B36A83300FAC6E0 /* WrldsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB829F092B36A83300FAC6E0 /* WrldsApp.swift */; };
 		FB829F0C2B36A83300FAC6E0 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB829F0B2B36A83300FAC6E0 /* ContentView.swift */; };
 		FB829F0E2B36A83400FAC6E0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FB829F0D2B36A83400FAC6E0 /* Assets.xcassets */; };
@@ -251,6 +254,9 @@
 		FB58E87F2B02B26C00FD9E2E /* DragAndDrop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragAndDrop.swift; sourceTree = "<group>"; };
 		FB58E8812B030F1D00FD9E2E /* RealmFind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmFind.swift; sourceTree = "<group>"; };
 		FB58E8832B03169700FD9E2E /* TimeProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeProvider.swift; sourceTree = "<group>"; };
+		FB6C0C4E2B525B2500163A6D /* ModernTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModernTextField.swift; sourceTree = "<group>"; };
+		FB6C0C502B525E8500163A6D /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		FB6C0C522B52706B00163A6D /* ModernTextEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModernTextEditor.swift; sourceTree = "<group>"; };
 		FB829F072B36A83300FAC6E0 /* Wrlds.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Wrlds.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FB829F092B36A83300FAC6E0 /* WrldsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WrldsApp.swift; sourceTree = "<group>"; };
 		FB829F0B2B36A83300FAC6E0 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -477,6 +483,8 @@
 				FBE2C62B2B1C3DBD004C0116 /* LoadingPopup.swift */,
 				FBE2C62D2B1C3FDE004C0116 /* LoadingForm.swift */,
 				FB4840952B1D43AD0003377A /* BarListPicker.swift */,
+				FB6C0C4E2B525B2500163A6D /* ModernTextField.swift */,
+				FB6C0C522B52706B00163A6D /* ModernTextEditor.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -623,6 +631,7 @@
 			isa = PBXGroup;
 			children = (
 				FB9F1DD32B15307E00FD9078 /* UserSignUp.swift */,
+				FB6C0C502B525E8500163A6D /* LoginView.swift */,
 			);
 			path = SignUp;
 			sourceTree = "<group>";
@@ -1031,6 +1040,7 @@
 				FBD9AFC92B008435005F8620 /* ManagedViewAction.swift in Sources */,
 				FBE385502B4B32950090901C /* FriendsListView.swift in Sources */,
 				FB9F1DD92B1533C400FD9078 /* FirebaseLogin.swift in Sources */,
+				FB6C0C532B52706B00163A6D /* ModernTextEditor.swift in Sources */,
 				FBE385522B4B89F80090901C /* LiveSessions.swift in Sources */,
 				FB9F1E402B159F6A00FD9078 /* OrientationInfo.swift in Sources */,
 				FBDF0DC52B21811000FADE44 /* SharedSessionsView.swift in Sources */,
@@ -1048,6 +1058,7 @@
 				FBEBEF942B49504D00B8BA32 /* LiveConnections.swift in Sources */,
 				FB15DD302B0745DF00A21290 /* MenuBarIcon.swift in Sources */,
 				FBE2C6202B1AFD20004C0116 /* SessionPlanThumbView.swift in Sources */,
+				FB6C0C4F2B525B2500163A6D /* ModernTextField.swift in Sources */,
 				FB93BB1B2B03471C00864CB2 /* FireData.swift in Sources */,
 				FB58A1B42B17D1420024B9A2 /* ToolBarView.swift in Sources */,
 				FBB450002B04B7580096F8EB /* ColorProvider.swift in Sources */,
@@ -1070,6 +1081,7 @@
 				FB15DD362B074F5C00A21290 /* Chat.swift in Sources */,
 				FB3E02C32B0D19A300D8558C /* User.swift in Sources */,
 				FB5094282B0584CA000AEA96 /* NavStackWindowView.swift in Sources */,
+				FB6C0C512B525E8500163A6D /* LoginView.swift in Sources */,
 				FB3E02C12B0C9A6D00D8558C /* BuddyProfileView.swift in Sources */,
 				FBD9AFB82AFF0253005F8620 /* GridLines.swift in Sources */,
 				FBE2C6262B1BD7BA004C0116 /* TipBoxView.swift in Sources */,

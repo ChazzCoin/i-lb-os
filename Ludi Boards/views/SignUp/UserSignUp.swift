@@ -52,10 +52,11 @@ struct SignUpView: View {
     var body: some View {
         
         if self.BEO.isLoggedIn {
-            ProfileView().environmentObject(self.BEO)
+            ProfileView()
+                .opacity(self.BEO.isLoggedIn ? 1.0 : 0.0)
+                .environmentObject(self.BEO)
         } else {
-            LoadingForm(isLoading: $isLoading, showCompletion: $showCompletion) { runLoading in
-                
+            VStack {
                 HStack {
                     TextField("Sign-Up Code", text: $loginCode)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -77,7 +78,7 @@ struct SignUpView: View {
                 }
                 
                 if codeAccepted != nil && codeAccepted == true {
-                    VStack(alignment: .leading) {
+                    VStack() {
                         Section(header: Text("User Sign-Up")) {
                             TextField("Email", text: $email)
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -137,45 +138,42 @@ struct SignUpView: View {
                                         .padding(.trailing, 10)
                                 }
                             }
-                            
-                            
                         }
                     }
                     solButton(title: "Sign Up", action: {
-                        runLoading()
+//                        runLoading()
                         signUpNewUserInFirebase()
                         self.BEO.loadUser()
                     }, isEnabled: isFormValid)
                 } else {
-                    Section(header: Text("Login")) {
-                        TextField("Email", text: $emailLogin)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .padding(.leading, 24)
-                            .padding(.trailing, 24)
-                            .autocapitalization(.none)
-                            .disableAutocorrection(true)
-                        
-                        SecureField("Password", text: $passLogin)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .padding(.leading, 24)
-                            .padding(.trailing, 24)
-                        
-                    }
+                
+                    Text("Login")
+                    TextField("Email", text: $emailLogin)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .padding(.horizontal, 40)
+                        .autocapitalization(.none)
+                        .disableAutocorrection(true)
+                    
+                    SecureField("Password", text: $passLogin)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .padding(.horizontal, 40)
                     
                     solButton(title: "Login", action: {
-                        runLoading()
+//                        runLoading()
                         loginUser(withEmail: emailLogin, password: passLogin) { result in
                             if result {
                                 print("User LogIn: \(result)")
                                 self.BEO.isLoggedIn = true
                             } else {
-                                // 
+                                //
                                 self.showSignInFailedAlert = true
                             }
                           
                         }
-                    }, isEnabled: true)
+                    }, isEnabled: true).padding()
+                    
                 }
+//                Spacer()
                 
             }
             .alert("Login Failed.", isPresented: $showSignInFailedAlert) {

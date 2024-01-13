@@ -171,19 +171,20 @@ class FirebaseRoomService: ObservableObject {
                 var inTemp: [SolUser] = []
                 var roomTemp: [Room] = []
                 for r in inRoom {
-                    if let user = self.realmInstance.findByField(SolUser.self, field: "userId", value: r.userId) {
+                    if r.userId == getFirebaseUserId() { continue }
+                    roomTemp.safeAdd(r)
+                    if let user = self.realmInstance.findByField(SolUser.self, field: "userId", value: r.id) {
                         inTemp.safeAdd(user)
-                        roomTemp.safeAdd(r)
                     } else {
                         if r.userId.isEmpty {continue}
-                        fireGetSolUserAsync(userId: r.userId, realm: self.realmInstance)
+                        fireGetSolUserAsync(userId: r.id, realm: self.realmInstance)
                     }
                 }
                 self.objsInCurrentRoom = roomTemp
                 
                 
                 for i in roomTemp {
-                    if let user = self.realmInstance.findByField(SolUser.self, field: "userId", value: i.userId) {
+                    if let user = self.realmInstance.findByField(SolUser.self, field: "userId", value: i.id) {
                         inTemp.safeAdd(user)
                     }
                 }
@@ -207,7 +208,7 @@ class FirebaseRoomService: ObservableObject {
     }
     
     func toggleUserPresence(user: SolUser) {
-        let roomObj = self.allRooms.filter("roomId == %@ AND userId == %@", self.currentRoomId, user.userId)
+        let roomObj = self.allRooms.filter("roomId == %@ AND userId == %@", self.currentRoomId, user.id)
         for item in roomObj {
             if item.status == "IN" {
                 userHasEnteredTheRoom()

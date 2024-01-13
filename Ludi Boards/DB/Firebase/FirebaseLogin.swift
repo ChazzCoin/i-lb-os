@@ -51,7 +51,7 @@ func syncUserFromFirebaseDb(_ email: String, realmInstance: Realm=realm(), compl
         }
 }
 
-func syncUserFromFirebaseDb(realmInstance: Realm=realm(), completion: @escaping (Bool) -> Void) {
+func syncUserFromFirebaseDb(realmInstance: Realm=realm(), onResult: @escaping (CurrentSolUser) -> Void = { _ in }, completion: @escaping (Bool) -> Void) {
     
     safeFirebaseUserId() { uId in
         let dbRef = Database.database().reference()
@@ -59,12 +59,10 @@ func syncUserFromFirebaseDb(realmInstance: Realm=realm(), completion: @escaping 
 
         usersRef.child(uId).observeSingleEvent(of: .value) { snapshot in
             if snapshot.exists() {
-                let result = CurrentSolUser(dictionary: snapshot.value as! [String : Any])
-                try? realmInstance.write {
-                    let r = realmInstance.create(CurrentSolUser.self, value: result, update: .all)
+                if let r = snapshot.toLudiObject(CurrentSolUser.self, realm: realmInstance) {
                     print("Successful CurrentSolUser Parsing: [ \(r) ]")
-                }
-                
+                    onResult(r)
+                }                
                 completion(true)
             } else {
                 print("User Does Not Exist.")
@@ -195,6 +193,13 @@ func loginUser(withEmail email: String, password: String, completion: @escaping 
 func logoutUser(completion: @escaping (Result<Void, Error>) -> Void) {
     do {
         try Auth.auth().signOut()
+        newRealm().updateGetCurrentSolUser { user in
+            user.userId = ""
+            user.userName = ""
+            user.email = ""
+            user.isLoggedIn = false
+            user.imgUrl = ""
+        }
         CodiChannel.ON_LOG_IN_OUT.send(value: "logout")
         completion(.success(()))
     } catch let signOutError as NSError {

@@ -145,13 +145,13 @@ struct ChatView: View {
             }
         }
         .navigationBarTitle("SOL Chat", displayMode: .inline)
-//        .navigationBarItems(leading: Button(action: {
-//            withAnimation {
-//                isSidebarVisible.toggle()
-//            }
-//        }) {
-//            Image(systemName: "line.horizontal.3")
-//        })
+        .navigationBarItems(leading: Button(action: {
+            withAnimation {
+                isSidebarVisible.toggle()
+            }
+        }) {
+            Image(systemName: "line.horizontal.3")
+        })
         .onAppear() {
             
             safeFirebaseUserId { uId in

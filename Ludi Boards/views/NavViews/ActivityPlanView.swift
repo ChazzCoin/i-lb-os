@@ -45,33 +45,25 @@ struct ActivityPlanView: View {
             
             // Details Section
             Section(header: Text("Activity Details")) {
-                TextField("Title", text: $activityPlan.title)
-                TextField("Sub Title", text: $activityPlan.subTitle)
-                TextField("Date", text: $activityPlan.dateOf)
-                TextField("Time Period", text: $activityPlan.timePeriod)
-                TextField("Duration", text: $activityPlan.duration)
-                TextField("Age Level", text: $activityPlan.ageLevel)
-            }
+                ModernTextField("Title", text: $activityPlan.title)
+                ModernTextField("Sub Title", text: $activityPlan.subTitle)
+                ModernTextField("Date", text: $activityPlan.dateOf)
+                ModernTextField("Time Period", text: $activityPlan.timePeriod)
+                ModernTextField("Duration", text: $activityPlan.duration)
+                ModernTextField("Age Level", text: $activityPlan.ageLevel)
+            }.clearSectionBackground()
 
             // Description Section
-            Section(header: Text("Description")) {
-                TextEditor(text:$activityPlan.objectiveDetails)
+            Section(header: Text("Details")) {
+                
+                ModernTextEditor("Objective", text:$activityPlan.objectiveDetails)
                     .frame(minHeight: 100)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 5)
-                            .stroke(Color.gray, lineWidth: 1)
-                    )
-            }
+                
+                ModernTextEditor("Description", text:$activityPlan.activityDetails)
+                    .frame(minHeight: 100)
+                
+            }.clearSectionBackground()
 
-            // Objective Section
-            Section(header: Text("Objective")) {
-                TextEditor(text:$activityPlan.activityDetails)
-                    .frame(minHeight: 100)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 5)
-                            .stroke(Color.gray, lineWidth: 1)
-                    )
-            }
             
             Section(header: Text("Board Settings")) {
                 
