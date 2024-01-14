@@ -315,7 +315,7 @@ struct BoardEngine: View {
             switch newScenePhase {
                 case .active:
                     print("App is in foreground")
-//                    FirebaseRoomService.enterRoom(roomId: self.BEO.currentActivityId)
+                    FirebaseRoomService.enterRoom(roomId: self.BEO.currentActivityId)
                 case .inactive:
                     print("App is inactive")
                     FirebaseRoomService.awayRoom(roomId: self.BEO.currentActivityId)

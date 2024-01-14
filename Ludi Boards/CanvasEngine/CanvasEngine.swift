@@ -280,7 +280,7 @@ struct CanvasEngine: View {
         let caller = MenuBarProvider.chat.tool.title
         let temp = ManagedViewWindow(id: caller, viewBuilder: {
             NavStackWindow(id: caller, viewBuilder: {
-                ChatView(chatId: "default-1")
+                ChatView()
                     .environmentObject(self.BEO)
             })
         })

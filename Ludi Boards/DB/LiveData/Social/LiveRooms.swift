@@ -237,15 +237,9 @@ class FirebaseRoomService: ObservableObject {
         isObserving = false
     }
     
-    static func enterRoom(roomId:String) {
-        toggleRoomStatus(roomId: roomId, status: "IN")
-    }
-    static func leaveRoom(roomId:String) {
-        toggleRoomStatus(roomId: roomId, status: "OUT")
-    }
-    static func awayRoom(roomId:String) {
-        toggleRoomStatus(roomId: roomId, status: "AWAY")
-    }
+    static func enterRoom(roomId:String) { toggleRoomStatus(roomId: roomId, status: "IN") }
+    static func leaveRoom(roomId:String) { toggleRoomStatus(roomId: roomId, status: "OUT") }
+    static func awayRoom(roomId:String) { toggleRoomStatus(roomId: roomId, status: "AWAY") }
     
     static func toggleRoomStatus(roomId:String, status:String) {
         if roomId == "SOL" || roomId.isEmpty { return }
@@ -280,7 +274,6 @@ class FirebaseRoomService: ObservableObject {
             }
         }
        
-        
     }
     
     deinit {

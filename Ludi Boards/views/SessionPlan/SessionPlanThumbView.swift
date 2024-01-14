@@ -13,46 +13,46 @@ struct SessionPlanThumbView: View {
 
     var body: some View {
         HStack(spacing: 16) {
-            Image("soccer_one") // Replace with actual image
+            // Image Styling
+            Image("tools_soccer_thumb_field") // Replace with actual image
                 .resizable()
                 .scaledToFill()
                 .frame(width: 75, height: 75)
-                .cornerRadius(10)
-                .clipped()
+                .background(Color.gray.opacity(0.3)) // Placeholder background
+                .cornerRadius(12)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(Color.green, lineWidth: 2) // Adding a subtle border
+                )
 
-            VStack(alignment: .leading, spacing: 8) {
+            // Text Content
+            VStack(alignment: .leading, spacing: 4) {
                 Text(sessionPlan.title)
-                    .font(.headline)
+                    .font(.system(size: 18, weight: .bold))
+                    .foregroundColor(Color.primaryBackground) // Highlighted title color
                     .lineLimit(1)
+
                 Text(sessionPlan.subTitle)
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundColor(.primary)
                     .lineLimit(2)
-                Text(sessionPlan.sessionDetails)
+
+                Text(sessionPlan.id)
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(.gray)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+            Spacer()
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.vertical, 8)
-        .padding(.horizontal, 16)
-        .background(Color(UIColor.systemBackground))
-        .cornerRadius(12)
-        .shadow(radius: 3)
+        .padding()
+        .background(Color.white)
+        .cornerRadius(15)
+        .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
+        .padding(.horizontal, 8)
         .navigationBarTitle("SOL Sessions", displayMode: .inline)
-//        .navigationBarItems(trailing: HStack {
-//            Button(action: {
-//                print("Minimize")
-//                CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: MenuBarProvider.boardCreate.tool.title, stateAction: "close"))
-//            }) {
-//                Image(systemName: "minus")
-//                    .resizable()
-//                    .frame(width: 30, height: 30)
-//            }
-//        })
     }
 }
-
 
 
 //struct SessionPlanThumbView_Previews: PreviewProvider {
@@ -84,8 +84,8 @@ struct SessionPlanListView: View {
     }
 }
 
-struct SessionPlanListView_Preview: PreviewProvider {
-    static var previews: some View {
-        SessionPlanListView(sessionPlans: [SessionPlan(), SessionPlan()])
-    }
-}
+//struct SessionPlanListView_Preview: PreviewProvider {
+//    static var previews: some View {
+//        SessionPlanListView(sessionPlans: [SessionPlan(), SessionPlan()])
+//    }
+//}

@@ -37,3 +37,23 @@ func compareTimestamps(timestamp1: String, timestamp2: String) -> ComparisonResu
 
     return date1.compare(date2)
 }
+
+
+func getCurrentTimestamp() -> String {
+    let currentDateTime = Date()
+    let formatter = DateFormatter()
+    formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+    return formatter.string(from: currentDateTime)
+}
+
+// Function to convert timestamp string to human-readable date
+func convertTimestampToReadableDate(timestamp: String) -> String? {
+    let formatter = DateFormatter()
+    formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+    guard let date = formatter.date(from: timestamp) else {
+        return nil
+    }
+
+    formatter.dateFormat = "EEEE, MMM d, yyyy HH:mm:ss"
+    return formatter.string(from: date)
+}

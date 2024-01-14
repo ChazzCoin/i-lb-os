@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import FirebaseDatabase
 import Combine
+import RealmSwift
 
 //struct Message: Identifiable {
 //    let id: Int
@@ -41,39 +42,27 @@ struct ChatView: View {
     @State var cancellables = Set<AnyCancellable>()
     @State var chatRef = fireGetReference(dbPath: DatabasePaths.chat)
     
-    @LiveStateObjects(Chat.self) var chatMessages
+    @State var fireObserver: DatabaseHandle? = nil
+    @State var currentUser = newRealm().getCurrentSolUser()
+    
+    @ObservedResults(Chat.self) var allMessages
+    var roomMessages: Results<Chat> {
+        return allMessages.filter("chatId == %@", self.boardEngineObject.currentActivityId)
+    }
+    // Function to sort chats by timestamp
+    func sortChatsByTimestamp(chats: Results<Chat>) -> Results<Chat> {
+        return chats.sorted(byKeyPath: "timestamp", ascending: true)
+    }
     
     func observeChat() {
-        self.chatRef.child(boardEngineObject.currentActivityId).fireObserver { snapshot in
-            let mapped: [String:Any] = snapshot.toHashMap()
-            for (_, value) in mapped {
-                let singleChat: Chat? = toChat(from: value as? [String: Any] ?? [:])
-                if singleChat != nil && !messages.keys.contains(singleChat!.timestamp) {
-                    messages[singleChat!.timestamp] = singleChat
-                }
+        fireObserver = nil
+        fireObserver = self.chatRef.child(boardEngineObject.currentActivityId).fireObserver { snapshot in
+            if let results = snapshot.toLudiObjects(Chat.self, realm: self.allMessages.realm?.thaw()) {
+                print("New Chat Messages: \(results)")
             }
-            sortAndResetMessages()
         }
     }
-    
-    func observeLudiChat() {
-        self.chatRef.child(boardEngineObject.currentActivityId).fireObserver { snapshot in
-            let _ = snapshot.toLudiObjects(Chat.self)
-        }
-        CodiChannel.REALM_ON_CHANGE.receive(on: RunLoop.main) { realmId in
-            print("Received on ON REALM CHANGE channel: \(realmId)")
-            if self.isReloading { return }
-            self.isReloading = true
-            
-            // Dispatch the task to the main queue after the delay
-            DispatchQueue.executeAfter(seconds: delaySeconds) {
-                //TODO: LOADING VIEW!!
-                reloader()
-            }
-            
-        }.store(in: &cancellables)
-        
-    }
+
     
     func reloader() {
         let results = realmInstance.findAllByField(Chat.self, field: "chatId", value: boardEngineObject.currentActivityId)
@@ -90,7 +79,7 @@ struct ChatView: View {
             ScrollViewReader { scrollViewProxy in
                 ScrollView {
                     LazyVStack(spacing: 12) {
-                        ForEach(Array(messages.values.compactMap { $0 }), id: \.id) { chat in
+                        ForEach(sortChatsByTimestamp(chats: roomMessages)) { chat in
                             ChatMessageRow(chat: chat)
                         }
                     }
@@ -129,20 +118,22 @@ struct ChatView: View {
         }
     }
     var sidebarView: some View {
-        RoomUserList()
-            .environmentObject(self.boardEngineObject)
+        RoomUserList().environmentObject(self.boardEngineObject)
     }
+    
     var body: some View {
         
         // Main Content and Sidebar
         ZStack(alignment: .leading) {
+            
             mainContentView
 
             if isSidebarVisible {
                 sidebarView
-                    .frame(width: 250)
+                    .frame(width: 300)
                     .transition(.move(edge: .leading))
             }
+            
         }
         .navigationBarTitle("SOL Chat", displayMode: .inline)
         .navigationBarItems(leading: Button(action: {
@@ -158,7 +149,18 @@ struct ChatView: View {
                 self.currentUserId = uId
             }
             
-            observeLudiChat()
+            observeChat()
+            
+            CodiChannel.SESSION_ON_ID_CHANGE.receive(on: RunLoop.main) { onChange in
+                var temp = onChange as! SessionChange
+                if let roomId = temp.activityId {
+                    if self.chatId != roomId {
+                        print("Changing Chat ID: \(roomId)")
+                        self.chatId = roomId
+                        observeChat()
+                    }
+                }
+            }.store(in: &cancellables)
             
         }
     }
@@ -166,15 +168,27 @@ struct ChatView: View {
     
 
     func sendMessage() {
-        let newMessage = Chat()
-        newMessage.chatId = boardEngineObject.currentActivityId
-        newMessage.messageText = messageText
-        newMessage.senderId = self.currentUserId
-        newMessage.timestamp = getTimeStamp()
-        firebaseDatabase { db in
-            db.child(DatabasePaths.chat.rawValue).child(chatId).child(newMessage.id).setValue(newMessage.toDictionary())
+        
+        allMessages.realm?.getCurrentSolUser() { user in
+            let newMessage = Chat()
+            newMessage.chatId = chatId
+            newMessage.messageText = messageText
+            newMessage.senderId = user.userId
+            newMessage.senderName = user.userName
+            newMessage.senderImage = user.imgUrl
+            newMessage.timestamp = getCurrentTimestamp()
+            
+            firebaseDatabase { db in
+                db.child(DatabasePaths.chat.rawValue)
+                    .child(chatId)
+                    .child(newMessage.id)
+                    .setValue(newMessage.toDict())
+            }
+            
+            messageText = ""
         }
-        messageText = ""
+        
+        
     }
 
     func getCurrentTime() -> String {
@@ -212,15 +226,24 @@ struct ChatView: View {
 struct ChatMessageRow: View {
     let chat: Chat
     var isCurrentUser: Bool {
-        chat.senderId == "me"
+        chat.senderId == getFirebaseUserId()
     }
-
+    
+    func toHumanReadableTime(ts: String) -> String {
+        return convertTimestampToReadableDate(timestamp: ts) ?? "unknown time"
+    }
+    
     var body: some View {
         HStack {
             if isCurrentUser {
                 Spacer()
             }
-            MessageBubbleView(text: chat.messageText ?? "", isCurrentUser: isCurrentUser, userName: chat.senderName ?? "Anon", dateTime: chat.timestamp)
+            MessageBubbleView(
+                text: chat.messageText ?? "",
+                isCurrentUser: isCurrentUser,
+                userName: chat.senderName ?? "Anon",
+                dateTime: toHumanReadableTime(ts: chat.timestamp)
+            )
             if !isCurrentUser {
                 Spacer()
             }

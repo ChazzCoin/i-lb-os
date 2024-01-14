@@ -8,19 +8,17 @@
 import Foundation
 import RealmSwift
 
-@objcMembers class Chat: Object {
-    dynamic var id: String = UUID().uuidString
-    dynamic var senderId: String?
-    dynamic var senderName: String?
-    dynamic var senderImage: String?
-    dynamic var chatId: String?
-    dynamic var receiverId: String?
-    dynamic var messageText: String?
-    dynamic var timestamp: String = getTimeStamp()
+class Chat: Object, ObjectKeyIdentifiable {
+    
+    @Persisted(primaryKey: true) var id: String = UUID().uuidString
+    @Persisted var senderId: String?
+    @Persisted var senderName: String?
+    @Persisted var senderImage: String?
+    @Persisted var chatId: String?
+    @Persisted var receiverId: String?
+    @Persisted var messageText: String?
+    @Persisted var timestamp: String = getCurrentTimestamp()
 
-    override static func primaryKey() -> String? {
-        return "id"
-    }
 }
 
 extension Chat {

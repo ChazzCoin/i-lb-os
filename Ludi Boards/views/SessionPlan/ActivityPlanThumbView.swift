@@ -51,7 +51,7 @@ struct ActivityPlanThumbView: View {
                     HStack {
                         Image(systemName: "clock")
                             .foregroundColor(.gray)
-                        Text("Duration: \(activityPlan?.duration ?? "Unknown")")
+                        Text("Duration: \(activityPlan?.id ?? "Unknown")")
                             .font(.caption)
                             .foregroundColor(.gray)
                     }

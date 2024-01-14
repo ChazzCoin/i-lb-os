@@ -37,7 +37,7 @@ class ManagedViewWindows: ObservableObject {
     @Published var managedViewGenerics: [String:ManagedViewWindow] = [:]
     
     func newManagedViewWindow(viewId: String) -> ManagedViewWindow {
-        return ManagedViewWindow(id: viewId, viewBuilder: {ChatView(chatId: "default-1")})
+        return ManagedViewWindow(id: viewId, viewBuilder: {ChatView()})
     }
     
     func toggleManagedViewWindowById(viewId: String) {
