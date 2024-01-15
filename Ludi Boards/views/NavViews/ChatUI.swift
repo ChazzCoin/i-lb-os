@@ -32,6 +32,7 @@ struct ChatView: View {
     @State private var messages: [String: Chat?] = [:]
     @State private var lastMessageId: String?
     
+    @StateObject var ROOM = FirebaseRoomService()
     @StateObject var keyboardResponder = KeyboardResponder()
     
     @State private var isSidebarVisible = false
@@ -130,18 +131,23 @@ struct ChatView: View {
         .onChange(of: boardEngineObject.currentActivityId) { _ in
             chatId = boardEngineObject.currentActivityId
             observeChat()
+            self.ROOM.stopObserving()
+            self.ROOM.startObserving(roomId: chatId)
         }
         .onAppear() {
             chatId = boardEngineObject.currentActivityId
             observeChat()
+            self.ROOM.startObserving(roomId: chatId)
         }
         .onDisappear() {
             stopObserver()
+            self.ROOM.stopObserving()
         }
     }
     var sidebarView: some View {
         RoomUserList()
             .environmentObject(self.boardEngineObject)
+            .environmentObject(self.ROOM)
     }
     
     var body: some View {

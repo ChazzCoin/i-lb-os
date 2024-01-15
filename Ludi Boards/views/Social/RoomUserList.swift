@@ -11,7 +11,7 @@ import RealmSwift
 
 struct RoomUserList: View {
     @EnvironmentObject var BEO: BoardEngineObject
-    @StateObject var ROOM = FirebaseRoomService()
+    @EnvironmentObject var ROOM: FirebaseRoomService
     @State private var showingAddBuddyView = false
 
     var body: some View {
@@ -55,12 +55,7 @@ struct RoomUserList: View {
         .sheet(isPresented: $showingAddBuddyView) {
             AddBuddyView(isPresented: $showingAddBuddyView, sessionId: .constant("none"))
         }
-        .onAppear() {
-            self.ROOM.startObserving(roomId: self.BEO.currentActivityId)
-        }
-        .onDisappear() {
-            self.ROOM.stopObserving()
-        }
+        
         
     }
     
