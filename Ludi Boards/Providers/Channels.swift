@@ -9,6 +9,16 @@ import Foundation
 import Combine
 import SwiftUI
 
+class NotificationController {
+    var message: String = ""
+    var icon: String = "door_open"
+
+    init(message: String, icon: String) {
+        self.message = message
+        self.icon = icon
+    }
+}
+
 class WindowController {
     var windowId: String = ""
     var stateAction: String = "open" //close
@@ -124,6 +134,7 @@ enum CodiChannel {
     case REALM_ON_DELETE
     case EMOJI_ON_CREATE
     case ON_LOG_IN_OUT
+    case ON_NOTIFICATION
     
     // ... (other cases)
 
@@ -167,6 +178,8 @@ enum CodiChannel {
                 return EmojiOnCreateChannel.shared.subject
             case .ON_LOG_IN_OUT:
                 return OnLogInOutChannel.shared.subject
+            case .ON_NOTIFICATION:
+                return OnNotificationChannel.shared.subject
         }
     }
 
@@ -252,5 +265,9 @@ class EmojiOnCreateChannel {
 }
 class OnLogInOutChannel {
     static let shared = OnLogInOutChannel()
+    let subject = PassthroughSubject<Any, Never>()
+}
+class OnNotificationChannel {
+    static let shared = OnNotificationChannel()
     let subject = PassthroughSubject<Any, Never>()
 }

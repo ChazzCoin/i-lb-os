@@ -12,6 +12,7 @@ import RealmSwift
 struct SessionPlanOverview: View {
     @State var userId: String = getFirebaseUserId() ?? "SOL"
     
+    @EnvironmentObject var BEO: BoardEngineObject
     @EnvironmentObject var NavStack: NavStackWindowObservable
   
     @ObservedResults(UserToSession.self, where: { $0.guestId == getFirebaseUserId() ?? "" }) var guestSessions
@@ -28,12 +29,12 @@ struct SessionPlanOverview: View {
     
     let realmInstance = realm()
     
-    @State private var liveDemoNotificationToken: NotificationToken? = nil
+//    @State private var liveDemoNotificationToken: NotificationToken? = nil
     
     @State private var isLoading: Bool = false
-    @State private var sessionNotificationToken: NotificationToken? = nil
-    @State private var sessionSharesNotificationToken: NotificationToken? = nil
-    @State private var sharesNotificationToken: NotificationToken? = nil
+//    @State private var sessionNotificationToken: NotificationToken? = nil
+//    @State private var sessionSharesNotificationToken: NotificationToken? = nil
+//    @State private var sharesNotificationToken: NotificationToken? = nil
     @State private var showNewPlanSheet = false
     
     @State private var isLoggedIn = false
@@ -49,7 +50,9 @@ struct SessionPlanOverview: View {
             Section(header: Text("Sessions")) {
                 List(hostedSessionPlans) { sessionPlan in
                     NavigationLink(
-                        destination: SessionPlanView(sessionId: sessionPlan.id, isShowing: .constant(true), isMasterWindow: false).environmentObject(self.NavStack)
+                        destination: SessionPlanView(sessionId: sessionPlan.id, isShowing: .constant(true), isMasterWindow: false)
+                            .environmentObject(self.BEO)
+                            .environmentObject(self.NavStack)
                     ) {
                         SessionPlanThumbView(sessionPlan: sessionPlan)
                     }
@@ -61,7 +64,9 @@ struct SessionPlanOverview: View {
                     List(sharedSessionPlans, id: \.self) { sessionPlan in
                         
                         NavigationLink(
-                            destination: SessionPlanView(sessionId: sessionPlan.id, isShowing: .constant(true), isMasterWindow: false).environmentObject(self.NavStack)
+                            destination: SessionPlanView(sessionId: sessionPlan.id, isShowing: .constant(true), isMasterWindow: false)
+                                .environmentObject(self.BEO)
+                                .environmentObject(self.NavStack)
                         ) {
                             SessionPlanThumbView(sessionPlan: sessionPlan)
                         }
@@ -82,6 +87,8 @@ struct SessionPlanOverview: View {
         .navigationBarTitle("Session Plans", displayMode: .inline)
         .sheet(isPresented: $showNewPlanSheet) {
             SessionPlanView(sessionId: "new", isShowing: $showNewPlanSheet, isMasterWindow: false)
+                .environmentObject(self.BEO)
+                .environmentObject(self.NavStack)
         }
         .refreshable {
             fetchAllSessionsFromFirebase()

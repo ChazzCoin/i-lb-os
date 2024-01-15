@@ -37,6 +37,7 @@
 		FB426A9B2B5343D90058CD9D /* SolSecureField.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB426A9A2B5343D90058CD9D /* SolSecureField.swift */; };
 		FB426A9D2B5345D70058CD9D /* Room.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB426A9C2B5345D70058CD9D /* Room.swift */; };
 		FB426A9F2B5346070058CD9D /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB426A9E2B5346070058CD9D /* Connection.swift */; };
+		FB426AA12B55B6A30058CD9D /* NotificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB426AA02B55B6A30058CD9D /* NotificationView.swift */; };
 		FB4840962B1D43AD0003377A /* BarListPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB4840952B1D43AD0003377A /* BarListPicker.swift */; };
 		FB4840982B1D66380003377A /* CurrentSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB4840972B1D66380003377A /* CurrentSession.swift */; };
 		FB48409A2B1EBC940003377A /* Sports.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB4840992B1EBC940003377A /* Sports.swift */; };
@@ -243,6 +244,7 @@
 		FB426A9A2B5343D90058CD9D /* SolSecureField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolSecureField.swift; sourceTree = "<group>"; };
 		FB426A9C2B5345D70058CD9D /* Room.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Room.swift; sourceTree = "<group>"; };
 		FB426A9E2B5346070058CD9D /* Connection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Connection.swift; sourceTree = "<group>"; };
+		FB426AA02B55B6A30058CD9D /* NotificationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationView.swift; sourceTree = "<group>"; };
 		FB4840952B1D43AD0003377A /* BarListPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarListPicker.swift; sourceTree = "<group>"; };
 		FB4840972B1D66380003377A /* CurrentSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentSession.swift; sourceTree = "<group>"; };
 		FB4840992B1EBC940003377A /* Sports.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sports.swift; sourceTree = "<group>"; };
@@ -875,6 +877,7 @@
 				FB10AE042B0DC8E600295F4B /* Tips.swift */,
 				FBE2C6252B1BD7BA004C0116 /* TipBoxView.swift */,
 				FBF3902D2B2D78CF00C0508A /* TipProvider.swift */,
+				FB426AA02B55B6A30058CD9D /* NotificationView.swift */,
 			);
 			path = Tips;
 			sourceTree = "<group>";
@@ -1098,6 +1101,7 @@
 				FBD9AFCD2B008457005F8620 /* UserToActivity.swift in Sources */,
 				FBAE62AD2B295A8100E008D5 /* ManagedPopUpView.swift in Sources */,
 				FB581BEB2B1EF39C00F5C90F /* Stopwatch.swift in Sources */,
+				FB426AA12B55B6A30058CD9D /* NotificationView.swift in Sources */,
 				FB4840962B1D43AD0003377A /* BarListPicker.swift in Sources */,
 				FB3E02B12B0C6B1D00D8558C /* ActivityPlan.swift in Sources */,
 				FB3E02BD2B0C90E600D8558C /* RoomUserList.swift in Sources */,

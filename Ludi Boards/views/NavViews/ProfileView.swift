@@ -24,14 +24,6 @@ struct ProfileView: View {
         return self.connections.filter("status == %@", "pending")
     }
     
-    @State private var aboutMe: String = "Just enjoying the world of coding and tech!"
-    @State private var email: String = "email@example.com"
-    @State private var phoneNumber: String = "123-456-7890"
-    @State private var membershipType: Int = 0
-    @State private var accountCreationDate: String = "Jan 1, 2020"
-    @State private var visibility: String = "closed"
-    @State private var photoUrl: String = "default_image_url"
-    
     @State private var showNewPlanSheet = false
     @State private var showChatButton = true
     @State private var showAddBuddyButton = true
@@ -77,13 +69,10 @@ struct ProfileView: View {
                     FriendsListView()
                 }
                 
-                if showAddBuddyButton {
-                    Button("Search Buddy") {
-                        // Add buddy action
-                        showNewPlanSheet = true
-                    }
-                    .buttonStyle(ActionButtonStyle())
-                }
+                solButton(title: "Search Buddy", action: {
+                    // Add buddy action
+                    showNewPlanSheet = true
+                }, isEnabled: showAddBuddyButton)
                 
                 solButton(title: "Sign Out", action: {
                     runLoading()
@@ -108,17 +97,6 @@ struct ProfileView: View {
             }
             .padding(.bottom, 20)
         }
-//        .task {
-//            _connections.refreshOnce()
-//            if let uId = getFirebaseUserId() {
-//                _solRequests.startFirebaseObservation(block: { db in
-//                    return db
-//                        .child("connections")
-//                        .queryOrdered(byChild: "userTwoId")
-//                        .queryEqual(toValue: uId)
-//                })
-//            }
-//        }
         .refreshable {
             loadUser()
         }
@@ -142,6 +120,7 @@ struct ProfileView: View {
     }
     
     func loadUser() {
+        currentUser.start()
         FirebaseConnectionsService.refreshOnce()
        
         print("Current User: \(String(describing: currentUser))")

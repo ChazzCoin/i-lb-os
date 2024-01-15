@@ -48,7 +48,7 @@ class LiveCurrentUser: ObservableObject {
     @Published var object: CurrentSolUser? = nil
     @Published var notificationToken: NotificationToken? = nil
     
-    init() {
+    func start() {
         self.startObserver(primaryKey: "SOL", realm: self.realmInstance)
         refreshFromFirebase()
         self.logoutListener()

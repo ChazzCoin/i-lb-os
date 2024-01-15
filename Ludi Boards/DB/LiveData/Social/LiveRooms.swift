@@ -138,15 +138,12 @@ class FirebaseRoomService: ObservableObject {
     @Published var currentRoomId = ""
     @Published var objsInCurrentRoom: [Room] = []
     @Published var usersInCurrentRoom: [SolUser] = []
-    @Published var inRoomSnapshot: [SolUser] = []
-//    @State var realmInstance = newRealm()
     private var ref: DatabaseReference? = nil
     
     @Published var reference: DatabaseReference = Database
         .database()
         .reference()
         .child("rooms")
-    
     
     var getCurrentRoom: Results<Room> {
         return self.allRooms.filter("roomId == %@", self.currentRoomId)
@@ -161,11 +158,12 @@ class FirebaseRoomService: ObservableObject {
         guard !isObserving else { return }
         self.currentRoomId = roomId
         firebaseSubscription = self.reference.child(roomId).observe(.value, with: { snapshot in
+            
+            let snapPresence = newRealm().objects(Room.self).filter("roomId == %@", roomId)
+            
             if let allUserPresences = snapshot.toLudiObjects(Room.self, realm: self.allRooms.realm?.thaw()) {
-                self.inRoomSnapshot = self.usersInCurrentRoom
-                
                 // Assuming UserPresence has properties `roomId` and `status`
-                let inRoom = allUserPresences.filter { $0.roomId == roomId && $0.status != "OUT" }
+                let inRoom = allUserPresences.filter { $0.roomId == roomId }
                 
                 var inTemp: [SolUser] = []
                 var roomTemp: [Room] = []
@@ -188,40 +186,35 @@ class FirebaseRoomService: ObservableObject {
                 }
                 self.usersInCurrentRoom = inTemp
                 
-                
-                // Handling Users
-                var userChanges: [SolUser] = []
-                for item in self.usersInCurrentRoom {
-                    if !self.inRoomSnapshot.contains(item) {
-                        userChanges.safeAdd(item)
+                // Handle In/Out Notifications
+                for item in self.objsInCurrentRoom {
+                    if !snapPresence.contains(item) {
+                        self.userHasEnteredTheRoom(user: item)
+                    } else {
+                        for snapItem in snapPresence {
+                            if item.userId != snapItem.userId {continue}
+                            if item.status == "OUT" && snapItem.status == "IN" {
+                                self.userHasLeftTheRoom(user: item)
+                            }
+                            else if item.status == "IN" && snapItem.status == "OUT" {
+                                self.userHasEnteredTheRoom(user: item)
+                            }
+                        }
                     }
                 }
-                for item in userChanges {
-                    self.toggleUserPresence(user: item)
-                }
-                
             }
         })
         isObserving = true
     }
     
-    func toggleUserPresence(user: SolUser) {
-        let roomObj = self.allRooms.filter("roomId == %@ AND userId == %@", self.currentRoomId, user.id)
-        for item in roomObj {
-            if item.status == "IN" {
-                userHasEnteredTheRoom()
-            } else if item.status == "OUT" {
-                userHasLeftTheRoom()
-            }
-        }
-    }
-    
-    func userHasLeftTheRoom() {
-        print("User has Entered Room: \(self.currentRoomId)")
-    }
-    
-    func userHasEnteredTheRoom() {
+    func userHasLeftTheRoom(user: Room) {
         print("User has Left Room: \(self.currentRoomId)")
+        CodiChannel.ON_NOTIFICATION.send(value: NotificationController(message: "\(user.userName) has left the room.", icon: "door_closed"))
+    }
+    
+    func userHasEnteredTheRoom(user: Room) {
+        print("User has Entered Room: \(self.currentRoomId)")
+        CodiChannel.ON_NOTIFICATION.send(value: NotificationController(message: "\(user.userName) has entered the room.", icon: "door_open"))
     }
 
     func stopObserving() {

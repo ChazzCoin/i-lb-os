@@ -57,7 +57,7 @@ class BoardEngineObject : ObservableObject {
     @Published var boardHeight: CGFloat = 6000.0
     @Published var boardStartPosX: CGFloat = 0.0
     @Published var boardStartPosY: CGFloat = 1000.0
-    @Published var boardBgColor: Color = Color.primaryBackground
+    @Published var boardBgColor: Color = Color.secondaryBackground
     
     @Published var boardBgName: String = "Sol"
     @Published private var boardBgRed: Double = 48.0
@@ -627,11 +627,11 @@ struct BoardEngine: View {
         self.BEO.changeActivity(activityId: "SOL")
         newActivity.ownerId = getFirebaseUserId() ?? CURRENT_USER_ID
         newActivity.sessionId = self.BEO.currentSessionId
-        let rgbb = Color.primaryBackground.toRGBA()
+        let rgbb = Color.secondaryBackground.toRGBA()
         newActivity.backgroundRed = rgbb?.red == nil ? newActivity.backgroundRed : rgbb?.red ?? 0.0
         newActivity.backgroundBlue = rgbb?.blue == nil ? newActivity.backgroundBlue : rgbb?.blue ?? 0.0
         newActivity.backgroundGreen = rgbb?.green == nil ? newActivity.backgroundGreen : rgbb?.green ?? 0.0
-        self.BEO.setColor(colorIn: Color.primaryBackground)
+        self.BEO.setColor(colorIn: Color.secondaryBackground)
         self.BEO.setFieldLineColor(colorIn: Color(red: newActivity.backgroundRed, green: newActivity.backgroundGreen, blue: newActivity.backgroundBlue))
         self.BEO.setBoardBgView(boardName: newActivity.backgroundView)
         self.activities.append(newActivity)

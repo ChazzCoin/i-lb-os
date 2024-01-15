@@ -115,35 +115,31 @@ struct CanvasEngine: View {
     }
     
     @State var menuIsOpen = true
+    @State var showNotification = false
+    @State var notificationMessage = ""
+    @State var notificationIcon = ""
     @State var sessionPlan = SessionPlan()
     
     var body: some View {
         
         GlobalPositioningZStack { geo, gps in
-            
-//            if self.BEO.isLoading {
-//                ProgressView()
-//                    .frame(width: 300, height: 300)
-//                    .progressViewStyle(.circular)
-//                    .scaleEffect(5) // Adjust the size as needed
-//                    .padding(20)
-//                    .cornerRadius(10)
-//                    .position(using: gps, at: .center)
-//            }
-            
+        
+            // Menu Bar
             MenuBarStatic(){}
                 .frame(width: 60, height: menuIsOpen ? (gps.screenSize.height - 100) : 60)
                 .position(using: gps, at: .topLeft, offsetX: 50, offsetY: menuIsOpen ? ((gps.screenSize.height - 100) / 2) : 30)
             
+            // Navigation Bar
             NavPadView()
                 .environmentObject(self.BEO)
                 .position(using: gps, at: .bottomCenter, offsetX: 0, offsetY: 150)
             
+            // NavStack Windows
             ForEach(Array(managedWindowsObject.managedViewGenerics.values)) { managedViewWindow in
                 managedViewWindow.viewBuilder().environmentObject(self.BEO)
             }.zIndex(25.0)
             
-            
+            // Tool Bar
             if toolBarIsEnabled {
                 ToolBarPicker {
                     LineIconView(isBgColor: false)
@@ -166,6 +162,7 @@ struct CanvasEngine: View {
                 .position(using: gps, at: .bottomCenter, offsetY: 50)
             }
             
+            // Drawing Mode Popup
             if self.BEO.isDraw {
                 GeometryReader { geo in
                     TipBoxViewFlasher(tips: TipLineDrawing){
@@ -176,6 +173,7 @@ struct CanvasEngine: View {
                 .position(using: gps, at: .topRight, offsetX: 150, offsetY: 0)
             }
             
+            // Tip Box
             if self.BEO.showTipViewStatic {
                 GeometryReader { geo in
                     TipBoxViewStatic(tips: TipLineGestures, subTitle: "General Tips"){
@@ -183,6 +181,15 @@ struct CanvasEngine: View {
                     }
                 }
                 .frame(width: 300)
+                .position(using: gps, at: .topLeft, offsetX: 150, offsetY: 0)
+            }
+            
+            // Notify Box
+            if self.showNotification {
+                GeometryReader { geo in
+                    NotificationView(message: self.$notificationMessage, icon: self.$notificationIcon)
+                }
+                .zIndex(50.0)
                 .position(using: gps, at: .topRight, offsetX: 150, offsetY: 0)
             }
             
@@ -217,6 +224,7 @@ struct CanvasEngine: View {
             self.BEO.loadUser()
             
             menuBarButtonListener()
+            notificationListener()
             handleChat()
 //            handleBuddyProfile()
             handleSessionPlan()
@@ -225,7 +233,31 @@ struct CanvasEngine: View {
 //            handleNavPad()
             handleMVSettings()
             handleSessionPlans()
+            
+            DispatchQueue.executeAfter(seconds: 10, action: {
+                CodiChannel.ON_NOTIFICATION.send(value: NotificationController(message: "Johnny has entered the room!", icon: "door_open"))
+            })
+            
         }
+        
+    }
+    
+    func notificationListener() {
+        
+        CodiChannel.ON_NOTIFICATION.receive(on: RunLoop.main) { message in
+            if let message = message as? NotificationController {
+                print("Received on ON_NOTIFICATION channel: \(message.message)")
+                self.notificationMessage = message.message
+                self.notificationIcon = message.icon
+                self.showNotification = true
+                DispatchQueue.executeAfter(seconds: 5, action: {
+                    withAnimation {
+                        self.showNotification = false
+                    }
+                })
+                
+            }
+        }.store(in: &cancellables)
         
     }
     
@@ -303,7 +335,7 @@ struct CanvasEngine: View {
     func handleNavPad() {
         let caller = MenuBarProvider.navHome.tool.title
         let temp = ManagedViewWindow(id: caller, viewBuilder: {
-            NavPadView()
+            NavPadView().environmentObject(self.BEO)
         })
         temp.title = "NavPad"
         temp.windowId = caller
@@ -330,6 +362,7 @@ struct CanvasEngine: View {
         let caller = MenuBarProvider.boardDetails.tool.title
         let buddies = ManagedViewWindow(id: caller, viewBuilder: {NavStackWindow(id: caller, viewBuilder: {
             SessionPlanView(sessionId: "SOL", isShowing: .constant(true), isMasterWindow: true)
+                .environmentObject(self.BEO)
         })})
         buddies.title = "Session Planner"
         buddies.windowId = caller
@@ -340,7 +373,7 @@ struct CanvasEngine: View {
         let caller = MenuBarProvider.boardCreate.tool.title
         let buddies = ManagedViewWindow(id: caller, viewBuilder: {
             NavStackWindow(id: caller, viewBuilder: {
-                SessionPlanOverview()
+                SessionPlanOverview().environmentObject(self.BEO)
             })
         })
         buddies.title = "SOL Sessions"
@@ -363,7 +396,7 @@ struct CanvasEngine: View {
         let caller = "mv_settings"
         let buddies = ManagedViewWindow(id: caller, viewBuilder: {
             NavStackFloatingWindow(id: caller, viewBuilder: {
-                SettingsView(onDelete: {})
+                SettingsView(onDelete: {}).environmentObject(self.BEO)
             })
         })
         buddies.title = "Tool View Settings"
