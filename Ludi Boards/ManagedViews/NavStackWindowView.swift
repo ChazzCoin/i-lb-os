@@ -43,72 +43,96 @@ struct BouncingValue {
     }
 }
 
-struct NavStackWindow : View {
-    @State var id: String
-    var viewBuilder: () -> AnyView
-    @EnvironmentObject var BEO: BoardEngineObject
+class NavStackWindowObservable : ObservableObject {
     
-    init<V: View>(id: String, viewBuilder: @escaping () -> V) {
-        self.id = id
-        self.viewBuilder = { AnyView(viewBuilder()) }
+    @Published var isHidden = true
+    
+    @Published var navStackCount = 0
+    @Published var keyboardIsShowing = false
+    @Published var keyboardHeight = 0.0
+    
+    @Published var screen: UIScreen = UIScreen.main
+    @Published var width = UIScreen.main.bounds.width * 0.9
+    @Published var height = UIScreen.main.bounds.height
+    
+    @Published var currentScreenWidthModifier = 0.9
+    @Published var currentPositionModifier = 0.05
+    @Published var currentScreenSize = "full" // half, float
+    
+    @Published var offset = CGSize.zero
+    @Published var position = CGPoint(x: 0, y: 0)
+    @GestureState var dragOffset = CGSize.zero
+    @Published var isDragging = false
+    
+    func addToStack() {
+        self.navStackCount = self.navStackCount + 1
+    }
+    func removeFromStack() {
+        self.navStackCount = self.navStackCount - 1
     }
     
-    @State private var isHidden = true
-    @State private var isFloatable = false
+    func resetPosition(gps: GlobalPositioningSystem) {
+        position = gps.getCoordinate(for: .center, offsetX: width * 0.05)
+    }
     
-    @State var cancellables = Set<AnyCancellable>()
-    @State var screen: UIScreen = UIScreen.main
-    @State var gps = GlobalPositioningSystem()
-        
-    @State private var offset = CGSize.zero
-    @State private var position = CGPoint(x: 0, y: 0)
-    @GestureState private var dragOffset = CGSize.zero
-    @State private var isDragging = false
-    
-    @State private var width = UIScreen.main.bounds.width * 0.9
-    @State private var height = UIScreen.main.bounds.height
-    
-    @State private var keyboardIsShowing = false
-    @State private var keyboardHeight = 0.0
-    
-    @State var currentScreenWidthModifier = 0.9
-    @State var currentPositionModifier = 0.05
-    @State var currentScreenSize = "full" // half, float
-    
-    func toggleWindowSize() {
+    func toggleWindowSize(gps: GlobalPositioningSystem) {
         if currentScreenSize == "half" {
-            fullScreenPosition()
+            fullScreenPosition(gps: gps)
         } else {
-            halfScreenPosition()
+            halfScreenPosition(gps: gps)
         }
     }
-    
-    func fullScreenPosition() {
+
+    func fullScreenPosition(gps: GlobalPositioningSystem) {
         width = UIScreen.main.bounds.width * 0.9
         height = UIScreen.main.bounds.height
         position = gps.getCoordinate(for: .center, offsetX: width * 0.05)
         currentScreenSize = "full"
     }
-    
-    func halfScreenPosition() {
+
+    func halfScreenPosition(gps: GlobalPositioningSystem) {
         width = UIScreen.main.bounds.width * 0.5
         height = UIScreen.main.bounds.height
         position = gps.getCoordinate(for: .center, offsetX: width * 0.5)
         currentScreenSize = "half"
     }
     
-    func resetPosition() {
-        position = gps.getCoordinate(for: .center, offsetX: width * 0.05)
-    }
+}
 
+struct NavStackWindow : View {
+    @State var id: String
+    var viewBuilder: () -> AnyView
+    
+    @EnvironmentObject var BEO: BoardEngineObject
+    @StateObject var gps = GlobalPositioningSystem()
+    @StateObject var NavStack = NavStackWindowObservable()
+    
+    init<V: View>(id: String, viewBuilder: @escaping () -> V) {
+        self.id = id
+        self.viewBuilder = { AnyView(viewBuilder()) }
+    }
+    
+    
+    @State private var isFloatable = false
+    @State var cancellables = Set<AnyCancellable>()
+    
     var body: some View {
         NavigationStack {
             viewBuilder()
                 .background(Image("sol_bg_big").opacity(0.3))
-//                .padding()
                 .environmentObject(BEO)
+                .environmentObject(NavStack)
                 .navigationBarItems(trailing: HStack {
                     // Add buttons or icons here for minimize, maximize, close, etc.
+                    if self.NavStack.keyboardIsShowing {
+                        Button(action: {
+                            hideKeyboard()
+                        }) {
+                            Image(systemName: "keyboard.chevron.compact.down")
+                                .resizable()
+                                .frame(width: 30, height: 30)
+                        }
+                    }
                     Button(action: {
                         CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: self.id, stateAction: "close", viewId: "self"))
                     }) {
@@ -117,7 +141,7 @@ struct NavStackWindow : View {
                             .frame(width: 30, height: 30)
                     }
                     Button(action: {
-                        toggleWindowSize()
+                        self.NavStack.toggleWindowSize(gps: self.gps)
                     }) {
                         Image(systemName: "arrow.up.left.and.down.right.magnifyingglass")
                             .resizable()
@@ -125,77 +149,95 @@ struct NavStackWindow : View {
                     }
                 })
         }
-        .frame(width: self.width, height: self.height)
-        .opacity(isHidden ? 0 : 1)
-        .background(Color.clear)
+        .frame(width: self.NavStack.width, height: self.NavStack.height)
+        .opacity(self.NavStack.isHidden ? 0 : 1)
         .cornerRadius(15)
         .shadow(radius: 10)
-        .position(position)
-        .offset(y: keyboardHeight)
-        .animation(.easeInOut(duration: 1.0), value: isHidden)
+        .position(self.NavStack.position)
+        .offset(y: self.NavStack.keyboardHeight)
+        .animation(.easeInOut(duration: 1.0), value: self.NavStack.isHidden)
         .keyboardListener(
             onAppear: { height in
                 // Handle keyboard appearance (e.g., adjust view)
                 print("Keyboard appeared with height: \(height)")
+                
+                self.NavStack.keyboardIsShowing = true
+                
                 if height < 100 {
-                    keyboardHeight = 0.0
+                    self.NavStack.keyboardHeight = 0.0
                     return
                 }
-                if keyboardHeight < height {
-                    keyboardHeight = height / 2
+                if self.NavStack.keyboardHeight < height {
+                    self.NavStack.keyboardHeight = height / 2
                 }
             },
             onDisappear: { height in
                 // Handle keyboard disappearance
                 print("Keyboard disappeared")
+                
+                self.NavStack.keyboardIsShowing = false
+                
                 if height > 100 {
-                    keyboardHeight = 0.0
+                    self.NavStack.keyboardHeight = 0.0
                     return
                 }
-                if keyboardHeight > height {
-                    keyboardHeight = height * 2
+                if self.NavStack.keyboardHeight > height {
+                    self.NavStack.keyboardHeight = height * 2
                 }
             }
         )
+        .onChange(of: self.NavStack.isHidden) { _ in
+            if self.NavStack.isHidden {
+                if self.NavStack.keyboardIsShowing {
+                    hideKeyboard()
+                }
+            }
+        }
         .onDisappear() {
 //            fullScreenPosition()
         }
         .onAppear() {
-            fullScreenPosition()
+            self.NavStack.fullScreenPosition(gps: self.gps)
             CodiChannel.MENU_WINDOW_TOGGLER.receive(on: RunLoop.main) { windowType in
                 print(windowType)
                 if (windowType as! String) != self.id { return }
-                fullScreenPosition()
-                if self.isHidden {
-                    self.isHidden = false
+                self.NavStack.fullScreenPosition(gps: self.gps)
+                if self.NavStack.isHidden {
+                    self.NavStack.isHidden = false
                 } else {
-                    self.isHidden = true
+                    self.NavStack.isHidden = true
                 }
             }.store(in: &cancellables)
             
             CodiChannel.MENU_WINDOW_CONTROLLER.receive(on: RunLoop.main) { wc in
                 print(wc)
                 let temp = wc as! WindowController
+                
+                if temp.windowId == "master" {
+                    self.NavStack.isHidden = true
+                    return
+                }
+                
                 if temp.windowId != self.id {
                     if temp.stateAction == "toggle" {
-                        if !self.isHidden {
-                            self.isHidden = true
+                        if !self.NavStack.isHidden {
+                            self.NavStack.isHidden = true
                         }
                     }
                     return
                 }
-                fullScreenPosition()
+                self.NavStack.fullScreenPosition(gps: self.gps)
                 if temp.stateAction == "toggle" {
-                    if self.isHidden {
-                        self.isHidden = false
+                    if self.NavStack.isHidden {
+                        self.NavStack.isHidden = false
                     } else {
                         
-                        self.isHidden = true
+                        self.NavStack.isHidden = true
                     }
                 } else if temp.stateAction == "open" {
-                    self.isHidden = false
+                    self.NavStack.isHidden = false
                 } else if temp.stateAction == "close" {
-                    self.isHidden = true
+                    self.NavStack.isHidden = true
                 }
             }.store(in: &cancellables)
         }

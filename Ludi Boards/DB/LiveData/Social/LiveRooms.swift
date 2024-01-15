@@ -65,7 +65,7 @@ struct LiveRooms: DynamicProperty {
     
     func load(roomId:String) {
         DispatchQueue.main.async {
-            firebaseObserver.startObserving(roomId: roomId, realmInstance: self.realmInstance)
+            firebaseObserver.startObserving(roomId: roomId)
         }
     }
     
@@ -139,7 +139,7 @@ class FirebaseRoomService: ObservableObject {
     @Published var objsInCurrentRoom: [Room] = []
     @Published var usersInCurrentRoom: [SolUser] = []
     @Published var inRoomSnapshot: [SolUser] = []
-    @State var realmInstance = newRealm()
+//    @State var realmInstance = newRealm()
     private var ref: DatabaseReference? = nil
     
     @Published var reference: DatabaseReference = Database
@@ -156,13 +156,12 @@ class FirebaseRoomService: ObservableObject {
         return self.allRooms.filter("roomId == %@ AND status != %@", self.currentRoomId, "OUT")
     }
     
-    func startObserving(roomId: String, realmInstance: Realm) {
+    func startObserving(roomId: String) {
         if !userIsVerifiedToProceed() { return }
         guard !isObserving else { return }
-        self.realmInstance = realmInstance
         self.currentRoomId = roomId
         firebaseSubscription = self.reference.child(roomId).observe(.value, with: { snapshot in
-            if let allUserPresences = snapshot.toLudiObjects(Room.self, realm: self.realmInstance) {
+            if let allUserPresences = snapshot.toLudiObjects(Room.self, realm: self.allRooms.realm?.thaw()) {
                 self.inRoomSnapshot = self.usersInCurrentRoom
                 
                 // Assuming UserPresence has properties `roomId` and `status`
@@ -173,18 +172,17 @@ class FirebaseRoomService: ObservableObject {
                 for r in inRoom {
                     if r.userId == getFirebaseUserId() { continue }
                     roomTemp.safeAdd(r)
-                    if let user = self.realmInstance.findByField(SolUser.self, field: "userId", value: r.id) {
+                    if let user = self.allRooms.realm?.findByField(SolUser.self, field: "userId", value: r.id) {
                         inTemp.safeAdd(user)
                     } else {
                         if r.userId.isEmpty {continue}
-                        fireGetSolUserAsync(userId: r.id, realm: self.realmInstance)
+                        fireGetSolUserAsync(userId: r.id, realm: self.allRooms.realm?.thaw())
                     }
                 }
                 self.objsInCurrentRoom = roomTemp
                 
-                
                 for i in roomTemp {
-                    if let user = self.realmInstance.findByField(SolUser.self, field: "userId", value: i.id) {
+                    if let user = self.allRooms.realm?.findByField(SolUser.self, field: "userId", value: i.id) {
                         inTemp.safeAdd(user)
                     }
                 }

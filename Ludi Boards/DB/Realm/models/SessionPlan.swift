@@ -17,7 +17,7 @@ class SessionPlan: Object, ObjectKeyIdentifiable {
     @Persisted var timePeriod: String = "24/7"
     @Persisted var duration: String = "24/7"
     @Persisted var ageLevel: String = "Any Age?"
-    @Persisted var title: String = "SOL Demo Plan"
+    @Persisted var title: String = "Session: \(TimeProvider.getMonthDayYearTime())"
     @Persisted var subTitle: String = "A Basic Session"
     @Persisted var objectiveDetails: String = "To show off SOL!"
     @Persisted var sessionDetails: String = "Add some details here!"

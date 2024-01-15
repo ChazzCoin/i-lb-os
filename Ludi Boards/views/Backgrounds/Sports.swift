@@ -7,6 +7,7 @@ import SwiftUI
 
 // Master
 class Sports {
+    let sol = SolBoards()
     let soccer = Soccer()
     let basketball = Basketball()
     let football = Football()
@@ -14,6 +15,7 @@ class Sports {
     
     func getAllBoardsBySport() -> [String:[String: () -> AnyView]] {
         var temp: [String:[String: () -> AnyView]] = [:]
+        temp[sol.sport] = sol.boards
         temp[soccer.sport] = soccer.boards
         temp[basketball.sport] = basketball.boards
         temp[football.sport] = football.boards
@@ -21,18 +23,38 @@ class Sports {
         return temp
     }
     func getAllBoards() -> [String: () -> AnyView] {
-        let boardCategories = [soccer.boards, basketball.boards, football.boards, pool.boards]
+        let boardCategories = [sol.boards, soccer.boards, basketball.boards, football.boards, pool.boards]
         return boardCategories.reduce(into: [String: () -> AnyView]()) { result, boards in
             result.merge(boards) { (current, _) in current }
         }
     }
     func getAllMinis() -> [String: () -> AnyView] {
-        let boardCategories = [soccer.minis, basketball.minis, football.minis, pool.minis]
+        let boardCategories = [sol.minis, soccer.minis, basketball.minis, football.minis, pool.minis]
         return boardCategories.reduce(into: [String: () -> AnyView]()) { result, boards in
             result.merge(boards) { (current, _) in current }
         }
     }
 
+}
+
+struct SolBackground : View {
+    @State var isMini: Bool
+    
+    var body: some View {
+        Image("sol_bg_trans")
+            .resizable()
+            .frame(width: isMini ? 100 : 5000, height: isMini ? 100 : 5000)
+    }
+}
+
+class SolBoards: SportBoard {
+    var sport: String = "SOL"
+    var boards: [String: () -> AnyView] = [
+        "Sol": { AnyView(SolBackground(isMini: false)) }
+    ]
+    var minis: [String: () -> AnyView] = [
+        "Sol": { AnyView(SolBackground(isMini: true)) }
+    ]
 }
 
 // Individual Sports

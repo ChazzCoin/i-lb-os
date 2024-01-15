@@ -22,7 +22,7 @@ struct SolSecureField: View {
             
             SecureField("", text: $text)
                 .padding(15)
-                .background(Color(.systemBackground))
+                .background(Color.primaryBackground)
                 .cornerRadius(10)
                 .shadow(color: .gray.opacity(0.4), radius: 5, x: 0, y: 2)
                 .overlay(

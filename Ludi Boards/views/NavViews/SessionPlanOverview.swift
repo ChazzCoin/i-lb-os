@@ -11,6 +11,8 @@ import RealmSwift
 
 struct SessionPlanOverview: View {
     @State var userId: String = getFirebaseUserId() ?? "SOL"
+    
+    @EnvironmentObject var NavStack: NavStackWindowObservable
   
     @ObservedResults(UserToSession.self, where: { $0.guestId == getFirebaseUserId() ?? "" }) var guestSessions
     var sharedSessionIds: [String] {
@@ -45,8 +47,10 @@ struct SessionPlanOverview: View {
                 })
             }.clearSectionBackground()
             Section(header: Text("Sessions")) {
-                List(sessionPlans) { sessionPlan in
-                    NavigationLink(destination: SessionPlanView(sessionId: sessionPlan.id, isShowing: .constant(true), isMasterWindow: false)) {
+                List(hostedSessionPlans) { sessionPlan in
+                    NavigationLink(
+                        destination: SessionPlanView(sessionId: sessionPlan.id, isShowing: .constant(true), isMasterWindow: false).environmentObject(self.NavStack)
+                    ) {
                         SessionPlanThumbView(sessionPlan: sessionPlan)
                     }
                 }
@@ -56,7 +60,9 @@ struct SessionPlanOverview: View {
                 Section(header: Text("Shared Sessions")) {
                     List(sharedSessionPlans, id: \.self) { sessionPlan in
                         
-                        NavigationLink(destination: SessionPlanView(sessionId: sessionPlan.id, isShowing: .constant(true), isMasterWindow: false)) {
+                        NavigationLink(
+                            destination: SessionPlanView(sessionId: sessionPlan.id, isShowing: .constant(true), isMasterWindow: false).environmentObject(self.NavStack)
+                        ) {
                             SessionPlanThumbView(sessionPlan: sessionPlan)
                         }
 
@@ -66,10 +72,11 @@ struct SessionPlanOverview: View {
             
         }
         .onAppear() {
+            self.NavStack.addToStack()
             fetchAllSessionsFromFirebase()
         }
         .onDisappear() {
-            
+            self.NavStack.removeFromStack()
         }
         .loading(isShowing: $isLoading)
         .navigationBarTitle("Session Plans", displayMode: .inline)

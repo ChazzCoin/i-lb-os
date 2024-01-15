@@ -16,6 +16,7 @@ struct ActivityPlanView: View {
     @State var sessionId: String
     @Binding var isShowing: Bool
     @EnvironmentObject var BEO: BoardEngineObject
+    @EnvironmentObject var NavStack: NavStackWindowObservable
     @Environment(\.presentationMode) var presentationMode
     @State var isLoading: Bool = false
     @State private var activityPlan: ActivityPlan = ActivityPlan() // Use StateObject for lifecycle management
@@ -42,6 +43,19 @@ struct ActivityPlanView: View {
     var body: some View {
         
         LoadingForm(isLoading: $isLoading, showCompletion: $showCompletion) { runLoading in
+            
+            if self.boardId != "new" {
+                solConfirmButton(
+                    title: "Load Activity onto Board",
+                    message: "Would you like to load this plan onto the board?",
+                    action: {
+                        runLoading()
+                        CodiChannel.SESSION_ON_ID_CHANGE.send(value: SessionChange(sessionId: self.sessionId, activityId: self.boardId))
+                        self.isCurrentPlan = true
+                    },
+                    isEnabled: !self.isCurrentPlan
+                )
+            }
             
             // Details Section
             Section(header: Text("Activity Details")) {
@@ -200,20 +214,7 @@ struct ActivityPlanView: View {
             
             // BUTTONS
             Section {
-                // LOAD BUTTON                
-                
-                if self.boardId != "new" {
-                    solConfirmButton(
-                        title: "Load Activity onto Board",
-                        message: "Would you like to load this plan onto the board?",
-                        action: {
-                            runLoading()
-                            CodiChannel.SESSION_ON_ID_CHANGE.send(value: SessionChange(sessionId: self.sessionId, activityId: self.boardId))
-                            self.isCurrentPlan = true
-                        }, 
-                        isEnabled: !self.isCurrentPlan
-                    )
-                }
+                // LOAD BUTTON
                 
                 if self.activityPlan.sessionId != "SOL-LIVE-DEMO" && self.activityPlan.sessionId != "SOL"{
                     // Delete BUTTON
@@ -255,7 +256,7 @@ struct ActivityPlanView: View {
             
         }
         .onAppear {
-            
+            self.NavStack.addToStack()
             if self.boardId != "new" {
                 fetchActivityPlan()
             }
@@ -270,7 +271,7 @@ struct ActivityPlanView: View {
             }.store(in: &cancellables)
         }
         .onDisappear() {
-            
+            self.NavStack.removeFromStack()
         }
         .refreshable {
             if self.boardId != "new" {
@@ -282,6 +283,30 @@ struct ActivityPlanView: View {
 //            AddBuddyView(isPresented: self.$showShareSheet, sessionId: self.activityPlan.$sessionId)
         }
         .navigationBarTitle(isCurrentPlan ? "Current Activity" : "Activity Plan", displayMode: .inline)
+        .navigationBarItems(trailing: HStack {
+            // Add buttons or icons here for minimize, maximize, close, etc.
+            if self.NavStack.navStackCount >= 2 {
+                
+                Button(action: {
+                    CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: "master", stateAction: "close", viewId: "self"))
+                }) {
+                    Image(systemName: "arrow.down.to.line.alt")
+                        .resizable()
+                        .frame(width: 30, height: 30)
+                }
+                
+                if self.NavStack.keyboardIsShowing {
+                    Button(action: {
+                        hideKeyboard()
+                    }) {
+                        Image(systemName: "keyboard.chevron.compact.down")
+                            .resizable()
+                            .frame(width: 30, height: 30)
+                    }
+                }
+                
+            }
+        })
     }
     
     private func fetchActivityPlan() {

@@ -57,9 +57,9 @@ class BoardEngineObject : ObservableObject {
     @Published var boardHeight: CGFloat = 6000.0
     @Published var boardStartPosX: CGFloat = 0.0
     @Published var boardStartPosY: CGFloat = 1000.0
-    @Published var boardBgColor: Color = Color.green.opacity(0.75)
+    @Published var boardBgColor: Color = Color.primaryBackground
     
-    @Published var boardBgName: String = "SoccerFieldFullView"
+    @Published var boardBgName: String = "Sol"
     @Published private var boardBgRed: Double = 48.0
     @Published private var boardBgGreen: Double = 128.0
     @Published private var boardBgBlue: Double = 20.0
@@ -359,7 +359,7 @@ struct BoardEngine: View {
                 }
                 
                 if userIsVerifiedToProceed() {
-                    newTool.fireSave(id: newTool.id)
+                    newTool.fireSave(parentId: self.BEO.currentActivityId, id: newTool.id)
                 }
                 
             }.store(in: &cancellables)
@@ -593,8 +593,19 @@ struct BoardEngine: View {
     }
     
     func createNewSessionPlan() {
+        
+        let results = self.realmIntance.objects(SessionPlan.self)
+        if !results.isEmpty {
+            if let temp = results.first {
+                self.BEO.changeSession(sessionId: temp.id)
+                return
+            }
+        }
+        
         self.realmIntance.safeWrite { r in
             let newSession = SessionPlan()
+            newSession.id = "SOL"
+            newSession.title = "Session: \(TimeProvider.getMonthDayYearTime())"
             newSession.ownerId = getFirebaseUserId() ?? CURRENT_USER_ID
             self.BEO.changeSession(sessionId: newSession.id)
             r.add(newSession)
@@ -602,12 +613,25 @@ struct BoardEngine: View {
     }
     
     func createNewActivityPlan() {
+        
+        let results = self.realmIntance.objects(ActivityPlan.self).filter("sessionId == %@", self.BEO.currentSessionId)
+        if !results.isEmpty {
+            if let temp = results.first {
+                self.BEO.changeActivity(activityId: temp.id)
+                return
+            }
+        }
+        
         let newActivity = ActivityPlan()
         newActivity.id = "SOL"
         self.BEO.changeActivity(activityId: "SOL")
         newActivity.ownerId = getFirebaseUserId() ?? CURRENT_USER_ID
         newActivity.sessionId = self.BEO.currentSessionId
-        self.BEO.setColor(colorIn: Color.green.opacity(0.75))
+        let rgbb = Color.primaryBackground.toRGBA()
+        newActivity.backgroundRed = rgbb?.red == nil ? newActivity.backgroundRed : rgbb?.red ?? 0.0
+        newActivity.backgroundBlue = rgbb?.blue == nil ? newActivity.backgroundBlue : rgbb?.blue ?? 0.0
+        newActivity.backgroundGreen = rgbb?.green == nil ? newActivity.backgroundGreen : rgbb?.green ?? 0.0
+        self.BEO.setColor(colorIn: Color.primaryBackground)
         self.BEO.setFieldLineColor(colorIn: Color(red: newActivity.backgroundRed, green: newActivity.backgroundGreen, blue: newActivity.backgroundBlue))
         self.BEO.setBoardBgView(boardName: newActivity.backgroundView)
         self.activities.append(newActivity)
@@ -626,6 +650,7 @@ struct BoardEngine: View {
         realmIntance.safeWrite { r in
             let line = ManagedView()
             line.boardId = self.BEO.currentActivityId
+            line.lastUserId = getFirebaseUserId() ?? CURRENT_USER_ID
             line.startX = Double(start.x)
             line.startY = Double(start.y)
             line.endX = Double(end.x)

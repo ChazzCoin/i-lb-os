@@ -40,7 +40,7 @@ import RealmSwift
     dynamic var backgroundLineGreen: Double = 255.0
     dynamic var backgroundLineBlue: Double = 255.0
     dynamic var backgroundLineAlpha: Double = 1.0
-    dynamic var backgroundView: String = "SoccerFieldFullView"
+    dynamic var backgroundView: String = "Sol"
 
     override static func primaryKey() -> String? {
         return "id"

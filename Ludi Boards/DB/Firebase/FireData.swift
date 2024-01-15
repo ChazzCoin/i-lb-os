@@ -24,6 +24,18 @@ extension Object {
         }
     }
     
+    func fireRef(parentId: String, id:String, block: (DatabaseReference) -> Void) {
+        if !userIsVerifiedToProceed() { return }
+        if let path = DatabasePaths.path(forObjectType: Self.self) {
+            block(Database
+                .database()
+                .reference()
+                .child(path.rawValue)
+                .child(parentId)
+                .child(id))
+        }
+    }
+    
     func fireRef(id:String, block: (DatabaseReference) -> Void) {
         if !userIsVerifiedToProceed() { return }
         if let path = DatabasePaths.path(forObjectType: Self.self) {
@@ -35,15 +47,35 @@ extension Object {
         }
     }
     
+    func fireSave(parentId: String, id:String) {
+        fireRef(parentId: parentId, id: id, block: { db in
+            db.save(obj: self)
+        })
+    }
+    
+    func fireDelete(parentId: String, id:String) {
+        fireRef(parentId: parentId, id: id, block: { db in
+            db.delete(id: id)
+        })
+    }
+    
+    func fireGet(parentId: String, id:String) {
+        fireRef(parentId: parentId, id: id, block: { db in
+            db.get { snapshot in
+                let _ = snapshot.toLudiObjects(Self.self)
+            }
+        })
+    }
+    
     func fireSave(id:String) {
         fireRef(id: id, block: { db in
-            db.save(obj: self)
+            db.child(id).save(obj: self)
         })
     }
     
     func fireDelete(id:String) {
         fireRef(id: id, block: { db in
-            db.delete(id: id)
+            db.child(id).delete(id: id)
         })
     }
     
@@ -55,8 +87,8 @@ extension Object {
         })
     }
     
-    func fireObserve(id:String, block: (DatabaseHandle) -> Void) {
-        fireRef(id: id, block: { db in
+    func fireObserve(parentId: String, id:String, block: (DatabaseHandle) -> Void) {
+        fireRef(parentId: parentId, id: id, block: { db in
             block(db.fireObserver(completion: { snapshot in
                 let _ = snapshot.toLudiObjects(Self.self)
             }))
@@ -176,7 +208,7 @@ func fireGetSolUserAsync(userId: String, realm: Realm?=nil, onCompletion: @escap
 
 
 // GET Sessions
-func fireGetSessionPlanAsync(sessionId: String, realm: Realm) {
+func fireGetSessionPlanAsync(sessionId: String, realm: Realm?=newRealm()) {
     if !userIsVerifiedToProceed() { return }
     firebaseDatabase(collection: DatabasePaths.sessionPlan.rawValue) { ref in
         ref.child(sessionId).observeSingleEvent(of: .value) { snapshot, _ in
@@ -204,7 +236,7 @@ func fireActivityPlanAsync(activityId: String, realm: Realm) {
         }
     }
 }
-func fireGetActivitiesBySessionId(sessionId: String, realm: Realm?=nil) {
+func fireGetActivitiesBySessionId(sessionId: String, realm: Realm?=newRealm()) {
     if !userIsVerifiedToProceed() { return }
     firebaseDatabase(collection: DatabasePaths.activityPlan.rawValue) { ref in
         ref.queryOrdered(byChild: "sessionId").queryEqual(toValue: sessionId)

@@ -10,6 +10,7 @@ import SwiftUI
 
 struct SessionPlanThumbView: View {
     @State var sessionPlan: SessionPlan
+//    @EnvironmentObject var NavStack: NavStackWindowObservable
 
     var body: some View {
         HStack(spacing: 16) {

@@ -32,6 +32,8 @@ struct ChatView: View {
     @State private var messages: [String: Chat?] = [:]
     @State private var lastMessageId: String?
     
+    @StateObject var keyboardResponder = KeyboardResponder()
+    
     @State private var isSidebarVisible = false
     
     private let realmInstance = realm()
@@ -42,7 +44,7 @@ struct ChatView: View {
     @State var cancellables = Set<AnyCancellable>()
     @State var chatRef = fireGetReference(dbPath: DatabasePaths.chat)
     
-    @State var fireObserver: DatabaseHandle? = nil
+    @State var firebaseSubscription: DatabaseHandle? = nil
     @State var currentUser = newRealm().getCurrentSolUser()
     
     @ObservedResults(Chat.self) var allMessages
@@ -55,14 +57,20 @@ struct ChatView: View {
     }
     
     func observeChat() {
-        fireObserver = nil
-        fireObserver = self.chatRef.child(boardEngineObject.currentActivityId).fireObserver { snapshot in
+        stopObserver()
+        firebaseSubscription = self.chatRef.child(boardEngineObject.currentActivityId).fireObserver { snapshot in
             if let results = snapshot.toLudiObjects(Chat.self, realm: self.allMessages.realm?.thaw()) {
                 print("New Chat Messages: \(results)")
             }
         }
     }
 
+    func stopObserver() {
+        if let fs = firebaseSubscription {
+            self.chatRef.removeObserver(withHandle: fs)
+            firebaseSubscription = nil
+        }
+    }
     
     func reloader() {
         let results = realmInstance.findAllByField(Chat.self, field: "chatId", value: boardEngineObject.currentActivityId)
@@ -83,9 +91,11 @@ struct ChatView: View {
                             ChatMessageRow(chat: chat)
                         }
                     }
-                }.onChange(of: lastMessageId) { _ in
-                    if let lastMessageId = lastMessageId {
-                        scrollViewProxy.scrollTo(lastMessageId, anchor: .bottom)
+                }.onChange(of: roomMessages.count) { _ in
+                    if let lastChat = sortChatsByTimestamp(chats: roomMessages).last {
+                        withAnimation {
+                            scrollViewProxy.scrollTo(lastChat.id, anchor: .bottom)
+                        }
                     }
                 }
             }
@@ -97,7 +107,8 @@ struct ChatView: View {
                 TextField("Type a message...", text: $messageText)
                     .padding(.horizontal)
                     .frame(height: 44)
-                    .background(Color(UIColor.systemGray6))
+                    .foregroundColor(Color.white)
+                    .background(Color.primaryBackground)
                     .cornerRadius(22)
 
                 Button(action: sendMessage) {
@@ -113,12 +124,24 @@ struct ChatView: View {
         }
         .loading(isShowing: $isReloading)
         .background(Color.white)
+        .onTap {
+            self.keyboardResponder.safeHideKeyboard()
+        }
+        .onChange(of: boardEngineObject.currentActivityId) { _ in
+            chatId = boardEngineObject.currentActivityId
+            observeChat()
+        }
         .onAppear() {
             chatId = boardEngineObject.currentActivityId
+            observeChat()
+        }
+        .onDisappear() {
+            stopObserver()
         }
     }
     var sidebarView: some View {
-        RoomUserList().environmentObject(self.boardEngineObject)
+        RoomUserList()
+            .environmentObject(self.boardEngineObject)
     }
     
     var body: some View {
@@ -281,8 +304,8 @@ struct MessageBubbleView: View {
 
             Text(text)
                 .padding(10)
-                .foregroundColor(isCurrentUser ? Color.white : Color.black)
-                .background(isCurrentUser ? Color.blue : Color(UIColor.systemGray5))
+                .foregroundColor(isCurrentUser ? Color.white : Color.white)
+                .background(isCurrentUser ? Color.blue : Color.primaryBackground)
                 .cornerRadius(10)
 
             Text(dateTime)

@@ -20,6 +20,8 @@ struct SessionPlanView: View {
     @State private var objective = ""
     @State private var isOpen = true
     
+//    @StateObject var keyboardResponder = KeyboardResponder()
+    
     @ObservedResults(ActivityPlan.self) var allActivities
     var activities: Results<ActivityPlan> {
         return self.allActivities.filter("sessionId == %@", self.sessionId)
@@ -31,12 +33,12 @@ struct SessionPlanView: View {
     @State private var shareIds: [String] = []
     
     @EnvironmentObject var BEO: BoardEngineObject
+    @EnvironmentObject var NavStack: NavStackWindowObservable
     @State private var isLoading = false
     @State private var showCompletion = false
     @State private var isCurrentPlan = false
     @State private var sessionNotificationToken: NotificationToken? = nil
     @State var cancellables = Set<AnyCancellable>()
-    let realmInstance = realm()
 
     func runLoadingProcess() {
         isLoading = true
@@ -54,6 +56,24 @@ struct SessionPlanView: View {
         
         LoadingForm(isLoading: $isLoading, showCompletion: $showCompletion) { runLoading in
             
+            if self.sessionId != "new" {
+                solConfirmButton(
+                    title: "Load Session",
+                    message: "Would you like to load this plan onto the board?",
+                    action: {
+                        runLoading()
+                        CodiChannel.SESSION_ON_ID_CHANGE.send(value: SessionChange(sessionId: sessionId, activityId: self.activities.first?.id ?? "nil"))
+                        isCurrentPlan = true
+                    }, 
+                    isEnabled: !self.isCurrentPlan)
+            }
+            
+            if !self.shareIds.contains(self.sessionId) && sessionId != "SOL-LIVE-DEMO" && sessionId != "SOL"  {
+                solButton(title: "Share Session", action: {
+                    self.showShareSheet = true
+                }, isEnabled: true)
+            }
+            
             Section(header: Text("Details")) {
                 SolTextField("Title", text: $title)
                 
@@ -66,7 +86,9 @@ struct SessionPlanView: View {
             }.clearSectionBackground()
 
             Section(header: Text("Activities")) {    
-                ActivityPlanListView(sessionId: self.sessionId).environmentObject(self.BEO)
+                ActivityPlanListView(sessionId: self.sessionId)
+                    .environmentObject(self.BEO)
+                    .environmentObject(self.NavStack)
                 
                 if self.sessionId != "new" {
                     solButton(title: "New Activity", action: {
@@ -82,14 +104,6 @@ struct SessionPlanView: View {
             
             // Save button at the bottom
             Section {
-                
-                if self.sessionId != "new" {
-                    solButton(title: "Load Session", action: {
-                        runLoading()
-                        CodiChannel.SESSION_ON_ID_CHANGE.send(value: SessionChange(sessionId: sessionId, activityId: self.activities.first?.id ?? "nil"))
-                        isCurrentPlan = true
-                    }, isEnabled: !self.isCurrentPlan)
-                }
                 
                 solButton(title: "Save", action: {
                     print("save button")
@@ -109,10 +123,6 @@ struct SessionPlanView: View {
                 } else {
                     
                     if !self.shareIds.contains(self.sessionId) && sessionId != "SOL-LIVE-DEMO" && sessionId != "SOL"  {
-                        solButton(title: "Share Session", action: {
-                            self.showShareSheet = true
-                        }, isEnabled: true)
-                        
                         solConfirmButton(
                             title: "Delete",
                             message: "Are you sure you want to delete this session?",
@@ -125,16 +135,52 @@ struct SessionPlanView: View {
                 }                
             }.clearSectionBackground()
         }
+        .onChange(of: self.BEO.currentSessionId) { _ in
+            fetchSessionPlan()
+        }
+        .onChange(of: self.NavStack.isHidden) { _ in
+            if !self.NavStack.isHidden {
+                if self.NavStack.navStackCount >= 2 {
+                    fetchSessionPlan()
+                }
+            }
+        }
         .onAppear {
+            self.NavStack.addToStack()
             if self.sessionId != "new" {
                 fetchSessionPlan()
             }
             getShareIds()
         }
         .onDisappear() {
+            self.NavStack.removeFromStack()
             self.sessionNotificationToken = nil
         }
         .navigationBarTitle(isCurrentPlan ? "Current Session" : "Session Plan", displayMode: .inline)
+        .navigationBarItems(trailing: HStack {
+            // Add buttons or icons here for minimize, maximize, close, etc.
+            if self.NavStack.navStackCount >= 2 {
+                
+                Button(action: {
+                    CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: "master", stateAction: "close", viewId: "self"))
+                }) {
+                    Image(systemName: "arrow.down.to.line.alt")
+                        .resizable()
+                        .frame(width: 30, height: 30)
+                }
+                
+                if self.NavStack.keyboardIsShowing {
+                    Button(action: {
+                        hideKeyboard()
+                    }) {
+                        Image(systemName: "keyboard.chevron.compact.down")
+                            .resizable()
+                            .frame(width: 30, height: 30)
+                    }
+                }
+                
+            }
+        })
         .sheet(isPresented: self.$showNewActivity) {
             ActivityPlanView(boardId: "new", sessionId: sessionId, isShowing: $showNewActivity)
         }
@@ -151,16 +197,17 @@ struct SessionPlanView: View {
     
     func getShareIds() {
         safeFirebaseUserId() { userId in
-            let umvs = realmInstance.objects(UserToSession.self).filter("guestId == %@", userId)
-            for i in umvs {
-                self.shareIds.append(i.sessionId)
+            if let umvs = self.allActivities.realm?.objects(UserToSession.self).filter("guestId == %@", userId) {
+                for i in umvs {
+                    self.shareIds.append(i.sessionId)
+                }
             }
         }
     }
     
     func deleteSessionPlan() {
-        if let sess = realmInstance.findByField(SessionPlan.self, value: self.sessionId) {
-            realmInstance.safeWrite { r in
+        if let sess = self.allActivities.realm?.findByField(SessionPlan.self, value: self.sessionId) {
+            self.allActivities.realm?.safeWrite { r in
                 r.delete(sess)
             }
             // TODO: FIREBASE ONLY
@@ -193,7 +240,7 @@ struct SessionPlanView: View {
         newAP.orderIndex = 0
         newAP.isOpen = isOpen
         
-        realmInstance.safeWrite { r in
+        self.allActivities.realm?.safeWrite { r in
             r.create(SessionPlan.self, value: newSP, update: .all)
             r.create(ActivityPlan.self, value: newAP, update: .all)
         }
@@ -204,8 +251,8 @@ struct SessionPlanView: View {
     }
     
     func updateSessionPlan() {
-        if let sp = realmInstance.findByField(SessionPlan.self, value: self.sessionId) {
-            realmInstance.safeWrite { r in
+        if let sp = self.allActivities.realm?.findByField(SessionPlan.self, value: self.sessionId) {
+            self.allActivities.realm?.safeWrite { r in
                 sp.ownerId = getFirebaseUserId() ?? "SOL"
                 sp.title = title
                 sp.sessionDetails = description
@@ -225,15 +272,15 @@ struct SessionPlanView: View {
             self.isCurrentPlan = true
         }
         
-        fireGetSessionPlanAsync(sessionId: self.sessionId, realm: self.realmInstance)
-        fireGetActivitiesBySessionId(sessionId: self.sessionId, realm: self.realmInstance)
+        fireGetSessionPlanAsync(sessionId: self.sessionId, realm: self.allActivities.realm?.thaw())
+        fireGetActivitiesBySessionId(sessionId: self.sessionId, realm: self.allActivities.realm?.thaw())
         
-        if let sp = realmInstance.findByField(SessionPlan.self, value: self.sessionId) {
+        if let sp = self.allActivities.realm?.findByField(SessionPlan.self, value: self.sessionId) {
             title = sp.title
             description = sp.sessionDetails
             objective = sp.objectiveDetails
             isOpen = sp.isOpen
-            if sp.ownerId != self.BEO.userId {
+            if sp.ownerId != self.BEO.userId && sp.ownerId != CURRENT_USER_ID {
                 self.BEO.isShared = true
             }
         }

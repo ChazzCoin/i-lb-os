@@ -22,7 +22,7 @@ struct SolTextField: View {
             
             TextField("", text: $text)
                 .padding(15)
-                .background(Color(.systemBackground))
+                .background(Color.primaryBackground)
                 .cornerRadius(10)
                 .shadow(color: .gray.opacity(0.4), radius: 5, x: 0, y: 2)
                 .overlay(
@@ -33,7 +33,7 @@ struct SolTextField: View {
                                 Image(systemName: "multiply.circle.fill")
                                     .foregroundColor(.gray)
                                     .padding(.trailing, 15) 
-                            }
+                            }.zIndex(10.0)
                         }
                     }
                 )
