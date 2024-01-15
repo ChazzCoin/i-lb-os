@@ -159,7 +159,8 @@ class FirebaseRoomService: ObservableObject {
         self.currentRoomId = roomId
         firebaseSubscription = self.reference.child(roomId).observe(.value, with: { snapshot in
             
-            let snapPresence = newRealm().objects(Room.self).filter("roomId == %@", roomId)
+            let realmy = newRealm().freeze()
+            let snapPresence = realmy.objects(Room.self).filter("roomId == %@", roomId)
             
             if let allUserPresences = snapshot.toLudiObjects(Room.self, realm: self.allRooms.realm?.thaw()) {
                 // Assuming UserPresence has properties `roomId` and `status`
