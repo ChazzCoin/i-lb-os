@@ -16,15 +16,20 @@ protocol Command {
 }
 
 class CommandController: ObservableObject {
-//    private var commandManager = CommandManager()
-    
-    @Published var realmInstance = realm()
-    @StateObject var MVS: ManagedViewService = ManagedViewService()
+    // External services
+    var realmInstance: Realm
+    var MVS: SingleManagedViewService
+
+    init() {
+        realmInstance = realm() // Assuming realm() returns a Realm instance
+        MVS = SingleManagedViewService()
+        DispatchQueue.main.async {
+            self.initChannels()
+        }
+    }
     
     @Published var coordinateStack: [CGPoint] = []
-    
     @Published var popUpIsVisible = false
-    
     @Published var currentUserId: String = ""
     
     @Published var activityId: String = ""
@@ -47,7 +52,6 @@ class CommandController: ObservableObject {
     @Published var lifeColorAlpha = 1.0
     
     @Published var position = CGPoint(x: 100, y: 100)
-//    @Published var dragOffset = CGSize.zero
     @Published var isDragging = false
     //
     @Published var cancellables = Set<AnyCancellable>()
@@ -69,35 +73,29 @@ class CommandController: ObservableObject {
         }
     }
     
-    init() {
-        initChannels()
-    }
-    
     func initialize(viewId:String, activityId:String) {
         self.viewId = viewId
         self.activityId = activityId
         // Setup
-//        initChannels()
         observeFromRealm()
         DispatchQueue.main.async {
             safeFirebaseUserId() { userId in
                 self.currentUserId = userId
             }
             self.MVS.initialize(realm: self.realmInstance, activityId: self.activityId, viewId: self.viewId)
-//            self.MVS.start()
         }
         // Load View State
         loadFromRealm()
     }
     
-    // Channels
-    
+    @MainActor
     func initChannels() {
         receiveOnSessionChange()
         recieveMenuWindowController()
         receiveToolAttributes()
     }
     
+    @MainActor
     func receiveOnSessionChange() {
         CodiChannel.SESSION_ON_ID_CHANGE.receive(on: RunLoop.main) { sc in
             let temp = sc as! SessionChange
@@ -112,6 +110,7 @@ class CommandController: ObservableObject {
         CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: self.menuWindowId, stateAction: self.popUpIsVisible ? "open" : "close", viewId: self.viewId, x: self.position.x, y: self.position.y))
     }
     
+    @MainActor
     func recieveMenuWindowController() {
         CodiChannel.MENU_WINDOW_CONTROLLER.receive(on: RunLoop.main) { vId in
             let temp = vId as! WindowController
@@ -122,6 +121,7 @@ class CommandController: ObservableObject {
         }.store(in: &cancellables)
     }
     
+    @MainActor
     func receiveToolAttributes() {
         CodiChannel.TOOL_ATTRIBUTES.receive(on: RunLoop.main) { viewAtts in
             let inVA = (viewAtts as! ViewAtts)
@@ -140,6 +140,8 @@ class CommandController: ObservableObject {
             self.updateRealm()
         }.store(in: &cancellables)
     }
+    
+    @MainActor
     func sendToolAttributes() {
         CodiChannel.TOOL_ATTRIBUTES.send(value: ViewAtts(
             viewId: self.viewId,
@@ -160,7 +162,6 @@ class CommandController: ObservableObject {
     }
     
     // Realm / Firebase
-    
     func loadFromRealm(managedView: ManagedView?=nil) {
         if isDisabledChecker() {return}
         var mv = managedView
@@ -182,6 +183,7 @@ class CommandController: ObservableObject {
         minSizeCheck()
     }
     
+    // TODO: COPY THIS TO MVSETTINGS FOR REALTIME UPDATES.
     // Observe From Realm
     func observeFromRealm() {
         if let mv = self.realmInstance.object(ofType: ManagedView.self, forPrimaryKey: self.viewId) {
@@ -217,8 +219,15 @@ class CommandController: ObservableObject {
                         }
                         case .error(let error):
                             print("Error: \(error)")
+                            self.managedViewNotificationToken?.invalidate()
+                            self.managedViewNotificationToken = nil
+                            self.observeFromRealm()
                         case .deleted:
                             print("Object has been deleted.")
+                            self.isDisabled = true
+                            self.lifeIsLocked = true
+                            self.managedViewNotificationToken?.invalidate()
+                            self.managedViewNotificationToken = nil
                     }
                 }
             }

@@ -22,7 +22,8 @@ struct SolTextEditor: View {
             
             TextEditor(text: $text)
                 .padding(10)
-                .background(Color.primaryBackground)
+                .background(Color.secondaryBackground)
+                .foregroundColor(.white)
                 .cornerRadius(10)
                 .shadow(color: .gray.opacity(0.4), radius: 5, x: 0, y: 2)
                 .animation(.easeInOut, value: text)

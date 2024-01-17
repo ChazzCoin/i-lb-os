@@ -50,7 +50,7 @@ struct MenuBarStatic: View {
                 Image(systemName: MenuBarProvider.menuBar.tool.image)
                     .resizable()
                     .frame(width: 35, height: 35)
-                    .foregroundColor(lifeColor)
+                    .foregroundColor(Color.white)
                     .onAppear() {
                         setColorScheme()
                     }
@@ -58,7 +58,7 @@ struct MenuBarStatic: View {
             .frame(width: 60, height: 60)
             .background(
                 RoundedRectangle(cornerRadius: 15)
-                    .foregroundColor(backgroundColorForScheme(colorScheme))
+                    .foregroundColor(Color.primaryBackground)
                     .shadow(radius: 5)
             )
             .onTapAnimation {

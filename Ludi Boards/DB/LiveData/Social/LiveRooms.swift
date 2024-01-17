@@ -130,6 +130,7 @@ enum RoomStatus {
 }
 
 class FirebaseRoomService: ObservableObject {
+    private let realmInstance = newRealm()
     private var firebaseSubscription: DatabaseHandle?
     @ObservedResults(SolUser.self) var allUsers
     @ObservedResults(Room.self) var allRooms
@@ -154,7 +155,7 @@ class FirebaseRoomService: ObservableObject {
     }
     
     func startObserving(roomId: String) {
-        if !userIsVerifiedToProceed() { return }
+        if !userIsVerifiedToProceed() || !self.realmInstance.isLiveSessionPlan(activityId: roomId) { return }
         guard !isObserving else { return }
         self.currentRoomId = roomId
         firebaseSubscription = self.reference.child(roomId).observe(.value, with: { snapshot in
@@ -236,36 +237,42 @@ class FirebaseRoomService: ObservableObject {
     static func toggleRoomStatus(roomId:String, status:String) {
         if roomId == "SOL" || roomId.isEmpty { return }
         
-        newRealm().getCurrentSolUser() { currentUser in
-            let tempRealm = newRealm()
-            if let item = tempRealm.findByField(Room.self, field: "roomId", value: roomId) {
-                tempRealm.safeWrite { _ in
-                    item.status = status
+        autoreleasepool {
+            let realmInstance = newRealm()
+            
+            if !realmInstance.isLiveSessionPlan(activityId: roomId) { return }
+            
+            realmInstance.getCurrentSolUser() { currentUser in
+                let tempRealm = newRealm()
+                if let item = tempRealm.findByField(Room.self, field: "roomId", value: roomId) {
+                    tempRealm.safeWrite { _ in
+                        item.status = status
+                    }
+                    print("User is about to be \(status) room \(roomId)")
+                    firebaseDatabase { db in
+                        var temp = item.toDict()
+                        temp["status"] = status
+                        db.child("rooms").child(item.roomId).child(item.id).setValue(temp)
+                    }
+                    return
+                }
+                
+                let roomPresence = Room()
+                roomPresence.roomId = roomId
+                roomPresence.userId = currentUser.userId
+                roomPresence.userName = currentUser.userName
+                roomPresence.userImg = currentUser.imgUrl
+                roomPresence.status = status
+                tempRealm.safeWrite { r in
+                    r.create(Room.self, value: roomPresence, update: .all)
                 }
                 print("User is about to be \(status) room \(roomId)")
                 firebaseDatabase { db in
-                    var temp = item.toDict()
-                    temp["status"] = status
-                    db.child("rooms").child(item.roomId).child(item.id).setValue(temp)
+                    db.child("rooms").child(roomId).child(roomPresence.id).setValue(roomPresence.toDict())
                 }
-                return
-            }
-            
-            let roomPresence = Room()
-            roomPresence.roomId = roomId
-            roomPresence.userId = currentUser.userId
-            roomPresence.userName = currentUser.userName
-            roomPresence.userImg = currentUser.imgUrl
-            roomPresence.status = status
-            tempRealm.safeWrite { r in
-                r.create(Room.self, value: roomPresence, update: .all)
-            }
-            print("User is about to be \(status) room \(roomId)")
-            firebaseDatabase { db in
-                db.child("rooms").child(roomId).child(roomPresence.id).setValue(roomPresence.toDict())
             }
         }
-       
+        
     }
     
     deinit {

@@ -23,7 +23,7 @@ struct solButton: View {
             Text(title)
                 .frame(maxWidth: .infinity)
                 .padding()
-                .background(isEnabled ? Color.secondaryBackground : Color.gray) // Background color changes when disabled
+                .background(isEnabled ? Color.primaryBackground : Color.gray) // Background color changes when disabled
                 .foregroundColor(.white)
                 .cornerRadius(10)
                 .scaleEffect(isButtonPressed ? 0.95 : 1.0)
@@ -50,7 +50,7 @@ struct solConfirmButton: View {
             Text(title)
                 .frame(maxWidth: .infinity)
                 .padding()
-                .background(isEnabled ? Color.secondaryBackground : Color.gray) // Background color changes when disabled
+                .background(isEnabled ? Color.primaryBackground : Color.gray) // Background color changes when disabled
                 .foregroundColor(.white)
                 .cornerRadius(10)
                 .scaleEffect(isButtonPressed ? 0.95 : 1.0)

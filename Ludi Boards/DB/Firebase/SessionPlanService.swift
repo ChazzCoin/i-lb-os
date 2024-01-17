@@ -20,9 +20,13 @@ class SessionPlanService: ObservableObject {
     }
 
     func startObserving(sessionId: String) {
-        if !userIsVerifiedToProceed() { return }
+        
+        if !userIsVerifiedToProceed()
+            || self.realmInstance.isLiveSessionPlan(sessionId: sessionId) { return }
+        
         guard !isObserving else { return }
-        observerHandle = reference.child(DatabasePaths.sessionPlan.rawValue)
+        observerHandle = reference
+            .child(DatabasePaths.sessionPlan.rawValue)
             .child(sessionId).observe(.value, with: { snapshot in
                 print("New Session Arriving...")
                 let _ = snapshot.toLudiObject(SessionPlan.self, realm: self.realmInstance)

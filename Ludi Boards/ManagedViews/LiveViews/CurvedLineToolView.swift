@@ -42,7 +42,7 @@ struct CurvedLineDrawingManaged: View {
     
     let realmInstance = realm()
     @State private var managedViewNotificationToken: NotificationToken? = nil
-    @State private var MVS: ManagedViewService = ManagedViewService()
+    @State private var MVS: SingleManagedViewService = SingleManagedViewService()
     @State private var isDisabled = false
     @State private var lifeIsLocked = false
     @State private var lifeDateUpdated = Int(Date().timeIntervalSince1970)
@@ -220,7 +220,7 @@ struct CurvedLineDrawingManaged: View {
                    stateAction: popUpIsVisible ? "open" : "close")
                 )
             }
-        }).simultaneously(with: LongPressGesture().onEnded { _ in
+        }).simultaneously(with: LongPressGesture(minimumDuration: 0.4).onEnded { _ in
             anchorsAreVisible = !anchorsAreVisible
         })
     }

@@ -22,7 +22,11 @@ class ActivityPlanService: ObservableObject {
     }
 
     func startObserving(activityId: String) {
-        if !userIsVerifiedToProceed() { return }
+        
+        if !userIsVerifiedToProceed()
+            || !self.realmInstance.isLiveSessionPlan(activityId: activityId)
+            || activityId.isEmpty { return }
+        
         guard !isObserving else { return }
         self.activityId = activityId
         observerHandle = reference.child(DatabasePaths.activityPlan.rawValue)

@@ -22,7 +22,8 @@ struct SolTextField: View {
             
             TextField("", text: $text)
                 .padding(15)
-                .background(Color.primaryBackground)
+                .background(Color.secondaryBackground)
+                .foregroundColor(.white)
                 .cornerRadius(10)
                 .shadow(color: .gray.opacity(0.4), radius: 5, x: 0, y: 2)
                 .overlay(

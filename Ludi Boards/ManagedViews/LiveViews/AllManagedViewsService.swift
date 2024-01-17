@@ -11,7 +11,7 @@ import RealmSwift
 
 
 //
-class ManagedViewsService: ObservableObject {
+class AllManagedViewsService: ObservableObject {
     let realmInstance: Realm
     @Published var reference: DatabaseReference = Database.database().reference()
     @Published var observerHandle: DatabaseHandle?
@@ -29,7 +29,7 @@ class ManagedViewsService: ObservableObject {
     }
 
     func startObserving(activityId: String) {
-        if !self.isLoggedIn {return}
+        if !self.isLoggedIn || activityId == "SOL" {return}
         guard !isObserving else { return }
         observerHandle = reference.child(DatabasePaths.managedViews.rawValue)
             .child(activityId).observe(.childAdded, with: { snapshot in
@@ -47,7 +47,7 @@ class ManagedViewsService: ObservableObject {
     }
 }
 
-class ManagedViewService: ObservableObject {
+class SingleManagedViewService: ObservableObject {
     @Published var realmInstance: Realm = realm()
     @Published var reference: DatabaseReference = Database
         .database()
@@ -68,6 +68,7 @@ class ManagedViewService: ObservableObject {
     @Published var managedViewNotificationToken: NotificationToken? = nil
     
     func initialize(realm: Realm, activityId:String, viewId:String) {
+        if activityId == "SOL" { return }
         self.realmInstance = realm
         self.activityId = activityId
         self.viewId = viewId
@@ -81,10 +82,9 @@ class ManagedViewService: ObservableObject {
     }
 
     func start() {
-//        if !self.isLoggedIn {return}
-        guard !isObserving else { return }
         
-        if self.activityId.isEmpty || self.viewId.isEmpty {return}
+        if isObserving || self.activityId.isEmpty || self.viewId.isEmpty {return}
+        if !self.realmInstance.isLiveSessionPlan(activityId: self.activityId) { return }
         
         observerHandle = reference.child(self.activityId).child(self.viewId).observe(.value, with: { snapshot in
             let _ = snapshot.toLudiObject(ManagedView.self, realm: self.realmInstance)
@@ -102,7 +102,10 @@ class ManagedViewService: ObservableObject {
     }
     
     func observeActivity(activityId: String) {
-        if !self.isLoggedIn {return}
+        
+        if !self.isLoggedIn
+            || !self.realmInstance.isLiveSessionPlan(activityId: activityId) { return }
+        
         guard !isObserving else { return }
         observerHandle = reference.child(activityId).observe(.childAdded, with: { snapshot in
                 let _ = snapshot.toLudiObjects(ManagedView.self, realm: self.realmInstance)
@@ -120,6 +123,7 @@ class ManagedViewService: ObservableObject {
     
     func updateFirebase(mv: ManagedView?) {
         guard let mv = mv else { return }
+        if mv.boardId == "SOL" { return }
         // Check if the user is logged in
         if shouldDenyWriteRequest() {
             return
@@ -155,16 +159,14 @@ class ManagedViewService: ObservableObject {
                         self.isLoggedIn = temp.isLoggedIn
                     case .error(let error):
                         print("Error: \(error)")
+                        self.nofityToken?.invalidate()
+                        self.nofityToken = nil
                     case .deleted:
                         print("Object has been deleted.")
+                        self.nofityToken?.invalidate()
+                        self.nofityToken = nil
                 }
             }
-        }
-    }
-    
-    func onChange() -> () -> Void {
-        return {
-            
         }
     }
     
@@ -178,9 +180,13 @@ class ManagedViewService: ObservableObject {
                         onChange(temp)
                     case .error(let error):
                         print("Error: \(error)")
+                        self.managedViewNotificationToken?.invalidate()
+                        self.managedViewNotificationToken = nil
                     case .deleted:
                         onChange(nil)
                         print("Object has been deleted.")
+                        self.managedViewNotificationToken?.invalidate()
+                        self.managedViewNotificationToken = nil
                 }
             }
         }

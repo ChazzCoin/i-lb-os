@@ -15,9 +15,13 @@ struct SessionPlanOverview: View {
     @EnvironmentObject var BEO: BoardEngineObject
     @EnvironmentObject var NavStack: NavStackWindowObservable
   
-    @ObservedResults(UserToSession.self, where: { $0.guestId == getFirebaseUserId() ?? "" }) var guestSessions
+    @ObservedResults(UserToSession.self, where: { $0.guestId == getFirebaseUserId() ?? "" && $0.status != "removed" }) var guestSessions
     var sharedSessionIds: [String] {
-       guestSessions.map { $0.sessionId }
+        var temp = Array(guestSessions.map { $0.sessionId })
+        if !temp.contains("SOL-LIVE-DEMO") {
+            temp.append("SOL-LIVE-DEMO")
+        }
+        return temp
     }
     @ObservedResults(SessionPlan.self) var sessionPlans
     var hostedSessionPlans: Results<SessionPlan> {
@@ -27,14 +31,9 @@ struct SessionPlanOverview: View {
         return self.sessionPlans.filter("id IN %@", self.sharedSessionIds)
     }
     
-    let realmInstance = realm()
-    
-//    @State private var liveDemoNotificationToken: NotificationToken? = nil
+    let realmInstance: Realm = newRealm()
     
     @State private var isLoading: Bool = false
-//    @State private var sessionNotificationToken: NotificationToken? = nil
-//    @State private var sessionSharesNotificationToken: NotificationToken? = nil
-//    @State private var sharesNotificationToken: NotificationToken? = nil
     @State private var showNewPlanSheet = false
     
     @State private var isLoggedIn = false

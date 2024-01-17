@@ -120,6 +120,7 @@
 		FB93BB172B033E2000864CB2 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FB93BB162B033E2000864CB2 /* GoogleService-Info.plist */; };
 		FB93BB1B2B03471C00864CB2 /* FireData.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB93BB1A2B03471C00864CB2 /* FireData.swift */; };
 		FB982F912B19D1B900C0DA03 /* FirebaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB982F902B19D1B900C0DA03 /* FirebaseService.swift */; };
+		FB986F0B2B5774C30042BED2 /* BoardSessionObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB986F0A2B5774C30042BED2 /* BoardSessionObserver.swift */; };
 		FB9F1DD02B1528FC00FD9078 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9F1DCF2B1528FC00FD9078 /* Extensions.swift */; };
 		FB9F1DD22B1529E400FD9078 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9F1DD12B1529E400FD9078 /* LoadingView.swift */; };
 		FB9F1DD42B15307E00FD9078 /* UserSignUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9F1DD32B15307E00FD9078 /* UserSignUp.swift */; };
@@ -189,7 +190,7 @@
 		FBDE4F702B4FA831007FE880 /* RecordShapeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDE4F6F2B4FA831007FE880 /* RecordShapeView.swift */; };
 		FBDF0DC52B21811000FADE44 /* SharedSessionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDF0DC42B21811000FADE44 /* SharedSessionsView.swift */; };
 		FBDF0DC72B224D2600FADE44 /* ActivityPlanService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDF0DC62B224D2600FADE44 /* ActivityPlanService.swift */; };
-		FBDF0DC92B224EB500FADE44 /* ManagedViewsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDF0DC82B224EB500FADE44 /* ManagedViewsService.swift */; };
+		FBDF0DC92B224EB500FADE44 /* AllManagedViewsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDF0DC82B224EB500FADE44 /* AllManagedViewsService.swift */; };
 		FBE2C6142B1AC68D004C0116 /* SoccerFieldBG.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C6132B1AC68D004C0116 /* SoccerFieldBG.swift */; };
 		FBE2C6172B1AF595004C0116 /* GrassFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C6162B1AF595004C0116 /* GrassFieldView.swift */; };
 		FBE2C61A2B1AF7D5004C0116 /* FootballFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C6192B1AF7D5004C0116 /* FootballFieldView.swift */; };
@@ -301,6 +302,7 @@
 		FB93BB162B033E2000864CB2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
 		FB93BB1A2B03471C00864CB2 /* FireData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireData.swift; sourceTree = "<group>"; };
 		FB982F902B19D1B900C0DA03 /* FirebaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseService.swift; sourceTree = "<group>"; };
+		FB986F0A2B5774C30042BED2 /* BoardSessionObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardSessionObserver.swift; sourceTree = "<group>"; };
 		FB9F1DCF2B1528FC00FD9078 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		FB9F1DD12B1529E400FD9078 /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		FB9F1DD32B15307E00FD9078 /* UserSignUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSignUp.swift; sourceTree = "<group>"; };
@@ -348,7 +350,7 @@
 		FBDE4F6F2B4FA831007FE880 /* RecordShapeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordShapeView.swift; sourceTree = "<group>"; };
 		FBDF0DC42B21811000FADE44 /* SharedSessionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedSessionsView.swift; sourceTree = "<group>"; };
 		FBDF0DC62B224D2600FADE44 /* ActivityPlanService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityPlanService.swift; sourceTree = "<group>"; };
-		FBDF0DC82B224EB500FADE44 /* ManagedViewsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedViewsService.swift; sourceTree = "<group>"; };
+		FBDF0DC82B224EB500FADE44 /* AllManagedViewsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllManagedViewsService.swift; sourceTree = "<group>"; };
 		FBE2C6132B1AC68D004C0116 /* SoccerFieldBG.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoccerFieldBG.swift; sourceTree = "<group>"; };
 		FBE2C6162B1AF595004C0116 /* GrassFieldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrassFieldView.swift; sourceTree = "<group>"; };
 		FBE2C6192B1AF7D5004C0116 /* FootballFieldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FootballFieldView.swift; sourceTree = "<group>"; };
@@ -673,7 +675,7 @@
 				FB5094292B05856D000AEA96 /* LineToolView.swift */,
 				FBAE62AE2B2A3FD200E008D5 /* CurvedLineToolView.swift */,
 				FBABDAC82B20469900321A00 /* ManagedViewManager.swift */,
-				FBDF0DC82B224EB500FADE44 /* ManagedViewsService.swift */,
+				FBDF0DC82B224EB500FADE44 /* AllManagedViewsService.swift */,
 			);
 			path = LiveViews;
 			sourceTree = "<group>";
@@ -712,10 +714,10 @@
 				FBEBEF902B494DA600B8BA32 /* DB */,
 				FB829F152B3D4DE100FAC6E0 /* Extensions */,
 				FB15DD2B2B07448B00A21290 /* CanvasEngine */,
+				FBD9AFCE2B008A6C005F8620 /* ManagedViews */,
 				FB5094242B05820B000AEA96 /* views */,
 				FB93BB162B033E2000864CB2 /* GoogleService-Info.plist */,
 				FBD9AFD32B008F5C005F8620 /* Providers */,
-				FBD9AFCE2B008A6C005F8620 /* ManagedViews */,
 				FBD9AFA72AFF00BF005F8620 /* LudiBoardsApp.swift */,
 				FBD9AFA92AFF00BF005F8620 /* ContentView.swift */,
 				FBD9AFAB2AFF00BF005F8620 /* Assets.xcassets */,
@@ -852,6 +854,7 @@
 				FB881A372B47397600C16198 /* RealmObserver.swift */,
 				FB982F902B19D1B900C0DA03 /* FirebaseService.swift */,
 				FBB450012B052B180096F8EB /* FireLiveData.swift */,
+				FB986F0A2B5774C30042BED2 /* BoardSessionObserver.swift */,
 			);
 			path = LiveData;
 			sourceTree = "<group>";
@@ -1087,8 +1090,9 @@
 				FBF404432B19304700FA0545 /* BorderedView.swift in Sources */,
 				FBE385562B4BC6E70090901C /* LiveSolUser.swift in Sources */,
 				FB58E8822B030F1D00FD9E2E /* RealmFind.swift in Sources */,
+				FB986F0B2B5774C30042BED2 /* BoardSessionObserver.swift in Sources */,
 				FB881A3E2B48732400C16198 /* RealmState.swift in Sources */,
-				FBDF0DC92B224EB500FADE44 /* ManagedViewsService.swift in Sources */,
+				FBDF0DC92B224EB500FADE44 /* AllManagedViewsService.swift in Sources */,
 				FBE2C6242B1B2E01004C0116 /* SessionPlanOverview.swift in Sources */,
 				FBD9AFC92B008435005F8620 /* ManagedViewAction.swift in Sources */,
 				FBE385502B4B32950090901C /* FriendsListView.swift in Sources */,

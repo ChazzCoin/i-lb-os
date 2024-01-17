@@ -234,14 +234,15 @@ struct CanvasEngine: View {
             handleMVSettings()
             handleSessionPlans()
             
-            DispatchQueue.executeAfter(seconds: 10, action: {
-                CodiChannel.ON_NOTIFICATION.send(value: NotificationController(message: "Johnny has entered the room!", icon: "door_open"))
-            })
+//            DispatchQueue.executeAfter(seconds: 10, action: {
+//                CodiChannel.ON_NOTIFICATION.send(value: NotificationController(message: "Johnny has entered the room!", icon: "door_open"))
+//            })
             
         }
         
     }
     
+    @MainActor
     func notificationListener() {
         
         CodiChannel.ON_NOTIFICATION.receive(on: RunLoop.main) { message in
@@ -261,6 +262,7 @@ struct CanvasEngine: View {
         
     }
     
+    @MainActor
     func menuBarButtonListener() {
         
         CodiChannel.MENU_WINDOW_CONTROLLER.receive(on: RunLoop.main) { controller in

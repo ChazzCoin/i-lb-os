@@ -15,7 +15,7 @@ class UserToSession: Object, ObjectKeyIdentifiable {
     @Persisted var hostUserName: String = "null"
     @Persisted var guestId: String = "null"
     @Persisted var guestUserName: String = "null"
-    @Persisted var status: String = "pending"
+    @Persisted var status: String = "view"
     @Persisted var isConnected: Bool = false
     @Persisted var authLevel: String = "guest"
 
@@ -51,6 +51,8 @@ func firePostShareSession(sessionId: String, guestId: String, guestUserName:Stri
     share.guestId = guestId
     share.guestUserName = guestUserName
     share.sessionId = sessionId
+    share.status = "edit" // view, removed
+    
     firebaseDatabase { db in
         db
             .child(DatabasePaths.userToSession.rawValue)

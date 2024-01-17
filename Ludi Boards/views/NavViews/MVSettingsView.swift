@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import Combine
+import RealmSwift
 import FirebaseDatabase
 
 enum ToolLevels: Int {
@@ -25,11 +26,12 @@ struct SettingsView: View {
     @State var activityId = ""
     @EnvironmentObject var BEO: BoardEngineObject
     @StateObject var managedViews = ManagedViewListener()
-    
+    @State var managedViewNotificationToken: NotificationToken? = nil
     @State var viewSize: CGFloat = 50
     @State var viewRotation: Double = 0
     @State var viewColor: Color = .black
     @State var toolLevel: Int = ToolLevels.BASIC.rawValue
+    @State var isLocked = false
     @State var viewId: String = ""
     
     let colors: [Color] = [Color.red, Color.blue]
@@ -106,6 +108,14 @@ struct SettingsView: View {
                     }.padding(.horizontal)
                 }
                 
+                Section {
+                    Toggle(isLocked ? "Locked" : "UnLocked", isOn: $isLocked)
+                        .onChange(of: isLocked, perform: { _ in
+                            let va = ViewAtts(viewId: viewId, isLocked: isLocked)
+                            CodiChannel.TOOL_ATTRIBUTES.send(value: va)
+                        })
+                }.padding()
+                
                 solConfirmButton(
                     title: "Delete Tool",
                     message: "Would you like to delete this tool?",
@@ -114,7 +124,11 @@ struct SettingsView: View {
                             self.realmInstance.safeWrite { r in
                                 temp.isDeleted = true
                             }
-                            self.fireDB.child(self.activityId).child(self.viewId).setValue(temp.toDict())
+                            
+                            firebaseDatabase { db in
+                                db.child(self.activityId).child(self.viewId).setValue(temp.toDict())
+                            }
+                            
                         }
                         CodiChannel.TOOL_ON_DELETE.send(value: self.viewId)
                         closeWindow()
@@ -175,6 +189,9 @@ struct SettingsView: View {
         }
         .background(Color.clear)
         .navigationBarTitle("Settings", displayMode: .inline)
+        .onChange(of: self.BEO.currentActivityId, perform: { _ in
+            startRestartSession()
+        })
         .refreshable { onCreate() }
         .onAppear() { onCreate() }
         .onDisappear() { closeSession() }
@@ -183,6 +200,7 @@ struct SettingsView: View {
     func closeSession() {
         let va = ViewAtts(viewId: viewId, stateAction: "close")
         CodiChannel.TOOL_ATTRIBUTES.send(value: va)
+        self.managedViewNotificationToken?.invalidate()
     }
     
     func closeWindow() {
@@ -194,8 +212,10 @@ struct SettingsView: View {
             self.activityId = self.BEO.currentActivityId
         }
         managedViews.loadTools(activityId: self.activityId)
+        observeFromRealm()
     }
     
+    @MainActor
     func onCreate() {
         CodiChannel.TOOL_ATTRIBUTES.receive(on: RunLoop.main) { vId in
             let temp = vId as! ViewAtts
@@ -208,17 +228,46 @@ struct SettingsView: View {
                 if toolLevel == ToolLevels.BASIC.rawValue {showColor = false}
                 else if toolLevel == ToolLevels.LINE.rawValue {showColor = true}
             }
-            if let ts = temp.size { viewSize = ts }
-            if let tr = temp.rotation { viewRotation = tr }
-            if let tc = temp.color { viewColor = tc }
+            if let ts = temp.size { self.viewSize = ts }
+            if let tr = temp.rotation { self.viewRotation = tr }
+            if let tc = temp.color { self.viewColor = tc }
+            if let lc = temp.isLocked { self.isLocked = lc }
+            
         }.store(in: &cancellables)
         startRestartSession()
     }
     
+    // Observe From Realm
+    func observeFromRealm() {
+        self.managedViewNotificationToken?.invalidate()
+        if let mv = self.realmInstance.object(ofType: ManagedView.self, forPrimaryKey: self.viewId) {
+            self.managedViewNotificationToken = mv.observe { change in
+                switch change {
+                    case .change(let obj, _):
+                        let temp = obj as! ManagedView
+                        if temp.id != self.viewId {return}
+                        DispatchQueue.main.async {
+                            if temp.id != self.viewId {return}
+                            if self.activityId != temp.boardId {self.activityId = temp.boardId}
+                            if self.viewSize != Double(temp.width) {self.viewSize = Double(temp.width)}
+                            if self.viewRotation != temp.rotation { self.viewRotation = temp.rotation}
+                            if self.isLocked != temp.isLocked { self.isLocked = temp.isLocked}
+//                            self.lifeLastUserId = temp.lastUserId
+                        }
+                        case .error(let error):
+                            print("Error: \(error)")
+                            self.managedViewNotificationToken?.invalidate()
+                            self.managedViewNotificationToken = nil
+                            self.observeFromRealm()
+                        case .deleted:
+                            print("Object has been deleted.")
+                            self.isLocked = true
+                            self.managedViewNotificationToken?.invalidate()
+                            self.managedViewNotificationToken = nil
+                    }
+                }
+            }
+        
+    }
+    
 }
-
-//struct SettingsView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        SettingsView(onDelete: {})
-//    }
-//}

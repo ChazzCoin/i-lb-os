@@ -22,9 +22,44 @@ extension Realm {
         return self.objects(type).filter("%K != %@", field, value)
     }
     
-//    func getCurrentUserSession() -> CurrentSession? {
-//        return self.findByField(CurrentSession.self, value: "SOL")
-//    }
+    func isLiveSessionPlan(sessionId: String) -> Bool {
+        if let plan = self.findByField(SessionPlan.self, value: sessionId) {
+            return plan.isLive
+        }
+        return false
+    }
+    
+    func isLiveSessionPlan(activityId: String) -> Bool {
+        var liveResult = false
+        self.getSessionPlanByActivityId(activityId: activityId) { result in
+            liveResult = result.isLive
+        }
+        return liveResult
+    }
+    
+    func getSessionPlanByActivityId(activityId: String, onResult: (SessionPlan) -> Void) {
+        if let act = self.findByField(ActivityPlan.self, value: activityId) {
+            if let sess = self.findByField(SessionPlan.self, value: act.sessionId) {
+                onResult(sess)
+            }
+        }
+    }
+
+}
+
+func isLiveSessionPlan(sessionId: String) -> Bool {
+    if let plan = newRealm().findByField(SessionPlan.self, value: sessionId) {
+        return plan.isLive
+    }
+    return false
+}
+
+func isLiveSessionPlan(activityId: String) -> Bool {
+    var liveResult = false
+    newRealm().getSessionPlanByActivityId(activityId: activityId) { result in
+        liveResult = result.isLive
+    }
+    return liveResult
 }
 
 extension Results {

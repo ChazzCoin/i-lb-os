@@ -18,7 +18,7 @@ struct SessionPlanView: View {
     @State private var title = "SOL Session"
     @State private var description = ""
     @State private var objective = ""
-    @State private var isOpen = true
+    @State private var isLive = true
     
 //    @StateObject var keyboardResponder = KeyboardResponder()
     
@@ -32,6 +32,7 @@ struct SessionPlanView: View {
     
     @State private var shareIds: [String] = []
     
+    @StateObject var sessionRealmObserver = RealmChangeListener()
     @EnvironmentObject var BEO: BoardEngineObject
     @EnvironmentObject var NavStack: NavStackWindowObservable
     @State private var isLoading = false
@@ -68,11 +69,27 @@ struct SessionPlanView: View {
                     isEnabled: !self.isCurrentPlan)
             }
             
-            if !self.shareIds.contains(self.sessionId) && sessionId != "SOL-LIVE-DEMO" && sessionId != "SOL"  {
-                solButton(title: "Share Session", action: {
-                    self.showShareSheet = true
-                }, isEnabled: true)
+            if userIsVerifiedToProceed() {
+                
+                if !self.shareIds.contains(self.sessionId) && sessionId != "SOL-LIVE-DEMO" && sessionId != "SOL"  {
+                    solButton(title: "Share Session", action: {
+                        self.showShareSheet = true
+                    }, isEnabled: self.isLive)
+                }
+                
+                Section {
+                    Toggle("Is Live", isOn: $isLive)
+                        .onChange(of: isLive) { newValue in
+                            if let s = self.BEO.realmInstance.findByField(SessionPlan.self, value: self.sessionId) {
+                                self.BEO.realmInstance.safeWrite { r in
+                                    s.isLive = self.isLive
+                                    s.fireSave(id: s.id)
+                                }
+                            }
+                        }
+                }
             }
+            
             
             Section(header: Text("Details")) {
                 SolTextField("Title", text: $title)
@@ -97,10 +114,6 @@ struct SessionPlanView: View {
                     })
                 }
             }.clearSectionBackground()
-
-            Section {
-                Toggle("Is Open", isOn: $isOpen)
-            }
             
             // Save button at the bottom
             Section {
@@ -154,6 +167,7 @@ struct SessionPlanView: View {
         }
         .onDisappear() {
             self.NavStack.removeFromStack()
+            self.sessionRealmObserver.stop()
             self.sessionNotificationToken = nil
         }
         .navigationBarTitle(isCurrentPlan ? "Current Session" : "Session Plan", displayMode: .inline)
@@ -230,7 +244,7 @@ struct SessionPlanView: View {
         newSP.title = title
         newSP.sessionDetails = description
         newSP.objectiveDetails = objective
-        newSP.isOpen = isOpen
+        newSP.isOpen = isLive
         newSP.ownerId = getFirebaseUserId() ?? CURRENT_USER_ID
         // New Activity
         let newAP = ActivityPlan()
@@ -238,7 +252,7 @@ struct SessionPlanView: View {
         newAP.ownerId = getFirebaseUserId() ?? CURRENT_USER_ID
         newAP.title = "\(title) Activity"
         newAP.orderIndex = 0
-        newAP.isOpen = isOpen
+        newAP.isLocal = isLive
         
         self.allActivities.realm?.safeWrite { r in
             r.create(SessionPlan.self, value: newSP, update: .all)
@@ -253,11 +267,11 @@ struct SessionPlanView: View {
     func updateSessionPlan() {
         if let sp = self.allActivities.realm?.findByField(SessionPlan.self, value: self.sessionId) {
             self.allActivities.realm?.safeWrite { r in
-                sp.ownerId = getFirebaseUserId() ?? "SOL"
+                sp.ownerId = getFirebaseUserId() ?? CURRENT_USER_ID
                 sp.title = title
                 sp.sessionDetails = description
                 sp.objectiveDetails = objective
-                sp.isOpen = isOpen
+                sp.isLive = isLive
                 sp.fireSave(id: sp.id)
             }
         }
@@ -275,11 +289,21 @@ struct SessionPlanView: View {
         fireGetSessionPlanAsync(sessionId: self.sessionId, realm: self.allActivities.realm?.thaw())
         fireGetActivitiesBySessionId(sessionId: self.sessionId, realm: self.allActivities.realm?.thaw())
         
-        if let sp = self.allActivities.realm?.findByField(SessionPlan.self, value: self.sessionId) {
+        if let sp = self.allActivities.realm?.thaw().findByField(SessionPlan.self, value: self.sessionId) {
+            self.sessionRealmObserver.observe(object: sp, onChange: { obj in
+                title = sp.title
+                description = sp.sessionDetails
+                objective = sp.objectiveDetails
+                isLive = sp.isLive
+                if sp.ownerId != self.BEO.userId && sp.ownerId != CURRENT_USER_ID {
+                    self.BEO.isShared = true
+                }
+            })
+            
             title = sp.title
             description = sp.sessionDetails
             objective = sp.objectiveDetails
-            isOpen = sp.isOpen
+            isLive = sp.isLive
             if sp.ownerId != self.BEO.userId && sp.ownerId != CURRENT_USER_ID {
                 self.BEO.isShared = true
             }

@@ -69,13 +69,13 @@ extension Object {
     
     func fireSave(id:String) {
         fireRef(id: id, block: { db in
-            db.child(id).save(obj: self)
+            db.save(obj: self)
         })
     }
     
     func fireDelete(id:String) {
         fireRef(id: id, block: { db in
-            db.child(id).delete(id: id)
+            db.delete(id: id)
         })
     }
     
