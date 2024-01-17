@@ -546,7 +546,7 @@ struct BoardEngine: View {
     
     func fiveStartObservingManagedViews() {
         if self.BEO.currentActivityId.isEmpty { return }
-        if !userIsVerifiedToProceed() || !self.isLiveSession { return }
+        if !userIsVerifiedToProceed() { return }
         observerHandleOne = reference
             .child(DatabasePaths.managedViews.rawValue)
             .child(self.BEO.currentActivityId)

@@ -118,16 +118,19 @@ struct SessionPlanView: View {
             // Save button at the bottom
             Section {
                 
-                solButton(title: "Save", action: {
-                    print("save button")
-                    runLoading()
-                    if self.sessionId == "new" {
-                        saveNewSessionPlan()
-                    } else {
-                        updateSessionPlan()
-                    }
-                    isShowing = false
-                })
+                solConfirmButton(
+                    title: "Save",
+                    message: "Are you sure you want to save this session?",
+                    action: {
+                        print("save button")
+                        runLoading()
+                        if self.sessionId == "new" {
+                            saveNewSessionPlan()
+                        } else {
+                            updateSessionPlan()
+                        }
+                        isShowing = false
+                    })
                 
                 if self.sessionId == "new" {
                     solButton(title: "Cancel", action: {
@@ -265,8 +268,8 @@ struct SessionPlanView: View {
     }
     
     func updateSessionPlan() {
-        if let sp = self.allActivities.realm?.findByField(SessionPlan.self, value: self.sessionId) {
-            self.allActivities.realm?.safeWrite { r in
+        if let sp = self.allActivities.realm?.thaw().findByField(SessionPlan.self, value: self.sessionId) {
+            self.allActivities.realm?.thaw().safeWrite { r in
                 sp.ownerId = getFirebaseUserId() ?? CURRENT_USER_ID
                 sp.title = title
                 sp.sessionDetails = description
