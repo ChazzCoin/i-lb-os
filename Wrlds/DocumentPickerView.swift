@@ -57,7 +57,7 @@ struct UploadAudioView: View {
                 
                 Text("Song Name: \(url.lastPathComponent)")
                 TextEditor(text:$songTitle)
-                    .frame(minHeight: 100)
+                    .frame(height: 25)
                     .overlay(
                         RoundedRectangle(cornerRadius: 5)
                             .stroke(Color.gray, lineWidth: 1)
@@ -65,15 +65,17 @@ struct UploadAudioView: View {
                 
                 Text("Song Artist: \(url.lastPathComponent)")
                 TextEditor(text:$songArtist)
-                    .frame(minHeight: 100)
+                    .frame(height: 25)
                     .overlay(
                         RoundedRectangle(cornerRadius: 5)
                             .stroke(Color.gray, lineWidth: 1)
                     )
-                
-                Button("Upload to Firebase") {
-                    uploadAudioToFirebase(url)
+                if !songTitle.isEmpty {
+                    Button("Upload to Firebase") {
+                        uploadFileToFirebaseStorage(title: songTitle, fileURL: url)
+                    }
                 }
+                
             } else {
                 Button("Pick an Audio File") {
                     showDocumentPicker = true
@@ -91,95 +93,96 @@ struct UploadAudioView: View {
         let fileManager = FileManager.default
         return fileManager.fileExists(atPath: fileUrl.path) && fileManager.isReadableFile(atPath: fileUrl.path)
     }
-
-    func uploadAudioToFirebase(_ url: URL) {
     
+    func uploadFileToFirebaseStorage(title: String, fileURL: URL) {
+        // Start accessing the security-scoped resource
+        guard fileURL.startAccessingSecurityScopedResource() else {
+            // Handle the failure here.
+            print("Unable to access the file.")
+            return
+        }
         
         let meta = StorageMetadata()
         meta.contentType = "audio/m4a"
+        let fileCoordinator = NSFileCoordinator()
+        var error: NSError?
 
+        // Create a bookmark to persist access
         do {
-            
-            let fileCoordinator = NSFileCoordinator()
-            var error: NSError?
-            
-            if let bookmark = createBookmark(from: url) {
-                
-                if let bm = UserDefaults.standard.object(forKey: "myFileBookmark") as? URL {
-                    fileCoordinator.coordinate(readingItemAt: bm, options: [], error: &error) { (url) in
-                        let isAccessible = url.startAccessingSecurityScopedResource()
-        //                let temp = verifyFileUrl(fileUrl: url)
-                        print(isAccessible)
-                        if isAccessible {
-                            // Now you can check with FileManager or proceed with uploading the file
-                            // Upload file to Firebase
-                            let storageRef = Storage.storage().reference().child("songs/\(url.lastPathComponent)")
-                            // Start the file upload
-                            storageRef.putFile(from: url, metadata: meta) { data, error in
-                                // Don't forget to stop accessing the resource
-                                url.stopAccessingSecurityScopedResource()
-                                guard data != nil else {
+            let bookmarkData = try fileURL.bookmarkData()
+            // You can now store this bookmarkData to access the file later
+            UserDefaults.standard.set(bookmarkData, forKey: "FileBookmark")
+        } catch {
+            print("Unable to create a bookmark: \(error)")
+        }
+        
+        let storageRef = Storage.storage().reference().child("songs/\(title)")
+        
+        if let fileURL = accessBookmarkedFile() {
+            // Upload the file to Firebase
+            let isAccessible = fileURL.startAccessingSecurityScopedResource()
+            if let temp = try? Data(contentsOf: fileURL) {
+                print("File is accessible: \(isAccessible)")
+                if isAccessible {
+                    // Upload the file
+                    storageRef.putData(temp, metadata: meta) { metadata, error in
+    //                    fileURL.stopAccessingSecurityScopedResource()
+                        if let error = error {
+                            // Handle any errors
+                            print("Error uploading file: \(error)")
+                            fileURL.stopAccessingSecurityScopedResource()
+                        } else {
+                            // Metadata contains file metadata such as size, content-type, etc.
+                            print("Upload successful, metadata: \(String(describing: metadata))")
+                            // File uploaded successfully, now get the download URL
+                            storageRef.downloadURL { (downloadURL, error) in
+                                guard let downloadURL = downloadURL else {
                                     // Handle error
-                                    print("Error during upload: \(error?.localizedDescription ?? "Unknown error")")
+                                    print("Error getting download URL: \(error?.localizedDescription ?? "Unknown error")")
                                     return
                                 }
-                                
-                                // File uploaded successfully, now get the download URL
-                                storageRef.downloadURL { (downloadURL, error) in
-                                    guard let downloadURL = downloadURL else {
-                                        // Handle error
-                                        print("Error getting download URL: \(error?.localizedDescription ?? "Unknown error")")
-                                        return
-                                    }
 
-                                    // Create a new Song object
-                                    let newSong = Song()
-                                    newSong.title = url.deletingPathExtension().lastPathComponent // Example title
-                                    newSong.artist = "Unknown Artist" // Placeholder artist
-                                    newSong.downloadUrl = downloadURL.absoluteString
+                                // Create a new Song object
+                                let newSong = Song()
+                                newSong.title = title // Example title
+                                newSong.artist = "Unknown Artist" // Placeholder artist
+                                newSong.downloadUrl = downloadURL.absoluteString
 
-                                    // Save the Song object and write to Firebase Realtime Database
-                                    firebaseDatabaseSET(obj: newSong) { db in
-                                        db.child("songs").child(newSong.id)
-                                    }
+                                // Save the Song object and write to Firebase Realtime Database
+                                firebaseDatabaseSET(obj: newSong) { db in
+                                    db.child("songs").child(newSong.id)
                                 }
+                                fileURL.stopAccessingSecurityScopedResource()
                             }
-                            
-                            
-                            
-                        } else {
-                            // Handle the error or the fact the file isn't accessible
-                            print("File Not Accessable")
                         }
                     }
-
-                    if let error = error {
-                        // Handle any errors here
-                        print("File Error: \(error)")
-                    }
                 }
-                
-                
-               
-                
             }
             
-//            let temp = UserDefaults.standard.object(forKey: "myFileBookmark")
-
             
-            
-            
-            
-        } catch {
-            print("Error while uploading")
+        } else {
+            print("Failed to retrieve file from bookmark")
         }
         
         
-              
-              
-              
-        
     }
+    
+    func accessBookmarkedFile() -> URL? {
+        guard let bookmarkData = UserDefaults.standard.data(forKey: "FileBookmark") else {
+            print("No bookmark data found")
+            return nil
+        }
+
+        var isStale = false
+        do {
+            let fileURL = try URL(resolvingBookmarkData: bookmarkData, bookmarkDataIsStale: &isStale)
+            return fileURL
+        } catch {
+            print("Error resolving bookmark: \(error)")
+            return nil
+        }
+    }
+
     
     func extractMetadata(from audioURL: URL) -> (title: String?, artist: String?, albumName: String?) {
         let asset = AVAsset(url: audioURL)

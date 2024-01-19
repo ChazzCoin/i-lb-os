@@ -35,19 +35,12 @@ struct SignUpView: View {
     
     @State var isLoginValid = false
     @State private var isUsernameAvailable: Bool? = nil
+    @State private var isEmailAvailable: Bool? = nil
     @State var keyboardOffset: Double = 0.0
     
     let code = "fair"
     @State private var codeAccepted: Bool? = nil
     @State private var loginCode = ""
-    
-    func loginCheck() {
-        if userIsVerifiedToProceed() {
-            self.BEO.isLoggedIn = true
-        } else {
-            self.BEO.isLoggedIn = false
-        }
-    }
 
     var body: some View {
         
@@ -56,12 +49,11 @@ struct SignUpView: View {
                 .opacity(self.BEO.isLoggedIn ? 1.0 : 0.0)
                 .environmentObject(self.BEO)
         } else {
-            VStack {
+            LoadingForm() { runLoading in
                 HStack {
-                    TextField("Sign-Up Code", text: $loginCode)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .padding(.leading, 24)
-                        .padding(.trailing, 24)
+                    SolTextField("Sign-Up Code", text: $loginCode)
+                        .padding(.leading)
+                        .padding(.trailing)
                         .onChange(of: loginCode) { newValue in
                             if loginCode.lowercased() == code {
                                 codeAccepted = true
@@ -80,19 +72,32 @@ struct SignUpView: View {
                 if codeAccepted != nil && codeAccepted == true {
                     VStack() {
                         Section(header: Text("User Sign-Up")) {
-                            TextField("Email", text: $email)
-                                .textFieldStyle(RoundedBorderTextFieldStyle())
-                                .padding(.leading, 24)
-                                .padding(.trailing, 24)
-                                .autocapitalization(.none)
-                                .disableAutocorrection(true)
-                                
+                           
                             
                             HStack {
-                                TextField("Username", text: $username)
-                                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                                    .padding(.leading, 24)
-                                    .padding(.trailing, 24)
+                                SolTextField("Email", text: $email)
+                                    .onChange(of: email) { newValue in
+                                        if newValue.count < 4 {return}
+                                        checkEmailExists(newValue) { result in
+                                            if !result {
+                                                isEmailAvailable = true
+                                            } else {
+                                                isEmailAvailable = false
+                                            }
+                                        }
+                                    }
+
+                                if let isAvailable = isEmailAvailable {
+                                    Image(systemName: isAvailable ? "checkmark.circle.fill" : "xmark.circle.fill")
+                                        .foregroundColor(isAvailable ? .green : .red)
+                                        .padding(.trailing, 10)
+                                }
+                            }
+                            .padding(.leading)
+                            .padding(.trailing)
+                            
+                            HStack {
+                                SolTextField("Username", text: $username)
                                     .onChange(of: username) { newValue in
                                         if newValue.count < 4 {return}
                                         checkUsernameExists(newValue) { result in
@@ -110,24 +115,19 @@ struct SignUpView: View {
                                         .padding(.trailing, 10)
                                 }
                             }
+                            .padding(.leading)
+                            .padding(.trailing)
                             
-                            TextField("Name", text: $name)
-                                .textFieldStyle(RoundedBorderTextFieldStyle())
-                                .padding(.leading, 24)
-                                .padding(.trailing, 24)
-                                .autocapitalization(.none)
-                                .disableAutocorrection(true)
+                            SolTextField("Name", text: $name)
+                                .padding(.leading)
+                                .padding(.trailing)
                             
-                            SecureField("Password", text: $password)
-                                .textFieldStyle(RoundedBorderTextFieldStyle())
-                                .padding(.leading, 24)
-                                .padding(.trailing, 24)
+                            SolTextField("Password", text: $password)
+                                .padding(.leading)
+                                .padding(.trailing)
 
                             HStack {
-                                SecureField("Verify Password", text: $verifyPassword)
-                                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                                    .padding(.leading, 24)
-                                    .padding(.trailing, 24)
+                                SolSecureField("Verify Password", text: $verifyPassword)
                                     .onChange(of: verifyPassword) { newValue in
                                         arePasswordsMatching = (password == newValue)
                                     }
@@ -138,42 +138,50 @@ struct SignUpView: View {
                                         .padding(.trailing, 10)
                                 }
                             }
+                            .padding(.leading)
+                            .padding(.trailing)
                         }
                     }
-                    solButton(title: "Sign Up", action: {
-//                        runLoading()
-                        signUpNewUserInFirebase()
-                        self.BEO.loadUser()
-                    }, isEnabled: isFormValid)
+                    
+                    solButton(
+                        title: "Sign Up",
+                        action: {
+                            runLoading()
+                            signUpNewUserInFirebase()
+                            self.BEO.loadUser()
+                        }, isEnabled: isFormValid
+                    ).padding()
+                    
                 } else {
                 
-                    Text("Login")
-                    TextField("Email", text: $emailLogin)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .padding(.horizontal, 40)
-                        .autocapitalization(.none)
-                        .disableAutocorrection(true)
+                    Text("Login").font(.largeTitle)
                     
-                    SecureField("Password", text: $passLogin)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .padding(.horizontal, 40)
+                    SolTextField("Email", text: $emailLogin)
+                        .padding(.leading)
+                        .padding(.trailing)
+
+                    SolSecureField("Password", text: $passLogin)
+                        .padding(.leading)
+                        .padding(.trailing)
                     
-                    solButton(title: "Login", action: {
-//                        runLoading()
+                    solButton(
+                        title: "Login",
+                        action: {
+                        runLoading()
                         loginUser(withEmail: emailLogin, password: passLogin) { result in
-                            if result {
-                                print("User LogIn: \(result)")
-                                self.BEO.isLoggedIn = true
-                            } else {
-                                //
-                                self.showSignInFailedAlert = true
+                                if result {
+                                    print("User LogIn: \(result)")
+                                    self.BEO.isLoggedIn = true
+                                } else {
+                                    //
+                                    self.showSignInFailedAlert = true
+                                }
+                              
                             }
-                          
-                        }
-                    }, isEnabled: true).padding()
+                        }, isEnabled: true
+                    ).padding()
                     
                 }
-//                Spacer()
                 
             }
             .alert("Login Failed.", isPresented: $showSignInFailedAlert) {
@@ -184,9 +192,6 @@ struct SignUpView: View {
                 Text("Unable to Login.")
             }
             .navigationBarTitle("Sign Up/Login")
-            .onAppear() {
-                loginCheck()
-            }
         }
         
     }
@@ -200,10 +205,10 @@ struct SignUpView: View {
             switch result {
                 case .success(let authResult):
                     print("User signed up successfully: \(authResult.user.email ?? "")")
-                    self.BEO.isLoggedIn = true
+                    self.BEO.loadUser()
                 case .failure(let error):
                     print("Error signing up: \(error.localizedDescription)")
-                    loginCheck()
+                    self.BEO.loadUser()
             }
         }
 
@@ -227,7 +232,10 @@ struct SignUpView: View {
     }
 
     var isFormValid: Bool {
-        !username.isEmpty //&& !email.isEmpty && !password.isEmpty && !name.isEmpty
+        
+//        if self.isUsernameAvailable
+        
+        !username.isEmpty
     }
 }
 

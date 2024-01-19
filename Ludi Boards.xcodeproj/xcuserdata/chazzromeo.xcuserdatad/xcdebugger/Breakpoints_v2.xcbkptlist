@@ -438,54 +438,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "B5C16E2F-AE14-4C8E-A14D-7C40EEA47238"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Wrlds/DocumentPickerView.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "85"
-            endingLineNumber = "85"
-            landmarkName = "body"
-            landmarkType = "24">
-            <Locations>
-               <Location
-                  uuid = "B5C16E2F-AE14-4C8E-A14D-7C40EEA47238 - eeed55e8921954e0"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (Swift.Optional&lt;Foundation.URL&gt;, Swift.Optional&lt;Swift.Error&gt;) -&gt; () in closure #1 (Swift.Optional&lt;FirebaseStorage.StorageMetadata&gt;, Swift.Optional&lt;Swift.Error&gt;) -&gt; () in Wrlds.UploadAudioView.uploadAudioToFirebase(Foundation.URL) -&gt; ()"
-                  moduleName = "Wrlds"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Wrlds/DocumentPickerView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "86"
-                  endingLineNumber = "86"
-                  offsetFromSymbolStart = "388">
-               </Location>
-               <Location
-                  uuid = "B5C16E2F-AE14-4C8E-A14D-7C40EEA47238 - 905c8963ae6bf9b3"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (Foundation.URL) -&gt; () in closure #2 () -&gt; Wrlds.DocumentPicker in Wrlds.UploadAudioView.body.getter : some"
-                  moduleName = "Wrlds"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Wrlds/DocumentPickerView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "85"
-                  endingLineNumber = "85"
-                  offsetFromSymbolStart = "316">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "8329F7C0-A057-47F0-89D8-47BF23D53F37"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
@@ -742,62 +694,94 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "44355BD8-75FD-4DBC-AD7F-F10E2E10FE66"
+            uuid = "79AB3D49-848E-4925-88BA-1BFAF74C1D0D"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Wrlds/MediaPlayerView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "23"
+            endingLineNumber = "23"
+            landmarkName = "play(from:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "0A5ADE44-917C-4B0E-917A-074F93AF0BA5"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Wrlds/MediaPlayerView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "24"
+            endingLineNumber = "24"
+            landmarkName = "play(from:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "0215BEEA-9036-4420-82C8-83B974745990"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Wrlds/DocumentPickerView.swift"
+            filePath = "Ludi Boards/CanvasEngine/BoardEngineView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "174"
-            endingLineNumber = "174"
-            landmarkName = "uploadAudioToFirebase(_:)"
+            startingLineNumber = "664"
+            endingLineNumber = "664"
+            landmarkName = "createNewActivityPlan()"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "44355BD8-75FD-4DBC-AD7F-F10E2E10FE66 - ba2220208d1f69d6"
+                  uuid = "0215BEEA-9036-4420-82C8-83B974745990 - 967d99edff0c1fca"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "Wrlds.UploadAudioView.uploadAudioToFirebase(Foundation.URL) -&gt; ()"
-                  moduleName = "Wrlds"
+                  symbolName = "Ludi_Boards.BoardEngine.createNewActivityPlan() -&gt; ()"
+                  moduleName = "Ludi Boards"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Wrlds/DocumentPickerView.swift"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/CanvasEngine/BoardEngineView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "169"
-                  endingLineNumber = "169"
-                  offsetFromSymbolStart = "1468">
+                  startingLineNumber = "664"
+                  endingLineNumber = "664"
+                  offsetFromSymbolStart = "240">
                </Location>
                <Location
-                  uuid = "44355BD8-75FD-4DBC-AD7F-F10E2E10FE66 - ba2220208d1f6b03"
+                  uuid = "0215BEEA-9036-4420-82C8-83B974745990 - 967d99edff0c1fca"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "Wrlds.UploadAudioView.uploadAudioToFirebase(Foundation.URL) -&gt; ()"
-                  moduleName = "Wrlds"
+                  symbolName = "Ludi_Boards.BoardEngine.createNewActivityPlan() -&gt; ()"
+                  moduleName = "Ludi Boards"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Wrlds/DocumentPickerView.swift"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/CanvasEngine/BoardEngineView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "182"
-                  endingLineNumber = "182"
-                  offsetFromSymbolStart = "2732">
+                  startingLineNumber = "664"
+                  endingLineNumber = "664"
+                  offsetFromSymbolStart = "816">
                </Location>
                <Location
-                  uuid = "44355BD8-75FD-4DBC-AD7F-F10E2E10FE66 - ba2220208d1f6b03"
+                  uuid = "0215BEEA-9036-4420-82C8-83B974745990 - 967d99edff0c1fca"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "Wrlds.UploadAudioView.uploadAudioToFirebase(Foundation.URL) -&gt; ()"
-                  moduleName = "Wrlds"
+                  symbolName = "Ludi_Boards.BoardEngine.createNewActivityPlan() -&gt; ()"
+                  moduleName = "Ludi Boards"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Wrlds/DocumentPickerView.swift"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/CanvasEngine/BoardEngineView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "182"
-                  endingLineNumber = "182"
-                  offsetFromSymbolStart = "2248">
+                  startingLineNumber = "664"
+                  endingLineNumber = "664"
+                  offsetFromSymbolStart = "776">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -805,63 +789,62 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "A7CCB8A1-12D2-45DE-A0DC-BF68CCC34629"
+            uuid = "BAF7DEAB-C8F2-46AA-BB5D-7E4A1EE70209"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Wrlds/DocumentPickerView.swift"
+            filePath = "Ludi Boards/CanvasEngine/BoardEngineView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "124"
-            endingLineNumber = "124"
-            landmarkName = "uploadAudioToFirebase(_:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "2D812C9E-C7BD-45B1-8ACA-FE5FF38BE641"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Wrlds/DocumentPickerView.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "128"
-            endingLineNumber = "128"
-            landmarkName = "uploadAudioToFirebase(_:)"
+            startingLineNumber = "665"
+            endingLineNumber = "665"
+            landmarkName = "createNewActivityPlan()"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "2D812C9E-C7BD-45B1-8ACA-FE5FF38BE641 - a390444ed0c66d6e"
+                  uuid = "BAF7DEAB-C8F2-46AA-BB5D-7E4A1EE70209 - 967d99edff0c1feb"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (Swift.Optional&lt;FirebaseStorage.StorageMetadata&gt;, Swift.Optional&lt;Swift.Error&gt;) -&gt; () in closure #1 (Foundation.URL) -&gt; () in Wrlds.UploadAudioView.uploadAudioToFirebase(Foundation.URL) -&gt; ()"
-                  moduleName = "Wrlds"
+                  symbolName = "Ludi_Boards.BoardEngine.createNewActivityPlan() -&gt; ()"
+                  moduleName = "Ludi Boards"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Wrlds/DocumentPickerView.swift"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/CanvasEngine/BoardEngineView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "128"
-                  endingLineNumber = "128"
-                  offsetFromSymbolStart = "396">
+                  startingLineNumber = "665"
+                  endingLineNumber = "665"
+                  offsetFromSymbolStart = "736">
                </Location>
                <Location
-                  uuid = "2D812C9E-C7BD-45B1-8ACA-FE5FF38BE641 - 8d798c3364b132a8"
+                  uuid = "BAF7DEAB-C8F2-46AA-BB5D-7E4A1EE70209 - 967d99edff0c1feb"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (Swift.Optional&lt;Foundation.URL&gt;, Swift.Optional&lt;Swift.Error&gt;) -&gt; () in closure #1 (Swift.Optional&lt;FirebaseStorage.StorageMetadata&gt;, Swift.Optional&lt;Swift.Error&gt;) -&gt; () in closure #1 (Foundation.URL) -&gt; () in Wrlds.UploadAudioView.uploadAudioToFirebase(Foundation.URL) -&gt; ()"
-                  moduleName = "Wrlds"
+                  symbolName = "Ludi_Boards.BoardEngine.createNewActivityPlan() -&gt; ()"
+                  moduleName = "Ludi Boards"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Wrlds/DocumentPickerView.swift"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/CanvasEngine/BoardEngineView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "129"
-                  endingLineNumber = "129"
-                  offsetFromSymbolStart = "380">
+                  startingLineNumber = "665"
+                  endingLineNumber = "665"
+                  offsetFromSymbolStart = "932">
+               </Location>
+               <Location
+                  uuid = "BAF7DEAB-C8F2-46AA-BB5D-7E4A1EE70209 - 967d99edff0c1feb"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Ludi_Boards.BoardEngine.createNewActivityPlan() -&gt; ()"
+                  moduleName = "Ludi Boards"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/CanvasEngine/BoardEngineView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "665"
+                  endingLineNumber = "665"
+                  offsetFromSymbolStart = "892">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -869,79 +852,62 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "CB0EF438-2909-4A25-8638-88DACEC7B514"
+            uuid = "56E9A780-8E88-41D7-91DB-5D6C129CA7D0"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Wrlds/DocumentPickerView.swift"
+            filePath = "Ludi Boards/CanvasEngine/BoardEngineView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "132"
-            endingLineNumber = "132"
-            landmarkName = "uploadAudioToFirebase(_:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "E8B4E38E-8082-4C30-AF88-159E3320CA5A"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Wrlds/DocumentPickerView.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "152"
-            endingLineNumber = "152"
-            landmarkName = "uploadAudioToFirebase(_:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "63CFBE23-038C-4696-BDD4-CB49474B0F66"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Wrlds/DocumentPickerView.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "158"
-            endingLineNumber = "158"
-            landmarkName = "uploadAudioToFirebase(_:)"
+            startingLineNumber = "666"
+            endingLineNumber = "666"
+            landmarkName = "createNewActivityPlan()"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "63CFBE23-038C-4696-BDD4-CB49474B0F66 - ba2220208d1f686b"
+                  uuid = "56E9A780-8E88-41D7-91DB-5D6C129CA7D0 - 967d99edff0c1f88"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "Wrlds.UploadAudioView.uploadAudioToFirebase(Foundation.URL) -&gt; ()"
-                  moduleName = "Wrlds"
+                  symbolName = "Ludi_Boards.BoardEngine.createNewActivityPlan() -&gt; ()"
+                  moduleName = "Ludi Boards"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Wrlds/DocumentPickerView.swift"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/CanvasEngine/BoardEngineView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "158"
-                  endingLineNumber = "158"
-                  offsetFromSymbolStart = "1904">
+                  startingLineNumber = "666"
+                  endingLineNumber = "666"
+                  offsetFromSymbolStart = "816">
                </Location>
                <Location
-                  uuid = "63CFBE23-038C-4696-BDD4-CB49474B0F66 - ba2220208d1f686b"
+                  uuid = "56E9A780-8E88-41D7-91DB-5D6C129CA7D0 - 967d99edff0c1f88"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "Wrlds.UploadAudioView.uploadAudioToFirebase(Foundation.URL) -&gt; ()"
-                  moduleName = "Wrlds"
+                  symbolName = "Ludi_Boards.BoardEngine.createNewActivityPlan() -&gt; ()"
+                  moduleName = "Ludi Boards"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Wrlds/DocumentPickerView.swift"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/CanvasEngine/BoardEngineView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "158"
-                  endingLineNumber = "158"
-                  offsetFromSymbolStart = "1668">
+                  startingLineNumber = "666"
+                  endingLineNumber = "666"
+                  offsetFromSymbolStart = "1012">
+               </Location>
+               <Location
+                  uuid = "56E9A780-8E88-41D7-91DB-5D6C129CA7D0 - 967d99edff0c1f88"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Ludi_Boards.BoardEngine.createNewActivityPlan() -&gt; ()"
+                  moduleName = "Ludi Boards"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/CanvasEngine/BoardEngineView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "666"
+                  endingLineNumber = "666"
+                  offsetFromSymbolStart = "972">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -949,95 +915,62 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "0B3C249E-863C-44AE-8AC7-CB28FE0873FA"
+            uuid = "17282ADB-D945-45C6-B71C-7639E601F91F"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Wrlds/DocumentPickerView.swift"
+            filePath = "Ludi Boards/CanvasEngine/BoardEngineView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "110"
-            endingLineNumber = "110"
-            landmarkName = "uploadAudioToFirebase(_:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "475A6CC6-A530-420A-B444-0CD3B2C30F67"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Wrlds/DocumentPickerView.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "113"
-            endingLineNumber = "113"
-            landmarkName = "uploadAudioToFirebase(_:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "65C86E8D-99BE-43D5-AD83-6F267BA305D0"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Wrlds/DocumentPickerView.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "116"
-            endingLineNumber = "116"
-            landmarkName = "uploadAudioToFirebase(_:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "A62A5015-36EB-48EC-A522-113F98FF25B1"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Wrlds/DocumentPickerView.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "106"
-            endingLineNumber = "106"
-            landmarkName = "uploadAudioToFirebase(_:)"
+            startingLineNumber = "663"
+            endingLineNumber = "663"
+            landmarkName = "createNewActivityPlan()"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "A62A5015-36EB-48EC-A522-113F98FF25B1 - ba2220208d1f6137"
+                  uuid = "17282ADB-D945-45C6-B71C-7639E601F91F - 967d99edff0c1fca"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "Wrlds.UploadAudioView.uploadAudioToFirebase(Foundation.URL) -&gt; ()"
-                  moduleName = "Wrlds"
+                  symbolName = "Ludi_Boards.BoardEngine.createNewActivityPlan() -&gt; ()"
+                  moduleName = "Ludi Boards"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Wrlds/DocumentPickerView.swift"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/CanvasEngine/BoardEngineView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "106"
-                  endingLineNumber = "106"
-                  offsetFromSymbolStart = "512">
+                  startingLineNumber = "664"
+                  endingLineNumber = "664"
+                  offsetFromSymbolStart = "240">
                </Location>
                <Location
-                  uuid = "A62A5015-36EB-48EC-A522-113F98FF25B1 - ba2220208d1f6137"
+                  uuid = "17282ADB-D945-45C6-B71C-7639E601F91F - 967d99edff0c1e2d"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "Wrlds.UploadAudioView.uploadAudioToFirebase(Foundation.URL) -&gt; ()"
-                  moduleName = "Wrlds"
+                  symbolName = "Ludi_Boards.BoardEngine.createNewActivityPlan() -&gt; ()"
+                  moduleName = "Ludi Boards"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Wrlds/DocumentPickerView.swift"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/CanvasEngine/BoardEngineView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "106"
-                  endingLineNumber = "106"
-                  offsetFromSymbolStart = "468">
+                  startingLineNumber = "663"
+                  endingLineNumber = "663"
+                  offsetFromSymbolStart = "736">
+               </Location>
+               <Location
+                  uuid = "17282ADB-D945-45C6-B71C-7639E601F91F - 967d99edff0c1e2d"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Ludi_Boards.BoardEngine.createNewActivityPlan() -&gt; ()"
+                  moduleName = "Ludi Boards"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/CanvasEngine/BoardEngineView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "663"
+                  endingLineNumber = "663"
+                  offsetFromSymbolStart = "696">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -1045,47 +978,47 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "CA3B536E-DCBE-4956-A408-5122D99900D4"
-            shouldBeEnabled = "Yes"
+            uuid = "0E7024FF-6274-445B-B593-3604E780FBE4"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Wrlds/DocumentPickerView.swift"
+            filePath = "Ludi Boards/CanvasEngine/BoardEngineView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "107"
-            endingLineNumber = "107"
-            landmarkName = "uploadAudioToFirebase(_:)"
+            startingLineNumber = "452"
+            endingLineNumber = "452"
+            landmarkName = "twoLoadSessionPlan()"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "CA3B536E-DCBE-4956-A408-5122D99900D4 - ba2220208d1f61d8"
+                  uuid = "0E7024FF-6274-445B-B593-3604E780FBE4 - 9fdc165637bc046f"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "Wrlds.UploadAudioView.uploadAudioToFirebase(Foundation.URL) -&gt; ()"
-                  moduleName = "Wrlds"
+                  symbolName = "Ludi_Boards.BoardEngine.twoLoadSessionPlan() -&gt; ()"
+                  moduleName = "Ludi Boards"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Wrlds/DocumentPickerView.swift"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/CanvasEngine/BoardEngineView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "107"
-                  endingLineNumber = "107"
-                  offsetFromSymbolStart = "676">
+                  startingLineNumber = "453"
+                  endingLineNumber = "453"
+                  offsetFromSymbolStart = "184">
                </Location>
                <Location
-                  uuid = "CA3B536E-DCBE-4956-A408-5122D99900D4 - ba2220208d1f61f9"
+                  uuid = "0E7024FF-6274-445B-B593-3604E780FBE4 - 9fdc165637bc040e"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "Wrlds.UploadAudioView.uploadAudioToFirebase(Foundation.URL) -&gt; ()"
-                  moduleName = "Wrlds"
+                  symbolName = "Ludi_Boards.BoardEngine.twoLoadSessionPlan() -&gt; ()"
+                  moduleName = "Ludi Boards"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Wrlds/DocumentPickerView.swift"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/CanvasEngine/BoardEngineView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "108"
-                  endingLineNumber = "108"
-                  offsetFromSymbolStart = "588">
+                  startingLineNumber = "452"
+                  endingLineNumber = "452"
+                  offsetFromSymbolStart = "2596">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -1093,47 +1026,47 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "A0BCF25E-5F63-4614-B665-9D63B46D586C"
-            shouldBeEnabled = "Yes"
+            uuid = "ADC50438-DC51-43D7-8D4A-DAC07AE2004A"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Wrlds/DocumentPickerView.swift"
+            filePath = "Ludi Boards/CanvasEngine/BoardEngineView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "108"
-            endingLineNumber = "108"
-            landmarkName = "uploadAudioToFirebase(_:)"
+            startingLineNumber = "462"
+            endingLineNumber = "462"
+            landmarkName = "threeLoadActivityPlan()"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "A0BCF25E-5F63-4614-B665-9D63B46D586C - ba2220208d1f61f9"
+                  uuid = "ADC50438-DC51-43D7-8D4A-DAC07AE2004A - e57cc7b876fdc78a"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "Wrlds.UploadAudioView.uploadAudioToFirebase(Foundation.URL) -&gt; ()"
-                  moduleName = "Wrlds"
+                  symbolName = "closure #1 (Ludi_Boards.SessionPlan) -&gt; () in Ludi_Boards.BoardEngine.twoLoadSessionPlan() -&gt; ()"
+                  moduleName = "Ludi Boards"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Wrlds/DocumentPickerView.swift"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/CanvasEngine/BoardEngineView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "108"
-                  endingLineNumber = "108"
-                  offsetFromSymbolStart = "948">
+                  startingLineNumber = "462"
+                  endingLineNumber = "462"
+                  offsetFromSymbolStart = "268">
                </Location>
                <Location
-                  uuid = "A0BCF25E-5F63-4614-B665-9D63B46D586C - ba2220208d1f61f9"
+                  uuid = "ADC50438-DC51-43D7-8D4A-DAC07AE2004A - aec32cb5c5a4db3a"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "Wrlds.UploadAudioView.uploadAudioToFirebase(Foundation.URL) -&gt; ()"
-                  moduleName = "Wrlds"
+                  symbolName = "Ludi_Boards.BoardEngine.threeLoadActivityPlan() -&gt; ()"
+                  moduleName = "Ludi Boards"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Wrlds/DocumentPickerView.swift"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/CanvasEngine/BoardEngineView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "108"
-                  endingLineNumber = "108"
-                  offsetFromSymbolStart = "588">
+                  startingLineNumber = "462"
+                  endingLineNumber = "462"
+                  offsetFromSymbolStart = "452">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -1141,62 +1074,394 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "E223073F-F006-4785-8A23-199B19DC37FC"
-            shouldBeEnabled = "Yes"
+            uuid = "9EF91B50-1FA0-4041-8F99-9A4468AFE37B"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Wrlds/DocumentPickerView.swift"
+            filePath = "Ludi Boards/CanvasEngine/BoardEngineView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "109"
-            endingLineNumber = "109"
-            landmarkName = "uploadAudioToFirebase(_:)"
+            startingLineNumber = "464"
+            endingLineNumber = "464"
+            landmarkName = "threeLoadActivityPlan()"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "E223073F-F006-4785-8A23-199B19DC37FC - ba2220208d1f619a"
+                  uuid = "9EF91B50-1FA0-4041-8F99-9A4468AFE37B - 9fdc165637bc0682"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "Wrlds.UploadAudioView.uploadAudioToFirebase(Foundation.URL) -&gt; ()"
-                  moduleName = "Wrlds"
+                  symbolName = "Ludi_Boards.BoardEngine.twoLoadSessionPlan() -&gt; ()"
+                  moduleName = "Ludi Boards"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Wrlds/DocumentPickerView.swift"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/CanvasEngine/BoardEngineView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "109"
-                  endingLineNumber = "109"
-                  offsetFromSymbolStart = "1136">
+                  startingLineNumber = "464"
+                  endingLineNumber = "464"
+                  offsetFromSymbolStart = "2596">
                </Location>
                <Location
-                  uuid = "E223073F-F006-4785-8A23-199B19DC37FC - e990894bd744a155"
+                  uuid = "9EF91B50-1FA0-4041-8F99-9A4468AFE37B - aec32cb5c5a4dafc"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (Foundation.URL) -&gt; () in Wrlds.UploadAudioView.uploadAudioToFirebase(Foundation.URL) -&gt; ()"
-                  moduleName = "Wrlds"
+                  symbolName = "Ludi_Boards.BoardEngine.threeLoadActivityPlan() -&gt; ()"
+                  moduleName = "Ludi Boards"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Wrlds/DocumentPickerView.swift"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/CanvasEngine/BoardEngineView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "110"
-                  endingLineNumber = "110"
-                  offsetFromSymbolStart = "176">
+                  startingLineNumber = "464"
+                  endingLineNumber = "464"
+                  offsetFromSymbolStart = "856">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "06AE39BD-90D2-4CD2-87A9-FCE522AC55DF"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ludi Boards/views/TabView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "22"
+            endingLineNumber = "22"
+            landmarkName = "init(items:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "06AE39BD-90D2-4CD2-87A9-FCE522AC55DF - 6d5d3688769a7817"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Ludi_Boards.DynamicTabView.init(items: Swift.Array&lt;Ludi_Boards.TabItem&gt;) -&gt; Ludi_Boards.DynamicTabView"
+                  moduleName = "Ludi Boards"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/views/TabView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "22"
+                  endingLineNumber = "22"
+                  offsetFromSymbolStart = "60">
                </Location>
                <Location
-                  uuid = "E223073F-F006-4785-8A23-199B19DC37FC - ba2220208d1f619a"
+                  uuid = "06AE39BD-90D2-4CD2-87A9-FCE522AC55DF - 6d5d3688769a7817"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "Wrlds.UploadAudioView.uploadAudioToFirebase(Foundation.URL) -&gt; ()"
-                  moduleName = "Wrlds"
+                  symbolName = "Ludi_Boards.DynamicTabView.init(items: Swift.Array&lt;Ludi_Boards.TabItem&gt;) -&gt; Ludi_Boards.DynamicTabView"
+                  moduleName = "Ludi Boards"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Wrlds/DocumentPickerView.swift"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/views/TabView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "109"
-                  endingLineNumber = "109"
-                  offsetFromSymbolStart = "1080">
+                  startingLineNumber = "22"
+                  endingLineNumber = "22"
+                  offsetFromSymbolStart = "84">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "CACB85AC-7005-4CCE-9617-4431AD0ABDB0"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ludi Boards/views/TabView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "32"
+            endingLineNumber = "32"
+            landmarkName = "body"
+            landmarkType = "24">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "3C82CE88-9119-41D3-ADA5-45079C8EDB83"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ludi Boards/views/TabView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "41"
+            endingLineNumber = "41"
+            landmarkName = "body"
+            landmarkType = "24">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "09A9DE71-DE4F-46BE-8498-6FC672354FCC"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ludi Boards/views/NavViews/SessionPlanView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "105"
+            endingLineNumber = "105"
+            landmarkName = "body"
+            landmarkType = "24">
+            <Locations>
+               <Location
+                  uuid = "09A9DE71-DE4F-46BE-8498-6FC672354FCC - 1ce5080bc26561cb"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #3 () -&gt; () in closure #1 () -&gt; SwiftUI.TupleView&lt;(Ludi_Boards.solConfirmButton, SwiftUI._ConditionalContent&lt;Ludi_Boards.solButton, Swift.Optional&lt;Ludi_Boards.solConfirmButton&gt;&gt;, Swift.Optional&lt;Ludi_Boards.solConfirmButton&gt;)&gt; in closure #1 (() -&gt; ()) -&gt; SwiftUI.TupleView&lt;(Ludi_Boards.DStack&lt;SwiftUI.TupleView&lt;(Ludi_Boards.solConfirmButton, SwiftUI._ConditionalContent&lt;Ludi_Boards.solButton, Swift.Optional&lt;Ludi_Boards.solConfirmButton&gt;&gt;, Swift.Optional&lt;Ludi_Boards.solConfirmButton&gt;)&gt;&gt;, SwiftUI.Section&lt;SwiftUI.EmptyView, Ludi_Boards.DStack&lt;SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.onChange&lt;&#x3c4;_0_0 where &#x3c4;_1_0: Swift.Equatable&gt;(of: &#x3c4;_1_0, perform: (&#x3c4;_1_0) -&gt; ()) -&gt; some&gt;&gt;.0, Ludi_Boards.solButton)&gt;&gt;, SwiftUI.EmptyView&gt;, &lt;&lt;opaque return type of SwiftUI.View.clearSectionBackground() -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of SwiftUI.View.clearSectionBackground() -&gt; some&gt;&gt;.0)&gt; in Ludi_Boards.SessionPlanView.body.getter : some"
+                  moduleName = "Ludi Boards"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/views/NavViews/SessionPlanView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "105"
+                  endingLineNumber = "105"
+                  offsetFromSymbolStart = "144">
+               </Location>
+               <Location
+                  uuid = "09A9DE71-DE4F-46BE-8498-6FC672354FCC - 6c326b40292b5e08"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; SwiftUI.TupleView&lt;(Ludi_Boards.solConfirmButton, SwiftUI._ConditionalContent&lt;Ludi_Boards.solButton, Swift.Optional&lt;Ludi_Boards.solConfirmButton&gt;&gt;, Swift.Optional&lt;Ludi_Boards.solConfirmButton&gt;)&gt; in closure #1 (() -&gt; ()) -&gt; SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.clearSectionBackground() -&gt; some&gt;&gt;.0, SwiftUI.Section&lt;SwiftUI.EmptyView, Ludi_Boards.DStack&lt;SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.onChange&lt;&#x3c4;_0_0 where &#x3c4;_1_0: Swift.Equatable&gt;(of: &#x3c4;_1_0, perform: (&#x3c4;_1_0) -&gt; ()) -&gt; some&gt;&gt;.0, Ludi_Boards.solButton)&gt;&gt;, SwiftUI.EmptyView&gt;, &lt;&lt;opaque return type of SwiftUI.View.clearSectionBackground() -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of SwiftUI.View.clearSectionBackground() -&gt; some&gt;&gt;.0)&gt; in Ludi_Boards.SessionPlanView.body.getter : some"
+                  moduleName = "Ludi Boards"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/views/NavViews/SessionPlanView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "105"
+                  endingLineNumber = "105"
+                  offsetFromSymbolStart = "4544">
+               </Location>
+               <Location
+                  uuid = "09A9DE71-DE4F-46BE-8498-6FC672354FCC - 1ce5080bc26561cb"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #3 () -&gt; () in closure #1 () -&gt; SwiftUI.TupleView&lt;(Ludi_Boards.solConfirmButton, SwiftUI._ConditionalContent&lt;Ludi_Boards.solButton, Swift.Optional&lt;Ludi_Boards.solConfirmButton&gt;&gt;, Swift.Optional&lt;Ludi_Boards.solConfirmButton&gt;)&gt; in closure #1 (() -&gt; ()) -&gt; SwiftUI.TupleView&lt;(Ludi_Boards.DStack&lt;SwiftUI.TupleView&lt;(Ludi_Boards.solConfirmButton, SwiftUI._ConditionalContent&lt;Ludi_Boards.solButton, Swift.Optional&lt;Ludi_Boards.solConfirmButton&gt;&gt;, Swift.Optional&lt;Ludi_Boards.solConfirmButton&gt;)&gt;&gt;, SwiftUI.Section&lt;SwiftUI.EmptyView, Ludi_Boards.DStack&lt;SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.onChange&lt;&#x3c4;_0_0 where &#x3c4;_1_0: Swift.Equatable&gt;(of: &#x3c4;_1_0, perform: (&#x3c4;_1_0) -&gt; ()) -&gt; some&gt;&gt;.0, Ludi_Boards.solButton)&gt;&gt;, SwiftUI.EmptyView&gt;, &lt;&lt;opaque return type of SwiftUI.View.clearSectionBackground() -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of SwiftUI.View.clearSectionBackground() -&gt; some&gt;&gt;.0)&gt; in Ludi_Boards.SessionPlanView.body.getter : some"
+                  moduleName = "Ludi Boards"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/views/NavViews/SessionPlanView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "105"
+                  endingLineNumber = "105"
+                  offsetFromSymbolStart = "124">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "DFB80454-F9A3-4EC4-B25A-69BB37A9C576"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ludi Boards/views/NavViews/SessionPlanView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "120"
+            endingLineNumber = "120"
+            landmarkName = "body"
+            landmarkType = "24">
+            <Locations>
+               <Location
+                  uuid = "DFB80454-F9A3-4EC4-B25A-69BB37A9C576 - 3110bff743ae31fb"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #4 () -&gt; () in closure #1 () -&gt; SwiftUI.TupleView&lt;(Ludi_Boards.solConfirmButton, SwiftUI._ConditionalContent&lt;Ludi_Boards.solButton, Swift.Optional&lt;Ludi_Boards.solConfirmButton&gt;&gt;, Swift.Optional&lt;Ludi_Boards.solConfirmButton&gt;)&gt; in closure #1 (() -&gt; ()) -&gt; SwiftUI.TupleView&lt;(Ludi_Boards.DStack&lt;SwiftUI.TupleView&lt;(Ludi_Boards.solConfirmButton, SwiftUI._ConditionalContent&lt;Ludi_Boards.solButton, Swift.Optional&lt;Ludi_Boards.solConfirmButton&gt;&gt;, Swift.Optional&lt;Ludi_Boards.solConfirmButton&gt;)&gt;&gt;, SwiftUI.Section&lt;SwiftUI.EmptyView, Ludi_Boards.DStack&lt;SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.onChange&lt;&#x3c4;_0_0 where &#x3c4;_1_0: Swift.Equatable&gt;(of: &#x3c4;_1_0, perform: (&#x3c4;_1_0) -&gt; ()) -&gt; some&gt;&gt;.0, Ludi_Boards.solButton)&gt;&gt;, SwiftUI.EmptyView&gt;, &lt;&lt;opaque return type of SwiftUI.View.clearSectionBackground() -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of SwiftUI.View.clearSectionBackground() -&gt; some&gt;&gt;.0)&gt; in Ludi_Boards.SessionPlanView.body.getter : some"
+                  moduleName = "Ludi Boards"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/views/NavViews/SessionPlanView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "120"
+                  endingLineNumber = "120"
+                  offsetFromSymbolStart = "244">
+               </Location>
+               <Location
+                  uuid = "DFB80454-F9A3-4EC4-B25A-69BB37A9C576 - ea8a9371e1e99518"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 () -&gt; Ludi_Boards.DStack&lt;SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.onChange&lt;&#x3c4;_0_0 where &#x3c4;_1_0: Swift.Equatable&gt;(of: &#x3c4;_1_0, perform: (&#x3c4;_1_0) -&gt; ()) -&gt; some&gt;&gt;.0, Ludi_Boards.solButton)&gt;&gt; in closure #1 (() -&gt; ()) -&gt; SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.clearSectionBackground() -&gt; some&gt;&gt;.0, SwiftUI.Section&lt;SwiftUI.EmptyView, Ludi_Boards.DStack&lt;SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.onChange&lt;&#x3c4;_0_0 where &#x3c4;_1_0: Swift.Equatable&gt;(of: &#x3c4;_1_0, perform: (&#x3c4;_1_0) -&gt; ()) -&gt; some&gt;&gt;.0, Ludi_Boards.solButton)&gt;&gt;, SwiftUI.EmptyView&gt;, &lt;&lt;opaque return type of SwiftUI.View.clearSectionBackground() -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of SwiftUI.View.clearSectionBackground() -&gt; some&gt;&gt;.0)&gt; in Ludi_Boards.SessionPlanView.body.getter : some"
+                  moduleName = "Ludi Boards"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/views/NavViews/SessionPlanView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "120"
+                  endingLineNumber = "120"
+                  offsetFromSymbolStart = "152">
+               </Location>
+               <Location
+                  uuid = "DFB80454-F9A3-4EC4-B25A-69BB37A9C576 - 9c4803fc748fed50"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.onChange&lt;&#x3c4;_0_0 where &#x3c4;_1_0: Swift.Equatable&gt;(of: &#x3c4;_1_0, perform: (&#x3c4;_1_0) -&gt; ()) -&gt; some&gt;&gt;.0, Ludi_Boards.solButton)&gt; in closure #2 () -&gt; Ludi_Boards.DStack&lt;SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.onChange&lt;&#x3c4;_0_0 where &#x3c4;_1_0: Swift.Equatable&gt;(of: &#x3c4;_1_0, perform: (&#x3c4;_1_0) -&gt; ()) -&gt; some&gt;&gt;.0, Ludi_Boards.solButton)&gt;&gt; in closure #1 (() -&gt; ()) -&gt; SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.clearSectionBackground() -&gt; some&gt;&gt;.0, SwiftUI.Section&lt;SwiftUI.EmptyView, Ludi_Boards.DStack&lt;SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.onChange&lt;&#x3c4;_0_0 where &#x3c4;_1_0: Swift.Equatable&gt;(of: &#x3c4;_1_0, perform: (&#x3c4;_1_0) -&gt; ()) -&gt; some&gt;&gt;.0, Ludi_Boards.solButton)&gt;&gt;, SwiftUI.EmptyView&gt;, &lt;&lt;opaque return type of SwiftUI.View.clearSectionBackground() -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of SwiftUI.View.clearSectionBackground() -&gt; some&gt;&gt;.0)&gt; in Ludi_Boards.SessionPlanView.body.getter : some"
+                  moduleName = "Ludi Boards"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/views/NavViews/SessionPlanView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "121"
+                  endingLineNumber = "121"
+                  offsetFromSymbolStart = "708">
+               </Location>
+               <Location
+                  uuid = "DFB80454-F9A3-4EC4-B25A-69BB37A9C576 - 3110bff743ae31fb"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #4 () -&gt; () in closure #1 () -&gt; SwiftUI.TupleView&lt;(Ludi_Boards.solConfirmButton, SwiftUI._ConditionalContent&lt;Ludi_Boards.solButton, Swift.Optional&lt;Ludi_Boards.solConfirmButton&gt;&gt;, Swift.Optional&lt;Ludi_Boards.solConfirmButton&gt;)&gt; in closure #1 (() -&gt; ()) -&gt; SwiftUI.TupleView&lt;(Ludi_Boards.DStack&lt;SwiftUI.TupleView&lt;(Ludi_Boards.solConfirmButton, SwiftUI._ConditionalContent&lt;Ludi_Boards.solButton, Swift.Optional&lt;Ludi_Boards.solConfirmButton&gt;&gt;, Swift.Optional&lt;Ludi_Boards.solConfirmButton&gt;)&gt;&gt;, SwiftUI.Section&lt;SwiftUI.EmptyView, Ludi_Boards.DStack&lt;SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.onChange&lt;&#x3c4;_0_0 where &#x3c4;_1_0: Swift.Equatable&gt;(of: &#x3c4;_1_0, perform: (&#x3c4;_1_0) -&gt; ()) -&gt; some&gt;&gt;.0, Ludi_Boards.solButton)&gt;&gt;, SwiftUI.EmptyView&gt;, &lt;&lt;opaque return type of SwiftUI.View.clearSectionBackground() -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of SwiftUI.View.clearSectionBackground() -&gt; some&gt;&gt;.0)&gt; in Ludi_Boards.SessionPlanView.body.getter : some"
+                  moduleName = "Ludi Boards"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/views/NavViews/SessionPlanView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "120"
+                  endingLineNumber = "120"
+                  offsetFromSymbolStart = "184">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "87BB207D-4080-4CA7-9A40-625471ABA408"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ludi Boards/views/NavViews/SessionPlanView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "78"
+            endingLineNumber = "78"
+            landmarkName = "body"
+            landmarkType = "24">
+            <Locations>
+               <Location
+                  uuid = "87BB207D-4080-4CA7-9A40-625471ABA408 - 67d1ea72c6ca3648"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; () in closure #1 () -&gt; SwiftUI.TupleView&lt;(Ludi_Boards.solConfirmButton, SwiftUI._ConditionalContent&lt;Ludi_Boards.solButton, Swift.Optional&lt;Ludi_Boards.solConfirmButton&gt;&gt;, Swift.Optional&lt;Ludi_Boards.solConfirmButton&gt;)&gt; in closure #1 (() -&gt; ()) -&gt; SwiftUI.TupleView&lt;(Ludi_Boards.DStack&lt;SwiftUI.TupleView&lt;(Ludi_Boards.solConfirmButton, SwiftUI._ConditionalContent&lt;Ludi_Boards.solButton, Swift.Optional&lt;Ludi_Boards.solConfirmButton&gt;&gt;, Swift.Optional&lt;Ludi_Boards.solConfirmButton&gt;)&gt;&gt;, SwiftUI.Section&lt;SwiftUI.EmptyView, Ludi_Boards.DStack&lt;SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.onChange&lt;&#x3c4;_0_0 where &#x3c4;_1_0: Swift.Equatable&gt;(of: &#x3c4;_1_0, perform: (&#x3c4;_1_0) -&gt; ()) -&gt; some&gt;&gt;.0, Ludi_Boards.solButton)&gt;&gt;, SwiftUI.EmptyView&gt;, &lt;&lt;opaque return type of SwiftUI.View.clearSectionBackground() -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of SwiftUI.View.clearSectionBackground() -&gt; some&gt;&gt;.0)&gt; in Ludi_Boards.SessionPlanView.body.getter : some"
+                  moduleName = "Ludi Boards"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/views/NavViews/SessionPlanView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "78"
+                  endingLineNumber = "78"
+                  offsetFromSymbolStart = "160">
+               </Location>
+               <Location
+                  uuid = "87BB207D-4080-4CA7-9A40-625471ABA408 - 271aa1f9966e3856"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; () in closure #1 () -&gt; SwiftUI.TupleView&lt;(Ludi_Boards.solConfirmButton, SwiftUI._ConditionalContent&lt;Ludi_Boards.solButton, Swift.Optional&lt;Ludi_Boards.solConfirmButton&gt;&gt;, Swift.Optional&lt;Ludi_Boards.solConfirmButton&gt;)&gt; in closure #1 (() -&gt; ()) -&gt; SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.clearSectionBackground() -&gt; some&gt;&gt;.0, SwiftUI.Section&lt;SwiftUI.EmptyView, Ludi_Boards.DStack&lt;SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.onChange&lt;&#x3c4;_0_0 where &#x3c4;_1_0: Swift.Equatable&gt;(of: &#x3c4;_1_0, perform: (&#x3c4;_1_0) -&gt; ()) -&gt; some&gt;&gt;.0, Ludi_Boards.solButton)&gt;&gt;, SwiftUI.EmptyView&gt;, &lt;&lt;opaque return type of SwiftUI.View.clearSectionBackground() -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of SwiftUI.View.clearSectionBackground() -&gt; some&gt;&gt;.0)&gt; in Ludi_Boards.SessionPlanView.body.getter : some"
+                  moduleName = "Ludi Boards"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/views/NavViews/SessionPlanView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "78"
+                  endingLineNumber = "78"
+                  offsetFromSymbolStart = "364">
+               </Location>
+               <Location
+                  uuid = "87BB207D-4080-4CA7-9A40-625471ABA408 - 67d1ea72c6ca3648"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; () in closure #1 () -&gt; SwiftUI.TupleView&lt;(Ludi_Boards.solConfirmButton, SwiftUI._ConditionalContent&lt;Ludi_Boards.solButton, Swift.Optional&lt;Ludi_Boards.solConfirmButton&gt;&gt;, Swift.Optional&lt;Ludi_Boards.solConfirmButton&gt;)&gt; in closure #1 (() -&gt; ()) -&gt; SwiftUI.TupleView&lt;(Ludi_Boards.DStack&lt;SwiftUI.TupleView&lt;(Ludi_Boards.solConfirmButton, SwiftUI._ConditionalContent&lt;Ludi_Boards.solButton, Swift.Optional&lt;Ludi_Boards.solConfirmButton&gt;&gt;, Swift.Optional&lt;Ludi_Boards.solConfirmButton&gt;)&gt;&gt;, SwiftUI.Section&lt;SwiftUI.EmptyView, Ludi_Boards.DStack&lt;SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.onChange&lt;&#x3c4;_0_0 where &#x3c4;_1_0: Swift.Equatable&gt;(of: &#x3c4;_1_0, perform: (&#x3c4;_1_0) -&gt; ()) -&gt; some&gt;&gt;.0, Ludi_Boards.solButton)&gt;&gt;, SwiftUI.EmptyView&gt;, &lt;&lt;opaque return type of SwiftUI.View.clearSectionBackground() -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of SwiftUI.View.clearSectionBackground() -&gt; some&gt;&gt;.0)&gt; in Ludi_Boards.SessionPlanView.body.getter : some"
+                  moduleName = "Ludi Boards"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/views/NavViews/SessionPlanView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "78"
+                  endingLineNumber = "78"
+                  offsetFromSymbolStart = "140">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "DEC95ACB-3D0C-4E6F-86B9-2178DEA8762F"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ludi Boards/views/NavViews/SessionPlanView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "93"
+            endingLineNumber = "93"
+            landmarkName = "body"
+            landmarkType = "24">
+            <Locations>
+               <Location
+                  uuid = "DEC95ACB-3D0C-4E6F-86B9-2178DEA8762F - 787b995e443cda7e"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 () -&gt; () in closure #1 () -&gt; SwiftUI.TupleView&lt;(Ludi_Boards.solConfirmButton, SwiftUI._ConditionalContent&lt;Ludi_Boards.solButton, Swift.Optional&lt;Ludi_Boards.solConfirmButton&gt;&gt;, Swift.Optional&lt;Ludi_Boards.solConfirmButton&gt;)&gt; in closure #1 (() -&gt; ()) -&gt; SwiftUI.TupleView&lt;(Ludi_Boards.DStack&lt;SwiftUI.TupleView&lt;(Ludi_Boards.solConfirmButton, SwiftUI._ConditionalContent&lt;Ludi_Boards.solButton, Swift.Optional&lt;Ludi_Boards.solConfirmButton&gt;&gt;, Swift.Optional&lt;Ludi_Boards.solConfirmButton&gt;)&gt;&gt;, SwiftUI.Section&lt;SwiftUI.EmptyView, Ludi_Boards.DStack&lt;SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.onChange&lt;&#x3c4;_0_0 where &#x3c4;_1_0: Swift.Equatable&gt;(of: &#x3c4;_1_0, perform: (&#x3c4;_1_0) -&gt; ()) -&gt; some&gt;&gt;.0, Ludi_Boards.solButton)&gt;&gt;, SwiftUI.EmptyView&gt;, &lt;&lt;opaque return type of SwiftUI.View.clearSectionBackground() -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of SwiftUI.View.clearSectionBackground() -&gt; some&gt;&gt;.0)&gt; in Ludi_Boards.SessionPlanView.body.getter : some"
+                  moduleName = "Ludi Boards"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/views/NavViews/SessionPlanView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "93"
+                  endingLineNumber = "93"
+                  offsetFromSymbolStart = "112">
+               </Location>
+               <Location
+                  uuid = "DEC95ACB-3D0C-4E6F-86B9-2178DEA8762F - 6c326b40292b5fbc"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; SwiftUI.TupleView&lt;(Ludi_Boards.solConfirmButton, SwiftUI._ConditionalContent&lt;Ludi_Boards.solButton, Swift.Optional&lt;Ludi_Boards.solConfirmButton&gt;&gt;, Swift.Optional&lt;Ludi_Boards.solConfirmButton&gt;)&gt; in closure #1 (() -&gt; ()) -&gt; SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.clearSectionBackground() -&gt; some&gt;&gt;.0, SwiftUI.Section&lt;SwiftUI.EmptyView, Ludi_Boards.DStack&lt;SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.onChange&lt;&#x3c4;_0_0 where &#x3c4;_1_0: Swift.Equatable&gt;(of: &#x3c4;_1_0, perform: (&#x3c4;_1_0) -&gt; ()) -&gt; some&gt;&gt;.0, Ludi_Boards.solButton)&gt;&gt;, SwiftUI.EmptyView&gt;, &lt;&lt;opaque return type of SwiftUI.View.clearSectionBackground() -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of SwiftUI.View.clearSectionBackground() -&gt; some&gt;&gt;.0)&gt; in Ludi_Boards.SessionPlanView.body.getter : some"
+                  moduleName = "Ludi Boards"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/views/NavViews/SessionPlanView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "93"
+                  endingLineNumber = "93"
+                  offsetFromSymbolStart = "2728">
+               </Location>
+               <Location
+                  uuid = "DEC95ACB-3D0C-4E6F-86B9-2178DEA8762F - 787b995e443cda7e"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 () -&gt; () in closure #1 () -&gt; SwiftUI.TupleView&lt;(Ludi_Boards.solConfirmButton, SwiftUI._ConditionalContent&lt;Ludi_Boards.solButton, Swift.Optional&lt;Ludi_Boards.solConfirmButton&gt;&gt;, Swift.Optional&lt;Ludi_Boards.solConfirmButton&gt;)&gt; in closure #1 (() -&gt; ()) -&gt; SwiftUI.TupleView&lt;(Ludi_Boards.DStack&lt;SwiftUI.TupleView&lt;(Ludi_Boards.solConfirmButton, SwiftUI._ConditionalContent&lt;Ludi_Boards.solButton, Swift.Optional&lt;Ludi_Boards.solConfirmButton&gt;&gt;, Swift.Optional&lt;Ludi_Boards.solConfirmButton&gt;)&gt;&gt;, SwiftUI.Section&lt;SwiftUI.EmptyView, Ludi_Boards.DStack&lt;SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.onChange&lt;&#x3c4;_0_0 where &#x3c4;_1_0: Swift.Equatable&gt;(of: &#x3c4;_1_0, perform: (&#x3c4;_1_0) -&gt; ()) -&gt; some&gt;&gt;.0, Ludi_Boards.solButton)&gt;&gt;, SwiftUI.EmptyView&gt;, &lt;&lt;opaque return type of SwiftUI.View.clearSectionBackground() -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of SwiftUI.View.clearSectionBackground() -&gt; some&gt;&gt;.0)&gt; in Ludi_Boards.SessionPlanView.body.getter : some"
+                  moduleName = "Ludi Boards"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/views/NavViews/SessionPlanView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "93"
+                  endingLineNumber = "93"
+                  offsetFromSymbolStart = "92">
                </Location>
             </Locations>
          </BreakpointContent>

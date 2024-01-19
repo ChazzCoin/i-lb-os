@@ -73,6 +73,15 @@ class BoardEngineObject : ObservableObject {
     @Published var boardFeildLineStroke: Double = 10
     @Published var boardFeildRotation: Double = 0
     
+    @Published var deviceScreenBounds = UIScreen.main.bounds
+    @Published var deviceType = UIDevice.current.userInterfaceIdiom
+    
+    func deviceIsPhone() -> Bool {
+        return self.deviceType == .phone
+    }
+    func deviceIsPad() -> Bool {
+        return self.deviceType == .pad
+    }
     
     // Current Session / Activity
     func changeSession(sessionId:String) {
@@ -82,13 +91,19 @@ class BoardEngineObject : ObservableObject {
     func changeActivity(activityId:String) {
         if activityId.isEmpty { return }
         if activityId != self.currentActivityId {
-//            roomFireService.stopObserving()
             FirebaseRoomService.leaveRoom(roomId: self.currentActivityId)
             self.currentActivityId = activityId
-//            roomFireService.startObserving(roomId: activityId, realmInstance: self.realmInstance)
             FirebaseRoomService.enterRoom(roomId: activityId)
-            
         }
+    }
+    
+    func runCanvasLoading() {
+        self.gesturesAreLocked = true
+        self.isLoading = true
+        DispatchQueue.executeAfter(seconds: 5, action: {
+            self.isLoading = false
+            self.gesturesAreLocked = false
+        })
     }
     
     // Navigation
@@ -123,10 +138,10 @@ class BoardEngineObject : ObservableObject {
         return CGVector(dx: dx, dy: dy)
     }
     func loadUser() {
+        self.isLoggedIn = userIsVerifiedToProceed()
         self.realmInstance.getCurrentSolUser { su in
             self.userId = su.userId
             self.userName = su.userName
-            self.isLoggedIn = su.isLoggedIn
         }
     }
     
@@ -345,6 +360,11 @@ struct BoardEngine: View {
         }
         .onAppear {
            
+            print("BoardEngineView onAppear")
+            self.BEO.runCanvasLoading()
+            
+            self.BEO.loadUser()
+            
             SPS = SessionPlanService(realm: self.realmIntance)
             APS = ActivityPlanService(realm: self.realmIntance)
             MVS = AllManagedViewsService(realm: self.realmIntance)
@@ -392,8 +412,6 @@ struct BoardEngine: View {
     
     func oneLoadAllSessionPlans() {
         
-        self.BEO.isLoading = true
-        
         if self.currentSessionWasLoaded {
             // TWO
             twoLoadSessionPlan()
@@ -415,19 +433,7 @@ struct BoardEngine: View {
         twoLoadSessionPlan()
     }
     
-    func sixSavePlansToFirebase() {
-        if !userIsVerifiedToProceed() { return }
-        if self.BEO.currentSessionId == "SOL" || self.BEO.currentSessionId.isEmpty {return}
-        if let sessionPlan = self.realmIntance.findByField(SessionPlan.self, field: "id", value: self.BEO.currentSessionId) {
-            if sessionPlan.id == "SOL" {return}
-            sessionPlan.fireSave(id: sessionPlan.id)
-        }
-        if self.BEO.currentActivityId == "SOL" || self.BEO.currentActivityId.isEmpty {return}
-        if let activityPlan = self.realmIntance.findByField(ActivityPlan.self, field: "id", value: self.BEO.currentActivityId) {
-            if activityPlan.id == "SOL" {return}
-            activityPlan.fireSave(id: activityPlan.id)
-        }
-    }
+    
     
     func twoLoadSessionPlan() {
         
@@ -514,39 +520,42 @@ struct BoardEngine: View {
         if self.BEO.currentActivityId.isEmpty { return }
         // Realm
         let umvs = realmIntance.findAllByField(ManagedView.self, field: "boardId", value: self.BEO.currentActivityId)
-        managedViewNotificationToken = umvs?.observe { (changes: RealmCollectionChange) in
-            switch changes {
-                case .initial(let results):
-                    print("Realm Listener: initial")
-                    for i in results {
-                        if i.isInvalidated {continue}
-                        basicTools.safeAddManagedView(i)
-                    }
-                case .update(let results, let de, _, _):
-                    print("Realm Listener: update")
-                    
-                    for d in de {
-                        basicTools.remove(at: d)
-                    }
-                    
-                    for i in results {
-                        if i.isInvalidated {continue}
-                        basicTools.safeAddManagedView(i)
-                    }
-                case .error(let error):
-                    print("Realm Listener: \(error)")
-                    managedViewNotificationToken?.invalidate()
-                    managedViewNotificationToken = nil
+        
+        self.realmIntance.executeWithRetry {
+            self.managedViewNotificationToken = umvs?.observe { (changes: RealmCollectionChange) in
+                switch changes {
+                    case .initial(let results):
+                        print("Realm Listener: initial")
+                        for i in results {
+                            if i.isInvalidated {continue}
+                            self.basicTools.safeAddManagedView(i)
+                        }
+                    case .update(let results, let de, _, _):
+                        print("Realm Listener: update")
+                        
+                        for d in de {
+                            self.basicTools.remove(at: d)
+                        }
+                        
+                        for i in results {
+                            if i.isInvalidated {continue}
+                            self.basicTools.safeAddManagedView(i)
+                        }
+                    case .error(let error):
+                        print("Realm Listener: \(error)")
+                        self.managedViewNotificationToken?.invalidate()
+                        self.managedViewNotificationToken = nil
+                }
             }
         }
+        
         fiveStartObservingManagedViews()
         sixSavePlansToFirebase()
-        self.BEO.isLoading = false
     }
     
     func fiveStartObservingManagedViews() {
         if self.BEO.currentActivityId.isEmpty { return }
-        if !userIsVerifiedToProceed() { return }
+        if !BEO.isLoggedIn { return }
         observerHandleOne = reference
             .child(DatabasePaths.managedViews.rawValue)
             .child(self.BEO.currentActivityId)
@@ -576,6 +585,20 @@ struct BoardEngine: View {
             })
     }
     
+    func sixSavePlansToFirebase() {
+        if !self.BEO.isLoggedIn { return }
+        if self.BEO.currentSessionId == "SOL" || self.BEO.currentSessionId.isEmpty {return}
+        if let sessionPlan = self.realmIntance.findByField(SessionPlan.self, field: "id", value: self.BEO.currentSessionId) {
+            if sessionPlan.id == "SOL" {return}
+            sessionPlan.fireSave(id: sessionPlan.id)
+        }
+        if self.BEO.currentActivityId == "SOL" || self.BEO.currentActivityId.isEmpty {return}
+        if let activityPlan = self.realmIntance.findByField(ActivityPlan.self, field: "id", value: self.BEO.currentActivityId) {
+            if activityPlan.id == "SOL" {return}
+            activityPlan.fireSave(id: activityPlan.id)
+        }
+    }
+    
     func stopObserving() {
         guard let handleOne = observerHandleOne, let handleTwo = observerHandleTwo else { return }
         reference.removeObserver(withHandle: handleOne)
@@ -585,10 +608,10 @@ struct BoardEngine: View {
     }
     
     func handleBoardChange(temp: SessionChange) {
-        self.BEO.isLoading = true
         var sessionDidChange = false
         var activityDidChange = false
         
+        self.BEO.runCanvasLoading()
         APS?.stopObserving()
         MVS?.stopObserving()
         stopObserving()

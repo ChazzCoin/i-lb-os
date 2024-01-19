@@ -123,16 +123,8 @@ struct MusicPlayerView: View {
                                 .font(.subheadline)
                         }
                     }
-                }.background(Color.clear)
-            }.background(Color.clear)
-
-            Spacer().frame(width: 100, height: 500)
-            
-//            // Playback Controls
-//            if let song = currentSong {
-//                
-//                
-//            }
+                }
+            }
             
             VStack {
                 Text("Now Playing").font(.title)

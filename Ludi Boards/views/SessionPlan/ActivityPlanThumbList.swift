@@ -18,17 +18,17 @@ struct ActivityPlanListView: View {
     var body: some View {
         
         if let acts = self.BEO.realmInstance.findAllByField(ActivityPlan.self, field: "sessionId", value: self.sessionId) {
-            List(acts) { activityPlan in
-                if !activityPlan.isInvalidated && !activityPlan.isDeleted {
-                    NavigationLink(
-                        destination: ActivityPlanView(boardId: activityPlan.id, sessionId: activityPlan.sessionId, isShowing: .constant(true))
-                            .environmentObject(self.BEO)
-                            .environmentObject(self.NavStack)
-                    ) {
-                        ActivityPlanThumbView(activityPlan: activityPlan)
-                    }
-                }
-            }
+//            List(acts) { activityPlan in
+//                if !activityPlan.isInvalidated && !activityPlan.isDeleted {
+//                    NavigationLink(
+//                        destination: ActivityPlanView(boardId: activityPlan.id, sessionId: activityPlan.sessionId, isShowing: .constant(true))
+//                            .environmentObject(self.BEO)
+//                            .environmentObject(self.NavStack)
+//                    ) {
+//                        ActivityPlanThumbView(activityPlan: activityPlan)
+//                    }
+//                }
+//            }
         }
         
     }

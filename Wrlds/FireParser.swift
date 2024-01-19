@@ -56,27 +56,22 @@ extension DataSnapshot {
 
 extension Dictionary where Key == String, Value == Any {
     func toRealmObject<T: Object>(_ type: T.Type, realmParameter: Realm? = nil) -> T? {
-            do {
-                if let realm = realmParameter {
-                    var object: T?
-                    try? realm.write {
-                        object = realm.create(type, value: self, update: .all)
-                        realm.refresh()
-//                        CodiChannel.REALM_ON_CHANGE.send(value: self["id"] ?? "nil")
-                    }
-                    return object
-                } else {
-                    let realm = realm()
-                    var object: T?
-                    try? realm.write {
-                        object = realm.create(type, value: self, update: .all)
-                        realm.refresh()
-//                        CodiChannel.REALM_ON_CHANGE.send(value: self["id"] ?? "nil")
-                    }
-                    return object
-                }
-                
+        if let realm = realmParameter {
+            var object: T?
+            realm.safeWrite { _ in
+                object = realm.create(type, value: self, update: .all)
+                realm.refresh()
             }
+            return object
+        } else {
+            let realm = realm()
+            var object: T?
+            realm.safeWrite { _ in
+                object = realm.create(type, value: self, update: .all)
+                realm.refresh()
+            }
+            return object
+        }
         }
 }
 

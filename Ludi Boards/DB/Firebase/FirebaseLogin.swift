@@ -17,7 +17,23 @@ func checkUsernameExists(_ username: String, completion: @escaping (Bool) -> Voi
     let dbRef = Database.database().reference()
     let usersRef = dbRef.child("users")
 
-    usersRef.queryOrdered(byChild: "username").queryEqual(toValue: username)
+    usersRef.queryOrdered(byChild: "userName").queryEqual(toValue: username)
+        .observeSingleEvent(of: .value) { snapshot in
+            if snapshot.exists() {
+                print("User Does Exist.")
+                completion(true)
+            } else {
+                print("User Does Not Exist.")
+                completion(false)
+            }
+        }
+}
+
+func checkEmailExists(_ email: String, completion: @escaping (Bool) -> Void) {
+    let dbRef = Database.database().reference()
+    let usersRef = dbRef.child("users")
+
+    usersRef.queryOrdered(byChild: "email").queryEqual(toValue: email)
         .observeSingleEvent(of: .value) { snapshot in
             if snapshot.exists() {
                 print("User Does Exist.")
@@ -37,10 +53,14 @@ func syncUserFromFirebaseDb(_ email: String, realmInstance: Realm=realm(), compl
         .observeSingleEvent(of: .value) { snapshot in
             if snapshot.exists() {
                 snapshot.parseSingleObject { obj in
-                    let result = CurrentSolUser(dictionary: obj as [String : Any])
-                    try? realmInstance.write {
-                        let r = realmInstance.create(CurrentSolUser.self, value: result, update: .all)
-                        print("Successful CurrentSolUser Parsing: [ \(r) ]")
+                    do {
+                        let result = CurrentSolUser(dictionary: obj as [String : Any])
+                        try realmInstance.write {
+                            let r = realmInstance.create(CurrentSolUser.self, value: result, update: .all)
+                            print("Successful CurrentSolUser Parsing: [ \(r) ]")
+                        }
+                    } catch {
+                        print("Failed to write to Realm")
                     }
                 }
                 completion(true)

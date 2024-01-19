@@ -123,7 +123,17 @@ struct CanvasEngine: View {
     var body: some View {
         
         GlobalPositioningZStack { geo, gps in
-        
+            
+            if self.BEO.isLoading {
+                ProgressView()
+                    .frame(width: 300, height: 300)
+                    .progressViewStyle(.circular)
+                    .scaleEffect(5) // Adjust the size as needed
+                    .padding(20)
+                    .cornerRadius(10)
+                    .position(using: gps, at: .center)
+            }
+            
             // Menu Bar
             MenuBarStatic(){}
                 .frame(width: 60, height: menuIsOpen ? (gps.screenSize.height - 100) : 60)
@@ -241,6 +251,8 @@ struct CanvasEngine: View {
         }
         
     }
+    
+    
     
     @MainActor
     func notificationListener() {

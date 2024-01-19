@@ -12,14 +12,15 @@ import Combine
 
 // ActivityPlan View
 struct ActivityPlanView: View {
-    @State var boardId: String
-    @State var sessionId: String
+//    @State var boardId: String
+//    @State var sessionId: String
+    @Binding var activityPlan: ActivityPlan
     @Binding var isShowing: Bool
     @EnvironmentObject var BEO: BoardEngineObject
     @EnvironmentObject var NavStack: NavStackWindowObservable
     @Environment(\.presentationMode) var presentationMode
     @State var isLoading: Bool = false
-    @State private var activityPlan: ActivityPlan = ActivityPlan() // Use StateObject for lifecycle management
+//    @State private var activityPlan: ActivityPlan = ActivityPlan() // Use StateObject for lifecycle management
     @State var realmInstance = realm()
     
     @State var confirmationPopupIsShowing = false
@@ -44,152 +45,176 @@ struct ActivityPlanView: View {
         
         LoadingForm(isLoading: $isLoading, showCompletion: $showCompletion) { runLoading in
             
-            if self.boardId != "new" {
+            
+            
+            DStack {
+                // SAVE BUTTON
                 solConfirmButton(
-                    title: "Load Activity onto Board",
-                    message: "Would you like to load this plan onto the board?",
+                    title: "Save Activity",
+                    message: "Would you like to save this plan?",
                     action: {
                         runLoading()
-                        CodiChannel.SESSION_ON_ID_CHANGE.send(value: SessionChange(sessionId: self.sessionId, activityId: self.boardId))
-                        self.isCurrentPlan = true
-                    },
-                    isEnabled: !self.isCurrentPlan
+                        if self.activityPlan.id == "new" {
+                            saveNewActivityPlan()
+                        } else {
+                            updateActivityPlan()
+                        }
+                        isShowing = false
+                    }
                 )
+            
+                if self.activityPlan.sessionId != "SOL-LIVE-DEMO" && self.activityPlan.sessionId != "SOL"{
+                    // Delete BUTTON
+                    solConfirmButton(
+                        title: "Delete Activity",
+                        message: "Would you like to delete this plan?",
+                        action: {
+                            startLoadingProcess()
+                            if let item = realmInstance.findByField(ActivityPlan.self, field: "id", value: self.activityPlan.id) {
+                                activityPlan = ActivityPlan()
+                                realmInstance.safeWrite { r in
+                                    item.isDeleted = true
+                                }
+                                // TODO: FIREBASE ONLY
+                                deleteActivityPlanFromFirebase(apId: self.activityPlan.id)
+                                self.presentationMode.wrappedValue.dismiss()
+                            }
+                        }
+                    )
+                }
+            
+                if self.activityPlan.id != "new" {
+                    solButton(
+                        title: "Load Activity onto Board",
+                        
+                        action: {
+                            runLoading()
+                            CodiChannel.SESSION_ON_ID_CHANGE.send(value: SessionChange(sessionId: self.activityPlan.sessionId, activityId: self.activityPlan.id))
+                            self.isCurrentPlan = true
+                        },
+                        isEnabled: !self.isCurrentPlan
+                    )
+                }
+                
             }
+            .zIndex(1.0)
+            .clearSectionBackground()
             
             // Details Section
             Section(header: Text("Activity Details")) {
-                SolTextField("Title", text: $activityPlan.title)
-                SolTextField("Sub Title", text: $activityPlan.subTitle)
-                SolTextField("Date", text: $activityPlan.dateOf)
-                SolTextField("Time Period", text: $activityPlan.timePeriod)
-                SolTextField("Duration", text: $activityPlan.duration)
-                SolTextField("Age Level", text: $activityPlan.ageLevel)
+                
+                DStack {
+                    SolTextField("Title", text: $activityPlan.title)
+                    SolTextField("Sub Title", text: $activityPlan.subTitle)
+                }
+                
+                DStack {
+                    SolTextField("Date", text: $activityPlan.dateOf)
+                    SolTextField("Time Period", text: $activityPlan.timePeriod)
+                }
+                
+                DStack {
+                    SolTextField("Duration", text: $activityPlan.duration)
+                    SolTextField("Age Level", text: $activityPlan.ageLevel)
+                }
+                
             }.clearSectionBackground()
 
             // Description Section
             Section(header: Text("Details")) {
                 
-                SolTextEditor("Objective", text:$activityPlan.objectiveDetails)
-                    .frame(minHeight: 100)
-                
-                SolTextEditor("Description", text:$activityPlan.activityDetails)
-                    .frame(minHeight: 100)
+                DStack {
+                    SolTextEditor("Objective", text:$activityPlan.objectiveDetails)
+                        .frame(minHeight: 100)
+                    
+                    SolTextEditor("Description", text:$activityPlan.activityDetails)
+                        .frame(minHeight: 100)
+                }
                 
             }.clearSectionBackground()
 
             
             Section(header: Text("Board Settings")) {
                 
+                Text("Field Type: \(fieldName)")
+                BarListPicker(initialSelected: self.isCurrentPlan ? self.BEO.boardBgName : self.activityPlan.backgroundView, viewBuilder: self.BEO.boards.getAllMinis()) { v in
+                    fieldName = v
+                    if self.isCurrentPlan {
+                        self.BEO.setBoardBgView(boardName: v)
+                        realmInstance.safeWrite { r in
+                            self.activityPlan.backgroundView = v
+                            r.add(self.activityPlan)
+                        }
+                    }
+                }
                 
-                Section(header: Text("Field Color: \(bgColor.uiColor.accessibilityName)")) {
-                    ColorListPicker() { color in
-                        bgColor = color
-                        if self.isCurrentPlan {
-                            self.BEO.setColor(colorIn: color)
-                            if let c = color.toRGBA() {
-                                realmInstance.safeWrite { r in
-                                    self.activityPlan.backgroundRed = c.red
-                                    self.activityPlan.backgroundGreen = c.green
-                                    self.activityPlan.backgroundBlue = c.blue
-                                    self.activityPlan.backgroundAlpha = c.alpha
-                                    r.add(self.activityPlan)
-                                }
-                            }
-                        }
-                        
-                    }
-                    Text("Background Color Transparency: \(colorOpacity)")
-                    Slider(
-                        value: $colorOpacity,
-                        in: 0.0...1.0,
-                        step: 0.1,
-                        onEditingChanged: { editing in
-                            if !editing {
-                                if self.isCurrentPlan {
-                                    self.BEO.boardBgAlpha = colorOpacity
-                                    self.BEO.boardBgColor = self.BEO.getColor()
+                DStack {
+                    VStack {
+                        Text("Background Color: \(colorOpacity)")
+                        ColorListPicker() { color in
+                            bgColor = color
+                            if self.isCurrentPlan {
+                                self.BEO.setColor(colorIn: color)
+                                if let c = color.toRGBA() {
                                     realmInstance.safeWrite { r in
-                                        self.activityPlan.backgroundAlpha = colorOpacity
+                                        self.activityPlan.backgroundRed = c.red
+                                        self.activityPlan.backgroundGreen = c.green
+                                        self.activityPlan.backgroundBlue = c.blue
+                                        self.activityPlan.backgroundAlpha = c.alpha
                                         r.add(self.activityPlan)
                                     }
                                 }
-                                
                             }
+                            
                         }
-                    ).padding()
-                }.padding(.leading)
+                    }
+                    
+                    VStack {
+                        Text("Background Color Transparency: \(colorOpacity)")
+                        Slider(
+                            value: $colorOpacity,
+                            in: 0.0...1.0,
+                            step: 0.1,
+                            onEditingChanged: { editing in
+                                if !editing {
+                                    if self.isCurrentPlan {
+                                        self.BEO.boardBgAlpha = colorOpacity
+                                        self.BEO.boardBgColor = self.BEO.getColor()
+                                        realmInstance.safeWrite { r in
+                                            self.activityPlan.backgroundAlpha = colorOpacity
+                                            r.add(self.activityPlan)
+                                        }
+                                    }
+                                    
+                                }
+                            }
+                        ).padding()
+                    }
+                    
+                }
                 
-                Section(header: Text("Field Lines")) {
-                    
-                    Text("Field Type: \(fieldName)")
-                    BarListPicker(initialSelected: self.isCurrentPlan ? self.BEO.boardBgName : self.activityPlan.backgroundView, viewBuilder: self.BEO.boards.getAllMinis()) { v in
-                        fieldName = v
-                        if self.isCurrentPlan {
-                            self.BEO.setBoardBgView(boardName: v)
-                            realmInstance.safeWrite { r in
-                                self.activityPlan.backgroundView = v
-                                r.add(self.activityPlan)
-                            }
-                        }
-                    }
-                    
-                    Text("Line Color: \(lineColor.uiColor.accessibilityName)")
-                    ColorListPicker() { color in
-                        lineColor = color
-                        if self.isCurrentPlan {
-                            self.BEO.setFieldLineColor(colorIn: color)
-                            if let c = color.toRGBA() {
-                                realmInstance.safeWrite { r in
-                                    self.activityPlan.backgroundLineRed = c.red
-                                    self.activityPlan.backgroundLineGreen = c.green
-                                    self.activityPlan.backgroundLineBlue = c.blue
-                                    self.activityPlan.backgroundLineAlpha = c.alpha
-                                    r.add(self.activityPlan)
-                                }
-                            }
-                        }
-                        
-                    }
-                    
-                    Text("Line Transparency: \(lineOpacity)")
-                    Slider(
-                        value: $lineOpacity,
-                        in: 0.0...1.0,
-                        step: 0.1,
-                        onEditingChanged: { editing in
-                            if !editing {
-                                if self.isCurrentPlan {
-                                    self.BEO.boardFieldLineAlpha = lineOpacity
-                                    self.BEO.boardFieldLineColor = self.BEO.getFieldLineColor()
+                DStack {
+                    VStack {
+                        Text("Line Color: \(lineColor.uiColor.accessibilityName)")
+                        ColorListPicker() { color in
+                            lineColor = color
+                            if self.isCurrentPlan {
+                                self.BEO.setFieldLineColor(colorIn: color)
+                                if let c = color.toRGBA() {
                                     realmInstance.safeWrite { r in
-                                        self.activityPlan.backgroundLineAlpha = lineOpacity
+                                        self.activityPlan.backgroundLineRed = c.red
+                                        self.activityPlan.backgroundLineGreen = c.green
+                                        self.activityPlan.backgroundLineBlue = c.blue
+                                        self.activityPlan.backgroundLineAlpha = c.alpha
                                         r.add(self.activityPlan)
                                     }
                                 }
                             }
+                            
                         }
-                    ).padding()
+                    }
                     
-                    Text("Line Width: \(Int(lineStroke))")
-                    Slider(
-                        value: $lineStroke,
-                        in: 1.0...50.0,
-                        step: 1,
-                        onEditingChanged: { editing in
-                            if !editing {
-                                if self.isCurrentPlan {
-                                    self.BEO.boardFeildLineStroke = lineStroke
-                                    realmInstance.safeWrite { r in
-                                        self.activityPlan.backgroundLineStroke = lineStroke
-                                        r.add(self.activityPlan)
-                                    }
-                                }
-                            }
-                        }
-                    ).padding()
-                    
-                    Section() {
+                    VStack {
                         Text("Rotate Field: \(Int(fieldRotation))")
                         Slider(
                             value: $fieldRotation,
@@ -209,74 +234,73 @@ struct ActivityPlanView: View {
                             }
                         ).padding()
                     }
-                }.padding(.leading)
-            }.clearSectionBackground()
-            
-            // BUTTONS
-            Section {
-                // LOAD BUTTON
-                
-                if self.activityPlan.sessionId != "SOL-LIVE-DEMO" && self.activityPlan.sessionId != "SOL"{
-                    // Delete BUTTON
-                    solConfirmButton(
-                        title: "Delete",
-                        message: "Would you like to delete this plan?",
-                        action: {
-                            startLoadingProcess()
-                            if let item = realmInstance.findByField(ActivityPlan.self, field: "id", value: self.boardId) {
-                                activityPlan = ActivityPlan()
-                                realmInstance.safeWrite { r in
-                                    item.isDeleted = true
-                                }
-                                // TODO: FIREBASE ONLY
-                                deleteActivityPlanFromFirebase(apId: self.boardId)
-                                self.presentationMode.wrappedValue.dismiss()
-                            }
-                        }
-                    )
+                    
+                    
+                    
                 }
                 
-                
-                // SAVE BUTTON
-                solConfirmButton(
-                    title: "Save",
-                    message: "Would you like to save this plan?",
-                    action: {
-                        runLoading()
-                        if self.boardId == "new" {
-                            saveNewActivityPlan()
-                        } else {
-                            updateActivityPlan()
-                        }
-                        isShowing = false
+                DStack {
+                    
+                    VStack {
+                        Text("Line Width: \(Int(lineStroke))")
+                        Slider(
+                            value: $lineStroke,
+                            in: 1.0...50.0,
+                            step: 1,
+                            onEditingChanged: { editing in
+                                if !editing {
+                                    if self.isCurrentPlan {
+                                        self.BEO.boardFeildLineStroke = lineStroke
+                                        realmInstance.safeWrite { r in
+                                            self.activityPlan.backgroundLineStroke = lineStroke
+                                            r.add(self.activityPlan)
+                                        }
+                                    }
+                                }
+                            }
+                        ).padding()
                     }
-                )
+                    
+                    
+                    VStack {
+                        Text("Line Transparency: \(lineOpacity)")
+                        Slider(
+                            value: $lineOpacity,
+                            in: 0.0...1.0,
+                            step: 0.1,
+                            onEditingChanged: { editing in
+                                if !editing {
+                                    if self.isCurrentPlan {
+                                        self.BEO.boardFieldLineAlpha = lineOpacity
+                                        self.BEO.boardFieldLineColor = self.BEO.getFieldLineColor()
+                                        realmInstance.safeWrite { r in
+                                            self.activityPlan.backgroundLineAlpha = lineOpacity
+                                            r.add(self.activityPlan)
+                                        }
+                                    }
+                                }
+                            }
+                        ).padding()
+                    }
+                       
+                }
                 
             }.clearSectionBackground()
-            
+                    
+
+        }
+        .onChange(of: self.activityPlan) { _ in
+            if self.BEO.currentActivityId == self.activityPlan.id {
+                self.isCurrentPlan = true
+            } else {
+                self.isCurrentPlan = false
+            }
         }
         .onAppear {
-            self.NavStack.addToStack()
-            if self.boardId != "new" {
-                fetchActivityPlan()
-            }
-            
-            CodiChannel.SESSION_ON_ID_CHANGE.receive(on: RunLoop.main) { sc in
-                let temp = sc as! SessionChange
-                if temp.activityId == self.boardId {
-                    self.isCurrentPlan = true
-                } else {
-                    self.isCurrentPlan = false
-                }
-            }.store(in: &cancellables)
-        }
-        .onDisappear() {
-            self.NavStack.removeFromStack()
-        }
-        .refreshable {
-            if self.boardId != "new" {
-                startLoadingProcess()
-                fetchActivityPlan()
+            if self.BEO.currentActivityId == self.activityPlan.id {
+                self.isCurrentPlan = true
+            } else {
+                self.isCurrentPlan = false
             }
         }
         .sheet(isPresented: self.$showShareSheet) {
@@ -310,9 +334,8 @@ struct ActivityPlanView: View {
     }
     
     private func fetchActivityPlan() {
-        if let ap = realmInstance.findByField(ActivityPlan.self, value: self.boardId) {
+        if let ap = realmInstance.findByField(ActivityPlan.self, value: self.activityPlan.id) {
             self.activityPlan = ap
-            self.boardId = ap.id
             self.lineStroke = ap.backgroundLineStroke
             self.lineOpacity = ap.backgroundLineAlpha
             self.colorOpacity = ap.backgroundAlpha
@@ -339,7 +362,7 @@ struct ActivityPlanView: View {
     func saveNewActivityPlan() {
         // New Activity
         let newAP = ActivityPlan()
-        newAP.sessionId = sessionId
+        newAP.sessionId = self.activityPlan.sessionId
         newAP.orderIndex = 0
         
         newAP.ownerId = getFirebaseUserId() ?? "SOL"
@@ -393,11 +416,15 @@ struct ActivityPlanView: View {
     
     func updateActivityPlan() {
         realmInstance.safeWrite { r in
-            self.activityPlan.ownerId = getFirebaseUserId() ?? "SOL"
-            r.create(ActivityPlan.self, value: self.activityPlan, update: .all)
+            if let temp = self.activityPlan.thaw() {
+                temp.ownerId = getFirebaseUserId() ?? "SOL"
+                r.create(ActivityPlan.self, value: temp, update: .all)
+                //TODO: FIREBASE ONLY
+                updateInFirebase(newAP: temp)
+            }
+            
         }
-        //TODO: FIREBASE ONLY
-        updateInFirebase(newAP: self.activityPlan)
+        
     }
     func deleteActivityPlanFromFirebase(apId: String) {
         firebaseDatabase { db in

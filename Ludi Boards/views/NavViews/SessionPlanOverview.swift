@@ -47,21 +47,8 @@ struct SessionPlanOverview: View {
                 })
             }.clearSectionBackground()
             Section(header: Text("Sessions")) {
-                List(hostedSessionPlans) { sessionPlan in
-                    NavigationLink(
-                        destination: SessionPlanView(sessionId: sessionPlan.id, isShowing: .constant(true), isMasterWindow: false)
-                            .environmentObject(self.BEO)
-                            .environmentObject(self.NavStack)
-                    ) {
-                        SessionPlanThumbView(sessionPlan: sessionPlan)
-                    }
-                }
-            }.clearSectionBackground()
-
-            if userIsVerifiedToProceed() {
-                Section(header: Text("Shared Sessions")) {
-                    List(sharedSessionPlans, id: \.self) { sessionPlan in
-                        
+                if !(self.sessionPlans.realm?.isInWriteTransaction ?? true) {
+                    List(hostedSessionPlans) { sessionPlan in
                         NavigationLink(
                             destination: SessionPlanView(sessionId: sessionPlan.id, isShowing: .constant(true), isMasterWindow: false)
                                 .environmentObject(self.BEO)
@@ -69,8 +56,26 @@ struct SessionPlanOverview: View {
                         ) {
                             SessionPlanThumbView(sessionPlan: sessionPlan)
                         }
-
                     }
+                }
+            }.clearSectionBackground()
+
+            if self.BEO.isLoggedIn {
+                Section(header: Text("Shared Sessions")) {
+                    if !(self.sessionPlans.realm?.isInWriteTransaction ?? true)  {
+                        List(sharedSessionPlans, id: \.self) { sessionPlan in
+                            
+                            NavigationLink(
+                                destination: SessionPlanView(sessionId: sessionPlan.id, isShowing: .constant(true), isMasterWindow: false)
+                                    .environmentObject(self.BEO)
+                                    .environmentObject(self.NavStack)
+                            ) {
+                                SessionPlanThumbView(sessionPlan: sessionPlan)
+                            }
+
+                        }
+                    }
+                    
                 }.clearSectionBackground()
             }
             

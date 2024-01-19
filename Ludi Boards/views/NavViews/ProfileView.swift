@@ -55,7 +55,7 @@ struct ProfileView: View {
                     .font(.subheadline)
                     .fontWeight(.bold)
                 
-                if userIsVerifiedToProceed() {
+                if self.BEO.isLoggedIn {
                     Section(header: Text("Connection Status")) {
                         InternetSpeedChecker()
                     }
@@ -74,25 +74,29 @@ struct ProfileView: View {
                     showNewPlanSheet = true
                 }, isEnabled: showAddBuddyButton)
                 
-                solButton(title: "Sign Out", action: {
-                    runLoading()
-                    
-                    logoutUser() { result in
-                        print("User Logged Out. \(result)")
-                    }
-                    if let user = self.BEO.realmInstance.findByField(CurrentSolUser.self, value: CURRENT_USER_ID) {
-                        self.BEO.realmInstance.safeWrite { r in
-                            user.userId = ""
-                            user.userName = ""
-                            user.email = ""
-                            user.imgUrl = ""
-                            user.isLoggedIn = false
+                solConfirmButton(
+                    title: "Sign Out",
+                    message: "Are you sure you want to logout?",
+                    action: {
+                        runLoading()
+                        
+                        logoutUser() { result in
+                            print("User Logged Out. \(result)")
                         }
-                    }
-                    self.BEO.userId = nil
-                    self.BEO.userName = nil
-                    self.BEO.isLoggedIn = false
-                }, isEnabled: true)
+                        if let user = self.BEO.realmInstance.findByField(CurrentSolUser.self, value: CURRENT_USER_ID) {
+                            self.BEO.realmInstance.safeWrite { r in
+                                user.userId = ""
+                                user.userName = ""
+                                user.email = ""
+                                user.imgUrl = ""
+                                user.isLoggedIn = false
+                            }
+                        }
+                        self.BEO.userId = nil
+                        self.BEO.userName = nil
+                        self.BEO.isLoggedIn = false
+                    },
+                    isEnabled: true)
                 
             }
             .padding(.bottom, 20)

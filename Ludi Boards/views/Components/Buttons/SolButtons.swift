@@ -29,6 +29,7 @@ struct solButton: View {
                 .scaleEffect(isButtonPressed ? 0.95 : 1.0)
                 .animation(.spring(), value: isButtonPressed)
         }
+        .padding(/*@START_MENU_TOKEN@*/EdgeInsets()/*@END_MENU_TOKEN@*/)
         .solEnabled(isEnabled: isEnabled)
     }
 }

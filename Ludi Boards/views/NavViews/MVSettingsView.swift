@@ -59,7 +59,7 @@ struct SettingsView: View {
     var body: some View {
         LoadingForm(isLoading: $isLoading, showCompletion: $showCompletion) { runLoading in
             
-            if userIsVerifiedToProceed() {
+            if self.BEO.isLoggedIn {
                 Section(header: Text("Connection Status").font(.headline)) {
                     InternetSpeedChecker()
                 }

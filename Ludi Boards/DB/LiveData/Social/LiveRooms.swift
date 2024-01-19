@@ -160,6 +160,8 @@ class FirebaseRoomService: ObservableObject {
         self.currentRoomId = roomId
         firebaseSubscription = self.reference.child(roomId).observe(.value, with: { snapshot in
             
+            if !snapshot.exists() { return }
+            
             let realmy = newRealm().freeze()
             let snapPresence = realmy.objects(Room.self).filter("roomId == %@", roomId)
             
@@ -237,38 +239,40 @@ class FirebaseRoomService: ObservableObject {
     static func toggleRoomStatus(roomId:String, status:String) {
         if roomId == "SOL" || roomId.isEmpty { return }
         
-        autoreleasepool {
-            let realmInstance = newRealm()
-            
-            if !realmInstance.isLiveSessionPlan(activityId: roomId) { return }
-            
-            realmInstance.getCurrentSolUser() { currentUser in
-                let tempRealm = newRealm()
-                if let item = tempRealm.findByField(Room.self, field: "roomId", value: roomId) {
-                    tempRealm.safeWrite { _ in
-                        item.status = status
-                    }
-                    print("User is about to be \(status) room \(roomId)")
-                    firebaseDatabase { db in
-                        var temp = item.toDict()
-                        temp["status"] = status
-                        db.child("rooms").child(item.roomId).child(item.id).setValue(temp)
-                    }
-                    return
-                }
-                
-                let roomPresence = Room()
-                roomPresence.roomId = roomId
-                roomPresence.userId = currentUser.userId
-                roomPresence.userName = currentUser.userName
-                roomPresence.userImg = currentUser.imgUrl
-                roomPresence.status = status
-                tempRealm.safeWrite { r in
-                    r.create(Room.self, value: roomPresence, update: .all)
+        let realmInstance = newRealm()
+        
+        if !realmInstance.isLiveSessionPlan(activityId: roomId) { return }
+        print("room verifications passed, attempting to send presence.")
+        realmInstance.getCurrentSolUser() { currentUser in
+            let tempRealm = newRealm()
+            if let item = tempRealm.findByField(Room.self, field: "roomId", value: roomId) {
+                tempRealm.safeWrite { _ in
+                    item.status = status
                 }
                 print("User is about to be \(status) room \(roomId)")
                 firebaseDatabase { db in
-                    db.child("rooms").child(roomId).child(roomPresence.id).setValue(roomPresence.toDict())
+                    var temp = item.toDict()
+                    temp["status"] = status
+                    db.child("rooms").child(item.roomId).child(item.id).setValue(temp){ (error: Error?, ref: DatabaseReference) in
+                        if let error = error { print("Error sending room presence to Firebase: \(error)") }
+                    }
+                }
+                return
+            }
+            
+            let roomPresence = Room()
+            roomPresence.roomId = roomId
+            roomPresence.userId = currentUser.userId
+            roomPresence.userName = currentUser.userName
+            roomPresence.userImg = currentUser.imgUrl
+            roomPresence.status = status
+            tempRealm.safeWrite { r in
+                r.create(Room.self, value: roomPresence, update: .all)
+            }
+            print("User is about to be \(status) room \(roomId)")
+            firebaseDatabase { db in
+                db.child("rooms").child(roomId).child(roomPresence.id).setValue(roomPresence.toDict()){ (error: Error?, ref: DatabaseReference) in
+                    if let error = error { print("Error sending room presence to Firebase: \(error)") }
                 }
             }
         }

@@ -48,6 +48,8 @@ struct ChatView: View {
     @State var firebaseSubscription: DatabaseHandle? = nil
     @State var currentUser = newRealm().getCurrentSolUser()
     
+    
+    
     @ObservedResults(Chat.self) var allMessages
     var roomMessages: Results<Chat> {
         return allMessages.filter("chatId == %@", self.boardEngineObject.currentActivityId)
@@ -60,7 +62,7 @@ struct ChatView: View {
     func observeChat() {
         stopObserver()
         firebaseSubscription = self.chatRef.child(boardEngineObject.currentActivityId).fireObserver { snapshot in
-            if let results = snapshot.toLudiObjects(Chat.self, realm: self.allMessages.realm?.thaw()) {
+            if let results = snapshot.toLudiObjects(Chat.self, realm: self.realmInstance) {
                 print("New Chat Messages: \(results)")
             }
         }
@@ -109,7 +111,7 @@ struct ChatView: View {
                     .padding(.horizontal)
                     .frame(height: 44)
                     .foregroundColor(Color.white)
-                    .background(Color.primaryBackground)
+                    .background(Color.secondaryBackground)
                     .cornerRadius(22)
 
                 Button(action: sendMessage) {
@@ -181,12 +183,13 @@ struct ChatView: View {
             observeChat()
             
             CodiChannel.SESSION_ON_ID_CHANGE.receive(on: RunLoop.main) { onChange in
-                var temp = onChange as! SessionChange
-                if let roomId = temp.activityId {
-                    if self.chatId != roomId {
-                        print("Changing Chat ID: \(roomId)")
-                        self.chatId = roomId
-                        observeChat()
+                if let temp = onChange as? SessionChange {
+                    if let roomId = temp.activityId {
+                        if self.chatId != roomId {
+                            print("Changing Chat ID: \(roomId)")
+                            self.chatId = roomId
+                            observeChat()
+                        }
                     }
                 }
             }.store(in: &cancellables)
@@ -198,7 +201,7 @@ struct ChatView: View {
 
     func sendMessage() {
         
-        allMessages.realm?.getCurrentSolUser() { user in
+        realmInstance.getCurrentSolUser() { user in
             let newMessage = Chat()
             newMessage.chatId = chatId
             newMessage.messageText = messageText

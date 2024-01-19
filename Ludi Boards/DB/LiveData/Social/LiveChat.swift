@@ -104,19 +104,26 @@ class RealmChatObserver: ObservableObject {
     func startObserver(chatId: String, realm: Realm) {
         if !userIsVerifiedToProceed() { return }
         self.objects = realm.objects(Chat.self).filter("chatId == %@", chatId)
-        notificationToken = self.objects?.observe { [weak self] (changes: RealmCollectionChange) in
-            guard let self = self else { return }
-            switch changes {
-                case .initial(_):
-                    print("RealmChatObserver: Initial")
-                    self.objectWillChange.send()
-                case .update(_, _, _, _):
-                    print("RealmChatObserver: Update")
-                    self.objectWillChange.send()
-                case .error(let error):
-                    print("RealmChatObserver: \(error)")
+        
+        self.objects?.realm?.executeWithRetry {
+            self.notificationToken = self.objects?.observe { [weak self] (changes: RealmCollectionChange) in
+                guard let self = self else { return }
+                switch changes {
+                    case .initial(_):
+                        print("RealmChatObserver: Initial")
+                        self.objectWillChange.send()
+                    case .update(_, _, _, _):
+                        print("RealmChatObserver: Update")
+                        self.objectWillChange.send()
+                    case .error(let error):
+                        print("RealmChatObserver: \(error)")
+                        self.notificationToken?.invalidate()
+                        self.notificationToken = nil
+                }
             }
         }
+        
+        
     }
     
     func destroy(deleteObjects:Bool=false) {

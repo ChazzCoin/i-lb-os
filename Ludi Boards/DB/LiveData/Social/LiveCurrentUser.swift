@@ -57,23 +57,27 @@ class LiveCurrentUser: ObservableObject {
     func startObserver(primaryKey: String, realm:Realm) {
         self.object = realm.object(ofType: CurrentSolUser.self, forPrimaryKey: primaryKey)
         // Setting up the observer
-        notificationToken = self.object?.observe { [weak self] change in
-            guard let self = self else { return }
-            switch change {
-                case .change:
-                    print("LiveCurrentUser: onChange")
-                    if ((self.object?.isInvalidated) != nil) {
-                        destroy()
+        
+        realm.executeWithRetry {
+            self.notificationToken = self.object?.observe { [weak self] change in
+                guard let self = self else { return }
+                switch change {
+                    case .change:
+                        print("LiveCurrentUser: onChange")
+                        if ((self.object?.isInvalidated) != nil) {
+                            self.destroy()
+                            break
+                        }
+                        DispatchQueue.main.async {
+                            self.objectWillChange.send()
+                        }
+                    case .deleted, .error:
+                        self.destroy()
                         break
-                    }
-                    DispatchQueue.main.async {
-                        self.objectWillChange.send()
-                    }
-                case .deleted, .error:
-                    destroy()
-                    break
+                }
             }
         }
+        
     }
     
     func destroy(deleteObjects:Bool=false) {
@@ -122,23 +126,27 @@ class RealmCurrentUserObserver: ObservableObject {
     func startObserver(primaryKey: String, realm:Realm) {
         self.object = realm.object(ofType: CurrentSolUser.self, forPrimaryKey: primaryKey)
         // Setting up the observer
-        notificationToken = self.object?.observe { [weak self] change in
-            guard let self = self else { return }
-            switch change {
-                case .change:
-                    print("LiveCurrentUser: onChange")
-                    if ((self.object?.isInvalidated) != nil) {
-                        destroy()
+        
+        realm.executeWithRetry {
+            self.notificationToken = self.object?.observe { [weak self] change in
+                guard let self = self else { return }
+                switch change {
+                    case .change:
+                        print("LiveCurrentUser: onChange")
+                        if ((self.object?.isInvalidated) != nil) {
+                            self.destroy()
+                            break
+                        }
+                        DispatchQueue.main.async {
+                            self.objectWillChange.send()
+                        }
+                    case .deleted, .error:
+                        self.destroy()
                         break
-                    }
-                    DispatchQueue.main.async {
-                        self.objectWillChange.send()
-                    }
-                case .deleted, .error:
-                    destroy()
-                    break
+                }
             }
         }
+        
     }
     
     func destroy(deleteObjects:Bool=false) {
