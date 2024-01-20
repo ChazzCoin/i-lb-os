@@ -28,8 +28,8 @@ extension View {
             action()
         }
     }
-    func onTapAnimation(perform action: @escaping () -> Void) -> some View {
-        self.modifier(TapAnimationModifier(action: action))
+    func onTapAnimation(enabled: Bool = true, perform action: @escaping () -> Void) -> some View {
+        self.modifier(TapAnimationModifier(action: action, isEnabled: enabled))
     }
     
     func onDoubleTap(scale: CGFloat = 2.0, duration: Double = 0.5, completion: @escaping () -> Void = {}) -> some View {
@@ -102,13 +102,15 @@ func hapticFeedback(style: UIImpactFeedbackGenerator.FeedbackStyle = .heavy) {
 
 struct TapAnimationModifier: ViewModifier {
     let action: () -> Void
+    let isEnabled: Bool
     @State private var isPressed = false
 
     func body(content: Content) -> some View {
         content
-            .scaleEffect(isPressed ? 0.75 : 1.0)
-            .animation(.easeInOut(duration: 0.2), value: isPressed)
+            .scaleEffect(isPressed ? 0.90 : 1.0)
+            .animation(.easeInOut(duration: 0.1), value: isPressed)
             .onTapGesture {
+                if !isEnabled {return}
                 hapticFeedback()
                 self.isPressed = true
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {

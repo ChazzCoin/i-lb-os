@@ -147,7 +147,7 @@ struct CanvasEngine: View {
             // NavStack Windows
             ForEach(Array(managedWindowsObject.managedViewGenerics.values)) { managedViewWindow in
                 managedViewWindow.viewBuilder().environmentObject(self.BEO)
-            }.zIndex(25.0)
+            }.zIndex(50.0)
             
             // Tool Bar
             if toolBarIsEnabled {
@@ -202,6 +202,7 @@ struct CanvasEngine: View {
                 .zIndex(50.0)
                 .position(using: gps, at: .topRight, offsetX: 150, offsetY: 0)
             }
+            
             
 //            FloatingEmojiView()
 //                .position(using: gps, at: .topLeft, offsetX: 200, offsetY: 0)

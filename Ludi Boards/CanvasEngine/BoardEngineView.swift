@@ -13,7 +13,7 @@ import FirebaseDatabase
 
 class BoardEngineObject : ObservableObject {
 
-    @Environment(\.colorScheme) var colorScheme
+//    @Environment(\.colorScheme) var colorScheme
 
     @ObservedResults(SessionPlan.self) var allSessionPlans
     @ObservedResults(ActivityPlan.self) var allActivityPlans
@@ -24,6 +24,8 @@ class BoardEngineObject : ObservableObject {
     @Published var boards = Sports()
     @Published var boardRefreshFlag = true
     
+    @Published var globalWindowsIndex = 3.0
+    @Published var windowIsOpen: Bool = false
     @Published var gesturesAreLocked: Bool = false
     @Published var isShowingPopUp: Bool = false
     
@@ -195,8 +197,8 @@ class BoardEngineObject : ObservableObject {
         AnyView(SoccerFieldFullView(isMini: false))
     }
     
-    func foregroundColor() -> Color { return foregroundColorForScheme(colorScheme) }
-    func backgroundColor() -> Color { return backgroundColorForScheme(colorScheme) }
+    func foregroundColor() -> Color { return Color.primaryBackground }
+    func backgroundColor() -> Color { return Color.secondaryBackground }
     
 }
 
@@ -432,8 +434,6 @@ struct BoardEngine: View {
         // TWO
         twoLoadSessionPlan()
     }
-    
-    
     
     func twoLoadSessionPlan() {
         

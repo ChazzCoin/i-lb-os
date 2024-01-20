@@ -41,7 +41,7 @@ struct SessionPlanOverview: View {
     var body: some View {
         Form {
             Section(header: Text("Manage")) {
-                solButton(title: "New Session", action: {
+                SolButton(title: "New Session", action: {
                     print("New Session Button")
                     showNewPlanSheet = true
                 })

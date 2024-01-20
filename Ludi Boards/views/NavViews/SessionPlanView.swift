@@ -48,10 +48,11 @@ struct SessionPlanView: View {
     @State var cancellables = Set<AnyCancellable>()
     
     @State var tabItems: [ActivityPlan] = []
-    @State var currentTab: ActivityPlan = ActivityPlan()
+    @State var currentTab: ActivityPlan = newActivityPlan()
     
-    @State var actionHasBeenMade = false
-    
+    @State private var sheetTitle = ""
+    @State private var sheetMessage = ""
+    @State private var sheetIsShowing = false
 
     func runLoadingProcess() {
         isLoading = true
@@ -71,12 +72,10 @@ struct SessionPlanView: View {
             
             DStack {
                 
-                solConfirmButton(
+                SolConfirmButton(
                     title: "Save Session",
                     message: "Are you sure you want to save this session?",
                     action: {
-                        if self.actionHasBeenMade {return}
-                        self.actionHasBeenMade = true
                         print("save button")
                         runLoading()
                         if self.sessionId == "new" {
@@ -86,46 +85,39 @@ struct SessionPlanView: View {
                         }
                         isShowing = false
                     })
-                
+                Spacer()
                 if self.sessionId == "new" {
                     
-                    solButton(title: "Cancel", action: {
-                        if self.actionHasBeenMade {return}
-                        self.actionHasBeenMade = true
+                    SolButton(title: "Cancel", action: {
                         self.isShowing = false
                     }, isEnabled: self.isShowing)
                     
                 } else {
                     
                     if !self.shareIds.contains(self.sessionId) && sessionId != "SOL-LIVE-DEMO" && sessionId != "SOL"  {
-                        solConfirmButton(
+                        SolConfirmButton(
                             title: "Delete Session",
                             message: "Are you sure you want to delete this session?",
                             action: {
-                                if self.actionHasBeenMade {return}
-                                self.actionHasBeenMade = true
                                 runLoading()
                                 deleteSessionPlan()
                             }
                         )
                     }
-                    
                 }
                 
+                Spacer()
                 if self.sessionId != "new" {
-                    solConfirmButton(
+                    SolConfirmButton(
                         title: "Load Session",
                         message: "Would you like to load this plan onto the board?",
                         action: {
-                            if self.actionHasBeenMade {return}
-                            self.actionHasBeenMade = true
                             runLoading()
                             CodiChannel.SESSION_ON_ID_CHANGE.send(value: SessionChange(sessionId: sessionId, activityId: self.activities.first?.id ?? "nil"))
                             isCurrentPlan = true
                         },
                         isEnabled: !self.isCurrentPlan)
                 }
-                
             }
             
             Section {
@@ -143,73 +135,62 @@ struct SessionPlanView: View {
                             }
                         }
                     
-                    solButton(title: "Share Session", action: {
+                    SolButton(title: "Share Session", action: {
                         self.showShareSheet = true
                     }, isEnabled: self.isSharable && self.isLive)
                     
                 }
-                
-                
             }
             
-            
-            Section(header: Text("Details")) {
+            Section(header: AlignLeft { HeaderText("Details") }) {
                 SolTextField("Title", text: $title)
                 
                 DStack {
                     SolTextEditor("Description", text: $description)
+                        .padding()
                         .frame(minHeight: 100)
                     
                     SolTextEditor("Objective", text: $objective)
+                        .padding()
                         .frame(minHeight: 100)
                 }
                 
             }.clearSectionBackground()
 
-            Section(header: Text("Activities")) {    
+            Section(header: AlignLeft { HeaderText("Activities") }) {
                 
-                if self.sessionId != "new" {
-                    solButton(title: "New Activity", action: {
-                        print("New Activity Button")
-                        showNewActivity = true
-                    })
-                }
-                
-                HStack {
-                    ForEach(tabItems, id: \.id) { item in
-                        Text("Title: \(item.id)")
-                            .padding()
-                            .background(self.currentTab.id == item.id ? Color.primaryBackground : Color.gray)
-                            .foregroundColor(Color.white)
-                            .cornerRadius(10)
-                            .shadow(radius: 5)
-                            .animation(.easeInOut, value: self.currentTab)
-                            .onTapGesture {
-                                withAnimation(.spring()) {
-                                    self.currentTab = item
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack {
+                        ForEach(tabItems, id: \.id) { item in
+                            Text("Title: \(item.id)")
+                                .frame(width: 200, height: 50)
+                                .padding()
+                                .background(self.currentTab.id == item.id ? Color.primaryBackground : Color.gray)
+                                .foregroundColor(Color.white)
+                                .cornerRadius(10)
+                                .shadow(radius: 5)
+                                .animation(.easeInOut, value: self.currentTab)
+                                .onTapGesture {
+                                    withAnimation(.spring()) {
+                                        self.currentTab = item
+                                    }
                                 }
-                            }
+                        }.clearSectionBackground()
                     }
                 }
-                .padding()
-                .background(Color(UIColor.systemBackground))
-                .cornerRadius(15)
-                .shadow(color: .gray, radius: 10, x: 0, y: 0)
-
+                
                 VStack {
                     ActivityPlanView(activityPlan: self.$currentTab, isShowing: .constant(true))
                         .environmentObject(self.BEO)
                         .environmentObject(self.NavStack)
                 }
-                .frame(minHeight: 500)
                 .padding()
-                .background(Color.secondaryBackground)
+                .background(Color.white)
                 .cornerRadius(15)
                 .shadow(color: .gray, radius: 10, x: 0, y: 0)
-                
-                
+                .padding()
+                   
             }.clearSectionBackground()
-            
             
         }
         .onChange(of: self.BEO.currentSessionId) { _ in
@@ -221,12 +202,6 @@ struct SessionPlanView: View {
                     fetchSessionPlan()
                 }
             }
-        }
-        .onChange(of: self.actionHasBeenMade) { _ in
-            if !self.actionHasBeenMade { return }
-            DispatchQueue.executeAfter(seconds: 3, action: {
-                self.actionHasBeenMade = false
-            })
         }
         .onAppear {
             self.NavStack.addToStack()
@@ -266,6 +241,16 @@ struct SessionPlanView: View {
                 
             }
         })
+        .alert(self.sheetTitle, isPresented: $sheetIsShowing) {
+            Button("Cancel", role: .cancel) {
+                sheetIsShowing = false
+            }
+            Button("OK", role: .none) {
+                sheetIsShowing = false
+            }
+        } message: {
+            Text(self.sheetMessage)
+        }
         .sheet(isPresented: self.$showNewActivity) {
 //            ActivityPlanView(boardId: "new", sessionId: sessionId, isShowing: $showNewActivity)
         }
@@ -350,6 +335,7 @@ struct SessionPlanView: View {
     
     func loadActivities() {
         var temp = false
+        tabItems.append(self.currentTab)
         for act in allActivities {
             if act.sessionId != self.sessionId { continue }
             if !temp {
@@ -357,7 +343,6 @@ struct SessionPlanView: View {
                 temp = true
             }
             tabItems.append(act)
-
         }
     }
     

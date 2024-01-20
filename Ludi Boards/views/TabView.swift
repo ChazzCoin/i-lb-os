@@ -27,7 +27,7 @@ struct DynamicTabView: View {
             // Tab Bar
             HStack {
                 ForEach(items, id: \.id) { item in
-                    solButton(title: item.title, action: {
+                    SolButton(title: item.title, action: {
 //                        self.selectedView = item.view
 //                        self.selectedTab = item
                     })

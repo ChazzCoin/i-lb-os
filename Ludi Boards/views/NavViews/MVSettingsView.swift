@@ -116,7 +116,7 @@ struct SettingsView: View {
                         })
                 }.padding()
                 
-                solConfirmButton(
+                SolConfirmButton(
                     title: "Delete Tool",
                     message: "Would you like to delete this tool?",
                     action: {

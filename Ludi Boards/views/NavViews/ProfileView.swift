@@ -69,12 +69,12 @@ struct ProfileView: View {
                     FriendsListView()
                 }
                 
-                solButton(title: "Search Buddy", action: {
+                SolButton(title: "Search Buddy", action: {
                     // Add buddy action
                     showNewPlanSheet = true
                 }, isEnabled: showAddBuddyButton)
                 
-                solConfirmButton(
+                SolConfirmButton(
                     title: "Sign Out",
                     message: "Are you sure you want to logout?",
                     action: {

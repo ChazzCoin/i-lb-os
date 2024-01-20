@@ -143,7 +143,7 @@ struct SignUpView: View {
                         }
                     }
                     
-                    solButton(
+                    SolButton(
                         title: "Sign Up",
                         action: {
                             runLoading()
@@ -164,7 +164,7 @@ struct SignUpView: View {
                         .padding(.leading)
                         .padding(.trailing)
                     
-                    solButton(
+                    SolButton(
                         title: "Login",
                         action: {
                         runLoading()

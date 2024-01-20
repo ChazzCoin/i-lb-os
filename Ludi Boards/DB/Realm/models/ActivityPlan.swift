@@ -44,3 +44,10 @@ class ActivityPlan: Object, ObjectKeyIdentifiable {
     @Persisted var backgroundView: String = "Sol"
     
 }
+
+
+func newActivityPlan() -> ActivityPlan {
+    let temp = ActivityPlan()
+    temp.id = "new"
+    return temp
+}

@@ -43,17 +43,17 @@ struct ActivityPlanView: View {
 
     var body: some View {
         
-        LoadingForm(isLoading: $isLoading, showCompletion: $showCompletion) { runLoading in
-            
-            
-            
+//        LoadingForm(isLoading: $isLoading, showCompletion: $showCompletion) { runLoading in
+        
+        VStack {
+        
             DStack {
                 // SAVE BUTTON
-                solConfirmButton(
+                SolConfirmButton(
                     title: "Save Activity",
                     message: "Would you like to save this plan?",
                     action: {
-                        runLoading()
+//                        runLoading()
                         if self.activityPlan.id == "new" {
                             saveNewActivityPlan()
                         } else {
@@ -61,11 +61,11 @@ struct ActivityPlanView: View {
                         }
                         isShowing = false
                     }
-                )
+                ).zIndex(2.0)
             
                 if self.activityPlan.sessionId != "SOL-LIVE-DEMO" && self.activityPlan.sessionId != "SOL"{
                     // Delete BUTTON
-                    solConfirmButton(
+                    SolConfirmButton(
                         title: "Delete Activity",
                         message: "Would you like to delete this plan?",
                         action: {
@@ -80,20 +80,20 @@ struct ActivityPlanView: View {
                                 self.presentationMode.wrappedValue.dismiss()
                             }
                         }
-                    )
+                    ).zIndex(2.0)
                 }
             
                 if self.activityPlan.id != "new" {
-                    solButton(
+                    SolButton(
                         title: "Load Activity onto Board",
                         
                         action: {
-                            runLoading()
+//                            runLoading()
                             CodiChannel.SESSION_ON_ID_CHANGE.send(value: SessionChange(sessionId: self.activityPlan.sessionId, activityId: self.activityPlan.id))
                             self.isCurrentPlan = true
                         },
                         isEnabled: !self.isCurrentPlan
-                    )
+                    ).zIndex(2.0)
                 }
                 
             }
@@ -101,7 +101,7 @@ struct ActivityPlanView: View {
             .clearSectionBackground()
             
             // Details Section
-            Section(header: Text("Activity Details")) {
+            Section(header: AlignLeft { HeaderText("Activity Details") }) {
                 
                 DStack {
                     SolTextField("Title", text: $activityPlan.title)
@@ -118,59 +118,78 @@ struct ActivityPlanView: View {
                     SolTextField("Age Level", text: $activityPlan.ageLevel)
                 }
                 
-            }.clearSectionBackground()
-
-            // Description Section
-            Section(header: Text("Details")) {
-                
                 DStack {
                     SolTextEditor("Objective", text:$activityPlan.objectiveDetails)
+                        .padding()
                         .frame(minHeight: 100)
                     
                     SolTextEditor("Description", text:$activityPlan.activityDetails)
+                        .padding()
                         .frame(minHeight: 100)
                 }
                 
             }.clearSectionBackground()
 
-            
-            Section(header: Text("Board Settings")) {
-                
-                Text("Field Type: \(fieldName)")
+            Section(header: AlignLeft { HeaderText("Board Settings") }) {
+                AlignLeft {
+                    SubHeaderText("Field Type: \(fieldName)")
+                        .padding()
+                }
                 BarListPicker(initialSelected: self.isCurrentPlan ? self.BEO.boardBgName : self.activityPlan.backgroundView, viewBuilder: self.BEO.boards.getAllMinis()) { v in
                     fieldName = v
                     if self.isCurrentPlan {
                         self.BEO.setBoardBgView(boardName: v)
                         realmInstance.safeWrite { r in
-                            self.activityPlan.backgroundView = v
-                            r.add(self.activityPlan)
+                            if let ap = self.activityPlan.thaw() {
+                                ap.backgroundView = v
+                                r.add(ap)
+                            }
+                            
                         }
                     }
                 }
+                .padding()
+                .border(Color.secondaryBackground, width: 1.0)
+                .cornerRadius(8)
+                .shadow(color: .gray, radius: 10, x: 0, y: 0)
+                .padding()
                 
                 DStack {
                     VStack {
-                        Text("Background Color: \(colorOpacity)")
+                        AlignLeft {
+                            SubHeaderText("Background Color: \(colorOpacity)")
+                                .padding()
+                        }
                         ColorListPicker() { color in
                             bgColor = color
                             if self.isCurrentPlan {
                                 self.BEO.setColor(colorIn: color)
                                 if let c = color.toRGBA() {
                                     realmInstance.safeWrite { r in
-                                        self.activityPlan.backgroundRed = c.red
-                                        self.activityPlan.backgroundGreen = c.green
-                                        self.activityPlan.backgroundBlue = c.blue
-                                        self.activityPlan.backgroundAlpha = c.alpha
-                                        r.add(self.activityPlan)
+                                        if let ap = self.activityPlan.thaw() {
+                                            ap.backgroundRed = c.red
+                                            ap.backgroundGreen = c.green
+                                            ap.backgroundBlue = c.blue
+                                            ap.backgroundAlpha = c.alpha
+                                            r.add(ap)
+                                        }
+                                        
                                     }
                                 }
                             }
                             
                         }
                     }
+                    .border(Color.secondaryBackground, width: 1.0)
+                    .cornerRadius(8)
+                    .shadow(color: .gray, radius: 10, x: 0, y: 0)
+                    .padding()
                     
                     VStack {
-                        Text("Background Color Transparency: \(colorOpacity)")
+                        AlignLeft {
+                            SubHeaderText("Background Color Transparency: \(colorOpacity)")
+                                .padding()
+                        }
                         Slider(
                             value: $colorOpacity,
                             in: 0.0...1.0,
@@ -181,41 +200,62 @@ struct ActivityPlanView: View {
                                         self.BEO.boardBgAlpha = colorOpacity
                                         self.BEO.boardBgColor = self.BEO.getColor()
                                         realmInstance.safeWrite { r in
-                                            self.activityPlan.backgroundAlpha = colorOpacity
-                                            r.add(self.activityPlan)
+                                            if let ap = self.activityPlan.thaw() {
+                                                ap.backgroundAlpha = colorOpacity
+                                                r.add(ap)
+                                            }
+                                            
                                         }
                                     }
                                     
                                 }
                             }
-                        ).padding()
+                        )
+                        .padding()
                     }
+                    .border(Color.secondaryBackground, width: 1.0)
+                    .cornerRadius(8)
+                    .shadow(color: .gray, radius: 10, x: 0, y: 0)
+                    .padding()
                     
                 }
                 
                 DStack {
                     VStack {
-                        Text("Line Color: \(lineColor.uiColor.accessibilityName)")
+                        AlignLeft {
+                            SubHeaderText("Line Color: \(lineColor.uiColor.accessibilityName)")
+                                .padding()
+                        }
                         ColorListPicker() { color in
                             lineColor = color
                             if self.isCurrentPlan {
                                 self.BEO.setFieldLineColor(colorIn: color)
                                 if let c = color.toRGBA() {
                                     realmInstance.safeWrite { r in
-                                        self.activityPlan.backgroundLineRed = c.red
-                                        self.activityPlan.backgroundLineGreen = c.green
-                                        self.activityPlan.backgroundLineBlue = c.blue
-                                        self.activityPlan.backgroundLineAlpha = c.alpha
-                                        r.add(self.activityPlan)
+                                        if let ap = self.activityPlan.thaw() {
+                                            ap.backgroundLineRed = c.red
+                                            ap.backgroundLineGreen = c.green
+                                            ap.backgroundLineBlue = c.blue
+                                            ap.backgroundLineAlpha = c.alpha
+                                            r.add(ap)
+                                        }
+                                        
                                     }
                                 }
                             }
                             
                         }
                     }
+                    .border(Color.secondaryBackground, width: 1.0)
+                    .cornerRadius(8)
+                    .shadow(color: .gray, radius: 10, x: 0, y: 0)
+                    .padding()
                     
                     VStack {
-                        Text("Rotate Field: \(Int(fieldRotation))")
+                        AlignLeft {
+                            SubHeaderText("Rotate Field: \(Int(fieldRotation))")
+                                .padding()
+                        }
                         Slider(
                             value: $fieldRotation,
                             in: 0...360,
@@ -225,8 +265,10 @@ struct ActivityPlanView: View {
                                     if self.isCurrentPlan {
                                         self.BEO.boardFeildRotation = fieldRotation
                                         realmInstance.safeWrite { r in
-                                            self.activityPlan.backgroundRotation = fieldRotation
-                                            r.add(self.activityPlan)
+                                            if let ap = self.activityPlan.thaw() {
+                                                ap.backgroundRotation = fieldRotation
+                                                r.add(ap)
+                                            }
                                         }
                                     }
                                     
@@ -234,15 +276,20 @@ struct ActivityPlanView: View {
                             }
                         ).padding()
                     }
-                    
-                    
+                    .border(Color.secondaryBackground, width: 1.0)
+                    .cornerRadius(8)
+                    .shadow(color: .gray, radius: 10, x: 0, y: 0)
+                    .padding()
                     
                 }
                 
                 DStack {
                     
                     VStack {
-                        Text("Line Width: \(Int(lineStroke))")
+                        AlignLeft {
+                            SubHeaderText("Line Width: \(Int(lineStroke))")
+                                .padding()
+                        }
                         Slider(
                             value: $lineStroke,
                             in: 1.0...50.0,
@@ -252,18 +299,27 @@ struct ActivityPlanView: View {
                                     if self.isCurrentPlan {
                                         self.BEO.boardFeildLineStroke = lineStroke
                                         realmInstance.safeWrite { r in
-                                            self.activityPlan.backgroundLineStroke = lineStroke
-                                            r.add(self.activityPlan)
+                                            if let ap = self.activityPlan.thaw() {
+                                                ap.backgroundLineStroke = lineStroke
+                                                r.add(ap)
+                                            }
                                         }
                                     }
                                 }
                             }
                         ).padding()
                     }
+                    .border(Color.secondaryBackground, width: 1.0)
+                    .cornerRadius(8)
+                    .shadow(color: .gray, radius: 10, x: 0, y: 0)
+                    .padding()
                     
                     
                     VStack {
-                        Text("Line Transparency: \(lineOpacity)")
+                        AlignLeft {
+                            SubHeaderText("Line Transparency: \(lineOpacity)")
+                                .padding()
+                        }
                         Slider(
                             value: $lineOpacity,
                             in: 0.0...1.0,
@@ -274,14 +330,20 @@ struct ActivityPlanView: View {
                                         self.BEO.boardFieldLineAlpha = lineOpacity
                                         self.BEO.boardFieldLineColor = self.BEO.getFieldLineColor()
                                         realmInstance.safeWrite { r in
-                                            self.activityPlan.backgroundLineAlpha = lineOpacity
-                                            r.add(self.activityPlan)
+                                            if let ap = self.activityPlan.thaw() {
+                                                ap.backgroundLineAlpha = lineOpacity
+                                                r.add(ap)
+                                            }
                                         }
                                     }
                                 }
                             }
                         ).padding()
                     }
+                    .border(Color.secondaryBackground, width: 1.0)
+                    .cornerRadius(8)
+                    .shadow(color: .gray, radius: 10, x: 0, y: 0)
+                    .padding()
                        
                 }
                 
@@ -289,6 +351,7 @@ struct ActivityPlanView: View {
                     
 
         }
+//        .padding()
         .onChange(of: self.activityPlan) { _ in
             if self.BEO.currentActivityId == self.activityPlan.id {
                 self.isCurrentPlan = true
@@ -297,6 +360,7 @@ struct ActivityPlanView: View {
             }
         }
         .onAppear {
+            self.BEO.windowIsOpen = true
             if self.BEO.currentActivityId == self.activityPlan.id {
                 self.isCurrentPlan = true
             } else {
@@ -306,31 +370,7 @@ struct ActivityPlanView: View {
         .sheet(isPresented: self.$showShareSheet) {
 //            AddBuddyView(isPresented: self.$showShareSheet, sessionId: self.activityPlan.$sessionId)
         }
-        .navigationBarTitle(isCurrentPlan ? "Current Activity" : "Activity Plan", displayMode: .inline)
-        .navigationBarItems(trailing: HStack {
-            // Add buttons or icons here for minimize, maximize, close, etc.
-            if self.NavStack.navStackCount >= 2 {
-                
-                Button(action: {
-                    CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: "master", stateAction: "close", viewId: "self"))
-                }) {
-                    Image(systemName: "arrow.down.to.line.alt")
-                        .resizable()
-                        .frame(width: 30, height: 30)
-                }
-                
-                if self.NavStack.keyboardIsShowing {
-                    Button(action: {
-                        hideKeyboard()
-                    }) {
-                        Image(systemName: "keyboard.chevron.compact.down")
-                            .resizable()
-                            .frame(width: 30, height: 30)
-                    }
-                }
-                
-            }
-        })
+//        .navigationBarTitle(isCurrentPlan ? "Current Activity" : "Activity Plan", displayMode: .inline)
     }
     
     private func fetchActivityPlan() {

@@ -90,14 +90,19 @@ struct ChatView: View {
             ScrollViewReader { scrollViewProxy in
                 ScrollView {
                     LazyVStack(spacing: 12) {
-                        ForEach(sortChatsByTimestamp(chats: roomMessages)) { chat in
-                            ChatMessageRow(chat: chat)
+                        if !(roomMessages.realm?.isInWriteTransaction ?? true) {
+                            ForEach(sortChatsByTimestamp(chats: roomMessages)) { chat in
+                                ChatMessageRow(chat: chat)
+                            }
                         }
                     }
                 }.onChange(of: roomMessages.count) { _ in
-                    if let lastChat = sortChatsByTimestamp(chats: roomMessages).last {
-                        withAnimation {
-                            scrollViewProxy.scrollTo(lastChat.id, anchor: .bottom)
+                    
+                    if !(roomMessages.realm?.isInWriteTransaction ?? true) {
+                        if let lastChat = sortChatsByTimestamp(chats: roomMessages).last {
+                            withAnimation {
+                                scrollViewProxy.scrollTo(lastChat.id, anchor: .bottom)
+                            }
                         }
                     }
                 }

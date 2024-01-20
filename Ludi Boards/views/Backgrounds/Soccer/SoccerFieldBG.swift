@@ -69,7 +69,7 @@ struct SoccerFieldFullView: View {
                 path.addRect(CGRect(x: 0, y: (height - goalAreaHeight) / 2, width: goalAreaWidth, height: goalAreaHeight))
                 path.addRect(CGRect(x: width - goalAreaWidth, y: (height - goalAreaHeight) / 2, width: goalAreaWidth, height: goalAreaHeight))
             }
-            .stroke(isMini ? foregroundColorForScheme(self.BEO.colorScheme) : self.BEO.boardFieldLineColor, lineWidth: isMini ? 3.0 : self.BEO.boardFeildLineStroke)
+            .stroke(isMini ? self.BEO.foregroundColor() : self.BEO.boardFieldLineColor, lineWidth: isMini ? 3.0 : self.BEO.boardFeildLineStroke)
             .rotationEffect(.degrees(self.BEO.boardFeildRotation))
         }
         .frame(width: isMini ? 100.0 : self.BEO.boardHeight, height: isMini ? 100.0 : self.BEO.boardWidth)
@@ -109,7 +109,7 @@ struct SoccerFieldHalfView: View {
                 let goalAreaHeight = 18.32 * widthScale
                 path.addRect(CGRect(x: width - goalAreaWidth, y: (height - goalAreaHeight) / 2, width: goalAreaWidth, height: goalAreaHeight))
             }
-            .stroke(isMini ? foregroundColorForScheme(self.BEO.colorScheme) : self.BEO.boardFieldLineColor, lineWidth: isMini ? 3.0 : self.BEO.boardFeildLineStroke)
+            .stroke(isMini ? self.BEO.foregroundColor() : self.BEO.boardFieldLineColor, lineWidth: isMini ? 3.0 : self.BEO.boardFeildLineStroke)
             .rotationEffect(.degrees(self.BEO.boardFeildRotation))
         }
         .frame(width: isMini ? 100.0 : self.BEO.boardHeight, height: isMini ? 100.0 : self.BEO.boardWidth)
@@ -125,7 +125,7 @@ struct BasicSquareView: View {
                 // Outer boundary of half field
                 path.addRect(CGRect(x: 0, y: 0, width: isMini ? 100.0 : self.BEO.boardHeight, height: isMini ? 100.0 : self.BEO.boardWidth))
             }
-            .stroke(isMini ? foregroundColorForScheme(self.BEO.colorScheme) : self.BEO.boardFieldLineColor, lineWidth: isMini ? 3.0 : self.BEO.boardFeildLineStroke)
+            .stroke(isMini ? self.BEO.foregroundColor() : self.BEO.boardFieldLineColor, lineWidth: isMini ? 3.0 : self.BEO.boardFeildLineStroke)
             .rotationEffect(.degrees(self.BEO.boardFeildRotation))
         }.frame(width: isMini ? 100.0 : self.BEO.boardHeight, height: isMini ? 100.0 : self.BEO.boardWidth)
     }
