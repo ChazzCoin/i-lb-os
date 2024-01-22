@@ -200,6 +200,16 @@ class BoardEngineObject : ObservableObject {
     func foregroundColor() -> Color { return Color.primaryBackground }
     func backgroundColor() -> Color { return Color.secondaryBackground }
     
+    func deleteAllTools() {
+        let results = self.realmInstance.objects(ManagedView.self).filter("boardId == %@", self.currentActivityId)
+        if results.isEmpty { return }
+        for tool in results {
+            self.realmInstance.safeWrite { _ in
+                tool.isDeleted = true
+            }
+        }
+    }
+    
 }
 
 struct BoardEngine: View {

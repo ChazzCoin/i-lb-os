@@ -30,7 +30,7 @@ class CommandController: ObservableObject {
     
     @Published var coordinateStack: [CGPoint] = []
     @Published var popUpIsVisible = false
-    @Published var currentUserId: String = ""
+    @Published var currentUserId: String = getFirebaseUserIdOrCurrentLocalId()
     
     @Published var activityId: String = ""
     @Published var viewId: String = ""
@@ -186,51 +186,43 @@ class CommandController: ObservableObject {
     // TODO: COPY THIS TO MVSETTINGS FOR REALTIME UPDATES.
     // Observe From Realm
     func observeFromRealm() {
-        if let mv = self.realmInstance.object(ofType: ManagedView.self, forPrimaryKey: self.viewId) {
-            self.managedViewNotificationToken = mv.observe { change in
-                switch change {
-                    case .change(let obj, _):
-                        let temp = obj as! ManagedView
-                        self.isDisabled = false
-                        if temp.id != self.viewId {return}
-                        if self.isDragging {return}
-                        
-                        DispatchQueue.main.async {
-                            if temp.id != self.viewId {return}
-                            if self.isDragging {return}
-                            let newPosition = CGPoint(x: temp.x, y: temp.y)
-                            self.coordinateStack.append(newPosition)
-                            self.animateToNextCoordinate()
-                            
-                            if self.activityId != temp.boardId {self.activityId = temp.boardId}
-                            
-                            if self.lifeWidth != Double(temp.width) {self.lifeWidth = Double(temp.width)}
-                            if self.lifeHeight != Double(temp.height) { self.lifeHeight = Double(temp.height)}
-                            if self.lifeRotation != temp.rotation { self.lifeRotation = temp.rotation}
-                            if self.lifeToolType != temp.toolType { self.lifeToolType = temp.toolType}
-                            if self.lifeColorRed != temp.colorRed {self.lifeColorRed = temp.colorRed}
-                            if self.lifeColorGreen != temp.colorGreen { self.lifeColorGreen = temp.colorGreen}
-                            if self.lifeColorBlue != temp.colorBlue {self.lifeColorBlue = temp.colorBlue}
-                            if self.lifeColorAlpha != temp.colorAlpha { self.lifeColorAlpha = temp.colorAlpha}
-                            if self.lifeIsLocked != temp.isLocked { self.lifeIsLocked = temp.isLocked}
-                            self.lifeLastUserId = temp.lastUserId
-                            self.MVS.isDeleted = temp.isDeleted
-                            self.minSizeCheck()
-                        }
-                        case .error(let error):
-                            print("Error: \(error)")
-                            self.managedViewNotificationToken?.invalidate()
-                            self.managedViewNotificationToken = nil
-                            self.observeFromRealm()
-                        case .deleted:
-                            print("Object has been deleted.")
-                            self.isDisabled = true
-                            self.lifeIsLocked = true
-                            self.managedViewNotificationToken?.invalidate()
-                            self.managedViewNotificationToken = nil
-                    }
+        
+        MVS.observeRealmManagedView() { temp in
+            self.isDisabled = false
+            if self.isDragging {return}
+            
+            DispatchQueue.main.async {
+                if self.isDragging {return}
+                
+                if temp.lastUserId != self.currentUserId {
+                    let newPosition = CGPoint(x: temp.x, y: temp.y)
+                    self.coordinateStack.append(newPosition)
+                    self.animateToNextCoordinate()
                 }
+                
+                if self.activityId != temp.boardId {self.activityId = temp.boardId}
+                
+                if self.lifeWidth != Double(temp.width) {self.lifeWidth = Double(temp.width)}
+                if self.lifeHeight != Double(temp.height) { self.lifeHeight = Double(temp.height)}
+                
+                if self.lifeRotation != temp.rotation { self.lifeRotation = temp.rotation}
+                
+                if self.lifeToolType != temp.toolType { self.lifeToolType = temp.toolType}
+                
+                if self.lifeColorRed != temp.colorRed {self.lifeColorRed = temp.colorRed}
+                if self.lifeColorGreen != temp.colorGreen { self.lifeColorGreen = temp.colorGreen}
+                if self.lifeColorBlue != temp.colorBlue {self.lifeColorBlue = temp.colorBlue}
+                if self.lifeColorAlpha != temp.colorAlpha { self.lifeColorAlpha = temp.colorAlpha}
+                
+                if self.lifeIsLocked != temp.isLocked { self.lifeIsLocked = temp.isLocked}
+                
+                self.lifeLastUserId = temp.lastUserId
+                
+                self.MVS.isDeleted = temp.isDeleted
+                
+                self.minSizeCheck()
             }
+        }
         
     }
     

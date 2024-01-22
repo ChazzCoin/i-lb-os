@@ -124,6 +124,14 @@ struct CanvasEngine: View {
         
         GlobalPositioningZStack { geo, gps in
             
+            SolIconConfirmButton(
+                systemName: MenuBarProvider.trash.tool.image,
+                title: "Delete All Tools",
+                message: "Are you sure you want to delete all tools?"
+            ) {
+                self.BEO.deleteAllTools()
+            }.position(using: gps, at: .topRight, offsetX: 35, offsetY: 35)
+            
             if self.BEO.isLoading {
                 ProgressView()
                     .frame(width: 300, height: 300)

@@ -113,6 +113,7 @@ struct LineDrawingManaged: View {
                 .position(x: lifeStartX, y: lifeStartY)
                 .gesture(dragGesture(isStart: true))
         )
+        // Create a triangle at lifeEndX/lifeEndY and then point it in the correct direction.
         .overlay(
             Circle()
                 .fill(Color.AIMYellow)
@@ -282,21 +283,16 @@ struct LineDrawingManaged: View {
     
     func observeView() {
         observeFromRealm()
-        MVS.start()
+        MVS.startFirebaseObserver()
     }
     
     func observeFromRealm() {
         if isDisabledChecker() {return}
         if isDeletedChecker() {return}
         
-        MVS.observeManagedView() { mv in
+        MVS.observeRealmManagedView() { temp in
             print("!!ManagedToolView!!")
-            guard let temp = mv else {
-                self.isDisabled = true
-                return
-            }
             
-            if temp.id != self.viewId {return}
             if self.isDragging {return}
                 
             DispatchQueue.main.async {
@@ -318,18 +314,20 @@ struct LineDrawingManaged: View {
                 loadRotationOfLine()
                 //
                 
-                let startPosition = CGPoint(x: temp.startX, y: temp.startY)
-                let endPosition = CGPoint(x: temp.endX, y: temp.endY)
-                let centerPosition = getCenterOfLine(start: startPosition, end: endPosition)
-                
-                let coords = [
-                    "start":startPosition,
-                    "end":endPosition,
-                    "center":centerPosition
-                ]
-                
-                self.coordinateStack.append(coords)
-                animateToNextCoordinate()
+                if temp.lastUserId != (getFirebaseUserId() ?? CURRENT_USER_ID) {
+                    let startPosition = CGPoint(x: temp.startX, y: temp.startY)
+                    let endPosition = CGPoint(x: temp.endX, y: temp.endY)
+                    let centerPosition = getCenterOfLine(start: startPosition, end: endPosition)
+                    
+                    let coords = [
+                        "start":startPosition,
+                        "end":endPosition,
+                        "center":centerPosition
+                    ]
+                    
+                    self.coordinateStack.append(coords)
+                    animateToNextCoordinate()
+                }
                 
                 if lifeIsLocked != temp.isLocked { lifeIsLocked = temp.isLocked}
             }
@@ -350,6 +348,7 @@ struct LineDrawingManaged: View {
                             mv.startY = Double(start?.y ?? CGFloat(lifeStartY))
                             mv.endX = Double(end?.x ?? CGFloat(lifeEndX))
                             mv.endY = Double(end?.y ?? CGFloat(lifeEndY))
+                            mv.lastUserId = getFirebaseUserId() ?? CURRENT_USER_ID
                         }
                         
                         MVS.updateFirebase(mv: mv)
@@ -407,8 +406,9 @@ struct LineDrawingManaged: View {
             mv?.toolType = "LINE"
             mv?.width = Int(lifeWidth)
             mv?.lineDash = Int(lifeLineDash)
-            guard let tMV = mv else { return }
-            r.create(ManagedView.self, value: tMV, update: .modified)
+            mv?.lastUserId = getFirebaseUserId() ?? CURRENT_USER_ID
+//            guard let tMV = mv else { return }
+//            r.create(ManagedView.self, value: tMV, update: .modified)
             // TODO: Firebase Users ONLY
             MVS.updateFirebase(mv: mv)
         }

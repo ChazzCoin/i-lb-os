@@ -247,38 +247,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "C40F22E9-445B-4424-AF2E-8A4EFEA84C99"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Ludi Boards/CanvasEngine/MenuBar/MenuBarWindow.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "114"
-            endingLineNumber = "114"
-            landmarkName = "animateIcons()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "14175011-0B5F-4478-B120-BED9051B89A7"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Ludi Boards/CanvasEngine/MenuBar/MenuBarWindow.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "123"
-            endingLineNumber = "123"
-            landmarkName = "animateIcons()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "3801E630-2C51-4423-B7ED-F2DB19D05402"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -733,13 +701,13 @@
             filePath = "Ludi Boards/CanvasEngine/BoardEngineView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "664"
-            endingLineNumber = "664"
+            startingLineNumber = "674"
+            endingLineNumber = "674"
             landmarkName = "createNewActivityPlan()"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "0215BEEA-9036-4420-82C8-83B974745990 - 967d99edff0c1fca"
+                  uuid = "0215BEEA-9036-4420-82C8-83B974745990 - 967d99edff0c1c80"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -749,12 +717,12 @@
                   urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/CanvasEngine/BoardEngineView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "664"
-                  endingLineNumber = "664"
-                  offsetFromSymbolStart = "892">
+                  startingLineNumber = "674"
+                  endingLineNumber = "674"
+                  offsetFromSymbolStart = "1380">
                </Location>
                <Location
-                  uuid = "0215BEEA-9036-4420-82C8-83B974745990 - 967d99edff0c1fca"
+                  uuid = "0215BEEA-9036-4420-82C8-83B974745990 - 967d99edff0c1c80"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -764,9 +732,24 @@
                   urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/CanvasEngine/BoardEngineView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "664"
-                  endingLineNumber = "664"
+                  startingLineNumber = "674"
+                  endingLineNumber = "674"
                   offsetFromSymbolStart = "776">
+               </Location>
+               <Location
+                  uuid = "0215BEEA-9036-4420-82C8-83B974745990 - 967d99edff0c1c80"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Ludi_Boards.BoardEngine.createNewActivityPlan() -&gt; ()"
+                  moduleName = "Ludi Boards"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/CanvasEngine/BoardEngineView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "674"
+                  endingLineNumber = "674"
+                  offsetFromSymbolStart = "816">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -781,13 +764,13 @@
             filePath = "Ludi Boards/CanvasEngine/BoardEngineView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "665"
-            endingLineNumber = "665"
+            startingLineNumber = "675"
+            endingLineNumber = "675"
             landmarkName = "createNewActivityPlan()"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "BAF7DEAB-C8F2-46AA-BB5D-7E4A1EE70209 - 967d99edff0c1feb"
+                  uuid = "BAF7DEAB-C8F2-46AA-BB5D-7E4A1EE70209 - 967d99edff0c1ca1"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -797,12 +780,12 @@
                   urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/CanvasEngine/BoardEngineView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "665"
-                  endingLineNumber = "665"
-                  offsetFromSymbolStart = "972">
+                  startingLineNumber = "675"
+                  endingLineNumber = "675"
+                  offsetFromSymbolStart = "1416">
                </Location>
                <Location
-                  uuid = "BAF7DEAB-C8F2-46AA-BB5D-7E4A1EE70209 - 967d99edff0c1feb"
+                  uuid = "BAF7DEAB-C8F2-46AA-BB5D-7E4A1EE70209 - 967d99edff0c1ca1"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -812,9 +795,24 @@
                   urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/CanvasEngine/BoardEngineView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "665"
-                  endingLineNumber = "665"
+                  startingLineNumber = "675"
+                  endingLineNumber = "675"
                   offsetFromSymbolStart = "892">
+               </Location>
+               <Location
+                  uuid = "BAF7DEAB-C8F2-46AA-BB5D-7E4A1EE70209 - 967d99edff0c1ca1"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Ludi_Boards.BoardEngine.createNewActivityPlan() -&gt; ()"
+                  moduleName = "Ludi Boards"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/CanvasEngine/BoardEngineView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "675"
+                  endingLineNumber = "675"
+                  offsetFromSymbolStart = "932">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -829,13 +827,13 @@
             filePath = "Ludi Boards/CanvasEngine/BoardEngineView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "666"
-            endingLineNumber = "666"
+            startingLineNumber = "676"
+            endingLineNumber = "676"
             landmarkName = "createNewActivityPlan()"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "56E9A780-8E88-41D7-91DB-5D6C129CA7D0 - 967d99edff0c1fa9"
+                  uuid = "56E9A780-8E88-41D7-91DB-5D6C129CA7D0 - 967d99edff0c1c5e"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -845,12 +843,12 @@
                   urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/CanvasEngine/BoardEngineView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "667"
-                  endingLineNumber = "667"
-                  offsetFromSymbolStart = "1004">
+                  startingLineNumber = "676"
+                  endingLineNumber = "676"
+                  offsetFromSymbolStart = "1748">
                </Location>
                <Location
-                  uuid = "56E9A780-8E88-41D7-91DB-5D6C129CA7D0 - 967d99edff0c1f88"
+                  uuid = "56E9A780-8E88-41D7-91DB-5D6C129CA7D0 - 967d99edff0c1c5e"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -860,9 +858,24 @@
                   urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/CanvasEngine/BoardEngineView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "666"
-                  endingLineNumber = "666"
+                  startingLineNumber = "676"
+                  endingLineNumber = "676"
                   offsetFromSymbolStart = "972">
+               </Location>
+               <Location
+                  uuid = "56E9A780-8E88-41D7-91DB-5D6C129CA7D0 - 967d99edff0c1c5e"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Ludi_Boards.BoardEngine.createNewActivityPlan() -&gt; ()"
+                  moduleName = "Ludi Boards"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/CanvasEngine/BoardEngineView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "676"
+                  endingLineNumber = "676"
+                  offsetFromSymbolStart = "1012">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -877,13 +890,13 @@
             filePath = "Ludi Boards/CanvasEngine/BoardEngineView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "663"
-            endingLineNumber = "663"
+            startingLineNumber = "673"
+            endingLineNumber = "673"
             landmarkName = "createNewActivityPlan()"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "17282ADB-D945-45C6-B71C-7639E601F91F - 967d99edff0c1e2d"
+                  uuid = "17282ADB-D945-45C6-B71C-7639E601F91F - 967d99edff0c1ce3"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -893,12 +906,12 @@
                   urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/CanvasEngine/BoardEngineView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "663"
-                  endingLineNumber = "663"
-                  offsetFromSymbolStart = "776">
+                  startingLineNumber = "673"
+                  endingLineNumber = "673"
+                  offsetFromSymbolStart = "1304">
                </Location>
                <Location
-                  uuid = "17282ADB-D945-45C6-B71C-7639E601F91F - 967d99edff0c1e2d"
+                  uuid = "17282ADB-D945-45C6-B71C-7639E601F91F - 967d99edff0c1ce3"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -908,9 +921,24 @@
                   urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/CanvasEngine/BoardEngineView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "663"
-                  endingLineNumber = "663"
+                  startingLineNumber = "673"
+                  endingLineNumber = "673"
                   offsetFromSymbolStart = "696">
+               </Location>
+               <Location
+                  uuid = "17282ADB-D945-45C6-B71C-7639E601F91F - 967d99edff0c1ce3"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Ludi_Boards.BoardEngine.createNewActivityPlan() -&gt; ()"
+                  moduleName = "Ludi Boards"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/CanvasEngine/BoardEngineView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "673"
+                  endingLineNumber = "673"
+                  offsetFromSymbolStart = "736">
                </Location>
             </Locations>
          </BreakpointContent>

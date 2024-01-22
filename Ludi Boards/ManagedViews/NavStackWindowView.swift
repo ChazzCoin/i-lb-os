@@ -155,7 +155,7 @@ struct NavStackWindow : View {
         .shadow(radius: 10)
         .position(self.NavStack.position)
         .offset(y: self.NavStack.keyboardHeight)
-        .animation(.easeInOut(duration: 1.0), value: self.NavStack.isHidden)
+        .animation(.easeInOut(duration: 0.10), value: self.NavStack.isHidden)
         .keyboardListener(
             onAppear: { height in
                 // Handle keyboard appearance (e.g., adjust view)

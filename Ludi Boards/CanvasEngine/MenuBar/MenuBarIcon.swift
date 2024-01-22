@@ -31,11 +31,7 @@ struct MenuButtonIcon: View {
                 .resizable()
                 .frame(width: 35, height: 35)
                 .foregroundColor(Color.white)
-                .onTapAnimation {
-                    print("CodiChannel SendTopic: \(icon.tool.title)")
-                    handleTap()
-                    CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: icon.tool.title, stateAction: "toggle"))
-                }.onAppear() {
+                .onAppear() {
                     setColorScheme()
                 }
         }
@@ -45,7 +41,11 @@ struct MenuButtonIcon: View {
                 .foregroundColor(Color.secondaryBackground)
                 .shadow(radius: 5)
         )
-        
+        .onTapAnimation {
+            print("CodiChannel SendTopic: \(icon.tool.title)")
+            handleTap()
+            CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: icon.tool.title, stateAction: "toggle"))
+        }
     }
 }
 

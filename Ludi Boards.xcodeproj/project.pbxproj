@@ -213,6 +213,7 @@
 		FBEBEF942B49504D00B8BA32 /* LiveConnections.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBEBEF932B49504D00B8BA32 /* LiveConnections.swift */; };
 		FBEBEF962B49506800B8BA32 /* LiveChat.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBEBEF952B49506800B8BA32 /* LiveChat.swift */; };
 		FBEBEF982B49507500B8BA32 /* LiveCurrentUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBEBEF972B49507500B8BA32 /* LiveCurrentUser.swift */; };
+		FBF1A5F92B5E342B0088150C /* SolIconButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF1A5F82B5E342B0088150C /* SolIconButton.swift */; };
 		FBF3902E2B2D78CF00C0508A /* TipProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF3902D2B2D78CF00C0508A /* TipProvider.swift */; };
 		FBF404432B19304700FA0545 /* BorderedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF404422B19304700FA0545 /* BorderedView.swift */; };
 /* End PBXBuildFile section */
@@ -376,6 +377,7 @@
 		FBEBEF932B49504D00B8BA32 /* LiveConnections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveConnections.swift; sourceTree = "<group>"; };
 		FBEBEF952B49506800B8BA32 /* LiveChat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveChat.swift; sourceTree = "<group>"; };
 		FBEBEF972B49507500B8BA32 /* LiveCurrentUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveCurrentUser.swift; sourceTree = "<group>"; };
+		FBF1A5F82B5E342B0088150C /* SolIconButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolIconButton.swift; sourceTree = "<group>"; };
 		FBF3902D2B2D78CF00C0508A /* TipProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TipProvider.swift; sourceTree = "<group>"; };
 		FBF404422B19304700FA0545 /* BorderedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BorderedView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -507,6 +509,7 @@
 			isa = PBXGroup;
 			children = (
 				FBE2C6272B1C26BF004C0116 /* SolButtons.swift */,
+				FBF1A5F82B5E342B0088150C /* SolIconButton.swift */,
 			);
 			path = Buttons;
 			sourceTree = "<group>";
@@ -1195,6 +1198,7 @@
 				FB48409A2B1EBC940003377A /* Sports.swift in Sources */,
 				FBE385542B4BB7540090901C /* LiveActivities.swift in Sources */,
 				FB10AE0D2B0F16B100295F4B /* ActivityPlanThumbList.swift in Sources */,
+				FBF1A5F92B5E342B0088150C /* SolIconButton.swift in Sources */,
 				FB07B6702B17A5B9009A0962 /* ManagedToolView.swift in Sources */,
 				FB15DD2A2B07443600A21290 /* BoardEngineView.swift in Sources */,
 				FB9F1DD22B1529E400FD9078 /* LoadingView.swift in Sources */,

@@ -130,7 +130,7 @@ struct CurvedLineDrawingManaged: View {
                 startPoint: CGPoint(x: lifeStartX, y: lifeStartY),
                 endPoint: CGPoint(x: lifeEndX, y: lifeEndY),
                 controlPoint1: CGPoint(x: lifeCenterX, y: lifeCenterY)
-            ).highPriorityGesture(doubleTap())
+            ).highPriorityGesture(doubleTapForSettingsAndAnchors())
         )
         .overlay(
             Circle()
@@ -138,7 +138,7 @@ struct CurvedLineDrawingManaged: View {
                 .frame(width: 150, height: 150) // Adjust size for easier tapping
                 .opacity(anchorsAreVisible ? 1 : 0) // Invisible
                 .position(x: lifeStartX, y: lifeStartY)
-                .gesture(dragGesture(isStart: true))
+                .gesture(dragSingleAnchor(isStart: true))
         )
         .overlay(
             Circle()
@@ -146,7 +146,7 @@ struct CurvedLineDrawingManaged: View {
                 .frame(width: 150, height: 150) // Increase size for finger tapping
                 .opacity(anchorsAreVisible ? 1 : 0) // Invisible
                 .position(x: lifeEndX, y: lifeEndY)
-                .gesture(dragGesture(isStart: false))
+                .gesture(dragSingleAnchor(isStart: false))
         )
         .overlay(
             Circle() // Use a circle for the control point
@@ -154,7 +154,7 @@ struct CurvedLineDrawingManaged: View {
                 .frame(width: 150, height: 150) // Adjust size as needed
                 .opacity(anchorsAreVisible ? 1 : 0)
                 .position(quadBezierPoint(start: CGPoint(x: lifeStartX, y: lifeStartY), end: CGPoint(x: lifeEndX, y: lifeEndY), control: CGPoint(x: lifeCenterX, y: lifeCenterY)))
-                .gesture(dragGestureForControlPoint())
+                .gesture(dragCurvedCenterAnchor())
         )
 //        .highPriorityGesture(doubleTap())
         .onAppear() {
@@ -196,7 +196,7 @@ struct CurvedLineDrawingManaged: View {
     
     
     // Drag gesture definition
-    private func doubleTap() -> some Gesture {
+    private func doubleTapForSettingsAndAnchors() -> some Gesture {
         TapGesture(count: 2).onEnded({ _ in
             print("Tapped double")
             anchorsAreVisible = !anchorsAreVisible
@@ -226,7 +226,7 @@ struct CurvedLineDrawingManaged: View {
     }
 
     
-    func dragGestureForControlPoint() -> some Gesture {
+    func dragCurvedCenterAnchor() -> some Gesture {
         DragGesture()
             .onChanged { value in
                 if self.lifeIsLocked {return}
@@ -245,7 +245,7 @@ struct CurvedLineDrawingManaged: View {
 
     
     // Drag gesture definition
-    private func dragGesture(isStart: Bool) -> some Gesture {
+    private func dragSingleAnchor(isStart: Bool) -> some Gesture {
         DragGesture()
             .onChanged { value in
                 if self.lifeIsLocked {return}
@@ -279,68 +279,54 @@ struct CurvedLineDrawingManaged: View {
     
     func observeView() {
         observeFromRealm()
-        MVS.start()
+        MVS.startFirebaseObserver()
     }
     
     func observeFromRealm() {
         if isDisabledChecker() {return}
         if isDeletedChecker() {return}
-        if let mv = realmInstance.object(ofType: ManagedView.self, forPrimaryKey: viewId) {
-            if isDisabledChecker() {return}
-            if isDeletedChecker() {return}
-            managedViewNotificationToken = mv.observe { change in
-                switch change {
-                    case .change(let obj, _):
-                        let temp = obj as! ManagedView
-                        if temp.id != self.viewId {return}
-                        if self.isDragging {return}
-                            
-                        DispatchQueue.main.async {
-                            if self.isDragging {return}
-                            if activityId != temp.boardId { activityId = temp.boardId }
-                            self.MVS.isDeleted = temp.isDeleted
-                            if lifeWidth != Double(temp.width) {lifeWidth = Double(temp.width)}
-                            if lifeLineDash != Double(temp.lineDash) {lifeLineDash = Double(temp.lineDash)}
-                            
-                            var colorHasChanged = false
-                            if lifeColorRed != temp.colorRed { colorHasChanged = true; lifeColorRed = temp.colorRed}
-                            if lifeColorGreen != temp.colorGreen { colorHasChanged = true; lifeColorGreen = temp.colorGreen}
-                            if lifeColorBlue != temp.colorBlue { colorHasChanged = true; lifeColorBlue = temp.colorBlue }
-                            if lifeColorAlpha != temp.colorAlpha { colorHasChanged = true; lifeColorAlpha = temp.colorAlpha }
-                            if colorHasChanged {
-                                lifeColor = colorFromRGBA(red: lifeColorRed, green: lifeColorGreen, blue: lifeColorBlue, alpha: lifeColorAlpha)
-                            }
-                            loadWidthAndHeight()
-                            loadRotationOfLine()
-                            //
-                            
-                            let startPosition = CGPoint(x: temp.startX, y: temp.startY)
-                            let endPosition = CGPoint(x: temp.endX, y: temp.endY)
-                            let centerPosition = CGPoint(x: temp.centerX, y: temp.centerY)
-                            
-                            let coords = [
-                                "start":startPosition,
-                                "end":endPosition,
-                                "center":centerPosition
-                            ]
-                            
-                            self.coordinateStack.append(coords)
-                            animateToNextCoordinate()
-                            
-                            if lifeIsLocked != temp.isLocked { lifeIsLocked = temp.isLocked}
-                        }
-                        
-                    case .error(let error):
-                        // Handle errors, if any
-                        print("Error: \(error)")
-                    case .deleted:
-                        // Object has been deleted
-                        self.isDisabled = true
-                        print("Object has been deleted.")
+        
+        MVS.observeRealmManagedView() { temp in
+            if self.isDragging {return}
+            
+            DispatchQueue.main.async {
+                if self.isDragging {return}
+                if activityId != temp.boardId { activityId = temp.boardId }
+                self.MVS.isDeleted = temp.isDeleted
+                if lifeWidth != Double(temp.width) {lifeWidth = Double(temp.width)}
+                if lifeLineDash != Double(temp.lineDash) {lifeLineDash = Double(temp.lineDash)}
+                
+                var colorHasChanged = false
+                if lifeColorRed != temp.colorRed { colorHasChanged = true; lifeColorRed = temp.colorRed}
+                if lifeColorGreen != temp.colorGreen { colorHasChanged = true; lifeColorGreen = temp.colorGreen}
+                if lifeColorBlue != temp.colorBlue { colorHasChanged = true; lifeColorBlue = temp.colorBlue }
+                if lifeColorAlpha != temp.colorAlpha { colorHasChanged = true; lifeColorAlpha = temp.colorAlpha }
+                if colorHasChanged {
+                    lifeColor = colorFromRGBA(red: lifeColorRed, green: lifeColorGreen, blue: lifeColorBlue, alpha: lifeColorAlpha)
                 }
+                loadWidthAndHeight()
+                loadRotationOfLine()
+                //
+                
+                if temp.lastUserId != getFirebaseUserIdOrCurrentLocalId() {
+                    let startPosition = CGPoint(x: temp.startX, y: temp.startY)
+                    let endPosition = CGPoint(x: temp.endX, y: temp.endY)
+                    let centerPosition = CGPoint(x: temp.centerX, y: temp.centerY)
+                    
+                    let coords = [
+                        "start":startPosition,
+                        "end":endPosition,
+                        "center":centerPosition
+                    ]
+                    
+                    self.coordinateStack.append(coords)
+                    animateToNextCoordinate()
+                }
+                
+                if lifeIsLocked != temp.isLocked { lifeIsLocked = temp.isLocked}
             }
+            
         }
-
     }
     
     // Function to update a Realm object in the background
@@ -357,6 +343,7 @@ struct CurvedLineDrawingManaged: View {
                             mv.centerY = Double(lifeCenterY)
                             mv.endX = Double(end?.x ?? CGFloat(lifeEndX))
                             mv.endY = Double(end?.y ?? CGFloat(lifeEndY))
+                            mv.lastUserId = getFirebaseUserIdOrCurrentLocalId()
                         }
                         
                         MVS.updateFirebase(mv: mv)
@@ -416,8 +403,7 @@ struct CurvedLineDrawingManaged: View {
             mv?.isLocked = self.isDragging ? true : lifeIsLocked
             mv?.toolType = "CURVED-LINE"
             mv?.width = Int(lifeWidth)
-            guard let tMV = mv else { return }
-            r.create(ManagedView.self, value: tMV, update: .modified)
+            mv?.lastUserId = getFirebaseUserIdOrCurrentLocalId()
             // TODO: Firebase Users ONLY
             MVS.updateFirebase(mv: mv)
         }
