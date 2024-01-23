@@ -175,12 +175,12 @@ struct SessionPlanView: View {
                                         self.currentTab = item
                                     }
                                 }
-                        }.clearSectionBackground()
+                        }
                     }
                 }
                 
                 VStack {
-                    ActivityPlanView(activityPlan: self.$currentTab, isShowing: .constant(true))
+                    ActivityPlanView(inComingAP: self.$currentTab, isShowing: .constant(true))
                         .environmentObject(self.BEO)
                         .environmentObject(self.NavStack)
                 }
@@ -190,7 +190,7 @@ struct SessionPlanView: View {
                 .shadow(color: .gray, radius: 10, x: 0, y: 0)
                 .padding()
                    
-            }.clearSectionBackground()
+            }
             
         }
         .onChange(of: self.BEO.currentSessionId) { _ in

@@ -493,6 +493,9 @@
 		FB3E02CD2B0D45FF00D8558C /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				FB9F1DD12B1529E400FD9078 /* LoadingView.swift */,
+				FBF404422B19304700FA0545 /* BorderedView.swift */,
+				FB9F1DD52B1532AB00FD9078 /* ImagePicker.swift */,
 				FB426A992B5343C30058CD9D /* Forms */,
 				FB426A982B5343840058CD9D /* Switches */,
 				FB426A972B53435A0058CD9D /* Lists */,
@@ -557,19 +560,16 @@
 		FB5094242B05820B000AEA96 /* views */ = {
 			isa = PBXGroup;
 			children = (
-				FBF1A5FA2B5F7BA90088150C /* Shapes */,
 				FB3E02CC2B0D45F000D8558C /* NavViews */,
 				FBE2C61E2B1AFCA2004C0116 /* Social */,
 				FBE2C61D2B1AFC8F004C0116 /* SessionPlan */,
 				FBF3902C2B2D78B000C0508A /* Tips */,
 				FBE2C6152B1AF584004C0116 /* Backgrounds */,
 				FB9F1DD72B1533B300FD9078 /* SignUp */,
+				FBF1A5FA2B5F7BA90088150C /* Shapes */,
 				FB3E02CD2B0D45FF00D8558C /* Components */,
 				FB10AE062B0DCDB500295F4B /* FloatingEmoji.swift */,
-				FB9F1DD12B1529E400FD9078 /* LoadingView.swift */,
-				FB9F1DD52B1532AB00FD9078 /* ImagePicker.swift */,
 				FB58A1B52B1804C80024B9A2 /* FlashingLight.swift */,
-				FBF404422B19304700FA0545 /* BorderedView.swift */,
 				FBABDAC42B20376F00321A00 /* ConfirmationPopup.swift */,
 				FBC2FC6D2B5A0BB200D1AB77 /* TabView.swift */,
 			);

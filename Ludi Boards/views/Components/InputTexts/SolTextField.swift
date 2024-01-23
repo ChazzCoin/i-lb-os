@@ -10,11 +10,13 @@ import SwiftUI
 
 struct SolTextField: View {
     @Binding var text: String
+    @State var onChange: (String) -> Void
     var placeholder: String = ""
 
-    init(_ placeholder: String, text: Binding<String>) {
+    init(_ placeholder: String, text: Binding<String>, onChange: @escaping (String) -> Void={ _ in }) {
         self._text = text
         self.placeholder = placeholder
+        self.onChange = onChange
     }
 
     var body: some View {
@@ -30,16 +32,21 @@ struct SolTextField: View {
                     HStack {
                         Spacer()
                         if !text.isEmpty {
-                            Button(action: { self.text = "" }) {
-                                Image(systemName: "multiply.circle.fill")
-                                    .foregroundColor(.gray)
-                                    .padding(.trailing, 15) 
-                            }.zIndex(10.0)
+                            Image(systemName: "multiply.circle.fill")
+                                .foregroundColor(.gray)
+                                .padding(.trailing, 15)
+                                .onTapAnimation {
+                                    self.text = ""
+                                }.zIndex(10.0)
                         }
                     }
                 )
                 .transition(.scale)
                 .animation(.easeInOut, value: text)
+                .onChange(of: text) { newValue in
+                    self.text = newValue
+                }
+                
             
             if text.isEmpty {
                 Text(placeholder)
@@ -51,8 +58,8 @@ struct SolTextField: View {
     }
 }
 
-struct ModernTextField_Previews: PreviewProvider {
-    static var previews: some View {
-        SolTextField("Placeholder", text: .constant(""))
-    }
-}
+//struct ModernTextField_Previews: PreviewProvider {
+//    static var previews: some View {
+//        SolTextField("Placeholder", text: .constant(""))
+//    }
+//}
