@@ -77,12 +77,13 @@ class CommandController: ObservableObject {
         self.viewId = viewId
         self.activityId = activityId
         // Setup
-        observeFromRealm()
         DispatchQueue.main.async {
             safeFirebaseUserId() { userId in
                 self.currentUserId = userId
             }
             self.MVS.initialize(realm: self.realmInstance, activityId: self.activityId, viewId: self.viewId)
+            self.observeFromRealm()
+            self.MVS.startFirebaseObserver()
         }
         // Load View State
         loadFromRealm()
@@ -163,7 +164,7 @@ class CommandController: ObservableObject {
     
     // Realm / Firebase
     func loadFromRealm(managedView: ManagedView?=nil) {
-        if isDisabledChecker() {return}
+        if isDisabledChecker() || isDeletedChecker() {return}
         var mv = managedView
         if mv == nil {mv = realm().object(ofType: ManagedView.self, forPrimaryKey: self.viewId)}
         guard let umv = mv else { return }
@@ -186,7 +187,7 @@ class CommandController: ObservableObject {
     // TODO: COPY THIS TO MVSETTINGS FOR REALTIME UPDATES.
     // Observe From Realm
     func observeFromRealm() {
-        
+        if isDisabledChecker() || isDeletedChecker() {return}
         MVS.observeRealmManagedView() { temp in
             self.isDisabled = false
             if self.isDragging {return}
@@ -227,7 +228,7 @@ class CommandController: ObservableObject {
     }
     
     func updateRealm(x:Double?=nil, y:Double?=nil) {
-        if isDisabledChecker() {return}
+        if isDisabledChecker() || isDeletedChecker() {return}
         DispatchQueue.global(qos: .background).async {
             // Create a new Realm instance for the background thread
             autoreleasepool {
