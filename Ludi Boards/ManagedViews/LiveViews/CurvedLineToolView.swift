@@ -10,6 +10,7 @@ import SwiftUI
 import RealmSwift
 import Combine
 import FirebaseDatabase
+import CoreGraphics
 
 struct OverlayLineV: View {
     @Binding var startX: CGFloat
@@ -67,6 +68,7 @@ struct CurvedLineDrawingManaged: View {
     @State private var lifeColorBlue = 0.0
     @State private var lifeColorAlpha = 1.0
     @State private var lifeLineDash = 0.0
+    @State private var lifeHeadIsEnabled = true
     @State private var lifeRotation: Angle = Angle.zero
     
     @State private var popUpIsVisible = false
@@ -77,6 +79,7 @@ struct CurvedLineDrawingManaged: View {
     @State private var isDragging = false
     @State var originalLifeStart = CGPoint.zero
     @State var originalLifeEnd = CGPoint.zero
+    @State var originalLifeCenter = CGPoint.zero
     
     @State private var objectNotificationToken: NotificationToken? = nil
     @State private var cancellables = Set<AnyCancellable>()
@@ -117,6 +120,32 @@ struct CurvedLineDrawingManaged: View {
         return CGPoint(x: x, y: y)
     }
     
+    func calculateAngle(startX: CGFloat, startY: CGFloat, endX: CGFloat, endY: CGFloat) -> Double {
+        let deltaX = endX - startX
+        let deltaY = endY - startY
+        let angle = atan2(deltaY, deltaX) * 180 / .pi
+        return Double(angle) + 90
+    }
+    
+    func calculateAngleAtEndPointOfQuadCurve() -> Double {
+        // Since we are calculating the angle at the end point, t = 1
+        let t: CGFloat = 1.0
+
+        // Breaking down the derivative calculation into smaller parts
+        let dx1 = lifeCenterX - lifeStartX
+        let dy1 = lifeCenterY - lifeStartY
+        let dx2 = lifeEndX - lifeCenterX
+        let dy2 = lifeEndY - lifeCenterY
+
+        let derivativeX = 2 * (1 - t) * dx1 + 2 * t * dx2
+        let derivativeY = 2 * (1 - t) * dy1 + 2 * t * dy2
+
+        // Calculate the angle
+        let angle = atan2(derivativeY, derivativeX) * 180 / .pi
+        return Double(angle) + 90
+    }
+
+    
     var body: some View {
         Path { path in
             path.move(to: CGPoint(x: lifeStartX, y: lifeStartY))
@@ -130,7 +159,16 @@ struct CurvedLineDrawingManaged: View {
                 startPoint: CGPoint(x: lifeStartX, y: lifeStartY),
                 endPoint: CGPoint(x: lifeEndX, y: lifeEndY),
                 controlPoint1: CGPoint(x: lifeCenterX, y: lifeCenterY)
-            ).highPriorityGesture(doubleTapForSettingsAndAnchors())
+            ).gesture(fullCurvedLineDragGesture())
+        )
+        .overlay(
+            Triangle()
+                .fill(anchorsAreVisible ? Color.AIMYellow : lifeColor)
+                .frame(width: 125, height: 125) // Increase size for finger tapping
+                .opacity(lifeHeadIsEnabled ? 1 : 0) // Invisible
+                .rotationEffect(Angle(degrees: calculateAngleAtEndPointOfQuadCurve()))
+                .position(x: lifeEndX, y: lifeEndY)
+                .gesture(dragSingleAnchor(isStart: false))
         )
         .overlay(
             Circle()
@@ -156,7 +194,7 @@ struct CurvedLineDrawingManaged: View {
                 .position(quadBezierPoint(start: CGPoint(x: lifeStartX, y: lifeStartY), end: CGPoint(x: lifeEndX, y: lifeEndY), control: CGPoint(x: lifeCenterX, y: lifeCenterY)))
                 .gesture(dragCurvedCenterAnchor())
         )
-//        .highPriorityGesture(doubleTap())
+        .gesture(fullCurvedLineDragGesture())
         .onAppear() {
         
             MVS.initialize(realm: self.realmInstance, activityId: self.activityId, viewId: self.viewId)
@@ -194,6 +232,47 @@ struct CurvedLineDrawingManaged: View {
         }
     }
     
+    func fullCurvedLineDragGesture() -> some Gesture {
+        DragGesture()
+            .onChanged { value in
+                if self.lifeIsLocked { return }
+                self.isDragging = true
+                
+                if self.originalLifeStart == .zero {
+                    self.originalLifeStart = CGPoint(x: lifeStartX, y: lifeStartY)
+                    self.originalLifeEnd = CGPoint(x: lifeEndX, y: lifeEndY)
+                    self.originalLifeCenter = CGPoint(x: lifeCenterX, y: lifeCenterY)
+                }
+                
+                handleFullDragTranslation(value: value)
+            }
+            .onEnded { value in
+                handleFullDragTranslation(value: value)
+                self.isDragging = false
+                self.originalLifeStart = .zero
+                self.originalLifeEnd = .zero
+                self.originalLifeCenter = .zero
+            }
+            .simultaneously(with: longPressGesture())
+    }
+    
+    func handleFullDragTranslation(value: DragGesture.Value) {
+        let dragAmount = value.translation
+        let startPoint = CGPoint(x: originalLifeStart.x + dragAmount.width, y: originalLifeStart.y + dragAmount.height)
+        let controlPoint = CGPoint(x: originalLifeCenter.x + dragAmount.width, y: originalLifeCenter.y + dragAmount.height)
+        let endPoint = CGPoint(x: originalLifeEnd.x + dragAmount.width, y: originalLifeEnd.y + dragAmount.height)
+        
+        lifeStartX = startPoint.x
+        lifeStartY = startPoint.y
+        lifeCenterX = controlPoint.x
+        lifeCenterY = controlPoint.y
+        lifeEndX = endPoint.x
+        lifeEndY = endPoint.y
+        
+        updateRealmPos(start: CGPoint(x: lifeStartX, y: lifeStartY),
+                    end: CGPoint(x: lifeEndX, y: lifeEndY))
+    }
+    
     
     // Drag gesture definition
     private func doubleTapForSettingsAndAnchors() -> some Gesture {
@@ -220,9 +299,8 @@ struct CurvedLineDrawingManaged: View {
                    stateAction: popUpIsVisible ? "open" : "close")
                 )
             }
-        }).simultaneously(with: LongPressGesture(minimumDuration: 0.4).onEnded { _ in
-            anchorsAreVisible = !anchorsAreVisible
         })
+        .simultaneously(with: longPressGesture())
     }
 
     
@@ -241,6 +319,7 @@ struct CurvedLineDrawingManaged: View {
                 dragOffset = .zero
                 updateRealm()
             }
+            .simultaneously(with: longPressGesture())
     }
 
     
@@ -275,6 +354,27 @@ struct CurvedLineDrawingManaged: View {
                 updateRealmPos(start: CGPoint(x: lifeStartX, y: lifeStartY),
                             end: CGPoint(x: lifeEndX, y: lifeEndY))
             }
+            .simultaneously(with: longPressGesture())
+    }
+    
+    // Basic Gestures
+    private func singleTapGesture() -> some Gesture {
+        TapGesture(count: 1).onEnded({ _ in
+            print("Tapped single")
+         })
+    }
+    
+    private func doubleTapGesture() -> some Gesture {
+        TapGesture(count: 2).onEnded({ _ in
+            print("Tapped double")
+//            toggleMenuSettings()
+         })
+    }
+    
+    private func longPressGesture() -> some Gesture {
+        LongPressGesture(minimumDuration: 0.4).onEnded { _ in
+           anchorsAreVisible = !anchorsAreVisible
+       }
     }
     
     func observeView() {
@@ -283,8 +383,7 @@ struct CurvedLineDrawingManaged: View {
     }
     
     func observeFromRealm() {
-        if isDisabledChecker() {return}
-        if isDeletedChecker() {return}
+        if isDisabledChecker() || isDeletedChecker() {return}
         
         MVS.observeRealmManagedView() { temp in
             if self.isDragging {return}
@@ -322,6 +421,8 @@ struct CurvedLineDrawingManaged: View {
                     self.coordinateStack.append(coords)
                     animateToNextCoordinate()
                 }
+                
+                lifeHeadIsEnabled = temp.headIsEnabled
                 
                 if lifeIsLocked != temp.isLocked { lifeIsLocked = temp.isLocked}
             }
@@ -403,47 +504,41 @@ struct CurvedLineDrawingManaged: View {
             mv?.isLocked = self.isDragging ? true : lifeIsLocked
             mv?.toolType = "CURVED-LINE"
             mv?.width = Int(lifeWidth)
+            mv?.headIsEnabled = lifeHeadIsEnabled
             mv?.lastUserId = getFirebaseUserIdOrCurrentLocalId()
             // TODO: Firebase Users ONLY
             MVS.updateFirebase(mv: mv)
         }
     }
     
-//    func updateFirebase(mv:ManagedView?) {
-//        // TODO: Firebase Users ONLY
-//        if self.activityId.isEmpty || self.viewId.isEmpty {return}
-//        reference.setValue(mv?.toDict())
-//    }
-    
-    
     func loadFromRealm() {
         if isDisabledChecker() {return}
         if isDeletedChecker() {return}
-        let mv = realmInstance.object(ofType: ManagedView.self, forPrimaryKey: viewId)
-        guard let umv = mv else { return }
-        // set attributes
-        activityId = umv.boardId
-        lifeIsLocked = umv.isLocked
-        
-        lifeStartX = umv.startX
-        lifeStartY = umv.startY
-        lifeCenterX = umv.centerX
-        lifeCenterY = umv.centerY
-        lifeEndX = umv.endX
-        lifeEndY = umv.endY
-        lifeWidth = Double(umv.width)
-        lifeLineDash = Double(umv.lineDash)
-        
-        lifeColorRed = umv.colorRed
-        lifeColorGreen = umv.colorGreen
-        lifeColorBlue = umv.colorBlue
-        lifeColorAlpha = umv.colorAlpha
-        lifeColor = colorFromRGBA(red: lifeColorRed, green: lifeColorGreen, blue: lifeColorBlue, alpha: lifeColorAlpha)
-        
-        loadWidthAndHeight()
-        loadRotationOfLine()
+        if let umv = realmInstance.object(ofType: ManagedView.self, forPrimaryKey: viewId) {
+            // set attributes
+            activityId = umv.boardId
+            lifeIsLocked = umv.isLocked
+            
+            lifeStartX = umv.startX
+            lifeStartY = umv.startY
+            lifeCenterX = umv.centerX
+            lifeCenterY = umv.centerY
+            lifeEndX = umv.endX
+            lifeEndY = umv.endY
+            lifeWidth = Double(umv.width)
+            lifeLineDash = Double(umv.lineDash)
+            lifeHeadIsEnabled = umv.headIsEnabled
+            
+            lifeColorRed = umv.colorRed
+            lifeColorGreen = umv.colorGreen
+            lifeColorBlue = umv.colorBlue
+            lifeColorAlpha = umv.colorAlpha
+            lifeColor = colorFromRGBA(red: lifeColorRed, green: lifeColorGreen, blue: lifeColorBlue, alpha: lifeColorAlpha)
+            
+            loadWidthAndHeight()
+            loadRotationOfLine()
+        }
     }
-    
     
 }
 

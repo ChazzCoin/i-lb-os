@@ -33,19 +33,11 @@ class ManagedView: Object, ObjectKeyIdentifiable {
     @Persisted var lastUserId: String = "me"
     @Persisted var isLocked: Bool = false
     @Persisted var isDeleted: Bool = false
+    @Persisted var headIsEnabled: Bool = true
     
     @Persisted var colorRed: Double = 48.0
     @Persisted var colorGreen: Double = 128.0
     @Persisted var colorBlue: Double = 20.0
     @Persisted var colorAlpha: Double = 0.75
-
-//    func toDictionary() -> [String: Any] {
-//        let properties = self.objectSchema.properties.map { $0.name }
-//        var dictionary: [String: Any] = [:]
-//        for property in properties {
-//            dictionary[property] = self.value(forKey: property)
-//        }
-//        return dictionary
-//    }
 
 }

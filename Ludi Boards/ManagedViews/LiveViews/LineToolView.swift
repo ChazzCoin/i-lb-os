@@ -27,6 +27,7 @@ struct LineDrawingManaged: View {
     @State private var lifeIsLocked = false
     @State private var lifeDateUpdated = Int(Date().timeIntervalSince1970)
     
+    @State private var lifeArrowIsEnabled = true
     @State private var lifeCenterPoint = CGPoint.zero
     @State private var lifeStartX: CGFloat = 0.0
     @State private var lifeStartY: CGFloat = 0.0
@@ -98,6 +99,13 @@ struct LineDrawingManaged: View {
         return length.bounded(byMin: 1.0, andMax: length - 400.0)
     }
     
+    func calculateAngle(startX: CGFloat, startY: CGFloat, endX: CGFloat, endY: CGFloat) -> Double {
+        let deltaX = endX - startX
+        let deltaY = endY - startY
+        let angle = atan2(deltaY, deltaX) * 180 / .pi
+        return Double(angle) + 90
+    }
+    
     var body: some View {
         Path { path in
             path.move(to: CGPoint(x: lifeStartX, y: lifeStartY))
@@ -106,21 +114,30 @@ struct LineDrawingManaged: View {
         .stroke(lifeColor, style: StrokeStyle(lineWidth: lifeWidth, dash: [lifeLineDash]))
         .opacity(!isDisabledChecker() && !isDeletedChecker() ? 1 : 0.0)
         .overlay(
+            Triangle()
+                .fill(anchorsAreVisible ? Color.AIMYellow : lifeColor)
+                .frame(width: 125, height: 125) // Increase size for finger tapping
+                .opacity(lifeArrowIsEnabled ? 1 : 0) // Invisible
+                .rotationEffect(Angle(degrees: calculateAngle(startX: lifeStartX, startY: lifeStartY, endX: lifeEndX, endY: lifeEndY)))
+                .position(x: lifeEndX, y: lifeEndY)
+                .gesture(singleAnchorDragGesture(isStart: false))
+        )
+        .overlay(
             Circle()
                 .fill(Color.AIMYellow)
                 .frame(width: 150, height: 150) // Adjust size for easier tapping
                 .opacity(anchorsAreVisible ? 1 : 0) // Invisible
                 .position(x: lifeStartX, y: lifeStartY)
-                .gesture(dragGesture(isStart: true))
+                .gesture(singleAnchorDragGesture(isStart: true))
         )
-        // Create a triangle at lifeEndX/lifeEndY and then point it in the correct direction.
+//        // Create a triangle at lifeEndX/lifeEndY and then point it in the correct direction.
         .overlay(
             Circle()
                 .fill(Color.AIMYellow)
                 .frame(width: 150, height: 150) // Increase size for finger tapping
                 .opacity(anchorsAreVisible ? 1 : 0) // Invisible
                 .position(x: lifeEndX, y: lifeEndY)
-                .gesture(dragGesture(isStart: false))
+                .gesture(singleAnchorDragGesture(isStart: false))
         )
         .overlay(
             Rectangle()
@@ -129,9 +146,9 @@ struct LineDrawingManaged: View {
                 .rotationEffect(lifeRotation)
                 .opacity(1)
                 .position(x: lifeCenterPoint.x.isFinite ? lifeCenterPoint.x : 0, y: lifeCenterPoint.y.isFinite ? lifeCenterPoint.y : 0)
-                .gesture(dragGestureDuo())
+                .gesture(fullLineDragGesture())
         )
-        .gesture(dragGestureDuo())
+        .gesture(fullLineDragGesture())
         .onAppear() {
         
             MVS.initialize(realm: self.realmInstance, activityId: self.activityId, viewId: self.viewId)
@@ -168,41 +185,6 @@ struct LineDrawingManaged: View {
         }
     }
     
-    // Drag gesture definition
-    private func dragGesture(isStart: Bool) -> some Gesture {
-        DragGesture()
-            .onChanged { value in
-                if self.lifeIsLocked {return}
-                if !anchorsAreVisible {return}
-                self.isDragging = true
-                if isStart {
-                    self.lifeStartX = value.location.x
-                    self.lifeStartY = value.location.y
-                } else {
-                    self.lifeEndX = value.location.x
-                    self.lifeEndY = value.location.y
-                }
-                loadCenterPoint()
-                loadWidthAndHeight()
-                loadRotationOfLine()
-                updateRealmPos(start: CGPoint(x: lifeStartX, y: lifeStartY),
-                            end: CGPoint(x: lifeEndX, y: lifeEndY))
-            }
-            .onEnded { _ in
-                if self.lifeIsLocked {return}
-                if !anchorsAreVisible {return}
-                self.isDragging = false
-                updateRealmPos(start: CGPoint(x: lifeStartX, y: lifeStartY),
-                            end: CGPoint(x: lifeEndX, y: lifeEndY))
-            }
-            .simultaneously(with: TapGesture(count: 2).onEnded({ _ in
-                print("Tapped double")
-                toggleMenuSettings()
-            })).simultaneously(with: LongPressGesture(minimumDuration: 0.4).onEnded { _ in
-                anchorsAreVisible = !anchorsAreVisible
-            })
-    }
-    
     private func toggleMenuSettings() {
         anchorsAreVisible = !anchorsAreVisible
         popUpIsVisible = !popUpIsVisible
@@ -227,8 +209,8 @@ struct LineDrawingManaged: View {
         }
     }
     
-    // Drag gesture definition
-    private func dragGestureDuo() -> some Gesture {
+    // Gestures
+    private func fullLineDragGesture() -> some Gesture {
         DragGesture()
             .updating($dragOffset, body: { (value, state, transaction) in
                 if self.lifeIsLocked {return}
@@ -250,8 +232,8 @@ struct LineDrawingManaged: View {
                 loadCenterPoint()
                 CodiChannel.TOOL_ON_FOLLOW.send(value: ViewFollowing(
                     viewId: self.viewId,
-                    x: lifeStartX + 200,
-                    y: lifeStartY + 200
+                    x: lifeStartX,
+                    y: lifeStartY
                 ))
                 updateRealmPos(start: CGPoint(x: lifeStartX, y: lifeStartY),
                             end: CGPoint(x: lifeEndX, y: lifeEndY))
@@ -269,17 +251,63 @@ struct LineDrawingManaged: View {
                             end: CGPoint(x: lifeEndX, y: lifeEndY))
                 self.originalLifeStart = .zero
                 self.originalLifeEnd = .zero
-            }.simultaneously(with: TapGesture(count: 1)
-                .onEnded { _ in
-//                    anchorsAreVisible = !anchorsAreVisible
-                }
-           ).simultaneously(with: TapGesture(count: 2).onEnded({ _ in
-               print("Tapped double")
-               toggleMenuSettings()
-            })).simultaneously(with: LongPressGesture(minimumDuration: 0.4).onEnded { _ in
-               anchorsAreVisible = !anchorsAreVisible
-           })
+            }
+            .simultaneously(with: doubleTapGesture())
+            .simultaneously(with: longPressGesture())
     }
+    
+    private func singleAnchorDragGesture(isStart: Bool) -> some Gesture {
+        DragGesture()
+            .onChanged { value in
+                if self.lifeIsLocked || !anchorsAreVisible { return }
+                self.isDragging = true
+                if isStart {
+                    self.lifeStartX = value.location.x
+                    self.lifeStartY = value.location.y
+                } else {
+                    self.lifeEndX = value.location.x
+                    self.lifeEndY = value.location.y
+                }
+                loadCenterPoint()
+                loadWidthAndHeight()
+                loadRotationOfLine()
+                updateRealmPos(start: CGPoint(x: lifeStartX, y: lifeStartY),
+                            end: CGPoint(x: lifeEndX, y: lifeEndY))
+            }
+            .onEnded { _ in
+                if self.lifeIsLocked || !anchorsAreVisible { return }
+                self.isDragging = false
+                updateRealmPos(start: CGPoint(x: lifeStartX, y: lifeStartY),
+                            end: CGPoint(x: lifeEndX, y: lifeEndY))
+            }
+            .simultaneously(with: doubleTapGesture())
+            .simultaneously(with: longPressGesture())
+    }
+    
+    
+    
+    // Basic Gestures
+    private func singleTapGesture() -> some Gesture {
+        TapGesture(count: 1).onEnded({ _ in
+            print("Tapped single")
+         })
+    }
+    
+    private func doubleTapGesture() -> some Gesture {
+        TapGesture(count: 2).onEnded({ _ in
+            print("Tapped double")
+            toggleMenuSettings()
+         })
+    }
+    
+    private func longPressGesture() -> some Gesture {
+        LongPressGesture(minimumDuration: 0.4).onEnded { _ in
+           anchorsAreVisible = !anchorsAreVisible
+       }
+    }
+    
+    
+    // Observers
     
     func observeView() {
         observeFromRealm()
@@ -287,8 +315,7 @@ struct LineDrawingManaged: View {
     }
     
     func observeFromRealm() {
-        if isDisabledChecker() {return}
-        if isDeletedChecker() {return}
+        if isDisabledChecker() || isDeletedChecker() {return}
         
         MVS.observeRealmManagedView() { temp in
             print("!!ManagedToolView!!")
@@ -328,6 +355,8 @@ struct LineDrawingManaged: View {
                     self.coordinateStack.append(coords)
                     animateToNextCoordinate()
                 }
+                
+                lifeArrowIsEnabled = temp.headIsEnabled
                 
                 if lifeIsLocked != temp.isLocked { lifeIsLocked = temp.isLocked}
             }
@@ -407,6 +436,7 @@ struct LineDrawingManaged: View {
             mv?.width = Int(lifeWidth)
             mv?.lineDash = Int(lifeLineDash)
             mv?.lastUserId = getFirebaseUserId() ?? CURRENT_USER_ID
+            mv?.headIsEnabled = lifeArrowIsEnabled
 //            guard let tMV = mv else { return }
 //            r.create(ManagedView.self, value: tMV, update: .modified)
             // TODO: Firebase Users ONLY
@@ -414,42 +444,32 @@ struct LineDrawingManaged: View {
         }
     }
     
-//    func updateFirebase(mv:ManagedView?) {
-//        // TODO: Firebase Users ONLY
-//        if !self.realmInstance.userIsLoggedIn() { return }
-//        
-//        if self.activityId.isEmpty || self.viewId.isEmpty {return}
-//        reference.setValue(mv?.toDict())
-//    }
-    
-    
     func loadFromRealm() {
-        if isDisabledChecker() {return}
-        if isDeletedChecker() {return}
-        let mv = realmInstance.object(ofType: ManagedView.self, forPrimaryKey: viewId)
-        guard let umv = mv else { return }
-        // set attributes
-        activityId = umv.boardId
-        lifeIsLocked = umv.isLocked
-        
-        lifeStartX = umv.startX
-        lifeStartY = umv.startY
-        lifeEndX = umv.endX
-        lifeEndY = umv.endY
-        lifeWidth = Double(umv.width)
-        lifeLineDash = Double(umv.lineDash)
-        
-        lifeColorRed = umv.colorRed
-        lifeColorGreen = umv.colorGreen
-        lifeColorBlue = umv.colorBlue
-        lifeColorAlpha = umv.colorAlpha
-        lifeColor = colorFromRGBA(red: lifeColorRed, green: lifeColorGreen, blue: lifeColorBlue, alpha: lifeColorAlpha)
-        
-        loadCenterPoint()
-        loadWidthAndHeight()
-        loadRotationOfLine()
+        if isDisabledChecker() || isDeletedChecker() {return}
+        if let umv = realmInstance.object(ofType: ManagedView.self, forPrimaryKey: viewId) {
+            // set attributes
+            activityId = umv.boardId
+            lifeIsLocked = umv.isLocked
+            
+            lifeStartX = umv.startX
+            lifeStartY = umv.startY
+            lifeEndX = umv.endX
+            lifeEndY = umv.endY
+            lifeWidth = Double(umv.width)
+            lifeLineDash = Double(umv.lineDash)
+            lifeArrowIsEnabled = umv.headIsEnabled
+            
+            lifeColorRed = umv.colorRed
+            lifeColorGreen = umv.colorGreen
+            lifeColorBlue = umv.colorBlue
+            lifeColorAlpha = umv.colorAlpha
+            lifeColor = colorFromRGBA(red: lifeColorRed, green: lifeColorGreen, blue: lifeColorBlue, alpha: lifeColorAlpha)
+            
+            loadCenterPoint()
+            loadWidthAndHeight()
+            loadRotationOfLine()
+        }
     }
-    
     
 }
 
