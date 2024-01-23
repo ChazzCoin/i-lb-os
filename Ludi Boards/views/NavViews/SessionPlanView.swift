@@ -142,17 +142,17 @@ struct SessionPlanView: View {
                 }
             }
             
-            Section(header: AlignLeft { HeaderText("Details") }) {
+            Section(header: AlignLeft { HeaderText("Session Details") }) {
                 SolTextField("Title", text: $title)
                 
                 DStack {
                     SolTextEditor("Description", text: $description)
                         .padding()
-                        .frame(minHeight: 100)
+                        .frame(minHeight: 125)
                     
                     SolTextEditor("Objective", text: $objective)
                         .padding()
-                        .frame(minHeight: 100)
+                        .frame(minHeight: 125)
                 }
                 
             }.clearSectionBackground()
@@ -180,19 +180,19 @@ struct SessionPlanView: View {
                 }
                 
                 VStack {
-                    ActivityPlanView(inComingAP: self.$currentTab, isShowing: .constant(true))
+                    ActivityPlanView(inComingAP: self.$currentTab, sessionId: self.$sessionId, isShowing: .constant(true))
                         .environmentObject(self.BEO)
                         .environmentObject(self.NavStack)
                 }
                 .padding()
-                .background(Color.white)
+                .background(Color.AOLGray)
                 .cornerRadius(15)
                 .shadow(color: .gray, radius: 10, x: 0, y: 0)
                 .padding()
                    
             }
             
-        }
+        }.clearSectionBackground()
         .onChange(of: self.BEO.currentSessionId) { _ in
             fetchSessionPlan()
         }
@@ -261,6 +261,7 @@ struct SessionPlanView: View {
             if self.sessionId != "new" {
                 runLoadingProcess()
                 fetchSessionPlan()
+                loadActivities()
             }
         }
     }
@@ -335,7 +336,8 @@ struct SessionPlanView: View {
     
     func loadActivities() {
         var temp = false
-        tabItems.append(self.currentTab)
+        tabItems.removeAll()
+        tabItems.append(newActivityPlan())
         for act in allActivities {
             if act.sessionId != self.sessionId { continue }
             if !temp {
