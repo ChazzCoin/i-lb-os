@@ -163,6 +163,9 @@ struct LineDrawingManaged: View {
                     isDisabled = true
                     return
                 }
+                
+                if let tdash = temp.lineDash { lifeLineDash = tdash }
+                if let thead = temp.headIsEnabled { lifeArrowIsEnabled = thead }
                 if let ts = temp.size { lifeWidth = ts }
                 if let tc = temp.color { lifeColor = tc }
                 if let tstroke = temp.stroke { lifeWidth = tstroke }
@@ -201,6 +204,8 @@ struct LineDrawingManaged: View {
                color: lifeColor,
                stroke: lifeWidth,
                position: CGPoint(x: lifeStartX, y: lifeStartY),
+               headIsEnabled: lifeArrowIsEnabled,
+               lineDash: lifeLineDash,
                toolType: "Line",
                level: ToolLevels.LINE.rawValue,
                isLocked: lifeIsLocked,

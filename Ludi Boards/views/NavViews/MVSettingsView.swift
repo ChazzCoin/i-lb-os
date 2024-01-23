@@ -30,6 +30,9 @@ struct SettingsView: View {
     @State var viewSize: CGFloat = 50
     @State var viewRotation: Double = 0
     @State var viewColor: Color = .black
+    @State var lineDash: CGFloat = 1
+    @State var headIsEnabled: Bool = true
+    
     @State var toolLevel: Int = ToolLevels.BASIC.rawValue
     @State var isLocked = false
     @State var viewId: String = ""
@@ -65,15 +68,50 @@ struct SettingsView: View {
                 }
             }
             
+            DStack {
+                Section {
+                    Toggle(isLocked ? "Locked" : "UnLocked", isOn: $isLocked)
+                        .onChange(of: isLocked, perform: { _ in
+                            let va = ViewAtts(viewId: viewId, isLocked: isLocked)
+                            CodiChannel.TOOL_ATTRIBUTES.send(value: va)
+                        })
+                }.padding()
+                
+                Section {
+                    Toggle(headIsEnabled ? "Arrow Visible" : "Arrow Not-Visible", isOn: $headIsEnabled)
+                        .onChange(of: headIsEnabled, perform: { _ in
+                            let va = ViewAtts(viewId: viewId, headIsEnabled: headIsEnabled)
+                            CodiChannel.TOOL_ATTRIBUTES.send(value: va)
+                        })
+                }.padding()
+            }
+            
+            
             Section(header: Text("Tool Settings").font(.headline)) {
                 // Settings
                 Section(header: Text("Size: \(Int(viewSize))")) {
                     
                     Slider(value: $viewSize,
-                       in: 15...300,
+                       in: 15...500,
                        onEditingChanged: { editing in
                             if !editing {
                                 let va = ViewAtts(viewId: viewId, size: viewSize)
+                                CodiChannel.TOOL_ATTRIBUTES.send(value: va)
+                            }
+                        }
+                    ).padding()
+                        .gesture(DragGesture().onChanged { _ in }, including: .subviews)
+                    
+                }
+                .padding(.horizontal)
+                
+                Section(header: Text("Dash/Dots: \(Int(lineDash))")) {
+                    
+                    Slider(value: $lineDash,
+                       in: 1...100,
+                       onEditingChanged: { editing in
+                            if !editing {
+                                let va = ViewAtts(viewId: viewId, lineDash: lineDash)
                                 CodiChannel.TOOL_ATTRIBUTES.send(value: va)
                             }
                         }
@@ -96,7 +134,7 @@ struct SettingsView: View {
                         Slider(
                             value: $viewRotation,
                             in: 0...360,
-                            step: 45,
+                            step: 15,
                             onEditingChanged: { editing in
                                 if !editing {
                                     let va = ViewAtts(viewId: viewId, rotation: viewRotation)
@@ -108,13 +146,7 @@ struct SettingsView: View {
                     }.padding(.horizontal)
                 }
                 
-                Section {
-                    Toggle(isLocked ? "Locked" : "UnLocked", isOn: $isLocked)
-                        .onChange(of: isLocked, perform: { _ in
-                            let va = ViewAtts(viewId: viewId, isLocked: isLocked)
-                            CodiChannel.TOOL_ATTRIBUTES.send(value: va)
-                        })
-                }.padding()
+               
                 
                 SolConfirmButton(
                     title: "Delete Tool",
@@ -228,6 +260,9 @@ struct SettingsView: View {
                 if toolLevel == ToolLevels.BASIC.rawValue {showColor = false}
                 else if toolLevel == ToolLevels.LINE.rawValue {showColor = true}
             }
+            
+            if let tdash = temp.lineDash { self.lineDash = tdash }
+            if let thead = temp.headIsEnabled { self.headIsEnabled = thead }
             if let ts = temp.size { self.viewSize = ts }
             if let tr = temp.rotation { self.viewRotation = tr }
             if let tc = temp.color { self.viewColor = tc }

@@ -25,7 +25,6 @@ struct ActivityPlanView: View {
     @State var confirmationPopupIsShowing = false
     
     @State var activityId = ""
-//    @State var sessionId = ""
     @State var title = ""
     @State var subTitle = ""
     @State var date = ""
@@ -48,11 +47,9 @@ struct ActivityPlanView: View {
     @State private var lineColor = Color.clear
     @State private var bgColor = Color.clear
     @State private var fieldName = ""
-    
     @State private var fieldRotation = 0.0
     
     @State var showShareSheet = false
-    
     @State var cancellables = Set<AnyCancellable>()
 
     func resetView() {
@@ -75,7 +72,7 @@ struct ActivityPlanView: View {
                     }
                 ).zIndex(2.0)
             
-                if self.sessionId != "SOL-LIVE-DEMO" && self.sessionId != "SOL"{
+                if self.sessionId != "SOL-LIVE-DEMO" && self.sessionId != "SOL" && self.activityId != "new" {
                     // Delete BUTTON
                     SolConfirmButton(
                         title: "Delete Activity",
@@ -343,7 +340,7 @@ struct ActivityPlanView: View {
             self.isCurrentPlan = false
         }
     }
-//    
+
     func startLoadingProcess() {
         isLoading = true
         // Simulate a network request or some processing

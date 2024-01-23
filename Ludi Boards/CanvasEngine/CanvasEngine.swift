@@ -165,11 +165,6 @@ struct CanvasEngine: View {
                         .onTapAnimation {
                             enableDrawing(drawingType: "LINE")
                         }
-                    DottedLineIconView()
-                        .frame(width: 50, height: 50)
-                        .onTapAnimation {
-                            enableDrawing(drawingType: "DOTTED-LINE")
-                        }
                     CurvedLineIconView()
                         .frame(width: 50, height: 50)
                         .onTapAnimation {

@@ -20,10 +20,6 @@ struct SessionPlanView: View {
     @State private var objective = ""
     @State private var isLive = true
     
-//    var tabbedActivity: ActivityPlan = ActivityPlan()
-    
-//    @StateObject var keyboardResponder = KeyboardResponder()
-    
     @ObservedResults(ActivityPlan.self) var allActivities
     var activities: Results<ActivityPlan> {
         return self.allActivities.filter("sessionId == %@", self.sessionId)

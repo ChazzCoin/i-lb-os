@@ -67,7 +67,7 @@ struct CurvedLineDrawingManaged: View {
     @State private var lifeColorGreen = 0.0
     @State private var lifeColorBlue = 0.0
     @State private var lifeColorAlpha = 1.0
-    @State private var lifeLineDash = 0.0
+    @State private var lifeLineDash = 1.0
     @State private var lifeHeadIsEnabled = true
     @State private var lifeRotation: Angle = Angle.zero
     
@@ -209,6 +209,9 @@ struct CurvedLineDrawingManaged: View {
                     isDisabled = true
                     return
                 }
+                
+                if let tdash = temp.lineDash { lifeLineDash = tdash }
+                if let thead = temp.headIsEnabled { lifeHeadIsEnabled = thead }
                 if let ts = temp.size { lifeWidth = ts }
                 if let tc = temp.color { lifeColor = tc }
                 if let tstroke = temp.stroke { lifeWidth = tstroke }
@@ -253,7 +256,7 @@ struct CurvedLineDrawingManaged: View {
                 self.originalLifeEnd = .zero
                 self.originalLifeCenter = .zero
             }
-            .simultaneously(with: longPressGesture())
+            .simultaneously(with: doubleTapForSettingsAndAnchors())
     }
     
     func handleFullDragTranslation(value: DragGesture.Value) {
@@ -293,6 +296,8 @@ struct CurvedLineDrawingManaged: View {
                    color: lifeColor,
                    stroke: lifeWidth,
                    position: CGPoint(x: lifeStartX, y: lifeStartY),
+                   headIsEnabled: lifeHeadIsEnabled,
+                   lineDash: lifeLineDash,
                    toolType: "Line",
                    level: ToolLevels.LINE.rawValue,
                    isLocked: lifeIsLocked,
@@ -319,7 +324,7 @@ struct CurvedLineDrawingManaged: View {
                 dragOffset = .zero
                 updateRealm()
             }
-            .simultaneously(with: longPressGesture())
+            .simultaneously(with: doubleTapForSettingsAndAnchors())
     }
 
     
@@ -354,7 +359,7 @@ struct CurvedLineDrawingManaged: View {
                 updateRealmPos(start: CGPoint(x: lifeStartX, y: lifeStartY),
                             end: CGPoint(x: lifeEndX, y: lifeEndY))
             }
-            .simultaneously(with: longPressGesture())
+            .simultaneously(with: doubleTapForSettingsAndAnchors())
     }
     
     // Basic Gestures
@@ -504,6 +509,7 @@ struct CurvedLineDrawingManaged: View {
             mv?.isLocked = self.isDragging ? true : lifeIsLocked
             mv?.toolType = "CURVED-LINE"
             mv?.width = Int(lifeWidth)
+            mv?.lineDash = Int(lifeLineDash)
             mv?.headIsEnabled = lifeHeadIsEnabled
             mv?.lastUserId = getFirebaseUserIdOrCurrentLocalId()
             // TODO: Firebase Users ONLY

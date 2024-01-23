@@ -42,6 +42,8 @@ class ViewAtts {
     var color: Color? = nil
     var stroke: Double? = nil
     var position: CGPoint? = nil
+    var headIsEnabled: Bool? = nil
+    var lineDash: CGFloat? = nil
     var toolType: String? = nil
     var level: Int = 0
     var isLocked: Bool? = nil
@@ -55,6 +57,8 @@ class ViewAtts {
         color: Color? = nil,
         stroke: Double? = nil,
         position: CGPoint? = nil,
+        headIsEnabled: Bool? = nil,
+        lineDash: CGFloat? = nil,
         toolType: String? = nil,
         level:Int=0,
         isLocked: Bool? = nil,
@@ -67,6 +71,8 @@ class ViewAtts {
         self.color = color
         self.stroke = stroke
         self.position = position
+        self.headIsEnabled = headIsEnabled
+        self.lineDash = lineDash
         self.toolType = toolType
         self.level = level
         self.isLocked = isLocked

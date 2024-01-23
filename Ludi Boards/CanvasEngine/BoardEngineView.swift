@@ -296,7 +296,7 @@ struct BoardEngine: View {
                          path.move(to: drawingStartPoint)
                          path.addLine(to: drawingEndPoint)
                      }
-                     .stroke(Color.red, style: StrokeStyle(lineWidth: 10, dash: [self.BEO.isDrawing == "DOTTED_LINE" ? 55 : 1]))
+                     .stroke(Color.red, style: StrokeStyle(lineWidth: 10, dash: [1]))
                  }
              }
             
@@ -714,7 +714,7 @@ struct BoardEngine: View {
             line.width = 10
             line.toolColor = "Black"
             line.toolType = self.BEO.isDrawing
-            line.lineDash = self.BEO.isDrawing == "DOTTED-LINE" ? 55 : 1
+            line.lineDash = 1
             line.dateUpdated = Int(Date().timeIntervalSince1970)
             r.create(ManagedView.self, value: line, update: .all)
             line.fireSave(id: line.id)
