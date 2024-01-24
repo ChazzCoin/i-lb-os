@@ -12,14 +12,13 @@ let TipLineDrawing = [
     "Tap anywhere on the field and begin dragging your finger to create a new line.",
     "Once you create the line, turn Line Drawing Mode off and double tap the line for settings.",
     "You will be able to modify the line as you please once you turn off Line Drawing Mode.",
-    "Suggestion 1: Straight Lines can be freely dragged around with your finger and is best to tap lines in the middle.",
-    "Suggestion 2: Curved Lines can NOT be dragged. Instead, tap the line and adjust freely based on its anchors."
+    "Suggestion 1: All Lines can be freely dragged around with your finger and is best to tap lines in the middle.",
 ]
 
 let TipLineGestures = [
-    "DOUBLE TAP for Tool Settings.",
-    "HOLD DOWN to toggle Line anchors.",
-    "Anchors allow more fine tuning to the lines.",
-    "STRAIGHT LINES can be freely dragged around with your finger.",
-    "CURVED LINES can NOT be freely dragged. Instead, utilize its 3 anchors to adjust its position.",
+    "DOUBLE TAP for Tool Settings + ANCHORS.",
+    "HOLD DOWN to toggle Line ANCHORS only.",
+    "ANCHORS allow more fine tuning to the lines.",
+    "ALL LINES can be freely dragged around with your finger.",
+    "CURVED LINES, utilize its 3 anchors to adjust its position.",
 ]

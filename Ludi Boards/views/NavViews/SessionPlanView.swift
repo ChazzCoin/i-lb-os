@@ -106,7 +106,7 @@ struct SessionPlanView: View {
                 if self.sessionId != "new" {
                     SolConfirmButton(
                         title: "Load Session",
-                        message: "Would you like to load this plan onto the board?",
+                        message: "Would you like to load this session onto the board?",
                         action: {
                             runLoading()
                             CodiChannel.SESSION_ON_ID_CHANGE.send(value: SessionChange(sessionId: sessionId, activityId: self.activities.first?.id ?? "nil"))
@@ -298,11 +298,11 @@ struct SessionPlanView: View {
         newSP.sessionDetails = description
         newSP.objectiveDetails = objective
         newSP.isOpen = isLive
-        newSP.ownerId = getFirebaseUserId() ?? CURRENT_USER_ID
+        newSP.ownerId = getFirebaseUserIdOrCurrentLocalId()
         // New Activity
         let newAP = ActivityPlan()
         newAP.sessionId = newSP.id
-        newAP.ownerId = getFirebaseUserId() ?? CURRENT_USER_ID
+        newAP.ownerId = getFirebaseUserIdOrCurrentLocalId()
         newAP.title = "\(title) Activity"
         newAP.orderIndex = 0
         newAP.isLocal = isLive
@@ -318,9 +318,9 @@ struct SessionPlanView: View {
     }
     
     func updateSessionPlan() {
-        if let sp = self.allActivities.realm?.thaw().findByField(SessionPlan.self, value: self.sessionId) {
-            self.allActivities.realm?.thaw().safeWrite { r in
-                sp.ownerId = getFirebaseUserId() ?? CURRENT_USER_ID
+        if let sp = self.BEO.realmInstance.findByField(SessionPlan.self, value: self.sessionId) {
+            self.BEO.realmInstance.safeWrite { r in
+                sp.ownerId = getFirebaseUserIdOrCurrentLocalId()
                 sp.title = title
                 sp.sessionDetails = description
                 sp.objectiveDetails = objective
@@ -334,6 +334,7 @@ struct SessionPlanView: View {
         var temp = false
         tabItems.removeAll()
         tabItems.append(newActivityPlan())
+        if self.sessionId == "new" { return }
         for act in allActivities {
             if act.sessionId != self.sessionId { continue }
             if !temp {

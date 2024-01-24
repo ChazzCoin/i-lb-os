@@ -34,18 +34,11 @@ struct ManagedViewBoardTool: View {
 
 
 struct enableManagedViewTool : ViewModifier {
+    
     @State var viewId: String
     @State var activityId: String
     @EnvironmentObject var BEO: BoardEngineObject
-    
     @StateObject var commander = CommandController()
-    
-//    @State private var currentUserId = "iphone"
-//    @State private var lastUserId = ""
-//    let minSizeWH = 100.0
-//
-//    @State var isWriting = false
-//    @State private var updateCount = 0
     @GestureState var dragOffset = CGSize.zero
     
     func body(content: Content) -> some View {

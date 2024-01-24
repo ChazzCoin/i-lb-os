@@ -116,7 +116,7 @@ struct LineDrawingManaged: View {
         .overlay(
             Triangle()
                 .fill(anchorsAreVisible ? Color.AIMYellow : lifeColor)
-                .frame(width: 125, height: 125) // Increase size for finger tapping
+                .frame(width: (lifeWidth*2).bound(to: 125...1000), height: (lifeWidth*2).bound(to: 125...1000)) // Increase size for finger tapping
                 .opacity(lifeArrowIsEnabled ? 1 : 0) // Invisible
                 .rotationEffect(Angle(degrees: calculateAngle(startX: lifeStartX, startY: lifeStartY, endX: lifeEndX, endY: lifeEndY)))
                 .position(x: lifeEndX, y: lifeEndY)

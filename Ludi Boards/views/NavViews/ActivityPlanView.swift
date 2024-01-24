@@ -65,7 +65,7 @@ struct ActivityPlanView: View {
                 // SAVE BUTTON
                 SolConfirmButton(
                     title: "Save Activity",
-                    message: "Would you like to save this plan?",
+                    message: "Would you like to save this activity?",
                     action: {
                         saveActivityPlan()
                         isShowing = false
@@ -76,7 +76,7 @@ struct ActivityPlanView: View {
                     // Delete BUTTON
                     SolConfirmButton(
                         title: "Delete Activity",
-                        message: "Would you like to delete this plan?",
+                        message: "Would you like to delete this activity?",
                         action: {
                             startLoadingProcess()
                             if let item = realmInstance.findByField(ActivityPlan.self, field: "id", value: self.activityId) {
@@ -92,9 +92,9 @@ struct ActivityPlanView: View {
                 }
             
                 if self.activityId != "new" {
-                    SolButton(
+                    SolConfirmButton(
                         title: "Load Activity onto Board",
-                        
+                        message: "Would you like to load this activity?",
                         action: {
                             CodiChannel.SESSION_ON_ID_CHANGE.send(value: SessionChange(sessionId: self.sessionId, activityId: self.activityId))
                             self.isCurrentPlan = true
