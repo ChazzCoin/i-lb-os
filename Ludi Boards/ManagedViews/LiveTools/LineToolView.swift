@@ -20,14 +20,13 @@ struct LineDrawingManaged: View {
     
     @State private var coordinateStack: [[String:CGPoint]] = []
     
-    let realmInstance = realm()
     @State private var managedViewNotificationToken: NotificationToken? = nil
     @State private var MVS: SingleManagedViewService = SingleManagedViewService()
     @State private var isDisabled = false
     @State private var lifeIsLocked = false
     @State private var lifeDateUpdated = Int(Date().timeIntervalSince1970)
     
-    @State private var lifeArrowIsEnabled = true
+    @State private var lifeHeadIsEnabled = true
     @State private var lifeCenterPoint = CGPoint.zero
     @State private var lifeStartX: CGFloat = 0.0
     @State private var lifeStartY: CGFloat = 0.0
@@ -117,7 +116,7 @@ struct LineDrawingManaged: View {
             Triangle()
                 .fill(anchorsAreVisible ? Color.AIMYellow : lifeColor)
                 .frame(width: (lifeWidth*2).bound(to: 125...1000), height: (lifeWidth*2).bound(to: 125...1000)) // Increase size for finger tapping
-                .opacity(lifeArrowIsEnabled ? 1 : 0) // Invisible
+                .opacity(lifeHeadIsEnabled ? 1 : 0) // Invisible
                 .rotationEffect(Angle(degrees: calculateAngle(startX: lifeStartX, startY: lifeStartY, endX: lifeEndX, endY: lifeEndY)))
                 .position(x: lifeEndX, y: lifeEndY)
                 .gesture(singleAnchorDragGesture(isStart: false))
@@ -134,7 +133,7 @@ struct LineDrawingManaged: View {
             Circle()
                 .fill(Color.AIMYellow)
                 .frame(width: 150, height: 150) // Increase size for finger tapping
-                .opacity(anchorsAreVisible && !lifeArrowIsEnabled  ? 1 : 0) // Invisible
+                .opacity(anchorsAreVisible && !lifeHeadIsEnabled  ? 1 : 0) // Invisible
                 .position(x: lifeEndX, y: lifeEndY)
                 .gesture(singleAnchorDragGesture(isStart: false))
         )
@@ -150,41 +149,51 @@ struct LineDrawingManaged: View {
         .gesture(fullLineDragGesture())
         .onAppear() {
         
-            MVS.initialize(realm: self.realmInstance, activityId: self.activityId, viewId: self.viewId)
+            MVS.initialize(realm: self.BEO.realmInstance, activityId: self.activityId, viewId: self.viewId)
             loadFromRealm()
-            
             observeView()
 
-            CodiChannel.TOOL_ATTRIBUTES.receive(on: RunLoop.main) { vId in
-                let temp = vId as! ViewAtts
-                if viewId != temp.viewId {return}
-                if temp.isDeleted {
-                    isDisabled = true
-                    return
-                }
-                
-                if let tdash = temp.lineDash { lifeLineDash = tdash }
-                if let thead = temp.headIsEnabled { lifeArrowIsEnabled = thead }
-                if let ts = temp.size { lifeWidth = ts }
-                if let tc = temp.color { lifeColor = tc }
-                if let tstroke = temp.stroke { lifeWidth = tstroke }
-                if let tl = temp.isLocked { lifeIsLocked = tl }
-                
-                if temp.stateAction == "close" {
-                    popUpIsVisible = false
-                }
-                
-                updateRealm()
-            }.store(in: &cancellables)
-            CodiChannel.MENU_WINDOW_CONTROLLER.receive(on: RunLoop.main) { vId in
-                let temp = vId as! WindowController
-                if temp.windowId != self.menuWindowId {return}
-                if temp.stateAction == "close" {
-                    popUpIsVisible = false
-                    anchorsAreVisible = false
-                }
-            }.store(in: &cancellables)
+            // Codi Channels
+            onToolAttributes()
+            onWindowController()
         }
+    }
+    
+    @MainActor
+    func onToolAttributes() {
+        CodiChannel.TOOL_ATTRIBUTES.receive(on: RunLoop.main) { vId in
+            let temp = vId as! ViewAtts
+            if viewId != temp.viewId {return}
+            if temp.isDeleted {
+                isDisabled = true
+                return
+            }
+            
+            if let tdash = temp.lineDash { lifeLineDash = tdash }
+            if let thead = temp.headIsEnabled { lifeHeadIsEnabled = thead }
+            if let ts = temp.size { lifeWidth = ts }
+            if let tc = temp.color { lifeColor = tc }
+            if let tstroke = temp.stroke { lifeWidth = tstroke }
+            if let tl = temp.isLocked { lifeIsLocked = tl }
+            
+            if temp.stateAction == "close" {
+                popUpIsVisible = false
+            }
+            
+            updateRealm()
+        }.store(in: &cancellables)
+    }
+    
+    @MainActor
+    func onWindowController() {
+        CodiChannel.MENU_WINDOW_CONTROLLER.receive(on: RunLoop.main) { vId in
+            let temp = vId as! WindowController
+            if temp.windowId != self.menuWindowId {return}
+            if temp.stateAction == "close" {
+                popUpIsVisible = false
+                anchorsAreVisible = false
+            }
+        }.store(in: &cancellables)
     }
     
     private func toggleMenuSettings() {
@@ -203,7 +212,7 @@ struct LineDrawingManaged: View {
                color: lifeColor,
                stroke: lifeWidth,
                position: CGPoint(x: lifeStartX, y: lifeStartY),
-               headIsEnabled: lifeArrowIsEnabled,
+               headIsEnabled: lifeHeadIsEnabled,
                lineDash: lifeLineDash,
                toolType: "LINE",
                level: ToolLevels.LINE.rawValue,
@@ -360,7 +369,7 @@ struct LineDrawingManaged: View {
                     animateToNextCoordinate()
                 }
                 
-                lifeArrowIsEnabled = temp.headIsEnabled
+                lifeHeadIsEnabled = temp.headIsEnabled
                 
                 if lifeIsLocked != temp.isLocked { lifeIsLocked = temp.isLocked}
             }
@@ -421,9 +430,9 @@ struct LineDrawingManaged: View {
     func updateRealm(start: CGPoint? = nil, end: CGPoint? = nil) {
         if isDisabledChecker() {return}
         if isDeletedChecker() {return}
-        let mv = realmInstance.findByField(ManagedView.self, value: viewId)
+        let mv = self.BEO.realmInstance.findByField(ManagedView.self, value: viewId)
         if mv == nil { return }
-        realmInstance.safeWrite { r in
+        self.BEO.realmInstance.safeWrite { r in
             mv?.startX = Double(start?.x ?? CGFloat(lifeStartX))
             mv?.startY = Double(start?.y ?? CGFloat(lifeStartY))
             mv?.endX = Double(end?.x ?? CGFloat(lifeEndX))
@@ -439,18 +448,15 @@ struct LineDrawingManaged: View {
             mv?.toolType = "LINE"
             mv?.width = Int(lifeWidth)
             mv?.lineDash = Int(lifeLineDash)
-            mv?.lastUserId = getFirebaseUserId() ?? CURRENT_USER_ID
-            mv?.headIsEnabled = lifeArrowIsEnabled
-//            guard let tMV = mv else { return }
-//            r.create(ManagedView.self, value: tMV, update: .modified)
-            // TODO: Firebase Users ONLY
+            mv?.lastUserId = getFirebaseUserIdOrCurrentLocalId()
+            mv?.headIsEnabled = lifeHeadIsEnabled
             MVS.updateFirebase(mv: mv)
         }
     }
     
     func loadFromRealm() {
         if isDisabledChecker() || isDeletedChecker() {return}
-        if let umv = realmInstance.object(ofType: ManagedView.self, forPrimaryKey: viewId) {
+        if let umv = self.BEO.realmInstance.object(ofType: ManagedView.self, forPrimaryKey: viewId) {
             // set attributes
             activityId = umv.boardId
             lifeIsLocked = umv.isLocked
@@ -461,7 +467,7 @@ struct LineDrawingManaged: View {
             lifeEndY = umv.endY
             lifeWidth = Double(umv.width)
             lifeLineDash = Double(umv.lineDash)
-            lifeArrowIsEnabled = umv.headIsEnabled
+            lifeHeadIsEnabled = umv.headIsEnabled
             
             lifeColorRed = umv.colorRed
             lifeColorGreen = umv.colorGreen
