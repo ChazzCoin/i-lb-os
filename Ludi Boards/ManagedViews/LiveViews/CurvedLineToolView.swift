@@ -164,7 +164,7 @@ struct CurvedLineDrawingManaged: View {
         .overlay(
             Triangle()
                 .fill(anchorsAreVisible ? Color.AIMYellow : lifeColor)
-                .frame(width: 125, height: 125) // Increase size for finger tapping
+                .frame(width: (lifeWidth*2).bound(to: 125...1000), height: (lifeWidth*2).bound(to: 125...1000)) // Increase size for finger tapping
                 .opacity(lifeHeadIsEnabled ? 1 : 0) // Invisible
                 .rotationEffect(Angle(degrees: calculateAngleAtEndPointOfQuadCurve()))
                 .position(x: lifeEndX, y: lifeEndY)
@@ -182,7 +182,7 @@ struct CurvedLineDrawingManaged: View {
             Circle()
                 .fill(Color.AIMYellow)
                 .frame(width: 150, height: 150) // Increase size for finger tapping
-                .opacity(anchorsAreVisible ? 1 : 0) // Invisible
+                .opacity(anchorsAreVisible && !lifeHeadIsEnabled ? 1 : 0) // Invisible
                 .position(x: lifeEndX, y: lifeEndY)
                 .gesture(dragSingleAnchor(isStart: false))
         )
@@ -210,13 +210,12 @@ struct CurvedLineDrawingManaged: View {
                     return
                 }
                 
+                if let tl = temp.isLocked { lifeIsLocked = tl }
                 if let tdash = temp.lineDash { lifeLineDash = tdash }
                 if let thead = temp.headIsEnabled { lifeHeadIsEnabled = thead }
                 if let ts = temp.size { lifeWidth = ts }
                 if let tc = temp.color { lifeColor = tc }
                 if let tstroke = temp.stroke { lifeWidth = tstroke }
-                
-                if let tl = temp.isLocked { lifeIsLocked = tl }
                 
                 if temp.stateAction == "close" {
                     popUpIsVisible = false
@@ -250,6 +249,7 @@ struct CurvedLineDrawingManaged: View {
                 handleFullDragTranslation(value: value)
             }
             .onEnded { value in
+                if self.lifeIsLocked { return }
                 handleFullDragTranslation(value: value)
                 self.isDragging = false
                 self.originalLifeStart = .zero
@@ -257,6 +257,7 @@ struct CurvedLineDrawingManaged: View {
                 self.originalLifeCenter = .zero
             }
             .simultaneously(with: doubleTapForSettingsAndAnchors())
+            .simultaneously(with: longPressGesture())
     }
     
     func handleFullDragTranslation(value: DragGesture.Value) {
@@ -285,10 +286,10 @@ struct CurvedLineDrawingManaged: View {
             popUpIsVisible = !popUpIsVisible
             CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(
                 windowId: self.menuWindowId,
-               stateAction: popUpIsVisible ? "open" : "close",
-               viewId: viewId,
-               x: self.lifeStartX,
-               y: self.lifeStartY
+                stateAction: popUpIsVisible ? "open" : "close",
+                viewId: viewId,
+                x: self.lifeStartX,
+                y: self.lifeStartY
             ))
             if popUpIsVisible {
                 CodiChannel.TOOL_ATTRIBUTES.send(value: ViewAtts(
@@ -298,16 +299,15 @@ struct CurvedLineDrawingManaged: View {
                    position: CGPoint(x: lifeStartX, y: lifeStartY),
                    headIsEnabled: lifeHeadIsEnabled,
                    lineDash: lifeLineDash,
-                   toolType: "Line",
+                   toolType: "LINE",
                    level: ToolLevels.LINE.rawValue,
                    isLocked: lifeIsLocked,
                    stateAction: popUpIsVisible ? "open" : "close")
                 )
             }
         })
-        .simultaneously(with: longPressGesture())
+        
     }
-
     
     func dragCurvedCenterAnchor() -> some Gesture {
         DragGesture()
@@ -325,9 +325,9 @@ struct CurvedLineDrawingManaged: View {
                 updateRealm()
             }
             .simultaneously(with: doubleTapForSettingsAndAnchors())
+            .simultaneously(with: longPressGesture())
     }
 
-    
     // Drag gesture definition
     private func dragSingleAnchor(isStart: Bool) -> some Gesture {
         DragGesture()
@@ -360,6 +360,7 @@ struct CurvedLineDrawingManaged: View {
                             end: CGPoint(x: lifeEndX, y: lifeEndY))
             }
             .simultaneously(with: doubleTapForSettingsAndAnchors())
+            .simultaneously(with: longPressGesture())
     }
     
     // Basic Gestures
@@ -397,6 +398,10 @@ struct CurvedLineDrawingManaged: View {
                 if self.isDragging {return}
                 if activityId != temp.boardId { activityId = temp.boardId }
                 self.MVS.isDeleted = temp.isDeleted
+                
+                lifeHeadIsEnabled = temp.headIsEnabled
+                lifeIsLocked = temp.isLocked
+                
                 if lifeWidth != Double(temp.width) {lifeWidth = Double(temp.width)}
                 if lifeLineDash != Double(temp.lineDash) {lifeLineDash = Double(temp.lineDash)}
                 
@@ -427,9 +432,7 @@ struct CurvedLineDrawingManaged: View {
                     animateToNextCoordinate()
                 }
                 
-                lifeHeadIsEnabled = temp.headIsEnabled
                 
-                if lifeIsLocked != temp.isLocked { lifeIsLocked = temp.isLocked}
             }
             
         }
@@ -488,8 +491,7 @@ struct CurvedLineDrawingManaged: View {
     }
     
     func updateRealm(start: CGPoint? = nil, end: CGPoint? = nil) {
-        if isDisabledChecker() {return}
-        if isDeletedChecker() {return}
+        if isDisabledChecker() || isDeletedChecker() {return}
         let mv = realmInstance.findByField(ManagedView.self, value: viewId)
         if mv == nil { return }
         realmInstance.safeWrite { r in
@@ -518,8 +520,7 @@ struct CurvedLineDrawingManaged: View {
     }
     
     func loadFromRealm() {
-        if isDisabledChecker() {return}
-        if isDeletedChecker() {return}
+        if isDisabledChecker() || isDeletedChecker() {return}
         if let umv = realmInstance.object(ofType: ManagedView.self, forPrimaryKey: viewId) {
             // set attributes
             activityId = umv.boardId

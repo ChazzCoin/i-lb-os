@@ -130,12 +130,11 @@ struct LineDrawingManaged: View {
                 .position(x: lifeStartX, y: lifeStartY)
                 .gesture(singleAnchorDragGesture(isStart: true))
         )
-//        // Create a triangle at lifeEndX/lifeEndY and then point it in the correct direction.
         .overlay(
             Circle()
                 .fill(Color.AIMYellow)
                 .frame(width: 150, height: 150) // Increase size for finger tapping
-                .opacity(anchorsAreVisible ? 1 : 0) // Invisible
+                .opacity(anchorsAreVisible && !lifeArrowIsEnabled  ? 1 : 0) // Invisible
                 .position(x: lifeEndX, y: lifeEndY)
                 .gesture(singleAnchorDragGesture(isStart: false))
         )
@@ -206,7 +205,7 @@ struct LineDrawingManaged: View {
                position: CGPoint(x: lifeStartX, y: lifeStartY),
                headIsEnabled: lifeArrowIsEnabled,
                lineDash: lifeLineDash,
-               toolType: "Line",
+               toolType: "LINE",
                level: ToolLevels.LINE.rawValue,
                isLocked: lifeIsLocked,
                stateAction: popUpIsVisible ? "open" : "close")
@@ -490,7 +489,7 @@ struct MatchedShape: View {
             path.addQuadCurve(to: endPoint,
                               control: controlPoint1)
         }
-        .stroke(Color.white.opacity(0.001), style: StrokeStyle(lineWidth: 200.0, dash: [1]))
+        .stroke(Color.white.opacity(0.01), style: StrokeStyle(lineWidth: 300.0, dash: [1]))
     }
 }
 

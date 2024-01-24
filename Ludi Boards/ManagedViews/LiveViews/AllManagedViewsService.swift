@@ -62,8 +62,6 @@ class SingleManagedViewService: ObservableObject {
     @Published var isLoggedIn: Bool = false
     @Published var isWriting: Bool = false
     
-//    @Published var onChange: () -> Void = {}
-    
     private var nofityToken: NotificationToken? = nil
     @Published var managedViewNotificationToken: NotificationToken? = nil
     
@@ -103,8 +101,7 @@ class SingleManagedViewService: ObservableObject {
     
     func observeFirebaseActivity(activityId: String) {
         
-        if !self.isLoggedIn
-            || !self.realmInstance.isLiveSessionPlan(activityId: activityId) { return }
+        if !self.isLoggedIn || !self.realmInstance.isLiveSessionPlan(activityId: activityId) { return }
         
         guard !isObserving else { return }
         observerHandle = reference.child(activityId).observe(.childAdded, with: { snapshot in

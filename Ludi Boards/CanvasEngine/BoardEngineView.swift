@@ -208,6 +208,11 @@ class BoardEngineObject : ObservableObject {
                 tool.isDeleted = true
             }
         }
+        self.refreshBoard()
+    }
+    func refreshBoard() {
+        self.boardRefreshFlag = false
+        self.boardRefreshFlag = true
     }
     
 }

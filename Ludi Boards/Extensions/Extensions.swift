@@ -9,12 +9,29 @@ import Foundation
 import CoreGraphics
 import UIKit
 
-
-
 func hideKeyboard() {
     UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
 }
 
+extension Comparable {
+    func bound(minValue: Self, maxValue: Self) -> Self {
+        return min(max(self, minValue), maxValue)
+    }
+}
+
+
+extension DispatchQueue {
+    static func executeAfter(seconds: TimeInterval, on queue: DispatchQueue = .main, action: @escaping () -> Void) {
+        queue.asyncAfter(deadline: .now() + seconds, execute: action)
+    }
+}
+
+
+extension Double {
+    func bound(to range: ClosedRange<Double>) -> Double {
+        return min(max(self, range.lowerBound), range.upperBound)
+    }
+}
 
 
 extension Array where Element: Equatable {
@@ -239,17 +256,4 @@ extension CGPoint {
     }
 }
 
-
-extension DispatchQueue {
-    static func executeAfter(seconds: TimeInterval, on queue: DispatchQueue = .main, action: @escaping () -> Void) {
-        queue.asyncAfter(deadline: .now() + seconds, execute: action)
-    }
-}
-
-
-extension Double {
-    func bound(to range: ClosedRange<Double>) -> Double {
-        return min(max(self, range.lowerBound), range.upperBound)
-    }
-}
 

@@ -33,6 +33,7 @@ struct SettingsView: View {
     @State var lineDash: CGFloat = 1
     @State var headIsEnabled: Bool = true
     
+    @State var toolType: String = "BASIC"
     @State var toolLevel: Int = ToolLevels.BASIC.rawValue
     @State var isLocked = false
     @State var viewId: String = ""
@@ -68,26 +69,30 @@ struct SettingsView: View {
                 }
             }
             
-            DStack {
-                Section {
-                    Toggle(isLocked ? "Locked" : "UnLocked", isOn: $isLocked)
-                        .onChange(of: isLocked, perform: { _ in
-                            let va = ViewAtts(viewId: viewId, isLocked: isLocked)
-                            CodiChannel.TOOL_ATTRIBUTES.send(value: va)
-                        })
-                }.padding()
-                
-                Section {
-                    Toggle(headIsEnabled ? "Arrow Visible" : "Arrow Not-Visible", isOn: $headIsEnabled)
-                        .onChange(of: headIsEnabled, perform: { _ in
-                            let va = ViewAtts(viewId: viewId, headIsEnabled: headIsEnabled)
-                            CodiChannel.TOOL_ATTRIBUTES.send(value: va)
-                        })
-                }.padding()
-            }
-            
-            
             Section(header: Text("Tool Settings").font(.headline)) {
+                
+                DStack {
+                    Section {
+                        Toggle(isLocked ? "Locked" : "UnLocked", isOn: $isLocked)
+                            .onChange(of: isLocked, perform: { _ in
+                                let va = ViewAtts(viewId: viewId, isLocked: isLocked)
+                                CodiChannel.TOOL_ATTRIBUTES.send(value: va)
+                            })
+                    }.padding()
+                    
+                    // Line Tool Only
+                    if toolType == "LINE" {
+                        Section {
+                            Toggle(headIsEnabled ? "Arrow Visible" : "Arrow Not-Visible", isOn: $headIsEnabled)
+                                .onChange(of: headIsEnabled, perform: { _ in
+                                    let va = ViewAtts(viewId: viewId, headIsEnabled: headIsEnabled)
+                                    CodiChannel.TOOL_ATTRIBUTES.send(value: va)
+                                })
+                        }.padding()
+                    }
+                    
+                }
+                
                 // Settings
                 Section(header: Text("Size: \(Int(viewSize))")) {
                     
@@ -105,23 +110,28 @@ struct SettingsView: View {
                 }
                 .padding(.horizontal)
                 
-                Section(header: Text("Dash/Dots: \(Int(lineDash))")) {
-                    
-                    Slider(value: $lineDash,
-                       in: 1...100,
-                       onEditingChanged: { editing in
-                            if !editing {
-                                let va = ViewAtts(viewId: viewId, lineDash: lineDash)
-                                CodiChannel.TOOL_ATTRIBUTES.send(value: va)
-                            }
-                        }
-                    ).padding()
-                        .gesture(DragGesture().onChanged { _ in }, including: .subviews)
-                    
-                }
-                .padding(.horizontal)
                 
-                if self.showColor {
+                // Line Tool Only
+                if toolType == "LINE" {
+                    Section(header: Text("Dash/Dots: \(Int(lineDash))")) {
+                        
+                        Slider(value: $lineDash,
+                           in: 1...100,
+                           onEditingChanged: { editing in
+                                if !editing {
+                                    let va = ViewAtts(viewId: viewId, lineDash: lineDash)
+                                    CodiChannel.TOOL_ATTRIBUTES.send(value: va)
+                                }
+                            }
+                        ).padding()
+                            .gesture(DragGesture().onChanged { _ in }, including: .subviews)
+                        
+                    }
+                    .padding(.horizontal)
+                }
+                
+                
+                if toolType == "LINE" {
                     Text("Color: \(viewColor.uiColor.accessibilityName)")
                     ColorListPicker() { color in
                         print("Color Picker Tapper")
@@ -145,8 +155,6 @@ struct SettingsView: View {
                         
                     }.padding(.horizontal)
                 }
-                
-               
                 
                 SolConfirmButton(
                     title: "Delete Tool",
@@ -173,7 +181,7 @@ struct SettingsView: View {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack {
                         ForEach(self.managedViews.basicTools) { item in
-                            if item.toolType == "LINE" || item.toolType == "DOTTED-LINE" {
+                            if item.toolType == "LINE" {
                                 if self.viewId == item.id {
                                     BorderedView(color: .red) {
                                         LineIconView(isBgColor: true)
@@ -260,7 +268,7 @@ struct SettingsView: View {
                 if toolLevel == ToolLevels.BASIC.rawValue {showColor = false}
                 else if toolLevel == ToolLevels.LINE.rawValue {showColor = true}
             }
-            
+            if let ttype = temp.toolType { self.toolType = ttype }
             if let tdash = temp.lineDash { self.lineDash = tdash }
             if let thead = temp.headIsEnabled { self.headIsEnabled = thead }
             if let ts = temp.size { self.viewSize = ts }
