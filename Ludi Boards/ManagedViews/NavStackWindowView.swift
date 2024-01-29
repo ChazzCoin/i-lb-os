@@ -112,7 +112,6 @@ struct NavStackWindow : View {
         self.viewBuilder = { AnyView(viewBuilder()) }
     }
     
-    
     @State private var isFloatable = false
     @State var cancellables = Set<AnyCancellable>()
     

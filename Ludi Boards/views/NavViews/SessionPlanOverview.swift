@@ -36,16 +36,35 @@ struct SessionPlanOverview: View {
     @State private var isLoading: Bool = false
     @State private var showNewPlanSheet = false
     
+    @State private var showNewTeamSheet = false
+    @State private var showNewPlayerRefSheet = false
+    
     @State private var isLoggedIn = false
 
     var body: some View {
         Form {
+            
             Section(header: Text("Manage")) {
+                
                 SolButton(title: "New Session", action: {
                     print("New Session Button")
                     showNewPlanSheet = true
                 })
+                
+                DStack {
+                    SolButton(title: "Create Team", action: {
+                        print("Create Team Button")
+                        showNewTeamSheet = true
+                    })
+                    
+                    SolButton(title: "Create Player", action: {
+                        print("Create Player Button")
+                        showNewPlayerRefSheet = true
+                    })
+                }
+                
             }.clearSectionBackground()
+            
             Section(header: Text("Sessions")) {
                 if !(self.sessionPlans.realm?.isInWriteTransaction ?? true) {
                     List(hostedSessionPlans) { sessionPlan in
@@ -94,6 +113,15 @@ struct SessionPlanOverview: View {
                 .environmentObject(self.BEO)
                 .environmentObject(self.NavStack)
         }
+        
+        .sheet(isPresented: $showNewTeamSheet) {
+            TeamView(teamId: "new")
+        }
+        
+        .sheet(isPresented: $showNewPlayerRefSheet) {
+            PlayerRefView(playerId: "new")
+        }
+        
         .refreshable {
             fetchAllSessionsFromFirebase()
         }

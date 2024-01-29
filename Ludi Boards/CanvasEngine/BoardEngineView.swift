@@ -269,6 +269,11 @@ struct BoardEngine: View {
     var body: some View {
          ZStack() {
              
+//             XShape()
+//                 .stroke(Color.red, style: StrokeStyle(lineWidth: 100, dash: [1]))
+//                .frame(width: 500, height: 500)
+////                .background(Color.red)
+//             
              if self.BEO.boardRefreshFlag {
                  ForEach(self.basicTools) { item in
                      if !item.isDeleted {

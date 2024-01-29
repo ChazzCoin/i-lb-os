@@ -34,13 +34,6 @@ class GlobalPositioningSystem: ObservableObject {
                 }
             }
         }
-//        if let window = UIApplication.shared.windows.first {
-//            DispatchQueue.main.async {
-//                self.screenSize = window.frame.size
-//                let uiInsets = window.safeAreaInsets
-//                self.safeAreaInsets = EdgeInsets(top: uiInsets.top, leading: uiInsets.left, bottom: uiInsets.bottom, trailing: uiInsets.right)
-//            }
-//        }
     }
 
     // Function to get coordinates for specified area
