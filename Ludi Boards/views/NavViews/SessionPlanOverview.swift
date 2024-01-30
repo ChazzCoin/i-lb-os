@@ -36,6 +36,8 @@ struct SessionPlanOverview: View {
     @State private var isLoading: Bool = false
     @State private var showNewPlanSheet = false
     
+    @State private var currentTeamId = ""
+    @State private var showCurrentTeamSheet = false
     @State private var showNewTeamSheet = false
     @State private var showNewPlayerRefSheet = false
     
@@ -46,12 +48,12 @@ struct SessionPlanOverview: View {
             
             Section(header: Text("Manage")) {
                 
-                SolButton(title: "New Session", action: {
-                    print("New Session Button")
-                    showNewPlanSheet = true
-                })
-                
                 DStack {
+                    SolButton(title: "Create Session", action: {
+                        print("New Session Button")
+                        showNewPlanSheet = true
+                    })
+                    
                     SolButton(title: "Create Team", action: {
                         print("Create Team Button")
                         showNewTeamSheet = true
@@ -65,38 +67,19 @@ struct SessionPlanOverview: View {
                 
             }.clearSectionBackground()
             
-            Section(header: Text("Sessions")) {
-                if !(self.sessionPlans.realm?.isInWriteTransaction ?? true) {
-                    List(hostedSessionPlans) { sessionPlan in
-                        NavigationLink(
-                            destination: SessionPlanView(sessionId: sessionPlan.id, isShowing: .constant(true), isMasterWindow: false)
-                                .environmentObject(self.BEO)
-                                .environmentObject(self.NavStack)
-                        ) {
-                            SessionPlanThumbView(sessionPlan: sessionPlan)
-                        }
-                    }
+            Section(header: Text("Teams")) {
+                TeamListView() { team in
+                    print("\(team) has been clicked.")
+                    currentTeamId = team.id
+                    showCurrentTeamSheet = true
                 }
-            }.clearSectionBackground()
-
-            if self.BEO.isLoggedIn {
-                Section(header: Text("Shared Sessions")) {
-                    if !(self.sessionPlans.realm?.isInWriteTransaction ?? true)  {
-                        List(sharedSessionPlans, id: \.self) { sessionPlan in
-                            
-                            NavigationLink(
-                                destination: SessionPlanView(sessionId: sessionPlan.id, isShowing: .constant(true), isMasterWindow: false)
-                                    .environmentObject(self.BEO)
-                                    .environmentObject(self.NavStack)
-                            ) {
-                                SessionPlanThumbView(sessionPlan: sessionPlan)
-                            }
-
-                        }
-                    }
-                    
-                }.clearSectionBackground()
             }
+            
+            Section(header: Text("Sessions")) {
+                SearchableSessionListView()
+                    .environmentObject(self.BEO)
+                    .environmentObject(self.NavStack)
+            }.clearSectionBackground()
             
         }
         .onAppear() {
@@ -113,13 +96,15 @@ struct SessionPlanOverview: View {
                 .environmentObject(self.BEO)
                 .environmentObject(self.NavStack)
         }
-        
+        .sheet(isPresented: $showCurrentTeamSheet) {
+            TeamView(teamId: $currentTeamId, isShowing: $showCurrentTeamSheet)
+        }
         .sheet(isPresented: $showNewTeamSheet) {
-            TeamView(teamId: "new")
+            TeamView(teamId: .constant("new"), isShowing: $showNewTeamSheet)
         }
         
         .sheet(isPresented: $showNewPlayerRefSheet) {
-            PlayerRefView(playerId: "new")
+            PlayerRefView(playerId: .constant("new"), isShowing: $showNewPlayerRefSheet)
         }
         
         .refreshable {

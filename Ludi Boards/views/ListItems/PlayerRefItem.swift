@@ -9,16 +9,23 @@ import Foundation
 import SwiftUI
 
 struct PlayerRefItemView: View {
-    var player: PlayerRef
+    @Binding var playerId: String
     
-    init(player: PlayerRef) {
-        self.player = player
-    }
+    @State var realmInstance = newRealm()
+    
+    @State var playerName: String = ""
+    @State var playerPosition: String = ""
+    @State var playerNumber: String = ""
+    @State var playerFoot: String = ""
+    @State var playerHand: String = ""
+    @State var playerAge: String = ""
+    @State var playerYear: String = ""
+    @State var playerImgUrl: String = ""
 
     var body: some View {
         HStack {
             // Player's image
-            if let imageUrl = URL(string: player.imgUrl), !player.imgUrl.isEmpty {
+            if let imageUrl = URL(string: playerImgUrl), !playerImgUrl.isEmpty {
                 AsyncImage(url: imageUrl) { image in
                     image.resizable()
                 } placeholder: {
@@ -36,31 +43,32 @@ struct PlayerRefItemView: View {
 
             VStack(alignment: .leading) {
                 // Player's name
-                Text(player.name)
+                Text(playerName)
                     .font(.headline)
+                    .foregroundColor(.white)
                     .lineLimit(1)
 
                 // Player's position
-                Text(player.position)
+                Text(playerPosition)
                     .font(.subheadline)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(.white)
                     .lineLimit(1)
 
                 // Player's number
-                if player.number != 0 {
-                    Text("Number: \(player.number)")
+                if Int(playerNumber) != 0 {
+                    Text("Number: \(playerNumber)")
                         .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.white)
                 }
-            }
+            }.padding()
 
             Spacer()
 
             // Additional details or indicators can go here
             VStack {
                 // Sample: Foot preference (if applicable)
-                if !player.foot.isEmpty {
-                    Text(player.foot)
+                if !playerFoot.isEmpty {
+                    Text(playerFoot)
                         .font(.caption)
                         .foregroundColor(.secondary)
                         .padding(5)
@@ -75,9 +83,18 @@ struct PlayerRefItemView: View {
         .background(Color.secondaryBackground)
         .cornerRadius(8)
         .shadow(radius: 3)
+        .onAppear() {
+            if let obj = self.realmInstance.findByField(PlayerRef.self, value: self.playerId) {
+                playerName = obj.name
+                playerPosition = obj.position
+                playerNumber = String(obj.number)
+                playerFoot = obj.foot
+                playerImgUrl = obj.imgUrl
+            }
+        }
     }
 }
 
-#Preview {
-    PlayerRefItemView(player: PlayerRef())
-}
+//#Preview {
+//    PlayerRefItemView(playerId: .constant(""))
+//}

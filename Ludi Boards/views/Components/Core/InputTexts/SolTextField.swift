@@ -10,11 +10,20 @@ import SwiftUI
 
 struct SolTextField: View {
     @Binding var text: String
-    @State var onChange: (String) -> Void
+    var onChange: (String) -> Void
     var placeholder: String = ""
+    @Binding var isEditable: Bool // Add this line to bind an external state for edit/view mode.
 
-    init(_ placeholder: String, text: Binding<String>, onChange: @escaping (String) -> Void={ _ in }) {
+    init(_ placeholder: String, text: Binding<String>, isEditable: Binding<Bool>, onChange: @escaping (String) -> Void = { _ in }) {
         self._text = text
+        self._isEditable = isEditable // Initialize it here.
+        self.placeholder = placeholder
+        self.onChange = onChange
+    }
+    
+    init(_ placeholder: String, text: Binding<String>, onChange: @escaping (String) -> Void = { _ in }) {
+        self._text = text
+        self._isEditable = .constant(true) // Initialize it here.
         self.placeholder = placeholder
         self.onChange = onChange
     }
@@ -23,19 +32,20 @@ struct SolTextField: View {
         ZStack(alignment: .leading) {
             
             TextField("", text: $text)
+                .disabled(!isEditable) // Use the isEditable state to enable or disable the text field.
                 .padding(15)
-                .background(Color.secondaryBackground)
-                .foregroundColor(.white)
+                .background(isEditable ? Color.secondaryBackground : Color.secondaryBackground.opacity(0.9)) // Change background based on isEditable.
+                .foregroundColor(isEditable ? .white : .white) // Change text color based on isEditable.
                 .cornerRadius(10)
-                .shadow(color: .gray.opacity(0.4), radius: 5, x: 0, y: 2)
+                .shadow(color: .gray.opacity(isEditable ? 0.4 : 0.1), radius: 5, x: 0, y: 2)
                 .overlay(
                     HStack {
                         Spacer()
-                        if !text.isEmpty {
+                        if !text.isEmpty && isEditable {
                             Image(systemName: "multiply.circle.fill")
                                 .foregroundColor(.gray)
                                 .padding(.trailing, 15)
-                                .onTapAnimation {
+                                .onTapGesture {
                                     self.text = ""
                                 }.zIndex(10.0)
                         }
@@ -44,7 +54,7 @@ struct SolTextField: View {
                 .transition(.scale)
                 .animation(.easeInOut, value: text)
                 .onChange(of: text) { newValue in
-                    self.text = newValue
+                    onChange(newValue) // Call onChange when text changes
                 }
                 
             

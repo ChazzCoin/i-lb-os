@@ -29,6 +29,13 @@
 		FB18F15E2B6838B900D89F8D /* PlayerRefView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB18F15D2B6838B900D89F8D /* PlayerRefView.swift */; };
 		FB18F1612B68390600D89F8D /* SolPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB18F1602B68390600D89F8D /* SolPicker.swift */; };
 		FB18F1652B68687900D89F8D /* PlayerRefItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB18F1642B68687900D89F8D /* PlayerRefItem.swift */; };
+		FB18F1672B686EA900D89F8D /* TeamItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB18F1662B686EA900D89F8D /* TeamItem.swift */; };
+		FB18F1692B68718000D89F8D /* SearchableSessionListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB18F1682B68718000D89F8D /* SearchableSessionListView.swift */; };
+		FB18F16B2B68A1CE00D89F8D /* SolListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB18F16A2B68A1CE00D89F8D /* SolListItem.swift */; };
+		FB18F16D2B68B10C00D89F8D /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB18F16C2B68B10C00D89F8D /* SearchBar.swift */; };
+		FB18F16F2B68B6A500D89F8D /* SolTeamPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB18F16E2B68B6A400D89F8D /* SolTeamPicker.swift */; };
+		FB18F1712B68C4D900D89F8D /* SolPlayerRefPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB18F1702B68C4D900D89F8D /* SolPlayerRefPicker.swift */; };
+		FB18F1732B68CE6400D89F8D /* SearchableActivityListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB18F1722B68CE6400D89F8D /* SearchableActivityListView.swift */; };
 		FB3E02AF2B0C6B1200D8558C /* SessionPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02AE2B0C6B1200D8558C /* SessionPlan.swift */; };
 		FB3E02B12B0C6B1D00D8558C /* ActivityPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02B02B0C6B1D00D8558C /* ActivityPlan.swift */; };
 		FB3E02B32B0C6B5100D8558C /* SessionPlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02B22B0C6B5100D8558C /* SessionPlanView.swift */; };
@@ -251,6 +258,13 @@
 		FB18F15D2B6838B900D89F8D /* PlayerRefView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerRefView.swift; sourceTree = "<group>"; };
 		FB18F1602B68390600D89F8D /* SolPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolPicker.swift; sourceTree = "<group>"; };
 		FB18F1642B68687900D89F8D /* PlayerRefItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerRefItem.swift; sourceTree = "<group>"; };
+		FB18F1662B686EA900D89F8D /* TeamItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamItem.swift; sourceTree = "<group>"; };
+		FB18F1682B68718000D89F8D /* SearchableSessionListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchableSessionListView.swift; sourceTree = "<group>"; };
+		FB18F16A2B68A1CE00D89F8D /* SolListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolListItem.swift; sourceTree = "<group>"; };
+		FB18F16C2B68B10C00D89F8D /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
+		FB18F16E2B68B6A400D89F8D /* SolTeamPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolTeamPicker.swift; sourceTree = "<group>"; };
+		FB18F1702B68C4D900D89F8D /* SolPlayerRefPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolPlayerRefPicker.swift; sourceTree = "<group>"; };
+		FB18F1722B68CE6400D89F8D /* SearchableActivityListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchableActivityListView.swift; sourceTree = "<group>"; };
 		FB3E02AE2B0C6B1200D8558C /* SessionPlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionPlan.swift; sourceTree = "<group>"; };
 		FB3E02B02B0C6B1D00D8558C /* ActivityPlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityPlan.swift; sourceTree = "<group>"; };
 		FB3E02B22B0C6B5100D8558C /* SessionPlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionPlanView.swift; sourceTree = "<group>"; };
@@ -504,7 +518,9 @@
 		FB18F15F2B6838FA00D89F8D /* Pickers */ = {
 			isa = PBXGroup;
 			children = (
+				FB18F16E2B68B6A400D89F8D /* SolTeamPicker.swift */,
 				FB18F1602B68390600D89F8D /* SolPicker.swift */,
+				FB18F1702B68C4D900D89F8D /* SolPlayerRefPicker.swift */,
 			);
 			path = Pickers;
 			sourceTree = "<group>";
@@ -518,6 +534,7 @@
 				FB426A962B533D0E0058CD9D /* InputTexts */,
 				FB426A992B5343C30058CD9D /* Forms */,
 				FB426A982B5343840058CD9D /* Switches */,
+				FB18F16C2B68B10C00D89F8D /* SearchBar.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -525,7 +542,14 @@
 		FB18F1632B68686B00D89F8D /* ListItems */ = {
 			isa = PBXGroup;
 			children = (
+				FB18F1682B68718000D89F8D /* SearchableSessionListView.swift */,
+				FB18F1722B68CE6400D89F8D /* SearchableActivityListView.swift */,
 				FB18F1642B68687900D89F8D /* PlayerRefItem.swift */,
+				FBE2C61F2B1AFD20004C0116 /* SessionPlanThumbView.swift */,
+				FB10AE0A2B0F162F00295F4B /* ActivityPlanThumbView.swift */,
+				FB10AE0C2B0F16B100295F4B /* ActivityPlanThumbList.swift */,
+				FB18F1662B686EA900D89F8D /* TeamItem.swift */,
+				FB18F16A2B68A1CE00D89F8D /* SolListItem.swift */,
 			);
 			path = ListItems;
 			sourceTree = "<group>";
@@ -615,19 +639,17 @@
 		FB5094242B05820B000AEA96 /* views */ = {
 			isa = PBXGroup;
 			children = (
-				FB18F1632B68686B00D89F8D /* ListItems */,
 				FB3E02CC2B0D45F000D8558C /* NavViews */,
+				FB18F1632B68686B00D89F8D /* ListItems */,
 				FBE2C61E2B1AFCA2004C0116 /* Social */,
-				FBE2C61D2B1AFC8F004C0116 /* SessionPlan */,
+				FBE2C61D2B1AFC8F004C0116 /* Experimental */,
 				FBF3902C2B2D78B000C0508A /* Tips */,
 				FBE2C6152B1AF584004C0116 /* Backgrounds */,
 				FB9F1DD72B1533B300FD9078 /* SignUp */,
 				FBF1A5FA2B5F7BA90088150C /* Shapes */,
 				FB3E02CD2B0D45FF00D8558C /* Components */,
-				FB10AE062B0DCDB500295F4B /* FloatingEmoji.swift */,
 				FB58A1B52B1804C80024B9A2 /* FlashingLight.swift */,
 				FBABDAC42B20376F00321A00 /* ConfirmationPopup.swift */,
-				FBC2FC6D2B5A0BB200D1AB77 /* TabView.swift */,
 			);
 			path = views;
 			sourceTree = "<group>";
@@ -882,16 +904,15 @@
 			path = Soccer;
 			sourceTree = "<group>";
 		};
-		FBE2C61D2B1AFC8F004C0116 /* SessionPlan */ = {
+		FBE2C61D2B1AFC8F004C0116 /* Experimental */ = {
 			isa = PBXGroup;
 			children = (
-				FBE2C61F2B1AFD20004C0116 /* SessionPlanThumbView.swift */,
-				FB10AE0A2B0F162F00295F4B /* ActivityPlanThumbView.swift */,
-				FB10AE0C2B0F16B100295F4B /* ActivityPlanThumbList.swift */,
 				FB48409B2B1EBE8B0003377A /* StopWatch.swift */,
 				FBBAD3BB2B1F8ECC004A4332 /* Timer.swift */,
+				FB10AE062B0DCDB500295F4B /* FloatingEmoji.swift */,
+				FBC2FC6D2B5A0BB200D1AB77 /* TabView.swift */,
 			);
-			path = SessionPlan;
+			path = Experimental;
 			sourceTree = "<group>";
 		};
 		FBE2C61E2B1AFCA2004C0116 /* Social */ = {
@@ -1171,6 +1192,7 @@
 				FBD9AFAA2AFF00BF005F8620 /* ContentView.swift in Sources */,
 				FB9F1DD62B1532AB00FD9078 /* ImagePicker.swift in Sources */,
 				FB58E8842B03169700FD9E2E /* TimeProvider.swift in Sources */,
+				FB18F1732B68CE6400D89F8D /* SearchableActivityListView.swift in Sources */,
 				FBF404432B19304700FA0545 /* BorderedView.swift in Sources */,
 				FBE385562B4BC6E70090901C /* LiveSolUser.swift in Sources */,
 				FB58E8822B030F1D00FD9E2E /* RealmFind.swift in Sources */,
@@ -1186,6 +1208,7 @@
 				FB6C0C532B52706B00163A6D /* ModernTextEditor.swift in Sources */,
 				FBE385522B4B89F80090901C /* LiveSessions.swift in Sources */,
 				FB9F1E402B159F6A00FD9078 /* OrientationInfo.swift in Sources */,
+				FB18F1692B68718000D89F8D /* SearchableSessionListView.swift in Sources */,
 				FBDF0DC52B21811000FADE44 /* SharedSessionsView.swift in Sources */,
 				FBD9AFC02B00817A005F8620 /* ManagedView.swift in Sources */,
 				FBD9AFCD2B008457005F8620 /* UserToActivity.swift in Sources */,
@@ -1248,6 +1271,7 @@
 				FB3E02CB2B0D2E4700D8558C /* InputTextEditor.swift in Sources */,
 				FB15DD272B07440700A21290 /* ViewWrapper.swift in Sources */,
 				FB581BED2B1F8A6800F5C90F /* KeyboardListener.swift in Sources */,
+				FB18F16F2B68B6A500D89F8D /* SolTeamPicker.swift in Sources */,
 				FBF3902E2B2D78CF00C0508A /* TipProvider.swift in Sources */,
 				FB881A3A2B47997000C16198 /* Commander.swift in Sources */,
 				FBAE62AF2B2A3FD200E008D5 /* CurvedLineToolView.swift in Sources */,
@@ -1258,7 +1282,9 @@
 				FB3E02C92B0D2D8D00D8558C /* ExpandingTextEditor.swift in Sources */,
 				FBEBEF982B49507500B8BA32 /* LiveCurrentUser.swift in Sources */,
 				FB881A3C2B47CD4400C16198 /* UserView.swift in Sources */,
+				FB18F16B2B68A1CE00D89F8D /* SolListItem.swift in Sources */,
 				FB3E02C72B0D2C3100D8558C /* InputSwitch.swift in Sources */,
+				FB18F1712B68C4D900D89F8D /* SolPlayerRefPicker.swift in Sources */,
 				FBC2FC6E2B5A0BB200D1AB77 /* TabView.swift in Sources */,
 				FB10AE072B0DCDB500295F4B /* FloatingEmoji.swift in Sources */,
 				FBDE4F5B2B4D1038007FE880 /* InternetProvider.swift in Sources */,
@@ -1285,6 +1311,7 @@
 				FBABDAC72B20456700321A00 /* ToolBarSettings.swift in Sources */,
 				FBDE4F5D2B4E2345007FE880 /* LiveRooms.swift in Sources */,
 				FBB450022B052B180096F8EB /* FireLiveData.swift in Sources */,
+				FB18F1672B686EA900D89F8D /* TeamItem.swift in Sources */,
 				FBBAD3BE2B1FBF58004A4332 /* NavPad.swift in Sources */,
 				FB881A442B48C61400C16198 /* BuddyRequestListView.swift in Sources */,
 				FBA4FB572B15AA2700BF409E /* GlobalPositioning.swift in Sources */,
@@ -1293,6 +1320,7 @@
 				FBDE4F592B4D0C12007FE880 /* SessionPlanService.swift in Sources */,
 				FBF1A5FC2B5F7BB70088150C /* Triangle.swift in Sources */,
 				FB426A9F2B5346070058CD9D /* Connection.swift in Sources */,
+				FB18F16D2B68B10C00D89F8D /* SearchBar.swift in Sources */,
 				FBE2C62E2B1C3FDE004C0116 /* LoadingForm.swift in Sources */,
 				FBE2C6142B1AC68D004C0116 /* SoccerFieldBG.swift in Sources */,
 				FB58E8802B02B26C00FD9E2E /* DragAndDrop.swift in Sources */,

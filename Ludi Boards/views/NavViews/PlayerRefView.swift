@@ -10,10 +10,16 @@ import SwiftUI
 import RealmSwift
 
 struct PlayerRefView: View {
-    @State var playerId: String
+    @Binding var playerId: String
+    @Binding var isShowing: Bool
     @State var player: PlayerRef = PlayerRef()
     @State private var isEditMode: Bool = false
 
+    @State private var attachATeamConfirmation: Bool = false
+    @State private var attachATeamIsOn: Bool = false
+    @State var playerTeamId: String = ""
+    @State var originalTeamId: String = ""
+    
     @State var playerName: String = ""
     @State var playerPosition: String = ""
     @State var playerNumber: String = ""
@@ -22,9 +28,30 @@ struct PlayerRefView: View {
     @State var playerAge: String = ""
     @State var playerYear: String = ""
     @State var playerImgUrl: String = ""
+    
+    @State var realmInstance = newRealm()
 
     var body: some View {
         ScrollView {
+            
+            HStack {
+                Text(playerName)
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+                
+                Spacer()
+                
+                Button(action: {
+                    isEditMode.toggle()
+                    if !isEditMode { isShowing = false }
+                }) {
+                    Text(isEditMode ? "Done" : "Edit")
+                        .foregroundColor(.blue)
+                }
+            }.padding()
+            
+            Divider()
+            
             VStack {
                 // Player's image
                 if let imageUrl = URL(string: playerImgUrl), !playerImgUrl.isEmpty {
@@ -72,61 +99,164 @@ struct PlayerRefView: View {
 
                 // Edit Button
                 if isEditMode {
-                    SolButton(title: "Save Player", action: {
-                        savePlayer()
-                        isEditMode.toggle()
-                    }, isEnabled: isEditMode)
-                } else {
-                    Button(action: {
-                        isEditMode.toggle()
-                    }) {
-                        Text("Edit Player")
-                            .foregroundColor(.white)
-                            .padding()
-                            .background(Color.blue)
-                            .cornerRadius(8)
+                    
+                    DStack {
+                        SolButton(title: "Save Player", action: {
+                            savePlayer()
+                            isEditMode.toggle()
+                            if !isEditMode { isShowing = false }
+                        }, isEnabled: isEditMode)
+                        
+                        SolButton(title: "Delete Player", action: {
+                            deletePlayer()
+                            isEditMode.toggle()
+                            if !isEditMode { isShowing = false }
+                        }, isEnabled: isEditMode && playerId != "new")
                     }
+                    
+                    
+                } else {
+                    SolButton(title: "Edit Player", action: {
+                        isEditMode.toggle()
+                        if !isEditMode { isShowing = false }
+                    }, isEnabled: isEditMode)
                 }
 
                 // Player Details
-                if !isEditMode {
-                    VStack(alignment: .leading) {
-                        DetailView(label: "Foot:", value: playerFoot)
-                        DetailView(label: "Hand:", value: playerHand)
-                        DetailView(label: "Year:", value: playerYear)
+                VStack {
+                    SolTextField("Player Name", text: $playerName, isEditable: $isEditMode)
+                    
+                    if isEditMode {
+                        
                     }
-                    .padding(.top, 20)
-                } else {
-                    // Editable fields
-                    VStack {
-                        SolTextField("Player Name", text: $playerName)
-                        SolTextField("Position", text: $playerPosition)
-                        SolTextField("Number", text: $playerNumber)
-                        SolTextField("Foot", text: $playerFoot)
-                        SolTextField("Hand", text: $playerHand)
-                        SolTextField("Age", text: $playerAge)
-                        SolTextField("Year", text: $playerYear)
+                    DStack {
+                        Toggle(isOn: $attachATeamIsOn, label: {
+                            SubHeaderText(playerTeamId.isEmpty ? "Attach a Team." : "Reassign Team")
+                        })
+                        SolTeamPicker(selection: $playerTeamId, isEnabled: .constant(attachATeamIsOn && isEditMode))
                     }
-                    .padding(.top, 20)
+                    
+                    DStack {
+                        SolTextField("Position", text: $playerPosition, isEditable: $isEditMode)
+                        SolTextField("Number", text: $playerNumber, isEditable: $isEditMode)
+                    }
+                    DStack {
+                        SolTextField("Foot", text: $playerFoot, isEditable: $isEditMode)
+                        SolTextField("Hand", text: $playerHand, isEditable: $isEditMode)
+                    }
+                    DStack {
+                        SolTextField("Age", text: $playerAge, isEditable: $isEditMode)
+                        SolTextField("Year", text: $playerYear, isEditable: $isEditMode)
+                    }
                 }
+                .padding(.top, 20)
             }
             .padding()
         }
+        .padding()
         .navigationBarTitle("Player Details", displayMode: .inline)
-        .onAppear() {
-            if playerId == "new" {
-                isEditMode = true
+        .onChange(of: self.playerId, perform: { value in
+            loadPlayer()
+        })
+        .onChange(of: playerTeamId, perform: { value in
+            if playerTeamId != originalTeamId && isEditMode {
+                attachATeamConfirmation = true
+            } else {
+                attachATeamConfirmation = false
             }
+        })
+        .alert("Assign Player", isPresented: $attachATeamConfirmation) {
+            Button("Cancel", role: .cancel) {
+                playerTeamId = originalTeamId
+                attachATeamConfirmation = false
+            }
+            Button("OK", role: .none) {
+                savePlayer()
+                originalTeamId = playerTeamId
+                attachATeamConfirmation = false
+            }
+        } message: {
+            Text("Are you sure you want to assign this player?")
+        }
+        .onAppear() {
             loadPlayer()
         }
     }
 
     private func loadPlayer() {
-        // Load player data into state variables
+        if playerId == "new" {
+            isEditMode = true
+            return
+        }
+        if let obj = self.realmInstance.findByField(PlayerRef.self, value: self.playerId) {
+            playerName = obj.name
+            playerTeamId = obj.teamId
+            playerPosition = obj.position
+            playerNumber = String(obj.number)
+            playerFoot = obj.foot
+            playerHand = obj.hand
+            playerAge = obj.age
+            playerYear = obj.year
+            playerImgUrl = obj.imgUrl
+        }
+        
+        if !playerTeamId.isEmpty {
+            originalTeamId = playerTeamId
+            attachATeamIsOn = true
+        }
     }
     
+    private func addPlayer() {
+        let obj = PlayerRef()
+        obj.name = playerName
+        obj.teamId = attachATeamIsOn ? playerTeamId : ""
+        obj.position = playerPosition
+        obj.number = Int(playerNumber) ?? 0
+        obj.foot = playerFoot
+        obj.hand = playerHand
+        obj.age = playerAge
+        obj.year = playerYear
+        obj.imgUrl = playerImgUrl
+        
+        self.realmInstance.safeWrite { r in
+            r.create(PlayerRef.self, value: obj, update: .all)
+        }
+        
+        // TODO: FIREBASE
+        
+    }
     private func savePlayer() {
-        // Implement functionality to save player data
+        
+        if self.playerId == "new" {
+            addPlayer()
+            return
+        }
+        
+        if let obj = self.realmInstance.findByField(PlayerRef.self, value: self.playerId) {
+            
+            self.realmInstance.safeWrite { r in
+                obj.name = playerName
+                obj.teamId = attachATeamIsOn ? playerTeamId : ""
+                obj.position = playerPosition
+                obj.number = Int(playerNumber) ?? 0
+                obj.foot = playerFoot
+                obj.hand = playerHand
+                obj.age = playerAge
+                obj.year = playerYear
+                obj.imgUrl = playerImgUrl
+
+                // TODO: FIREBASE
+            }
+            
+        }
+    }
+    
+    private func deletePlayer() {
+        if let obj = self.realmInstance.findByField(PlayerRef.self, value: self.playerId) {
+            self.realmInstance.safeWrite { r in
+                r.delete(obj)
+            }
+        }
     }
 }
 
@@ -148,6 +278,6 @@ struct DetailView: View {
 }
 
 
-#Preview {
-    PlayerRefView(playerId: "new")
-}
+//#Preview {
+//    PlayerRefView(playerId: "new")
+//}

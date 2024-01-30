@@ -7,21 +7,29 @@
 
 import Foundation
 import SwiftUI
+import RealmSwift
 
-struct SolPicker: View {
+struct SolTeamPicker: View {
     @Binding var selection: String
-    var data: [String]
-    var title: String
     @Binding var isEnabled: Bool
+    @ObservedResults(Team.self) var allTeams
     
     var body: some View {
-        Picker(selection: $selection, label: HeaderText(title)) {
-            ForEach(data, id: \.self) { item in
-                Text(item)
-                    .tag(item)
+        
+        ZStack {
+            
+            if isEnabled {
+                Picker(selection: $selection, label: HeaderText("Teams")) {
+                    ForEach(allTeams, id: \.self) { item in
+                        Text(item.name)
+                            .tag(item.id)
+                    }
+                }
+            } else {
+                SubHeaderText(selection)
             }
+            
         }
-//        .solEnabled(isEnabled: isEnabled)
         .padding(15)
         .background(Color.secondaryBackground) // Change background based on isEditable.
         .accentColor(.white) // Change text color based on isEditable.
