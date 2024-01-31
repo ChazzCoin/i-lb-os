@@ -28,18 +28,22 @@
 		FB18F15C2B68369400D89F8D /* TeamView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB18F15B2B68369400D89F8D /* TeamView.swift */; };
 		FB18F15E2B6838B900D89F8D /* PlayerRefView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB18F15D2B6838B900D89F8D /* PlayerRefView.swift */; };
 		FB18F1612B68390600D89F8D /* SolPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB18F1602B68390600D89F8D /* SolPicker.swift */; };
-		FB18F1652B68687900D89F8D /* PlayerRefItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB18F1642B68687900D89F8D /* PlayerRefItem.swift */; };
-		FB18F1672B686EA900D89F8D /* TeamItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB18F1662B686EA900D89F8D /* TeamItem.swift */; };
+		FB18F1652B68687900D89F8D /* PlayerRefList.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB18F1642B68687900D89F8D /* PlayerRefList.swift */; };
+		FB18F1672B686EA900D89F8D /* TeamList.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB18F1662B686EA900D89F8D /* TeamList.swift */; };
 		FB18F1692B68718000D89F8D /* SearchableSessionListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB18F1682B68718000D89F8D /* SearchableSessionListView.swift */; };
 		FB18F16B2B68A1CE00D89F8D /* SolListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB18F16A2B68A1CE00D89F8D /* SolListItem.swift */; };
 		FB18F16D2B68B10C00D89F8D /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB18F16C2B68B10C00D89F8D /* SearchBar.swift */; };
 		FB18F16F2B68B6A500D89F8D /* SolTeamPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB18F16E2B68B6A400D89F8D /* SolTeamPicker.swift */; };
 		FB18F1712B68C4D900D89F8D /* SolPlayerRefPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB18F1702B68C4D900D89F8D /* SolPlayerRefPicker.swift */; };
 		FB18F1732B68CE6400D89F8D /* SearchableActivityListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB18F1722B68CE6400D89F8D /* SearchableActivityListView.swift */; };
+		FB18F1752B697E2800D89F8D /* DSideBarWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB18F1742B697E2800D89F8D /* DSideBarWindow.swift */; };
+		FB18F1772B6988E200D89F8D /* ActivityPlanSingleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB18F1762B6988E100D89F8D /* ActivityPlanSingleView.swift */; };
+		FB18F1792B69A0DC00D89F8D /* SearchableTeamListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB18F1782B69A0DC00D89F8D /* SearchableTeamListView.swift */; };
+		FB18F17B2B69A26400D89F8D /* SearchablePlayerRefListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB18F17A2B69A26400D89F8D /* SearchablePlayerRefListView.swift */; };
 		FB3E02AF2B0C6B1200D8558C /* SessionPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02AE2B0C6B1200D8558C /* SessionPlan.swift */; };
 		FB3E02B12B0C6B1D00D8558C /* ActivityPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02B02B0C6B1D00D8558C /* ActivityPlan.swift */; };
 		FB3E02B32B0C6B5100D8558C /* SessionPlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02B22B0C6B5100D8558C /* SessionPlanView.swift */; };
-		FB3E02B52B0C6B6000D8558C /* ActivityPlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02B42B0C6B6000D8558C /* ActivityPlanView.swift */; };
+		FB3E02B52B0C6B6000D8558C /* ActivityPlanBindingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02B42B0C6B6000D8558C /* ActivityPlanBindingView.swift */; };
 		FB3E02B72B0C70D100D8558C /* InputField.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02B62B0C70D100D8558C /* InputField.swift */; };
 		FB3E02B92B0C724A00D8558C /* BoardBgProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02B82B0C724A00D8558C /* BoardBgProvider.swift */; };
 		FB3E02BB2B0C90D700D8558C /* Buddy.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02BA2B0C90D700D8558C /* Buddy.swift */; };
@@ -188,7 +192,6 @@
 		FBD9AFBA2AFF03D7005F8620 /* CanvasEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFB92AFF03D7005F8620 /* CanvasEngine.swift */; };
 		FBD9AFC02B00817A005F8620 /* ManagedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFBF2B00817A005F8620 /* ManagedView.swift */; };
 		FBD9AFC22B0081C1005F8620 /* RealmInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFC12B0081C1005F8620 /* RealmInstance.swift */; };
-		FBD9AFC92B008435005F8620 /* ManagedViewAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFC82B008435005F8620 /* ManagedViewAction.swift */; };
 		FBD9AFCB2B00843F005F8620 /* BoardSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFCA2B00843F005F8620 /* BoardSession.swift */; };
 		FBD9AFCD2B008457005F8620 /* UserToActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFCC2B008457005F8620 /* UserToActivity.swift */; };
 		FBD9AFD22B008CAB005F8620 /* MenuBarProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFD12B008CAB005F8620 /* MenuBarProvider.swift */; };
@@ -257,18 +260,22 @@
 		FB18F15B2B68369400D89F8D /* TeamView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamView.swift; sourceTree = "<group>"; };
 		FB18F15D2B6838B900D89F8D /* PlayerRefView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerRefView.swift; sourceTree = "<group>"; };
 		FB18F1602B68390600D89F8D /* SolPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolPicker.swift; sourceTree = "<group>"; };
-		FB18F1642B68687900D89F8D /* PlayerRefItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerRefItem.swift; sourceTree = "<group>"; };
-		FB18F1662B686EA900D89F8D /* TeamItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamItem.swift; sourceTree = "<group>"; };
+		FB18F1642B68687900D89F8D /* PlayerRefList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerRefList.swift; sourceTree = "<group>"; };
+		FB18F1662B686EA900D89F8D /* TeamList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamList.swift; sourceTree = "<group>"; };
 		FB18F1682B68718000D89F8D /* SearchableSessionListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchableSessionListView.swift; sourceTree = "<group>"; };
 		FB18F16A2B68A1CE00D89F8D /* SolListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolListItem.swift; sourceTree = "<group>"; };
 		FB18F16C2B68B10C00D89F8D /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
 		FB18F16E2B68B6A400D89F8D /* SolTeamPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolTeamPicker.swift; sourceTree = "<group>"; };
 		FB18F1702B68C4D900D89F8D /* SolPlayerRefPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolPlayerRefPicker.swift; sourceTree = "<group>"; };
 		FB18F1722B68CE6400D89F8D /* SearchableActivityListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchableActivityListView.swift; sourceTree = "<group>"; };
+		FB18F1742B697E2800D89F8D /* DSideBarWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DSideBarWindow.swift; sourceTree = "<group>"; };
+		FB18F1762B6988E100D89F8D /* ActivityPlanSingleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityPlanSingleView.swift; sourceTree = "<group>"; };
+		FB18F1782B69A0DC00D89F8D /* SearchableTeamListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchableTeamListView.swift; sourceTree = "<group>"; };
+		FB18F17A2B69A26400D89F8D /* SearchablePlayerRefListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchablePlayerRefListView.swift; sourceTree = "<group>"; };
 		FB3E02AE2B0C6B1200D8558C /* SessionPlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionPlan.swift; sourceTree = "<group>"; };
 		FB3E02B02B0C6B1D00D8558C /* ActivityPlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityPlan.swift; sourceTree = "<group>"; };
 		FB3E02B22B0C6B5100D8558C /* SessionPlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionPlanView.swift; sourceTree = "<group>"; };
-		FB3E02B42B0C6B6000D8558C /* ActivityPlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityPlanView.swift; sourceTree = "<group>"; };
+		FB3E02B42B0C6B6000D8558C /* ActivityPlanBindingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityPlanBindingView.swift; sourceTree = "<group>"; };
 		FB3E02B62B0C70D100D8558C /* InputField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputField.swift; sourceTree = "<group>"; };
 		FB3E02B82B0C724A00D8558C /* BoardBgProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardBgProvider.swift; sourceTree = "<group>"; };
 		FB3E02BA2B0C90D700D8558C /* Buddy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Buddy.swift; sourceTree = "<group>"; };
@@ -370,7 +377,6 @@
 		FBD9AFB92AFF03D7005F8620 /* CanvasEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasEngine.swift; sourceTree = "<group>"; };
 		FBD9AFBF2B00817A005F8620 /* ManagedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedView.swift; sourceTree = "<group>"; };
 		FBD9AFC12B0081C1005F8620 /* RealmInstance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmInstance.swift; sourceTree = "<group>"; };
-		FBD9AFC82B008435005F8620 /* ManagedViewAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedViewAction.swift; sourceTree = "<group>"; };
 		FBD9AFCA2B00843F005F8620 /* BoardSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardSession.swift; sourceTree = "<group>"; };
 		FBD9AFCC2B008457005F8620 /* UserToActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserToActivity.swift; sourceTree = "<group>"; };
 		FBD9AFD12B008CAB005F8620 /* MenuBarProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarProvider.swift; sourceTree = "<group>"; };
@@ -528,6 +534,7 @@
 		FB18F1622B6842C600D89F8D /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				FB18F1742B697E2800D89F8D /* DSideBarWindow.swift */,
 				FBC2FC6F2B5BC04300D1AB77 /* Text.swift */,
 				FB426A952B533CA90058CD9D /* Buttons */,
 				FB18F15F2B6838FA00D89F8D /* Pickers */,
@@ -544,11 +551,13 @@
 			children = (
 				FB18F1682B68718000D89F8D /* SearchableSessionListView.swift */,
 				FB18F1722B68CE6400D89F8D /* SearchableActivityListView.swift */,
-				FB18F1642B68687900D89F8D /* PlayerRefItem.swift */,
+				FB18F1782B69A0DC00D89F8D /* SearchableTeamListView.swift */,
+				FB18F17A2B69A26400D89F8D /* SearchablePlayerRefListView.swift */,
 				FBE2C61F2B1AFD20004C0116 /* SessionPlanThumbView.swift */,
 				FB10AE0A2B0F162F00295F4B /* ActivityPlanThumbView.swift */,
 				FB10AE0C2B0F16B100295F4B /* ActivityPlanThumbList.swift */,
-				FB18F1662B686EA900D89F8D /* TeamItem.swift */,
+				FB18F1662B686EA900D89F8D /* TeamList.swift */,
+				FB18F1642B68687900D89F8D /* PlayerRefList.swift */,
 				FB18F16A2B68A1CE00D89F8D /* SolListItem.swift */,
 			);
 			path = ListItems;
@@ -559,7 +568,8 @@
 			children = (
 				FBE2C6232B1B2E01004C0116 /* SessionPlanOverview.swift */,
 				FB3E02B22B0C6B5100D8558C /* SessionPlanView.swift */,
-				FB3E02B42B0C6B6000D8558C /* ActivityPlanView.swift */,
+				FB3E02B42B0C6B6000D8558C /* ActivityPlanBindingView.swift */,
+				FB18F1762B6988E100D89F8D /* ActivityPlanSingleView.swift */,
 				FB15DD332B074E6E00A21290 /* ChatUI.swift */,
 				FBA20A2E2B166FCE00045D1C /* MVSettingsView.swift */,
 				FB58A1B32B17D1420024B9A2 /* ToolBarView.swift */,
@@ -658,7 +668,6 @@
 			isa = PBXGroup;
 			children = (
 				FB4840972B1D66380003377A /* CurrentSession.swift */,
-				FBD9AFC82B008435005F8620 /* ManagedViewAction.swift */,
 				FBD9AFCC2B008457005F8620 /* UserToActivity.swift */,
 				FBD9AFCA2B00843F005F8620 /* BoardSession.swift */,
 				FBD9AFBF2B00817A005F8620 /* ManagedView.swift */,
@@ -1194,14 +1203,15 @@
 				FB58E8842B03169700FD9E2E /* TimeProvider.swift in Sources */,
 				FB18F1732B68CE6400D89F8D /* SearchableActivityListView.swift in Sources */,
 				FBF404432B19304700FA0545 /* BorderedView.swift in Sources */,
+				FB18F17B2B69A26400D89F8D /* SearchablePlayerRefListView.swift in Sources */,
 				FBE385562B4BC6E70090901C /* LiveSolUser.swift in Sources */,
+				FB18F1792B69A0DC00D89F8D /* SearchableTeamListView.swift in Sources */,
 				FB58E8822B030F1D00FD9E2E /* RealmFind.swift in Sources */,
 				FB986F0B2B5774C30042BED2 /* BoardSessionObserver.swift in Sources */,
 				FB881A3E2B48732400C16198 /* RealmState.swift in Sources */,
 				FBDF0DC92B224EB500FADE44 /* AllManagedViewsService.swift in Sources */,
 				FBE2C6242B1B2E01004C0116 /* SessionPlanOverview.swift in Sources */,
 				FB18F1402B63946100D89F8D /* XShape.swift in Sources */,
-				FBD9AFC92B008435005F8620 /* ManagedViewAction.swift in Sources */,
 				FBE385502B4B32950090901C /* FriendsListView.swift in Sources */,
 				FB9F1DD92B1533C400FD9078 /* FirebaseLogin.swift in Sources */,
 				FBC2FC702B5BC04300D1AB77 /* Text.swift in Sources */,
@@ -1241,18 +1251,20 @@
 				FBBAD3BC2B1F8ECC004A4332 /* Timer.swift in Sources */,
 				FBD9AFC22B0081C1005F8620 /* RealmInstance.swift in Sources */,
 				FB48409C2B1EBE8B0003377A /* StopWatch.swift in Sources */,
-				FB3E02B52B0C6B6000D8558C /* ActivityPlanView.swift in Sources */,
+				FB3E02B52B0C6B6000D8558C /* ActivityPlanBindingView.swift in Sources */,
 				FBDE4F572B4CF883007FE880 /* LogoutObserver.swift in Sources */,
 				FBE2C6222B1B1490004C0116 /* RealmChangeListener.swift in Sources */,
 				FB3E02B92B0C724A00D8558C /* BoardBgProvider.swift in Sources */,
 				FB15DD322B07461500A21290 /* MenuBarWindow.swift in Sources */,
 				FBC2FC6C2B59C4A400D1AB77 /* DStack.swift in Sources */,
+				FB18F1772B6988E200D89F8D /* ActivityPlanSingleView.swift in Sources */,
 				FB3E02B72B0C70D100D8558C /* InputField.swift in Sources */,
 				FBABDAC52B20376F00321A00 /* ConfirmationPopup.swift in Sources */,
 				FB15DD362B074F5C00A21290 /* Chat.swift in Sources */,
 				FB3E02C32B0D19A300D8558C /* User.swift in Sources */,
 				FB5094282B0584CA000AEA96 /* NavStackWindowView.swift in Sources */,
 				FB6C0C512B525E8500163A6D /* LoginView.swift in Sources */,
+				FB18F1752B697E2800D89F8D /* DSideBarWindow.swift in Sources */,
 				FB3E02C12B0C9A6D00D8558C /* BuddyProfileView.swift in Sources */,
 				FBD9AFB82AFF0253005F8620 /* GridLines.swift in Sources */,
 				FB18F15E2B6838B900D89F8D /* PlayerRefView.swift in Sources */,
@@ -1311,11 +1323,11 @@
 				FBABDAC72B20456700321A00 /* ToolBarSettings.swift in Sources */,
 				FBDE4F5D2B4E2345007FE880 /* LiveRooms.swift in Sources */,
 				FBB450022B052B180096F8EB /* FireLiveData.swift in Sources */,
-				FB18F1672B686EA900D89F8D /* TeamItem.swift in Sources */,
+				FB18F1672B686EA900D89F8D /* TeamList.swift in Sources */,
 				FBBAD3BE2B1FBF58004A4332 /* NavPad.swift in Sources */,
 				FB881A442B48C61400C16198 /* BuddyRequestListView.swift in Sources */,
 				FBA4FB572B15AA2700BF409E /* GlobalPositioning.swift in Sources */,
-				FB18F1652B68687900D89F8D /* PlayerRefItem.swift in Sources */,
+				FB18F1652B68687900D89F8D /* PlayerRefList.swift in Sources */,
 				FB9F1DD02B1528FC00FD9078 /* Extensions.swift in Sources */,
 				FBDE4F592B4D0C12007FE880 /* SessionPlanService.swift in Sources */,
 				FBF1A5FC2B5F7BB70088150C /* Triangle.swift in Sources */,

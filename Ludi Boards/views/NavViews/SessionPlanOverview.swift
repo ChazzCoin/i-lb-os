@@ -15,6 +15,8 @@ struct SessionPlanOverview: View {
     @EnvironmentObject var BEO: BoardEngineObject
     @EnvironmentObject var NavStack: NavStackWindowObservable
   
+    @ObservedResults(PlayerRef.self) var players
+    
     @ObservedResults(UserToSession.self, where: { $0.guestId == getFirebaseUserId() ?? "" && $0.status != "removed" }) var guestSessions
     var sharedSessionIds: [String] {
         var temp = Array(guestSessions.map { $0.sessionId })
@@ -42,44 +44,72 @@ struct SessionPlanOverview: View {
     @State private var showNewPlayerRefSheet = false
     
     @State private var isLoggedIn = false
+    
+    @State private var isSidebarVisible = false
+    var sidebarView: some View {
+        
+        DSidebarWindow {
+            Spacer().frame(height: 50)
+            SubHeaderText("Teams")
+            SearchableTeamListView()
+                .environmentObject(self.BEO)
+                .environmentObject(self.NavStack)
+            SubHeaderText("Players")
+            SearchablePlayerRefListView()
+                .environmentObject(self.BEO)
+                .environmentObject(self.NavStack)
+            Spacer()
+        }
+        
+    }
 
     var body: some View {
-        Form {
+        // Main Content and Sidebar
+        ZStack(alignment: .leading) {
             
-            Section(header: Text("Manage")) {
+            Form {
                 
-                DStack {
-                    SolButton(title: "Create Session", action: {
-                        print("New Session Button")
-                        showNewPlanSheet = true
-                    })
+                Section(header: Text("Manage")) {
                     
-                    SolButton(title: "Create Team", action: {
-                        print("Create Team Button")
-                        showNewTeamSheet = true
-                    })
+                    DStack {
+                        SolButton(title: "Create Session", action: {
+                            print("New Session Button")
+                            showNewPlanSheet = true
+                        })
+                        
+                        SolButton(title: "Create Team", action: {
+                            print("Create Team Button")
+                            showNewTeamSheet = true
+                        })
+                        
+                        SolButton(title: "Create Player", action: {
+                            print("Create Player Button")
+                            showNewPlayerRefSheet = true
+                        })
+                    }
                     
-                    SolButton(title: "Create Player", action: {
-                        print("Create Player Button")
-                        showNewPlayerRefSheet = true
-                    })
-                }
+                }.clearSectionBackground()
                 
-            }.clearSectionBackground()
-            
-            Section(header: Text("Teams")) {
-                TeamListView() { team in
-                    print("\(team) has been clicked.")
-                    currentTeamId = team.id
-                    showCurrentTeamSheet = true
-                }
+                Section(header: Text("Sessions")) {
+                    SearchableSessionListView()
+                        .environmentObject(self.BEO)
+                        .environmentObject(self.NavStack)
+                }.clearSectionBackground()
+                
+                
+                Section(header: Text("Activities")) {
+                    SearchableActivityListView()
+                        .environmentObject(self.BEO)
+                        .environmentObject(self.NavStack)
+                }.clearSectionBackground()
+                
             }
-            
-            Section(header: Text("Sessions")) {
-                SearchableSessionListView()
-                    .environmentObject(self.BEO)
-                    .environmentObject(self.NavStack)
-            }.clearSectionBackground()
+
+            if isSidebarVisible {
+                sidebarView
+                    .frame(width: 300)
+                    .transition(.move(edge: .leading))
+            }
             
         }
         .onAppear() {
@@ -91,6 +121,13 @@ struct SessionPlanOverview: View {
         }
         .loading(isShowing: $isLoading)
         .navigationBarTitle("Session Plans", displayMode: .inline)
+        .navigationBarItems(leading: Button(action: {
+            withAnimation {
+                isSidebarVisible.toggle()
+            }
+        }) {
+            Image(systemName: "line.horizontal.3")
+        })
         .sheet(isPresented: $showNewPlanSheet) {
             SessionPlanView(sessionId: "new", isShowing: $showNewPlanSheet, isMasterWindow: false)
                 .environmentObject(self.BEO)

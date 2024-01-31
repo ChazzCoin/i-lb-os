@@ -176,7 +176,7 @@ struct SessionPlanView: View {
                 }
                 
                 VStack {
-                    ActivityPlanView(inComingAP: self.$currentTab, sessionId: self.$sessionId, isShowing: .constant(true))
+                    ActivityPlanBindingView(inComingAP: self.$currentTab, sessionId: self.$sessionId, isShowing: .constant(true))
                         .environmentObject(self.BEO)
                         .environmentObject(self.NavStack)
                 }

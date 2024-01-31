@@ -101,7 +101,7 @@ struct CanvasEngine: View {
     
     func enableDrawing(drawingType:String="LINE") {
         self.BEO.isDraw = true
-        self.BEO.isDrawing = drawingType
+        self.BEO.drawType = drawingType
         self.BEO.gesturesAreLocked = true
         self.toolBarIsEnabled = false
         self.showMenuBar = false

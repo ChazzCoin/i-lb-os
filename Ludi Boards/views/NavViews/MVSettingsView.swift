@@ -69,6 +69,10 @@ struct SettingsView: View {
                 }
             }
             
+            // TODO: Attach a PlayerRef
+            
+            // TODO: View/Modify PlayerRef
+            
             Section(header: Text("Tool Settings").font(.headline)) {
                 
                 DStack {

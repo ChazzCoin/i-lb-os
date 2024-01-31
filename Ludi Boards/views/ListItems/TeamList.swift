@@ -13,15 +13,18 @@ struct TeamListView: View {
     // Assuming you have an array of image names from your assets
     var callback: (Team) -> Void
     @ObservedResults(Team.self) var teams
+    
+  
 
     var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 10) {
+        ScrollView(.vertical, showsIndicators: false) {
+            LazyVStack(spacing: 10) {
                 
                 if !teams.isEmpty {
                     ForEach(teams, id: \.self) { team in
                         TeamListItem(title: team.name, subTitle: team.age, isShared: false)
                             .onTapAnimation {
+                                
                                 callback(team)
                             }
                     }
@@ -30,12 +33,12 @@ struct TeamListView: View {
                 }
                 
             }
-            .padding()
+            
         }
+        .frame(height: 200)
+        
     }
 }
-
-import SwiftUI
 
 struct TeamListItem: View {
     var title: String

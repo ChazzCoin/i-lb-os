@@ -11,7 +11,7 @@ import RealmSwift
 import Combine
 
 // ActivityPlan View
-struct ActivityPlanView: View {
+struct ActivityPlanBindingView: View {
 
     @Binding var inComingAP: ActivityPlan
     @Binding var sessionId: String

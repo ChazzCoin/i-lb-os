@@ -52,89 +52,58 @@ struct PlayerRefView: View {
             
             Divider()
             
-            VStack {
-                // Player's image
-                if let imageUrl = URL(string: playerImgUrl), !playerImgUrl.isEmpty {
-                    AsyncImage(url: imageUrl) { image in
-                        image.resizable()
-                    } placeholder: {
-                        Color.gray
-                    }
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: 100, height: 100)
-                    .clipShape(Circle())
-                    .shadow(radius: 10)
-                    .padding(.top, 20)
-                } else {
-                    Circle()
-                        .fill(Color.gray)
+            DStack {
+                VStack {
+                    // Player's image
+                    if let imageUrl = URL(string: playerImgUrl), !playerImgUrl.isEmpty {
+                        AsyncImage(url: imageUrl) { image in
+                            image.resizable()
+                        } placeholder: {
+                            Color.gray
+                        }
+                        .aspectRatio(contentMode: .fill)
                         .frame(width: 100, height: 100)
+                        .clipShape(Circle())
                         .shadow(radius: 10)
                         .padding(.top, 20)
-                }
-
-                // Player's name
-                Text(playerName)
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-                    .padding(.top, 20)
-
-                // Player's position, number, and age
-                HStack {
-                    Text(playerPosition)
-                        .font(.title3)
-                        .fontWeight(.medium)
-                    Text("#\(playerNumber)")
-                        .font(.title3)
-                        .fontWeight(.medium)
-                    Spacer()
-                    Text("Age \(playerAge)")
-                        .font(.title3)
-                        .fontWeight(.medium)
-                }
-                .padding(.top, 5)
-                
-                Divider()
-                    .padding(.vertical)
-
-                // Edit Button
-                if isEditMode {
-                    
-                    DStack {
-                        SolButton(title: "Save Player", action: {
-                            savePlayer()
-                            isEditMode.toggle()
-                            if !isEditMode { isShowing = false }
-                        }, isEnabled: isEditMode)
-                        
-                        SolButton(title: "Delete Player", action: {
-                            deletePlayer()
-                            isEditMode.toggle()
-                            if !isEditMode { isShowing = false }
-                        }, isEnabled: isEditMode && playerId != "new")
+                    } else {
+                        Circle()
+                            .fill(Color.gray)
+                            .frame(width: 100, height: 100)
+                            .shadow(radius: 10)
+                            .padding(.top, 20)
                     }
-                    
-                    
-                } else {
-                    SolButton(title: "Edit Player", action: {
-                        isEditMode.toggle()
-                        if !isEditMode { isShowing = false }
-                    }, isEnabled: isEditMode)
-                }
 
+                    // Player's name
+                    Text(playerName)
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
+                        .padding(.top, 20)
+
+                    // Player's position, number, and age
+                    HStack {
+                        Text(playerPosition)
+                            .font(.title3)
+                            .fontWeight(.medium)
+                        Text("#\(playerNumber)")
+                            .font(.title3)
+                            .fontWeight(.medium)
+                        Spacer()
+                        Text("Age \(playerAge)")
+                            .font(.title3)
+                            .fontWeight(.medium)
+                    }
+                    .padding(.top, 5)
+                    
+                    
+                }.frame(width: 200)
+            
+            
                 // Player Details
                 VStack {
                     SolTextField("Player Name", text: $playerName, isEditable: $isEditMode)
                     
-                    if isEditMode {
-                        
-                    }
-                    DStack {
-                        Toggle(isOn: $attachATeamIsOn, label: {
-                            SubHeaderText(playerTeamId.isEmpty ? "Attach a Team." : "Reassign Team")
-                        })
-                        SolTeamPicker(selection: $playerTeamId, isEnabled: .constant(attachATeamIsOn && isEditMode))
-                    }
+                    
                     
                     DStack {
                         SolTextField("Position", text: $playerPosition, isEditable: $isEditMode)
@@ -150,8 +119,47 @@ struct PlayerRefView: View {
                     }
                 }
                 .padding(.top, 20)
+                
+
+               
             }
             .padding()
+            
+            DStack {
+                Toggle(isOn: $attachATeamIsOn, label: {
+                    SubHeaderText(playerTeamId.isEmpty ? "Attach a Team." : "Reassign Team")
+                })
+                SolTeamPicker(selection: $playerTeamId, isEnabled: .constant(attachATeamIsOn && isEditMode))
+            }
+            
+            Divider()
+                .padding(.vertical)
+
+            // Edit Button
+            if isEditMode {
+                
+                DStack {
+                    SolButton(title: "Save Player", action: {
+                        savePlayer()
+                        isEditMode.toggle()
+                        if !isEditMode { isShowing = false }
+                    }, isEnabled: isEditMode)
+                    
+                    SolButton(title: "Delete Player", action: {
+                        deletePlayer()
+                        isEditMode.toggle()
+                        if !isEditMode { isShowing = false }
+                    }, isEnabled: isEditMode && playerId != "new")
+                }
+                
+                
+            } else {
+                SolButton(title: "Edit Player", action: {
+                    isEditMode.toggle()
+                    if !isEditMode { isShowing = false }
+                }, isEnabled: isEditMode)
+            }
+            
         }
         .padding()
         .navigationBarTitle("Player Details", displayMode: .inline)

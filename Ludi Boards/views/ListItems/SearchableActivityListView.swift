@@ -40,18 +40,17 @@ struct SearchableActivityListView: View {
                     ForEach(filteredItems) { item in
                         NavigationLink(
                             destination: 
-                                SessionPlanView(sessionId: item.id, isShowing: .constant(true), isMasterWindow: false)
+                                ActivityPlanSingleView(inComingAP: .constant(item), sessionId: .constant(item.sessionId), isShowing: .constant(true))
                                     .environmentObject(self.BEO)
                                     .environmentObject(self.NavStack)
                         ){
-                            SolListItem(title: item.title, subTitle: item.subTitle, isShared: self.sharedSessionIds.contains(item.id))
+                            SolListItem(title: item.title, subTitle: item.subTitle, isShared: false)
                         }
                     }
                 }
                 .listStyle(GroupedListStyle())
             }
         }
-        .navigationBarTitle("Sessions")
         .onAppear {
             self.filteredItems = self.allItems.toArray()
             self.filterItems()

@@ -89,7 +89,7 @@ func BodyText(_ content: String) -> some View {
     Text(content)
         .font(.system(size: 18))
         .lineSpacing(4)
-        .foregroundColor(Color.gray)
+        .foregroundColor(Color.white)
 }
 
 func DisclaimerText(_ content: String) -> some View {
