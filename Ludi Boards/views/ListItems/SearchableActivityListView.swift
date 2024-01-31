@@ -32,7 +32,7 @@ struct SearchableActivityListView: View {
     
     var body: some View {
         VStack {
-            SearchBar(text: $searchText, placeholder: "Search items")
+            SearchBar(text: $searchText, placeholder: "Search Activities")
                 .padding(.top)
             
             ScrollView {

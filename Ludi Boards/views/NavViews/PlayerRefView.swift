@@ -17,6 +17,9 @@ struct PlayerRefView: View {
 
     @State private var attachATeamConfirmation: Bool = false
     @State private var attachATeamIsOn: Bool = false
+    
+    @State var playerTeamName: String = ""
+    @State var originalTeamName: String = ""
     @State var playerTeamId: String = ""
     @State var originalTeamId: String = ""
     
@@ -79,22 +82,6 @@ struct PlayerRefView: View {
                         .font(.largeTitle)
                         .fontWeight(.bold)
                         .padding(.top, 20)
-
-                    // Player's position, number, and age
-                    HStack {
-                        Text(playerPosition)
-                            .font(.title3)
-                            .fontWeight(.medium)
-                        Text("#\(playerNumber)")
-                            .font(.title3)
-                            .fontWeight(.medium)
-                        Spacer()
-                        Text("Age \(playerAge)")
-                            .font(.title3)
-                            .fontWeight(.medium)
-                    }
-                    .padding(.top, 5)
-                    
                     
                 }.frame(width: 200)
             
@@ -102,8 +89,6 @@ struct PlayerRefView: View {
                 // Player Details
                 VStack {
                     SolTextField("Player Name", text: $playerName, isEditable: $isEditMode)
-                    
-                    
                     
                     DStack {
                         SolTextField("Position", text: $playerPosition, isEditable: $isEditMode)
@@ -120,8 +105,6 @@ struct PlayerRefView: View {
                 }
                 .padding(.top, 20)
                 
-
-               
             }
             .padding()
             
@@ -129,7 +112,7 @@ struct PlayerRefView: View {
                 Toggle(isOn: $attachATeamIsOn, label: {
                     SubHeaderText(playerTeamId.isEmpty ? "Attach a Team." : "Reassign Team")
                 })
-                SolTeamPicker(selection: $playerTeamId, isEnabled: .constant(attachATeamIsOn && isEditMode))
+                SolTeamPicker(selection: $playerTeamName, isEnabled: .constant(attachATeamIsOn))
             }
             
             Divider()
@@ -145,11 +128,14 @@ struct PlayerRefView: View {
                         if !isEditMode { isShowing = false }
                     }, isEnabled: isEditMode)
                     
-                    SolButton(title: "Delete Player", action: {
-                        deletePlayer()
-                        isEditMode.toggle()
-                        if !isEditMode { isShowing = false }
-                    }, isEnabled: isEditMode && playerId != "new")
+                    SolConfirmButton(
+                        title: "Delete Player",
+                        message: "Are you sure you want to delete this player?",
+                        action: {
+                            deletePlayer()
+                            isEditMode.toggle()
+                            if !isEditMode { isShowing = false }
+                        }, isEnabled: isEditMode && playerId != "new")
                 }
                 
                 
@@ -166,8 +152,9 @@ struct PlayerRefView: View {
         .onChange(of: self.playerId, perform: { value in
             loadPlayer()
         })
-        .onChange(of: playerTeamId, perform: { value in
-            if playerTeamId != originalTeamId && isEditMode {
+        .onChange(of: playerTeamName, perform: { value in
+            playerTeamId = self.realmInstance.getTeamIdByName(name: playerTeamName)
+            if playerTeamName != originalTeamName && isEditMode {
                 attachATeamConfirmation = true
             } else {
                 attachATeamConfirmation = false
@@ -175,12 +162,12 @@ struct PlayerRefView: View {
         })
         .alert("Assign Player", isPresented: $attachATeamConfirmation) {
             Button("Cancel", role: .cancel) {
-                playerTeamId = originalTeamId
+                playerTeamName = originalTeamName
                 attachATeamConfirmation = false
             }
             Button("OK", role: .none) {
                 savePlayer()
-                originalTeamId = playerTeamId
+                originalTeamName = playerTeamName
                 attachATeamConfirmation = false
             }
         } message: {
@@ -216,6 +203,7 @@ struct PlayerRefView: View {
     
     private func addPlayer() {
         let obj = PlayerRef()
+        playerId = obj.id
         obj.name = playerName
         obj.teamId = attachATeamIsOn ? playerTeamId : ""
         obj.position = playerPosition

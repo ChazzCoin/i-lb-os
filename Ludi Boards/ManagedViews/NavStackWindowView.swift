@@ -274,12 +274,12 @@ struct NavStackFloatingWindow : View {
     
     func resetSize() {
         if UIDevice.current.userInterfaceIdiom == .pad {
-            self.width = min(screenWidth, screenHeight) * 0.5
+            self.width = min(screenWidth, screenHeight) * 0.65
         } else {
             self.width = min(screenWidth, screenHeight) * 0.8
         }
         
-        self.height = min(screenWidth, screenHeight) * 0.6
+        self.height = min(screenWidth, screenHeight) * 0.85
     }
 
     var body: some View {

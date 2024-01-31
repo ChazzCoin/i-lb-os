@@ -26,7 +26,7 @@ struct SearchableTeamListView: View {
     
     var body: some View {
         VStack {
-            SearchBar(text: $searchText, placeholder: "Search items")
+            SearchBar(text: $searchText, placeholder: "Search Teams")
                 .padding(.top)
             
             ScrollView {
@@ -38,10 +38,13 @@ struct SearchableTeamListView: View {
                                 showCurrentTeamSheet = true
                             }
                     }
+                    .clearSectionBackground()
                 }
-                .listStyle(GroupedListStyle())
+                .clearSectionBackground()
             }
+            .clearSectionBackground()
         }
+        .clearSectionBackground()
         .sheet(isPresented: $showCurrentTeamSheet) {
             TeamView(teamId: $currentTeamId, isShowing: $showCurrentTeamSheet)
         }

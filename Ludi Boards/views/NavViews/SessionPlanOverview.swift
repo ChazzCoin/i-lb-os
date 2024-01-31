@@ -49,17 +49,21 @@ struct SessionPlanOverview: View {
     var sidebarView: some View {
         
         DSidebarWindow {
-            Spacer().frame(height: 50)
-            SubHeaderText("Teams")
+            Spacer()
+                .frame(height: 50)
+                .clearSectionBackground()
+            HeaderText("Team Management")
             SearchableTeamListView()
+                .clearSectionBackground()
                 .environmentObject(self.BEO)
                 .environmentObject(self.NavStack)
-            SubHeaderText("Players")
             SearchablePlayerRefListView()
+                .clearSectionBackground()
                 .environmentObject(self.BEO)
                 .environmentObject(self.NavStack)
             Spacer()
         }
+        .clearSectionBackground()
         
     }
 

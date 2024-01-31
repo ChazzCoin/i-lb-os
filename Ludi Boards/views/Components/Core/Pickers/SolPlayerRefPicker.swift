@@ -12,13 +12,14 @@ import RealmSwift
 struct SolPlayerRefFreePicker: View {
     @Binding var selection: String
     @Binding var isEnabled: Bool
+    @State var realmInstance = newRealm()
     @ObservedResults(PlayerRef.self, where: { $0.teamId == "" }) var allPlayers
     
     var body: some View {
-        Picker(selection: $selection, label: HeaderText("Players")) {
+        Picker(selection: $selection, label: BodyText("No Players")) {
             ForEach(allPlayers, id: \.self) { item in
                 Text(item.name)
-                    .tag(item.id)
+                    .tag(item.name)
             }
         }
         .padding(15)

@@ -20,7 +20,6 @@ struct RoomUserList: View {
             if self.ROOM.objsInCurrentRoom.isEmpty {
                 Text("This room seems to be empty.")
                     .frame(maxWidth: .infinity)
-                    .background(Color.primaryBackground)
             }
             
             List(self.ROOM.objsInCurrentRoom) { buddy in

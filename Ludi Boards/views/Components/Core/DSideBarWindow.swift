@@ -17,14 +17,11 @@ struct DSidebarWindow<Content: View>: View {
     }
 
     var body: some View {
-        ScrollView(.vertical, showsIndicators: true) {
-            VStack(alignment: .leading) {
-                content
-            }
+        Form {
+            content
         }
-        .padding()
         .frame(width: 300, height: UIScreen.main.bounds.height, alignment: .leading)
-        .background(Color.gray.opacity(0.95))
+        .padding()
         .edgesIgnoringSafeArea(.all)
     }
 }

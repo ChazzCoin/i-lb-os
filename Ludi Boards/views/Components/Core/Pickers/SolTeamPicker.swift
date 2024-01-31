@@ -22,7 +22,7 @@ struct SolTeamPicker: View {
                 Picker(selection: $selection, label: HeaderText("Teams")) {
                     ForEach(allTeams, id: \.self) { item in
                         Text(item.name)
-                            .tag(item.id)
+                            .tag(item.name)
                     }
                 }
             } else {

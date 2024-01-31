@@ -38,6 +38,8 @@ struct SettingsView: View {
     @State var isLocked = false
     @State var viewId: String = ""
     
+    @State var hasPlayerRef: Bool = false
+    
     let colors: [Color] = [Color.red, Color.blue]
     private let circleSize: CGFloat = 40
     private let spacing: CGFloat = 10
@@ -47,6 +49,11 @@ struct SettingsView: View {
     @State private var isLoading = false
     @State private var showCompletion = false
     @State var cancellables = Set<AnyCancellable>()
+    
+    @State private var addPlayerName = ""
+    @State private var addPlayerId = "new"
+    @State private var currentPlayerId = "new"
+    @State private var showNewPlayerRefSheet = false
     
     @State var fireDB = Database
         .database()
@@ -69,9 +76,25 @@ struct SettingsView: View {
                 }
             }
             
-            // TODO: Attach a PlayerRef
-            
-            // TODO: View/Modify PlayerRef
+            Section(header: Text("Player Reference").font(.headline)) {
+                
+                DStack {
+                    Toggle(hasPlayerRef ? "Player Attached" : "No Player", isOn: $hasPlayerRef)
+                        .padding()
+                    SolPlayerRefFreePicker(selection: $addPlayerName, isEnabled: $hasPlayerRef)
+                    .padding()
+                }
+                
+                // TODO: View/Modify PlayerRef
+                SolButton(
+                    title: "Create Player Reference",
+                    action: {
+                        showNewPlayerRefSheet = true
+                    },
+                    isEnabled: hasPlayerRef
+                )
+                
+            }
             
             Section(header: Text("Tool Settings").font(.headline)) {
                 
@@ -233,6 +256,13 @@ struct SettingsView: View {
         }
         .background(Color.clear)
         .navigationBarTitle("Settings", displayMode: .inline)
+        .sheet(isPresented: $showNewPlayerRefSheet) {
+            
+            if let obj = self.realmInstance.findPlayerByName(name: self.currentPlayerId) {
+                PlayerRefView(playerId: .constant(obj.id), isShowing: $showNewPlayerRefSheet)
+            }
+            
+        }
         .onChange(of: self.BEO.currentActivityId, perform: { _ in
             startRestartSession()
         })

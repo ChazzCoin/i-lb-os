@@ -15,7 +15,9 @@ struct TeamView: View {
     @State var team: Team = Team()
     @ObservedResults(PlayerRef.self) var players
     var roster: Results<PlayerRef> {
-        return self.players.filter("teamId == %@", self.teamId)
+        let temp = self.players.filter("teamId == %@", self.teamId)
+        print("Roster: \(temp)")
+        return temp
     }
     
     @State private var isEditMode: Bool = false
@@ -28,6 +30,7 @@ struct TeamView: View {
     @State var teamCoach: String = ""
     @State var sport: String = ""
     
+    @State var addPlayerName = ""
     @State var addPlayerId = ""
     @State var showAddPlayerPicker: Bool = false
     
@@ -113,7 +116,7 @@ struct TeamView: View {
                 if isEditMode {
                     HStack {
                         Spacer()
-                        SolPlayerRefFreePicker(selection: $addPlayerId, isEnabled: $isEditMode)
+                        SolPlayerRefFreePicker(selection: $addPlayerName, isEnabled: $isEditMode)
                         Spacer()
                     }
                 }
@@ -143,8 +146,8 @@ struct TeamView: View {
             loadTeam()
         })
         .navigationBarTitle("Team Details", displayMode: .inline)
-        .onChange(of: addPlayerId, perform: { value in
-            if !addPlayerId.isEmpty {
+        .onChange(of: addPlayerName, perform: { value in
+            if !addPlayerName.isEmpty {
                 showAddPlayerPicker = true
             }
         })
@@ -154,7 +157,7 @@ struct TeamView: View {
             }
             Button("OK", role: .none) {
                 showAddPlayerPicker = false
-                if let obj = self.realmInstance.findByField(PlayerRef.self, value: self.addPlayerId) {
+                if let obj = self.realmInstance.findPlayerByName(name: self.addPlayerName) {
                     self.realmInstance.safeWrite { _ in
                         obj.teamId = self.teamId
                     }

@@ -26,7 +26,7 @@ struct SearchablePlayerRefListView: View {
     
     var body: some View {
         VStack {
-            SearchBar(text: $searchText, placeholder: "Search items")
+            SearchBar(text: $searchText, placeholder: "Search Players")
                 .padding(.top)
             
             ScrollView {
@@ -38,12 +38,15 @@ struct SearchablePlayerRefListView: View {
                                 showCurrentPlayerSheet = true
                             }
                     }
+                    .clearSectionBackground()
                 }
-                .listStyle(GroupedListStyle())
+                .clearSectionBackground()
             }
+            .clearSectionBackground()
         }
+        .clearSectionBackground()
         .sheet(isPresented: $showCurrentPlayerSheet) {
-            PlayerRefView(playerId: .constant(currentPlayerId), isShowing: $showCurrentPlayerSheet)
+            PlayerRefView(playerId: $currentPlayerId, isShowing: $showCurrentPlayerSheet)
         }
         .onAppear {
             self.filteredItems = self.allItems.toArray()

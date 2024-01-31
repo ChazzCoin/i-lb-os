@@ -29,11 +29,18 @@ struct SearchBar: UIViewRepresentable {
     }
 
     func makeUIView(context: UIViewRepresentableContext<SearchBar>) -> UISearchBar {
+        
         let searchBar = UISearchBar(frame: .zero)
         searchBar.delegate = context.coordinator
         searchBar.placeholder = placeholder
         searchBar.autocapitalizationType = .none
         searchBar.autocorrectionType = .no
+        searchBar.backgroundImage = UIImage()
+        searchBar.searchTextField.backgroundColor = .secondaryBackground
+        
+        searchBar.searchTextField.textColor = .white
+        searchBar.searchTextField.attributedPlaceholder = NSAttributedString(string: placeholder, attributes: [NSAttributedString.Key.foregroundColor: UIColor.white])
+            
         return searchBar
     }
 

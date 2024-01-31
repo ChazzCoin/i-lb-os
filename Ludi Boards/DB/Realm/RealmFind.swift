@@ -22,6 +22,25 @@ extension Realm {
         return self.objects(type).filter("%K != %@", field, value)
     }
     
+    //
+    func findPlayerByName(name: String) -> PlayerRef? {
+        return self.findByField(PlayerRef.self, field: "name", value: name)
+    }
+    
+    func getPlayerNameById(id: String) -> String {
+        return self.findByField(PlayerRef.self, value: id)?.name ?? ""
+    }
+    
+    func getTeamNameById(id: String) -> String {
+        return self.findByField(Team.self, value: id)?.name ?? ""
+    }
+    
+    func getTeamIdByName(name: String) -> String {
+        return self.findByField(Team.self, field: "name", value: name)?.id ?? ""
+    }
+    
+    //
+    
     func isLiveSessionPlan(sessionId: String) -> Bool {
         if let plan = self.findByField(SessionPlan.self, value: sessionId) {
             return plan.isLive
