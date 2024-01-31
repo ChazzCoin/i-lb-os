@@ -51,6 +51,17 @@ class BoardEngineObject : ObservableObject {
     @Published var canvasRotation: CGFloat = 0.0
     @GestureState var gestureScale: CGFloat = 1.0
     @Published var lastScaleValue: CGFloat = 1.0
+    @Published var dropPosition = CGPoint.zero
+    @Published var dropDelegate: CustomDropDelegate?
+    
+    init() {
+        dropDelegate = CustomDropDelegate(
+            BEO: .constant(self),
+            updatePosition: { position in
+                self.dropPosition = position
+            }
+        )
+    }
     
     // Board Settings
     @Published var boardWidth: CGFloat = 5000.0
@@ -231,6 +242,45 @@ class BoardEngineObject : ObservableObject {
     
 }
 
+struct CustomDropDelegate: DropDelegate {
+    @Binding var BEO: BoardEngineObject // Replace with your actual type
+    @State var updatePosition: (CGPoint) -> Void
+
+    func performDrop(info: DropInfo) -> Bool {
+        let dropLocation = info.location
+        
+        // Handle the drop and get the dropped content
+        guard let itemProvider = info.itemProviders(for: [.text]).first else {
+            return false
+        }
+        itemProvider.loadObject(ofClass: NSString.self) { (droppedString, error) in
+            DispatchQueue.main.async {
+                let newTool = ManagedView()
+                newTool.toolType = droppedString as! String
+                newTool.boardId = BEO.currentActivityId
+                newTool.x = dropLocation.x
+                newTool.y = dropLocation.y
+                BEO.realmInstance.safeWrite { r in
+                    r.create(ManagedView.self, value: newTool, update: .all)
+                }
+                
+                // TODO: Firebase Users ONLY
+                firebaseDatabase(safeFlag: userIsVerifiedToProceed()) { fdb in
+                    fdb.child(DatabasePaths.managedViews.rawValue)
+                        .child(BEO.currentActivityId)
+                        .child(newTool.id)
+                        .setValue(newTool.toDict())
+                }
+
+                // Update the position
+                updatePosition(dropLocation)
+            }
+        }
+        return true
+    }
+}
+
+
 struct BoardEngine: View {
     @Environment(\.scenePhase) var deviceState
     @EnvironmentObject var BEO: BoardEngineObject
@@ -315,27 +365,7 @@ struct BoardEngine: View {
             })
             .position(x: self.BEO.boardStartPosX, y: self.BEO.boardStartPosY).zIndex(2.0)
         )
-        .onDrop(of: [.text], isTargeted: nil) { providers in
-            providers.first?.loadObject(ofClass: NSString.self) { (droppedString, error) in
-                DispatchQueue.main.async {
-                    let newTool = ManagedView()
-                    newTool.toolType = droppedString as! String
-                    newTool.boardId = self.BEO.currentActivityId
-                    self.BEO.realmInstance.safeWrite { r in
-                        r.create(ManagedView.self, value: newTool, update: .all)
-                    }
-                    
-                    // TODO: Firebase Users ONLY
-                    firebaseDatabase(safeFlag: userIsVerifiedToProceed()) { fdb in
-                        fdb.child(DatabasePaths.managedViews.rawValue)
-                            .child(self.BEO.currentActivityId)
-                            .child(newTool.id)
-                            .setValue(newTool.toDict())
-                    }
-                }
-            }
-            return true
-        }
+        .onDrop(of: [.text], delegate: self.BEO.dropDelegate!)
         .simultaneousGesture( self.BEO.isDraw ?
             DragGesture()
                 .onChanged { value in
