@@ -8,7 +8,23 @@
 import Foundation
 import SwiftUI
 
-struct SearchBar: UIViewRepresentable {
+struct SearchBar : View {
+    @Binding var text: String
+    @State var placeholder: String
+    
+    var body: some View {
+        ZStack {
+            SearchBarView(text: $text, placeholder: placeholder)
+        }
+        .frame(height: 50)
+        .background(Color.secondaryBackground)
+        .foregroundColor(.white)
+        .cornerRadius(10)
+        .shadow(color: .gray.opacity(0.4), radius: 5, x: 0, y: 2)
+    }
+}
+
+struct SearchBarView: UIViewRepresentable {
     @Binding var text: String
     var placeholder: String
 
@@ -28,7 +44,7 @@ struct SearchBar: UIViewRepresentable {
         return Coordinator(text: $text)
     }
 
-    func makeUIView(context: UIViewRepresentableContext<SearchBar>) -> UISearchBar {
+    func makeUIView(context: UIViewRepresentableContext<SearchBarView>) -> UISearchBar {
         
         let searchBar = UISearchBar(frame: .zero)
         searchBar.delegate = context.coordinator
@@ -44,7 +60,7 @@ struct SearchBar: UIViewRepresentable {
         return searchBar
     }
 
-    func updateUIView(_ uiView: UISearchBar, context: UIViewRepresentableContext<SearchBar>) {
+    func updateUIView(_ uiView: UISearchBar, context: UIViewRepresentableContext<SearchBarView>) {
         uiView.text = text
     }
 }

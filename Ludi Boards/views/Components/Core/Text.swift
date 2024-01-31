@@ -85,11 +85,11 @@ func TitleText(_ content: String) -> some View {
 
 
 
-func BodyText(_ content: String) -> some View {
+func BodyText(_ content: String, color:Color = .white) -> some View {
     Text(content)
         .font(.system(size: 18))
         .lineSpacing(4)
-        .foregroundColor(Color.white)
+        .foregroundColor(color)
 }
 
 func DisclaimerText(_ content: String) -> some View {

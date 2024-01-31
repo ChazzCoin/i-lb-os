@@ -15,9 +15,7 @@ struct TeamView: View {
     @State var team: Team = Team()
     @ObservedResults(PlayerRef.self) var players
     var roster: Results<PlayerRef> {
-        let temp = self.players.filter("teamId == %@", self.teamId)
-        print("Roster: \(temp)")
-        return temp
+        return self.players.filter("teamId == %@", self.teamId)
     }
     
     @State private var isEditMode: Bool = false

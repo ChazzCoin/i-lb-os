@@ -142,11 +142,11 @@ struct SessionPlanView: View {
                 SolTextField("Title", text: $title)
                 
                 DStack {
-                    SolTextEditor("Description", text: $description)
+                    SolTextEditor("Description", text: $description, color: .black)
                         .padding()
                         .frame(minHeight: 125)
                     
-                    SolTextEditor("Objective", text: $objective)
+                    SolTextEditor("Objective", text: $objective, color: .black)
                         .padding()
                         .frame(minHeight: 125)
                 }

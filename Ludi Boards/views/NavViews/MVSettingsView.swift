@@ -22,6 +22,11 @@ struct SettingsView: View {
     
     var onDelete: () -> Void
     
+    @ObservedResults(PlayerRef.self) var players
+    var attachedPlayer: Results<PlayerRef> {
+        return self.players.filter("toolId == %@", self.viewId)
+    }
+    
     let realmInstance = realm()
     @State var activityId = ""
     @EnvironmentObject var BEO: BoardEngineObject
@@ -38,7 +43,7 @@ struct SettingsView: View {
     @State var isLocked = false
     @State var viewId: String = ""
     
-    @State var hasPlayerRef: Bool = false
+    
     
     let colors: [Color] = [Color.red, Color.blue]
     private let circleSize: CGFloat = 40
@@ -50,8 +55,11 @@ struct SettingsView: View {
     @State private var showCompletion = false
     @State var cancellables = Set<AnyCancellable>()
     
-    @State private var addPlayerName = ""
-    @State private var addPlayerId = "new"
+    @State var attachedPlayerIsOn: Bool = false
+    @State var hasPlayerRef: Bool = false
+    @State var addPlayerName = ""
+    @State var addPlayerId = "new"
+    @State var showAddPlayerPicker: Bool = false
     @State private var currentPlayerId = "new"
     @State private var showNewPlayerRefSheet = false
     
@@ -79,20 +87,35 @@ struct SettingsView: View {
             Section(header: Text("Player Reference").font(.headline)) {
                 
                 DStack {
-                    Toggle(hasPlayerRef ? "Player Attached" : "No Player", isOn: $hasPlayerRef)
+                    Toggle(attachedPlayerIsOn ? "Player Attached" : "No Player", isOn: $attachedPlayerIsOn)
                         .padding()
-                    SolPlayerRefFreePicker(selection: $addPlayerName, isEnabled: $hasPlayerRef)
-                    .padding()
+                    
+                    if hasPlayerRef {
+                        PlayerRefItemView(playerId: $currentPlayerId)
+                    } else {
+                        SolPlayerRefFreePicker(selection: $addPlayerName, isEnabled: $attachedPlayerIsOn)
+                            .padding()
+                    }
+                   
+                }
+                if hasPlayerRef {
+                    SolButton(
+                        title: "Player Details",
+                        action: {
+                            showNewPlayerRefSheet = true
+                        },
+                        isEnabled: hasPlayerRef
+                    )
+                } else {
+                    SolButton(
+                        title: "Create Player Reference",
+                        action: {
+                            showNewPlayerRefSheet = true
+                        },
+                        isEnabled: hasPlayerRef
+                    )
                 }
                 
-                // TODO: View/Modify PlayerRef
-                SolButton(
-                    title: "Create Player Reference",
-                    action: {
-                        showNewPlayerRefSheet = true
-                    },
-                    isEnabled: hasPlayerRef
-                )
                 
             }
             
@@ -256,12 +279,29 @@ struct SettingsView: View {
         }
         .background(Color.clear)
         .navigationBarTitle("Settings", displayMode: .inline)
-        .sheet(isPresented: $showNewPlayerRefSheet) {
-            
-            if let obj = self.realmInstance.findPlayerByName(name: self.currentPlayerId) {
-                PlayerRefView(playerId: .constant(obj.id), isShowing: $showNewPlayerRefSheet)
+        .onChange(of: addPlayerName, perform: { value in
+            if !addPlayerName.isEmpty {
+                showAddPlayerPicker = true
             }
-            
+        })
+        .sheet(isPresented: $showNewPlayerRefSheet) {
+            PlayerRefView(playerId: $currentPlayerId, isShowing: $showNewPlayerRefSheet)
+        }
+        .alert("Attach Player", isPresented: $showAddPlayerPicker) {
+            Button("Cancel", role: .cancel) {
+                showAddPlayerPicker = false
+            }
+            Button("OK", role: .none) {
+                showAddPlayerPicker = false
+                if let obj = self.realmInstance.findPlayerByName(name: self.addPlayerName) {
+                    self.currentPlayerId = obj.id
+                    self.realmInstance.safeWrite { _ in
+                        obj.toolId = self.viewId
+                    }
+                }
+            }
+        } message: {
+            Text("Are you sure you want to attach player to team?")
         }
         .onChange(of: self.BEO.currentActivityId, perform: { _ in
             startRestartSession()
@@ -309,6 +349,14 @@ struct SettingsView: View {
             if let tr = temp.rotation { self.viewRotation = tr }
             if let tc = temp.color { self.viewColor = tc }
             if let lc = temp.isLocked { self.isLocked = lc }
+            
+            hasPlayerRef = !attachedPlayer.isEmpty
+            if hasPlayerRef {
+                attachedPlayerIsOn = true
+            } else {
+                attachedPlayerIsOn = false
+            }
+            self.currentPlayerId = attachedPlayer.first?.id ?? "new"
             
         }.store(in: &cancellables)
         startRestartSession()

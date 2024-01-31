@@ -20,8 +20,14 @@ struct DSidebarWindow<Content: View>: View {
         Form {
             content
         }
+//        .padding()
         .frame(width: 300, height: UIScreen.main.bounds.height, alignment: .leading)
-        .padding()
-        .edgesIgnoringSafeArea(.all)
+        .background(
+            Image("sol_bg_big")
+                .resizable()
+                .frame(width: 300, height: UIScreen.main.bounds.height, alignment: .leading)
+                .opacity(0.9)
+        )
+//        .edgesIgnoringSafeArea(.all)
     }
 }

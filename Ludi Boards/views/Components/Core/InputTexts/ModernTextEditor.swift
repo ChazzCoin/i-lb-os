@@ -12,11 +12,13 @@ struct SolTextEditor: View {
     @Binding var text: String
     var placeholder: String
     var title: String
+    @State var color: Color
 
-    init(_ placeholder: String, text: Binding<String>) {
+    init(_ placeholder: String, text: Binding<String>, color: Color = .white) {
         self._text = text
         self.placeholder = placeholder
         self.title = placeholder
+        self.color = color
     }
 
     var body: some View {
@@ -24,7 +26,7 @@ struct SolTextEditor: View {
         VStack {
             
             AlignLeft {
-                BodyText(title)
+                BodyText(title, color: self.color)
             }
             
             ZStack(alignment: .topLeading) {

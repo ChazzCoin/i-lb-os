@@ -26,8 +26,8 @@ struct SearchableTeamListView: View {
     
     var body: some View {
         VStack {
+            
             SearchBar(text: $searchText, placeholder: "Search Teams")
-                .padding(.top)
             
             ScrollView {
                 LazyVGrid(columns: columns, spacing: 20) {

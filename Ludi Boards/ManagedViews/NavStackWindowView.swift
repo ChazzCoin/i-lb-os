@@ -121,8 +121,17 @@ struct NavStackWindow : View {
                 .background(Image("sol_bg_big").opacity(0.3))
                 .environmentObject(BEO)
                 .environmentObject(NavStack)
-                .navigationBarItems(trailing: HStack {
+                .navigationBarItems(leading: HStack {
                     // Add buttons or icons here for minimize, maximize, close, etc.
+                    Button(action: {
+                        CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: self.id, stateAction: "close", viewId: "self"))
+                    }) {
+                        Image(systemName: "minus.circle")
+                            .resizable()
+                            .frame(width: 30, height: 30)
+                    }
+                    
+                }, trailing: HStack {
                     if self.NavStack.keyboardIsShowing {
                         Button(action: {
                             hideKeyboard()
@@ -131,13 +140,6 @@ struct NavStackWindow : View {
                                 .resizable()
                                 .frame(width: 30, height: 30)
                         }
-                    }
-                    Button(action: {
-                        CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: self.id, stateAction: "close", viewId: "self"))
-                    }) {
-                        Image(systemName: "arrow.down.to.line.alt")
-                            .resizable()
-                            .frame(width: 30, height: 30)
                     }
                     Button(action: {
                         self.NavStack.toggleWindowSize(gps: self.gps)
