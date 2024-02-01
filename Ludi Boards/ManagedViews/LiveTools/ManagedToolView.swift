@@ -258,16 +258,14 @@ struct enableManagedViewTool : ViewModifier {
                 
                 if self.activityId != temp.boardId {self.activityId = temp.boardId}
                 
-                withAnimation {
-                    if self.lifeWidth != Double(temp.width) {self.lifeWidth = Double(temp.width)}
-                    if self.lifeHeight != Double(temp.height) { self.lifeHeight = Double(temp.height)}
-                    if self.lifeRotation != temp.rotation { self.lifeRotation = temp.rotation}
-                    if self.lifeToolType != temp.toolType { self.lifeToolType = temp.toolType}
-                    if self.lifeColorRed != temp.colorRed {self.lifeColorRed = temp.colorRed}
-                    if self.lifeColorGreen != temp.colorGreen { self.lifeColorGreen = temp.colorGreen}
-                    if self.lifeColorBlue != temp.colorBlue {self.lifeColorBlue = temp.colorBlue}
-                    if self.lifeColorAlpha != temp.colorAlpha { self.lifeColorAlpha = temp.colorAlpha}
-                }
+                if self.lifeWidth != Double(temp.width) {self.lifeWidth = Double(temp.width)}
+                if self.lifeHeight != Double(temp.height) { self.lifeHeight = Double(temp.height)}
+                if self.lifeRotation != temp.rotation { self.lifeRotation = temp.rotation}
+                if self.lifeToolType != temp.toolType { self.lifeToolType = temp.toolType}
+                if self.lifeColorRed != temp.colorRed {self.lifeColorRed = temp.colorRed}
+                if self.lifeColorGreen != temp.colorGreen { self.lifeColorGreen = temp.colorGreen}
+                if self.lifeColorBlue != temp.colorBlue {self.lifeColorBlue = temp.colorBlue}
+                if self.lifeColorAlpha != temp.colorAlpha { self.lifeColorAlpha = temp.colorAlpha}
                 
                 if self.lifeIsLocked != temp.isLocked { self.lifeIsLocked = temp.isLocked}
                 self.lifeLastUserId = temp.lastUserId

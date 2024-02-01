@@ -691,5 +691,309 @@
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "BB87D891-98C2-48C0-BDDB-1E89BECFADAC"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ludi Boards/views/ListItems/SearchableRecordingsListView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "101"
+            endingLineNumber = "101"
+            landmarkName = "deleteItems(at:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "BB87D891-98C2-48C0-BDDB-1E89BECFADAC - 9a4fe9a64a5c1984"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #5 () -&gt; () in Ludi_Boards.SearchableRecordingsListView.body.getter : some"
+                  moduleName = "Ludi Boards"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/views/ListItems/SearchableRecordingsListView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "101"
+                  endingLineNumber = "101"
+                  offsetFromSymbolStart = "348">
+               </Location>
+               <Location
+                  uuid = "BB87D891-98C2-48C0-BDDB-1E89BECFADAC - de0d2950946546b3"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Ludi_Boards.SearchableRecordingsListView.deleteItems(at: Foundation.IndexSet) -&gt; ()"
+                  moduleName = "Ludi Boards"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/views/ListItems/SearchableRecordingsListView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "101"
+                  endingLineNumber = "101"
+                  offsetFromSymbolStart = "84">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "683BD4C8-D75D-4611-B62C-5BB86C49AD88"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ludi Boards/CanvasEngine/CanvasEngine.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "178"
+            endingLineNumber = "178"
+            landmarkName = "body"
+            landmarkType = "24">
+            <Locations>
+               <Location
+                  uuid = "683BD4C8-D75D-4611-B62C-5BB86C49AD88 - f806eef0a72848b6"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (SwiftUI.GeometryProxy, Ludi_Boards.GlobalPositioningSystem) -&gt; SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.position(using: Ludi_Boards.GlobalPositioningSystem, at: Ludi_Boards.ScreenArea, offsetX: CoreGraphics.CGFloat, offsetY: CoreGraphics.CGFloat) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of SwiftUI.View.position(using: Ludi_Boards.GlobalPositioningSystem, at: Ludi_Boards.ScreenArea, offsetX: CoreGraphics.CGFloat, offsetY: CoreGraphics.CGFloat) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of SwiftUI.View.position(using: Ludi_Boards.GlobalPositioningSystem, at: Ludi_Boards.ScreenArea, offsetX: CoreGraphics.CGFloat, offsetY: CoreGraphics.CGFloat) -&gt; some&gt;&gt;.0, Swift.Optional&lt;&lt;&lt;opaque return type of SwiftUI.View.position(using: Ludi_Boards.GlobalPositioningSystem, at: Ludi_Boards.ScreenArea, offsetX: CoreGraphics.CGFloat, offsetY: CoreGraphics.CGFloat) -&gt; some&gt;&gt;.0&gt;, &lt;&lt;opaque return type of SwiftUI.View.position(using: Ludi_Boards.GlobalPositioningSystem, at: Ludi_Boards.ScreenArea, offsetX: CoreGraphics.CGFloat, offsetY: CoreGraphics.CGFloat) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of SwiftUI.View.position(using: Ludi_Boards.GlobalPositioningSystem, at: Ludi_Boards.ScreenArea, offsetX: CoreGraphics.CGFloat, offsetY: CoreGraphics.CGFloat) -&gt; some&gt;&gt;.0, Swift.Optional&lt;SwiftUI.ForEach&lt;Swift.Array&lt;Swift.String&gt;, Swift.String, &lt;&lt;opaque return type of SwiftUI.View.environmentObject&lt;&#x3c4;_0_0 where &#x3c4;_1_0: Combine.ObservableObject&gt;(&#x3c4;_1_0) -&gt; some&gt;&gt;.0&gt;&gt;, Swift.Optional&lt;&lt;&lt;opaque return type of SwiftUI.View.position(using: Ludi_Boards.GlobalPositioningSystem, at: Ludi_Boards.ScreenArea, offsetX: CoreGraphics.CGFloat, offsetY: CoreGraphics.CGFloat) -&gt; some&gt;&gt;.0&gt;, Swift.Optional&lt;&lt;&lt;opaque return type of SwiftUI.View.position(using: Ludi_Boards.GlobalPositioningSystem, at: Ludi_Boards.ScreenArea, offsetX: CoreGraphics.CGFloat, offsetY: CoreGraphics.CGFloat) -&gt; some&gt;&gt;.0&gt;, Swift.Optional&lt;&lt;&lt;opaque return type of SwiftUI.View.position(using: Ludi_Boards.GlobalPositioningSystem, at: Ludi_Boards.ScreenArea, offsetX: CoreGraphics.CGFloat, offsetY: CoreGraphics.CGFloat) -&gt; some&gt;&gt;.0&gt;, Swift.Optional&lt;&lt;&lt;opaque return type of SwiftUI.View.position(using: Ludi_Boards.GlobalPositioningSystem, at: Ludi_Boards.ScreenArea, offsetX: CoreGraphics.CGFloat, offsetY: CoreGraphics.CGFloat) -&gt; some&gt;&gt;.0&gt;, Swift.Optional&lt;&lt;&lt;opaque return type of SwiftUI.View.position(using: Ludi_Boards.GlobalPositioningSystem, at: Ludi_Boards.ScreenArea, offsetX: CoreGraphics.CGFloat, offsetY: CoreGraphics.CGFloat) -&gt; some&gt;&gt;.0&gt;, Swift.Optional&lt;&lt;&lt;opaque return type of SwiftUI.View.position(using: Ludi_Boards.GlobalPositioningSystem, at: Ludi_Boards.ScreenArea, offsetX: CoreGraphics.CGFloat, offsetY: CoreGraphics.CGFloat) -&gt; some&gt;&gt;.0&gt;)&gt; in Ludi_Boards.CanvasEngine.body.getter : some"
+                  moduleName = "Ludi Boards"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/CanvasEngine/CanvasEngine.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "178"
+                  endingLineNumber = "178"
+                  offsetFromSymbolStart = "7144">
+               </Location>
+               <Location
+                  uuid = "683BD4C8-D75D-4611-B62C-5BB86C49AD88 - 5f16c30ec73c5380"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #5 (Swift.String) -&gt; &lt;&lt;opaque return type of SwiftUI.View.environmentObject&lt;&#x3c4;_0_0 where &#x3c4;_1_0: Combine.ObservableObject&gt;(&#x3c4;_1_0) -&gt; some&gt;&gt;.0 in closure #1 (SwiftUI.GeometryProxy, Ludi_Boards.GlobalPositioningSystem) -&gt; SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.position(using: Ludi_Boards.GlobalPositioningSystem, at: Ludi_Boards.ScreenArea, offsetX: CoreGraphics.CGFloat, offsetY: CoreGraphics.CGFloat) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of SwiftUI.View.position(using: Ludi_Boards.GlobalPositioningSystem, at: Ludi_Boards.ScreenArea, offsetX: CoreGraphics.CGFloat, offsetY: CoreGraphics.CGFloat) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of SwiftUI.View.position(using: Ludi_Boards.GlobalPositioningSystem, at: Ludi_Boards.ScreenArea, offsetX: CoreGraphics.CGFloat, offsetY: CoreGraphics.CGFloat) -&gt; some&gt;&gt;.0, Swift.Optional&lt;&lt;&lt;opaque return type of SwiftUI.View.position(using: Ludi_Boards.GlobalPositioningSystem, at: Ludi_Boards.ScreenArea, offsetX: CoreGraphics.CGFloat, offsetY: CoreGraphics.CGFloat) -&gt; some&gt;&gt;.0&gt;, &lt;&lt;opaque return type of SwiftUI.View.position(using: Ludi_Boards.GlobalPositioningSystem, at: Ludi_Boards.ScreenArea, offsetX: CoreGraphics.CGFloat, offsetY: CoreGraphics.CGFloat) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of SwiftUI.View.position(using: Ludi_Boards.GlobalPositioningSystem, at: Ludi_Boards.ScreenArea, offsetX: CoreGraphics.CGFloat, offsetY: CoreGraphics.CGFloat) -&gt; some&gt;&gt;.0, Swift.Optional&lt;SwiftUI.ForEach&lt;Swift.Array&lt;Swift.String&gt;, Swift.String, &lt;&lt;opaque return type of SwiftUI.View.environmentObject&lt;&#x3c4;_0_0 where &#x3c4;_1_0: Combine.ObservableObject&gt;(&#x3c4;_1_0) -&gt; some&gt;&gt;.0&gt;&gt;, Swift.Optional&lt;&lt;&lt;opaque return type of SwiftUI.View.position(using: Ludi_Boards.GlobalPositioningSystem, at: Ludi_Boards.ScreenArea, offsetX: CoreGraphics.CGFloat, offsetY: CoreGraphics.CGFloat) -&gt; some&gt;&gt;.0&gt;, Swift.Optional&lt;&lt;&lt;opaque return type of SwiftUI.View.position(using: Ludi_Boards.GlobalPositioningSystem, at: Ludi_Boards.ScreenArea, offsetX: CoreGraphics.CGFloat, offsetY: CoreGraphics.CGFloat) -&gt; some&gt;&gt;.0&gt;, Swift.Optional&lt;&lt;&lt;opaque return type of SwiftUI.View.position(using: Ludi_Boards.GlobalPositioningSystem, at: Ludi_Boards.ScreenArea, offsetX: CoreGraphics.CGFloat, offsetY: CoreGraphics.CGFloat) -&gt; some&gt;&gt;.0&gt;, Swift.Optional&lt;&lt;&lt;opaque return type of SwiftUI.View.position(using: Ludi_Boards.GlobalPositioningSystem, at: Ludi_Boards.ScreenArea, offsetX: CoreGraphics.CGFloat, offsetY: CoreGraphics.CGFloat) -&gt; some&gt;&gt;.0&gt;, Swift.Optional&lt;&lt;&lt;opaque return type of SwiftUI.View.position(using: Ludi_Boards.GlobalPositioningSystem, at: Ludi_Boards.ScreenArea, offsetX: CoreGraphics.CGFloat, offsetY: CoreGraphics.CGFloat) -&gt; some&gt;&gt;.0&gt;, Swift.Optional&lt;&lt;&lt;opaque return type of SwiftUI.View.position(using: Ludi_Boards.GlobalPositioningSystem, at: Ludi_Boards.ScreenArea, offsetX: CoreGraphics.CGFloat, offsetY: CoreGraphics.CGFloat) -&gt; some&gt;&gt;.0&gt;)&gt; in Ludi_Boards.CanvasEngine.body.getter : some"
+                  moduleName = "Ludi Boards"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/CanvasEngine/CanvasEngine.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "179"
+                  endingLineNumber = "179"
+                  offsetFromSymbolStart = "72">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "0D0A0F85-FB12-4D88-BC32-79CD97E241F9"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ludi Boards/CanvasEngine/CanvasEngine.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "179"
+            endingLineNumber = "179"
+            landmarkName = "body"
+            landmarkType = "24">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "3A186C6A-D0CB-42CB-B5DB-CD2F5799B8E1"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ludi Boards/views/ListItems/SearchableRecordingsListView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "66"
+            endingLineNumber = "66"
+            landmarkName = "body"
+            landmarkType = "24">
+            <Locations>
+               <Location
+                  uuid = "3A186C6A-D0CB-42CB-B5DB-CD2F5799B8E1 - 519fc2fcfe5f8c6"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 (Swift.String) -&gt; () in Ludi_Boards.SearchableRecordingsListView.body.getter : some"
+                  moduleName = "Ludi Boards"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/views/ListItems/SearchableRecordingsListView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "66"
+                  endingLineNumber = "66"
+                  offsetFromSymbolStart = "380">
+               </Location>
+               <Location
+                  uuid = "3A186C6A-D0CB-42CB-B5DB-CD2F5799B8E1 - 519fc2fcfe5f8c6"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 (Swift.String) -&gt; () in Ludi_Boards.SearchableRecordingsListView.body.getter : some"
+                  moduleName = "Ludi Boards"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/views/ListItems/SearchableRecordingsListView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "66"
+                  endingLineNumber = "66"
+                  offsetFromSymbolStart = "428">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "9E8B78DE-8798-4849-80DB-70721FB00FBD"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ludi Boards/views/ListItems/SearchableRecordingsListView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "65"
+            endingLineNumber = "65"
+            landmarkName = "body"
+            landmarkType = "24">
+            <Locations>
+               <Location
+                  uuid = "9E8B78DE-8798-4849-80DB-70721FB00FBD - 519fc2fcfe5f8e5"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 (Swift.String) -&gt; () in Ludi_Boards.SearchableRecordingsListView.body.getter : some"
+                  moduleName = "Ludi Boards"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/views/ListItems/SearchableRecordingsListView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "65"
+                  endingLineNumber = "65"
+                  offsetFromSymbolStart = "152">
+               </Location>
+               <Location
+                  uuid = "9E8B78DE-8798-4849-80DB-70721FB00FBD - 519fc2fcfe5f8e5"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 (Swift.String) -&gt; () in Ludi_Boards.SearchableRecordingsListView.body.getter : some"
+                  moduleName = "Ludi Boards"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/views/ListItems/SearchableRecordingsListView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "65"
+                  endingLineNumber = "65"
+                  offsetFromSymbolStart = "200">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B82BE689-BEBF-4F1E-8752-A0FF063A2335"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ludi Boards/views/ListItems/SearchableRecordingsListView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "86"
+            endingLineNumber = "86"
+            landmarkName = "body"
+            landmarkType = "24">
+            <Locations>
+               <Location
+                  uuid = "B82BE689-BEBF-4F1E-8752-A0FF063A2335 - 9a4fe9a64a5c1b97"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #5 () -&gt; () in Ludi_Boards.SearchableRecordingsListView.body.getter : some"
+                  moduleName = "Ludi Boards"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/views/ListItems/SearchableRecordingsListView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "86"
+                  endingLineNumber = "86"
+                  offsetFromSymbolStart = "120">
+               </Location>
+               <Location
+                  uuid = "B82BE689-BEBF-4F1E-8752-A0FF063A2335 - 9a4fe9a64a5c1b97"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #5 () -&gt; () in Ludi_Boards.SearchableRecordingsListView.body.getter : some"
+                  moduleName = "Ludi Boards"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/views/ListItems/SearchableRecordingsListView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "86"
+                  endingLineNumber = "86"
+                  offsetFromSymbolStart = "160">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "06581975-2296-4B81-9372-90CAC1C46DA4"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ludi Boards/views/ListItems/SearchableRecordingsListView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "87"
+            endingLineNumber = "87"
+            landmarkName = "body"
+            landmarkType = "24">
+            <Locations>
+               <Location
+                  uuid = "06581975-2296-4B81-9372-90CAC1C46DA4 - 9a4fe9a64a5c1bf6"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #5 () -&gt; () in Ludi_Boards.SearchableRecordingsListView.body.getter : some"
+                  moduleName = "Ludi Boards"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/views/ListItems/SearchableRecordingsListView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "87"
+                  endingLineNumber = "87"
+                  offsetFromSymbolStart = "348">
+               </Location>
+               <Location
+                  uuid = "06581975-2296-4B81-9372-90CAC1C46DA4 - 9a4fe9a64a5c1bf6"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #5 () -&gt; () in Ludi_Boards.SearchableRecordingsListView.body.getter : some"
+                  moduleName = "Ludi Boards"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/views/ListItems/SearchableRecordingsListView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "87"
+                  endingLineNumber = "87"
+                  offsetFromSymbolStart = "388">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
    </Breakpoints>
 </Bucket>

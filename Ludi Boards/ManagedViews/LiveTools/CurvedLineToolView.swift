@@ -239,7 +239,7 @@ struct CurvedLineDrawingManaged: View {
             .onChanged { value in
                 if self.lifeIsLocked { return }
                 self.isDragging = true
-                
+                self.BEO.ignoreUpdates = true
                 if self.originalLifeStart == .zero {
                     self.originalLifeStart = CGPoint(x: lifeStartX, y: lifeStartY)
                     self.originalLifeEnd = CGPoint(x: lifeEndX, y: lifeEndY)
@@ -250,8 +250,10 @@ struct CurvedLineDrawingManaged: View {
             }
             .onEnded { value in
                 if self.lifeIsLocked { return }
+                self.BEO.ignoreUpdates = false
                 handleFullDragTranslation(value: value)
                 self.isDragging = false
+                
                 self.originalLifeStart = .zero
                 self.originalLifeEnd = .zero
                 self.originalLifeCenter = .zero
@@ -313,6 +315,8 @@ struct CurvedLineDrawingManaged: View {
         DragGesture()
             .onChanged { value in
                 if self.lifeIsLocked {return}
+                self.isDragging = true
+                self.BEO.ignoreUpdates = true
                 if dragOffset == .zero {
                     dragOffset = CGSize(width: (lifeCenterX - value.startLocation.x),
                                         height: (lifeCenterY - value.startLocation.y))
@@ -322,6 +326,8 @@ struct CurvedLineDrawingManaged: View {
             }
             .onEnded { _ in
                 dragOffset = .zero
+                self.isDragging = false
+                self.BEO.ignoreUpdates = false
                 updateRealm()
             }
             .simultaneously(with: doubleTapForSettingsAndAnchors())
@@ -335,6 +341,7 @@ struct CurvedLineDrawingManaged: View {
                 if self.lifeIsLocked {return}
                 if !anchorsAreVisible {return}
                 self.isDragging = true
+                self.BEO.ignoreUpdates = true
                 if isStart {
                     self.lifeStartX = value.location.x
                     self.lifeStartY = value.location.y
@@ -356,6 +363,7 @@ struct CurvedLineDrawingManaged: View {
                 if self.lifeIsLocked {return}
                 if !anchorsAreVisible {return}
                 self.isDragging = false
+                self.BEO.ignoreUpdates = false
                 updateRealmPos(start: CGPoint(x: lifeStartX, y: lifeStartY),
                             end: CGPoint(x: lifeEndX, y: lifeEndY))
             }
@@ -402,20 +410,21 @@ struct CurvedLineDrawingManaged: View {
                 lifeHeadIsEnabled = temp.headIsEnabled
                 lifeIsLocked = temp.isLocked
                 
-                if lifeWidth != Double(temp.width) {lifeWidth = Double(temp.width)}
-                if lifeLineDash != Double(temp.lineDash) {lifeLineDash = Double(temp.lineDash)}
-                
-                var colorHasChanged = false
-                if lifeColorRed != temp.colorRed { colorHasChanged = true; lifeColorRed = temp.colorRed}
-                if lifeColorGreen != temp.colorGreen { colorHasChanged = true; lifeColorGreen = temp.colorGreen}
-                if lifeColorBlue != temp.colorBlue { colorHasChanged = true; lifeColorBlue = temp.colorBlue }
-                if lifeColorAlpha != temp.colorAlpha { colorHasChanged = true; lifeColorAlpha = temp.colorAlpha }
-                if colorHasChanged {
-                    lifeColor = colorFromRGBA(red: lifeColorRed, green: lifeColorGreen, blue: lifeColorBlue, alpha: lifeColorAlpha)
+                withAnimation {
+                    if lifeWidth != Double(temp.width) {lifeWidth = Double(temp.width)}
+                    if lifeLineDash != Double(temp.lineDash) {lifeLineDash = Double(temp.lineDash)}
+                    
+                    var colorHasChanged = false
+                    if lifeColorRed != temp.colorRed { colorHasChanged = true; lifeColorRed = temp.colorRed}
+                    if lifeColorGreen != temp.colorGreen { colorHasChanged = true; lifeColorGreen = temp.colorGreen}
+                    if lifeColorBlue != temp.colorBlue { colorHasChanged = true; lifeColorBlue = temp.colorBlue }
+                    if lifeColorAlpha != temp.colorAlpha { colorHasChanged = true; lifeColorAlpha = temp.colorAlpha }
+                    if colorHasChanged {
+                        lifeColor = colorFromRGBA(red: lifeColorRed, green: lifeColorGreen, blue: lifeColorBlue, alpha: lifeColorAlpha)
+                    }
+                    loadWidthAndHeight()
+                    loadRotationOfLine()
                 }
-                loadWidthAndHeight()
-                loadRotationOfLine()
-                //
                 
                 if temp.lastUserId != getFirebaseUserIdOrCurrentLocalId() {
                     let startPosition = CGPoint(x: temp.startX, y: temp.startY)

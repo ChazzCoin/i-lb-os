@@ -9,9 +9,10 @@ import Foundation
 import SwiftUI
 
 struct MenuBarStatic: View {
+    @Binding var showIcons: Bool
     var onClick: () -> Void
     @StateObject private var rcl = RealmObserver<CurrentSolUser>()
-    @State private var showIcons = false
+//    @State private var showIcons = false
     @State private var iconStates = Array(repeating: false, count: 8)
     @Environment(\.colorScheme) var colorScheme
     @State private var isLocked = false

@@ -217,6 +217,7 @@ struct TipBoxViewStatic: View {
 struct RecordingFlasher: View {
     @State var title: String
     @State var subTitle: String
+    @State var showButton: Bool
     var onStop: () -> Void
     @State private var isFlashing = false
 
@@ -244,18 +245,20 @@ struct RecordingFlasher: View {
                         }
                     }
             }
-            
-            Button(action: {
-                // Add code here to "Turn Off" the feature
-                onStop()
-            }) {
-                Text("Stop Recording")
-                    .foregroundColor(.white)
-                    .padding(.vertical, 10)
-                    .frame(maxWidth: .infinity)
-                    .background(Color.red)
-                    .cornerRadius(8)
+            if showButton {
+                Button(action: {
+                    // Add code here to "Turn Off" the feature
+                    onStop()
+                }) {
+                    Text("Stop Recording")
+                        .foregroundColor(.white)
+                        .padding(.vertical, 10)
+                        .frame(maxWidth: .infinity)
+                        .background(Color.red)
+                        .cornerRadius(8)
+                }
             }
+            
         }
         .padding()
         .frame(maxWidth: 300, maxHeight: UIScreen.main.bounds.height - 100)

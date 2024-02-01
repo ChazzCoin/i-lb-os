@@ -96,11 +96,11 @@ struct SessionPlanOverview: View {
                 
                 
                 
-                Section(header: Text("Recorded Actions")) {
-                    SearchableRecordingActionsListView()
-                        .environmentObject(self.BEO)
-                        .environmentObject(self.NavStack)
-                }.clearSectionBackground()
+//                Section(header: Text("Recorded Actions")) {
+//                    SearchableRecordingActionsListView()
+//                        .environmentObject(self.BEO)
+//                        .environmentObject(self.NavStack)
+//                }.clearSectionBackground()
                 
                 
                 Section(header: Text("Sessions")) {

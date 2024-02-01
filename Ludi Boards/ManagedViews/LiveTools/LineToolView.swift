@@ -124,7 +124,7 @@ struct LineDrawingManaged: View {
         .overlay(
             Circle()
                 .fill(Color.AIMYellow)
-                .frame(width: 150, height: 150) // Adjust size for easier tapping
+                .frame(width: 200, height: 200) // Adjust size for easier tapping
                 .opacity(anchorsAreVisible ? 1 : 0) // Invisible
                 .position(x: lifeStartX, y: lifeStartY)
                 .gesture(singleAnchorDragGesture(isStart: true))
@@ -132,7 +132,7 @@ struct LineDrawingManaged: View {
         .overlay(
             Circle()
                 .fill(Color.AIMYellow)
-                .frame(width: 150, height: 150) // Increase size for finger tapping
+                .frame(width: 200, height: 200) // Increase size for finger tapping
                 .opacity(anchorsAreVisible && !lifeHeadIsEnabled  ? 1 : 0) // Invisible
                 .position(x: lifeEndX, y: lifeEndY)
                 .gesture(singleAnchorDragGesture(isStart: false))
@@ -232,6 +232,7 @@ struct LineDrawingManaged: View {
             .onChanged { value in
                 if self.lifeIsLocked {return}
                 self.isDragging = true
+                self.BEO.ignoreUpdates = true
                 if self.originalLifeStart == .zero {
                     self.originalLifeStart = CGPoint(x: lifeStartX, y: lifeStartY)
                     self.originalLifeEnd = CGPoint(x: lifeEndX, y: lifeEndY)
@@ -260,6 +261,7 @@ struct LineDrawingManaged: View {
                 lifeEndY = self.originalLifeEnd.y + translation.height
                 loadCenterPoint()
                 self.isDragging = false
+                self.BEO.ignoreUpdates = false
                 updateRealmPos(start: CGPoint(x: lifeStartX, y: lifeStartY),
                             end: CGPoint(x: lifeEndX, y: lifeEndY))
                 self.originalLifeStart = .zero
@@ -274,6 +276,7 @@ struct LineDrawingManaged: View {
             .onChanged { value in
                 if self.lifeIsLocked || !anchorsAreVisible { return }
                 self.isDragging = true
+                self.BEO.ignoreUpdates = true
                 if isStart {
                     self.lifeStartX = value.location.x
                     self.lifeStartY = value.location.y
@@ -290,6 +293,7 @@ struct LineDrawingManaged: View {
             .onEnded { _ in
                 if self.lifeIsLocked || !anchorsAreVisible { return }
                 self.isDragging = false
+                self.BEO.ignoreUpdates = false
                 updateRealmPos(start: CGPoint(x: lifeStartX, y: lifeStartY),
                             end: CGPoint(x: lifeEndX, y: lifeEndY))
             }
@@ -339,19 +343,23 @@ struct LineDrawingManaged: View {
                 if self.isDragging {return}
                 if activityId != temp.boardId { activityId = temp.boardId }
                 self.MVS.isDeleted = temp.isDeleted
-                if lifeWidth != Double(temp.width) {lifeWidth = Double(temp.width)}
-                if lifeLineDash != Double(temp.lineDash) {lifeLineDash = Double(temp.lineDash)}
                 
-                var colorHasChanged = false
-                if lifeColorRed != temp.colorRed { colorHasChanged = true; lifeColorRed = temp.colorRed}
-                if lifeColorGreen != temp.colorGreen { colorHasChanged = true; lifeColorGreen = temp.colorGreen}
-                if lifeColorBlue != temp.colorBlue { colorHasChanged = true; lifeColorBlue = temp.colorBlue }
-                if lifeColorAlpha != temp.colorAlpha { colorHasChanged = true; lifeColorAlpha = temp.colorAlpha }
-                if colorHasChanged {
-                    lifeColor = colorFromRGBA(red: lifeColorRed, green: lifeColorGreen, blue: lifeColorBlue, alpha: lifeColorAlpha)
+                withAnimation {
+                    if lifeWidth != Double(temp.width) {lifeWidth = Double(temp.width)}
+                    if lifeLineDash != Double(temp.lineDash) {lifeLineDash = Double(temp.lineDash)}
+                    
+                    var colorHasChanged = false
+                    if lifeColorRed != temp.colorRed { colorHasChanged = true; lifeColorRed = temp.colorRed}
+                    if lifeColorGreen != temp.colorGreen { colorHasChanged = true; lifeColorGreen = temp.colorGreen}
+                    if lifeColorBlue != temp.colorBlue { colorHasChanged = true; lifeColorBlue = temp.colorBlue }
+                    if lifeColorAlpha != temp.colorAlpha { colorHasChanged = true; lifeColorAlpha = temp.colorAlpha }
+                    if colorHasChanged {
+                        lifeColor = colorFromRGBA(red: lifeColorRed, green: lifeColorGreen, blue: lifeColorBlue, alpha: lifeColorAlpha)
+                    }
+                    loadWidthAndHeight()
+                    loadRotationOfLine()
                 }
-                loadWidthAndHeight()
-                loadRotationOfLine()
+                
                 //
                 
                 if temp.lastUserId != (getFirebaseUserId() ?? CURRENT_USER_ID) {

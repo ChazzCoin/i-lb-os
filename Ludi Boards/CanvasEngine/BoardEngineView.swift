@@ -356,8 +356,10 @@ class BoardEngineObject : ObservableObject {
     
     private func updateDurationAttribute() {
         guard let startTime = startTime, let endTime = endTime else { return }
-        self.recordingDuration = Double(endTime.uptimeNanoseconds - startTime.uptimeNanoseconds) / 1_000_000_000 // Convert to seconds
-        print("Recording duration: \(recordingDuration) seconds.")
+        DispatchQueue.main.async {
+            self.recordingDuration = Double(endTime.uptimeNanoseconds - startTime.uptimeNanoseconds) / 1_000_000_000 // Convert to seconds
+            print("Recording duration: \(self.recordingDuration) seconds.")
+        }
     }
     
     private func stopRecordingObserver() {

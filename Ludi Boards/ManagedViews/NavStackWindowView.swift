@@ -45,7 +45,7 @@ struct BouncingValue {
 
 class NavStackWindowObservable : ObservableObject {
     
-    @Published var isHidden = true
+    @Published var isHidden = false
     
     @Published var navStackCount = 0
     @Published var keyboardIsShowing = false
@@ -214,32 +214,32 @@ struct NavStackWindow : View {
                 print(wc)
                 let temp = wc as! WindowController
                 
-                if temp.windowId == "master" {
-                    self.NavStack.isHidden = true
-                    return
-                }
-                
-                if temp.windowId != self.id {
-                    if temp.stateAction == "toggle" {
-                        if !self.NavStack.isHidden {
-                            self.NavStack.isHidden = true
-                        }
-                    }
-                    return
-                }
+//                if temp.windowId == "master" {
+//                    self.NavStack.isHidden = true
+//                    return
+//                }
+//                
+//                if temp.windowId != self.id {
+//                    if temp.stateAction == "toggle" {
+//                        if !self.NavStack.isHidden {
+//                            self.NavStack.isHidden = true
+//                        }
+//                    }
+//                    return
+//                }
                 self.NavStack.fullScreenPosition(gps: self.gps)
-                if temp.stateAction == "toggle" {
-                    if self.NavStack.isHidden {
-                        self.NavStack.isHidden = false
-                    } else {
-                        
-                        self.NavStack.isHidden = true
-                    }
-                } else if temp.stateAction == "open" {
-                    self.NavStack.isHidden = false
-                } else if temp.stateAction == "close" {
-                    self.NavStack.isHidden = true
-                }
+//                if temp.stateAction == "toggle" {
+//                    if self.NavStack.isHidden {
+//                        self.NavStack.isHidden = false
+//                    } else {
+//                        
+//                        self.NavStack.isHidden = true
+//                    }
+//                } else if temp.stateAction == "open" {
+//                    self.NavStack.isHidden = false
+//                } else if temp.stateAction == "close" {
+//                    self.NavStack.isHidden = true
+//                }
             }.store(in: &cancellables)
         }
     }

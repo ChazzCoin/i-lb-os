@@ -35,7 +35,7 @@ struct CanvasEngine: View {
     let initialWidth: CGFloat = 6000
     let initialHeight: CGFloat = 6000
     
-    @StateObject var managedWindowsObject = ManagedViewWindows.shared
+    @StateObject var managedWindowsObject: NavWindowController = NavWindowController()
     
     var dragAngleGestures: some Gesture {
         DragGesture()
@@ -115,7 +115,7 @@ struct CanvasEngine: View {
     }
     
     @State var showRecordingsSheet = false
-    @State var menuIsOpen = true
+    @State var menuIsOpen = false
     @State var showNotification = false
     @State var notificationMessage = ""
     @State var notificationIcon = ""
@@ -160,7 +160,7 @@ struct CanvasEngine: View {
             }
             
             // Menu Bar
-            MenuBarStatic(){}
+            MenuBarStatic(showIcons: $menuIsOpen){}
                 .frame(width: 60, height: menuIsOpen ? (gps.screenSize.height - 100) : 60)
                 .position(using: gps, at: .topLeft, offsetX: 50, offsetY: menuIsOpen ? ((gps.screenSize.height - 100) / 2) : 30)
             
@@ -170,9 +170,18 @@ struct CanvasEngine: View {
                 .position(using: gps, at: .bottomCenter, offsetX: 0, offsetY: 150)
             
             // NavStack Windows
-            ForEach(Array(managedWindowsObject.managedViewGenerics.values)) { managedViewWindow in
-                managedViewWindow.viewBuilder().environmentObject(self.BEO)
-            }.zIndex(50.0)
+//            ForEach(Array(managedWindowsObject.managedViewGenerics.values)) { managedViewWindow in
+//                managedViewWindow.viewBuilder().environmentObject(self.BEO)
+//            }.zIndex(50.0)
+            
+            if !self.managedWindowsObject.reload {
+                ForEach(Array(managedWindowsObject.activeViews.keys), id: \.self) { key in
+                    managedWindowsObject.getView(withId: key)
+                        .viewBuilder()
+                        .zIndex(50.0)
+                        .environmentObject(self.BEO)
+                }
+            }
             
             // Tool Bar
             if toolBarIsEnabled {
@@ -195,7 +204,7 @@ struct CanvasEngine: View {
             // Drawing Mode Popup
             if self.BEO.isPlayingAnimation {
                 GeometryReader { geo in
-                    RecordingFlasher(title: "Playing in Progress...", subTitle: "Playback Mode.") {
+                    RecordingFlasher(title: "Playing in Progress...", subTitle: "Playback Mode.", showButton: false) {
                         
                     }
                 }
@@ -206,7 +215,7 @@ struct CanvasEngine: View {
             // Drawing Mode Popup
             if self.BEO.isRecording {
                 GeometryReader { geo in
-                    RecordingFlasher(title: "Recording in Progress...", subTitle: "Animation Mode.") {
+                    RecordingFlasher(title: "Recording in Progress...", subTitle: "Animation Mode.", showButton: true) {
                         self.BEO.stopRecording()
                     }
                 }
@@ -279,18 +288,13 @@ struct CanvasEngine: View {
         })
         .onAppear() {
             self.BEO.loadUser()
-            menuBarButtonListener()
-            notificationListener()
-            handleChat()
             handleSessionPlan()
-            handleShare()
-            handleMVSettings()
             handleSessionPlans()
+            addChatWindow()
+            addProfileWindow()
         }
         
     }
-    
-    
     
     @MainActor
     func notificationListener() {
@@ -360,40 +364,55 @@ struct CanvasEngine: View {
             self.BEO.gesturesAreLocked = true
         }
     }
-    func handleChat() {
-        let caller = MenuBarProvider.chat.tool.title
-        let temp = ManagedViewWindow(id: caller, viewBuilder: {
-            NavStackWindow(id: caller, viewBuilder: {
-                ChatView()
-                    .environmentObject(self.BEO)
-            })
-        })
-        temp.title = "Real-Time Chat"
-        temp.windowId = caller
-        managedWindowsObject.safelyAddItem(key: caller, item: temp)
-    }
-    func handleTimeManagement() {
-        let caller = MenuBarProvider.chat.tool.title
-        let temp = ManagedViewWindow(id: caller, viewBuilder: {
-            NavStackWindow(id: caller, viewBuilder: {
-                StopwatchView()
-            })
-        })
-        temp.title = "Stop-Watch"
-        temp.windowId = caller
-        managedWindowsObject.safelyAddItem(key: caller, item: temp)
-    }
+
+//    func handleTimeManagement() {
+//        let caller = MenuBarProvider.chat.tool.title
+//        let temp = ManagedViewWindow(id: caller, viewBuilder: {
+//            NavStackWindow(id: caller, viewBuilder: {
+//                StopwatchView()
+//            })
+//        })
+//        temp.title = "Stop-Watch"
+//        temp.windowId = caller
+//        managedWindowsObject.safelyAddItem(key: caller, item: temp)
+//    }
     
     func handleNavPad() {
         let caller = MenuBarProvider.navHome.tool.title
-        let temp = ManagedViewWindow(id: caller, viewBuilder: {
-            NavPadView().environmentObject(self.BEO)
-        })
-        temp.title = "NavPad"
-        temp.windowId = caller
-        managedWindowsObject.safelyAddItem(key: caller, item: temp)
+        managedWindowsObject.addNewViewToPool(viewId: caller, viewBuilder: { AnyView(NavPadView().environmentObject(self.BEO)) })
     }
-    
+    func addChatWindow() {
+        let caller = MenuBarProvider.chat.tool.title
+        managedWindowsObject.addNewViewToPool(viewId: caller, viewBuilder: {
+            AnyView(NavStackWindow(id: caller, viewBuilder: {
+                ChatView().environmentObject(self.BEO)
+            }))
+        })
+    }
+    func addProfileWindow() {
+        let caller = MenuBarProvider.profile.tool.title
+        managedWindowsObject.addNewViewToPool(viewId: caller, viewBuilder: {
+            AnyView(NavStackWindow(id: caller, viewBuilder: {
+                SignUpView().environmentObject(self.BEO)
+            }))
+        })
+    }
+    func handleSessionPlan() {
+        let caller = MenuBarProvider.boardDetails.tool.title
+        managedWindowsObject.addNewViewToPool(viewId: caller, viewBuilder: {
+            AnyView(NavStackWindow(id: caller, viewBuilder: {
+                SessionPlanView(sessionId: "SOL", isShowing: .constant(true), isMasterWindow: true).environmentObject(self.BEO)
+            }))
+        })
+    }
+    func handleSessionPlans() {
+        let caller = MenuBarProvider.boardCreate.tool.title
+        managedWindowsObject.addNewViewToPool(viewId: caller, viewBuilder: {
+            AnyView(NavStackWindow(id: caller, viewBuilder: {
+                SessionPlanOverview().environmentObject(self.BEO)
+            }))
+        })
+    }
 //    func handleBuddyList() {
 //        let caller = MenuBarProvider.buddyList.tool.title
 //        let buddies = ManagedViewWindow(id: caller, viewBuilder: AnyView(BuddyListView()))
@@ -410,51 +429,22 @@ struct CanvasEngine: View {
 //        managedWindowsObject.toggleItem(key: caller, item: AnyView(NavStackWindow(managedViewWindow: buddies)))
 //    }
 //    
-    func handleSessionPlan() {
-        let caller = MenuBarProvider.boardDetails.tool.title
-        let buddies = ManagedViewWindow(id: caller, viewBuilder: {NavStackWindow(id: caller, viewBuilder: {
-            SessionPlanView(sessionId: "SOL", isShowing: .constant(true), isMasterWindow: true)
-                .environmentObject(self.BEO)
-        })})
-        buddies.title = "Session Planner"
-        buddies.windowId = caller
-        managedWindowsObject.toggleItem(key: caller, item: buddies)
-    }
+
 //    
-    func handleSessionPlans() {
-        let caller = MenuBarProvider.boardCreate.tool.title
-        let buddies = ManagedViewWindow(id: caller, viewBuilder: {
-            NavStackWindow(id: caller, viewBuilder: {
-                SessionPlanOverview().environmentObject(self.BEO)
-            })
-        })
-        buddies.title = "SOL Sessions"
-        buddies.windowId = caller
-        managedWindowsObject.toggleItem(key: caller, item: buddies)
-    }
-//    
-    func handleShare() {
-        let caller = MenuBarProvider.profile.tool.title
-        let buddies = ManagedViewWindow(id: caller, viewBuilder: {
-            NavStackWindow(id: caller, viewBuilder: {
-                SignUpView().environmentObject(self.BEO)
-            })
-        })
-        buddies.title = "Sign Up"
-        buddies.windowId = caller
-        managedWindowsObject.toggleItem(key: caller, item: buddies)
-    }
-    func handleMVSettings() {
-        let caller = "mv_settings"
-        let buddies = ManagedViewWindow(id: caller, viewBuilder: {
-            NavStackFloatingWindow(id: caller, viewBuilder: {
-                SettingsView(onDelete: {}).environmentObject(self.BEO)
-            })
-        })
-        buddies.title = "Tool View Settings"
-        buddies.windowId = caller
-        managedWindowsObject.safelyAddItem(key: caller, item: buddies)
-    }
+   
+////
+
+//    func handleMVSettings() {
+//        let caller = "mv_settings"
+//        let buddies = ManagedViewWindow(id: caller, viewBuilder: {
+//            NavStackFloatingWindow(id: caller, viewBuilder: {
+//                SettingsView(onDelete: {}).environmentObject(self.BEO)
+//            })
+//        })
+//        buddies.title = "Tool View Settings"
+//        buddies.windowId = caller
+//        managedWindowsObject.safelyAddItem(key: caller, item: buddies)
+//    }
 }
 
 

@@ -39,13 +39,14 @@ struct RecordingView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             
+            
             SolTextField("Name", text: $name)
             SolTextField("Details", text: $details)
-            SolTextField("Activity ID", text: $boardId)
-            SolTextField("Date Created", text: $dateCreated)
+            
 
             Text("Duration: \(duration, specifier: "%.2f") seconds")
                 .font(.subheadline)
+                .padding()
             
             DStack {
                 SolConfirmButton(
@@ -63,6 +64,19 @@ struct RecordingView: View {
                 )
                 
                 SolConfirmButton(
+                    title: "Delete",
+                    message: "Are you sure you want to delete this Recording?",
+                    action: {
+                        self.BEO.realmInstance.safeFindByField(Recording.self, value: self.recordingId) { obj in
+                            self.BEO.realmInstance.safeWrite { r in
+                                r.delete(obj)
+                                self.isShowing = false
+                            }
+                        }
+                    }
+                )
+                
+                SolConfirmButton(
                     title: "Load and Play",
                     message: "Play animation?",
                     action: {
@@ -72,7 +86,6 @@ struct RecordingView: View {
                     }
                 )
             }
-            
             
             // TODO: ADD TIMELINE OF ACTIONS
             Section(header: Text("Recorded Actions")) {
@@ -85,6 +98,7 @@ struct RecordingView: View {
         .background(Color.gray.opacity(0.1))
         .cornerRadius(8)
         .padding()
+        .navigationTitle("Recorded Animation")
         .onChange(of: self.recordingId, perform: { value in
             loadRecording()
         })
