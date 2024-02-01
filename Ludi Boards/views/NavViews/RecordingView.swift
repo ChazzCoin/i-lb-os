@@ -37,13 +37,11 @@ struct RecordingView: View {
     @State var duration: Double = 0.0
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            
+        Form {
             
             SolTextField("Name", text: $name)
             SolTextField("Details", text: $details)
             
-
             Text("Duration: \(duration, specifier: "%.2f") seconds")
                 .font(.subheadline)
                 .padding()
@@ -94,9 +92,6 @@ struct RecordingView: View {
             }.clearSectionBackground()
             
         }
-        .padding()
-        .background(Color.gray.opacity(0.1))
-        .cornerRadius(8)
         .padding()
         .navigationTitle("Recorded Animation")
         .onChange(of: self.recordingId, perform: { value in

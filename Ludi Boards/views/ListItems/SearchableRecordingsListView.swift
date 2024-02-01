@@ -33,32 +33,30 @@ struct SearchableRecordingsListView: View {
     @State var itemToDeleteId = ""
     
     var body: some View {
-        VStack {
-            
-            SearchBar(text: $searchText, placeholder: "Search Recordings")
-                .padding(.top)
-            
-            ScrollView {
-                LazyVGrid(columns: columns, spacing: 20) {
-                    
-                    List {
+        
+        GeometryReader { geo in
+            VStack {
+                
+                SearchBar(text: $searchText, placeholder: "Search Recordings")
+                    .padding(.top)
+                
+                ScrollView {
+                    LazyVGrid(columns: columns, spacing: 8) {
+                        
                         ForEach(filteredItems) { item in
                             NavigationLink {
                                 RecordingView(recordingId: item.id, isShowing: self.$isShowing)
                             } label: {
                                 SolListItem(title: item.name, subTitle: String(item.duration), isShared: false)
                             }
-                            .gesture(LongPressGesture(minimumDuration: 0.5).onEnded { _ in
-                                showDeleteAlert = true
-                                itemToDeleteId = item.id
-                            })
-                           
-                            
-                        }.onDelete(perform: deleteItems)
+//                            .gesture(LongPressGesture(minimumDuration: 0.5).onEnded { _ in
+//                                showDeleteAlert = true
+//                                itemToDeleteId = item.id
+//                            })
+                        }
                     }
-                    
+                    .listStyle(GroupedListStyle())
                 }
-                .listStyle(GroupedListStyle())
             }
         }
         .onChange(of: self.BEO.currentActivityId, perform: { value in
@@ -84,6 +82,7 @@ struct SearchableRecordingsListView: View {
         }
         .onAppear {
             self.filteredItems = self.activityItems.toArray()
+            print(self.filteredItems)
             self.filterItems()
         }
     }
