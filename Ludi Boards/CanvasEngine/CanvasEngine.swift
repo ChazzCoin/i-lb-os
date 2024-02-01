@@ -114,6 +114,7 @@ struct CanvasEngine: View {
         self.showMenuBar = true
     }
     
+    @State var showRecordingsSheet = false
     @State var menuIsOpen = true
     @State var showNotification = false
     @State var notificationMessage = ""
@@ -131,6 +132,22 @@ struct CanvasEngine: View {
             ) {
                 self.BEO.deleteAllTools()
             }.position(using: gps, at: .topRight, offsetX: 35, offsetY: 35)
+            
+            SolIconConfirmButton(
+                systemName: "video",
+                title: "Animation Recording",
+                message: "Are you sure you want to \(self.BEO.isRecording ? "Stop" : "Start") recording?"
+            ) {
+                if !self.BEO.isRecording {
+                    self.BEO.startRecording()
+                } else {
+                    self.BEO.stopRecording()
+                }
+            }.position(using: gps, at: .topRight, offsetX: 35, offsetY: 150)
+            
+            SolIconButton(systemName: "play") {
+                self.showRecordingsSheet = true
+            }.position(using: gps, at: .topRight, offsetX: 35, offsetY: 300)
             
             if self.BEO.isLoading {
                 ProgressView()
@@ -173,6 +190,28 @@ struct CanvasEngine: View {
                 }
                 .zIndex(2.0)
                 .position(using: gps, at: .bottomCenter, offsetY: 50)
+            }
+            
+            // Drawing Mode Popup
+            if self.BEO.isPlayingAnimation {
+                GeometryReader { geo in
+                    RecordingFlasher(title: "Playing in Progress...", subTitle: "Playback Mode.") {
+                        
+                    }
+                }
+                .frame(width: 300)
+                .position(using: gps, at: .topRight, offsetX: 150, offsetY: 0)
+            }
+            
+            // Drawing Mode Popup
+            if self.BEO.isRecording {
+                GeometryReader { geo in
+                    RecordingFlasher(title: "Recording in Progress...", subTitle: "Animation Mode.") {
+                        self.BEO.stopRecording()
+                    }
+                }
+                .frame(width: 300)
+                .position(using: gps, at: .topRight, offsetX: 150, offsetY: 0)
             }
             
             // Drawing Mode Popup
@@ -234,24 +273,19 @@ struct CanvasEngine: View {
         .blur(radius: self.BEO.isLoading ? 10 : 0)
         .background(Color.white.opacity(0.001))
         .gesture(self.BEO.gesturesAreLocked ? nil : dragAngleGestures.simultaneously(with: scaleGestures))
+        .sheet(isPresented: self.$showRecordingsSheet, content: {
+            RecordingListView(isShowing: self.$showRecordingsSheet)
+                .environmentObject(self.BEO)
+        })
         .onAppear() {
             self.BEO.loadUser()
-            
             menuBarButtonListener()
             notificationListener()
             handleChat()
-//            handleBuddyProfile()
             handleSessionPlan()
             handleShare()
-//            handleBuddyList()
-//            handleNavPad()
             handleMVSettings()
             handleSessionPlans()
-            
-//            DispatchQueue.executeAfter(seconds: 10, action: {
-//                CodiChannel.ON_NOTIFICATION.send(value: NotificationController(message: "Johnny has entered the room!", icon: "door_open"))
-//            })
-            
         }
         
     }

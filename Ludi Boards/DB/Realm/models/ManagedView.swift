@@ -77,3 +77,69 @@ class ManagedViewAction: Object, ObjectKeyIdentifiable {
     @Persisted var colorAlpha: Double = 0.75
 
 }
+
+extension ManagedView {
+    func absorbRecordingAction(from managedView: RecordingAction, saveRealm: Realm) {
+        saveRealm.safeWrite { _ in
+            self.toolType = managedView.toolType
+            self.toolColor = managedView.toolColor
+            self.toolSize = managedView.toolSize
+            self.x = managedView.x
+            self.y = managedView.y
+            self.startX = managedView.startX
+            self.startY = managedView.startY
+            self.centerX = managedView.centerX
+            self.centerY = managedView.centerY
+            self.endX = managedView.endX
+            self.endY = managedView.endY
+            self.width = managedView.width
+            self.height = managedView.height
+            self.rotation = managedView.rotation
+            self.lineDash = managedView.lineDash
+            self.translationX = managedView.translationX
+            self.translationY = managedView.translationY
+            self.lastUserId = "recorder"
+            self.isLocked = managedView.isLocked
+            self.isDeleted = managedView.isDeleted
+            self.headIsEnabled = managedView.headIsEnabled
+            self.colorRed = managedView.colorRed
+            self.colorGreen = managedView.colorGreen
+            self.colorBlue = managedView.colorBlue
+            self.colorAlpha = managedView.colorAlpha
+        }
+    }
+}
+
+extension ManagedViewAction {
+    
+    func absorb(from managedView: ManagedView) {
+            self.boardId = managedView.boardId
+            self.sport = managedView.sport
+            self.toolType = managedView.toolType
+            self.toolColor = managedView.toolColor
+            self.toolSize = managedView.toolSize
+            self.x = managedView.x
+            self.y = managedView.y
+            self.startX = managedView.startX
+            self.startY = managedView.startY
+            self.centerX = managedView.centerX
+            self.centerY = managedView.centerY
+            self.endX = managedView.endX
+            self.endY = managedView.endY
+            self.width = managedView.width
+            self.height = managedView.height
+            self.rotation = managedView.rotation
+            self.lineDash = managedView.lineDash
+            self.translationX = managedView.translationX
+            self.translationY = managedView.translationY
+            self.lastUserId = managedView.lastUserId
+            self.isLocked = managedView.isLocked
+            self.isDeleted = managedView.isDeleted
+            self.headIsEnabled = managedView.headIsEnabled
+            self.colorRed = managedView.colorRed
+            self.colorGreen = managedView.colorGreen
+            self.colorBlue = managedView.colorBlue
+            self.colorAlpha = managedView.colorAlpha
+        }
+    
+}

@@ -213,17 +213,22 @@ struct SessionPlanView: View {
             self.sessionNotificationToken = nil
         }
         .navigationBarTitle(isCurrentPlan ? "Current Session" : "Session Plan", displayMode: .inline)
-        .navigationBarItems(trailing: HStack {
+        .navigationBarItems(leading: HStack {
             // Add buttons or icons here for minimize, maximize, close, etc.
             if self.NavStack.navStackCount >= 2 {
                 
                 Button(action: {
                     CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: "master", stateAction: "close", viewId: "self"))
                 }) {
-                    Image(systemName: "arrow.down.to.line.alt")
+                    Image(systemName: "minus.circle")
                         .resizable()
                         .frame(width: 30, height: 30)
                 }
+                
+            }
+        }, trailing: HStack {
+            // Add buttons or icons here for minimize, maximize, close, etc.
+            if self.NavStack.navStackCount >= 2 {
                 
                 if self.NavStack.keyboardIsShowing {
                     Button(action: {
@@ -236,6 +241,14 @@ struct SessionPlanView: View {
                 }
                 
             }
+            
+//            Button(action: {
+//                self.NavStack.toggleWindowSize(gps: self.gps)
+//            }) {
+//                Image(systemName: "arrow.up.left.and.down.right.magnifyingglass")
+//                    .resizable()
+//                    .frame(width: 30, height: 30)
+//            }
         })
         .alert(self.sheetTitle, isPresented: $sheetIsShowing) {
             Button("Cancel", role: .cancel) {

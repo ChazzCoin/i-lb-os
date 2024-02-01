@@ -214,6 +214,58 @@ struct TipBoxViewStatic: View {
     }
 }
 
+struct RecordingFlasher: View {
+    @State var title: String
+    @State var subTitle: String
+    var onStop: () -> Void
+    @State private var isFlashing = false
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(title)
+                        .font(.headline)
+                    
+                    Text(subTitle)
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
+                }
+
+                Spacer()
+                
+                Circle()
+                    .fill(Color.red)
+                    .frame(width: 15, height: 15)
+                    .opacity(isFlashing ? 1 : 0)
+                    .onAppear {
+                        withAnimation(Animation.easeInOut(duration: 0.5).repeatForever(autoreverses: true)) {
+                            isFlashing.toggle()
+                        }
+                    }
+            }
+            
+            Button(action: {
+                // Add code here to "Turn Off" the feature
+                onStop()
+            }) {
+                Text("Stop Recording")
+                    .foregroundColor(.white)
+                    .padding(.vertical, 10)
+                    .frame(maxWidth: .infinity)
+                    .background(Color.red)
+                    .cornerRadius(8)
+            }
+        }
+        .padding()
+        .frame(maxWidth: 300, maxHeight: UIScreen.main.bounds.height - 100)
+        .background(RoundedRectangle(cornerRadius: 12)
+            .fill(Color(UIColor.systemBackground))
+            .shadow(color: .gray.opacity(0.4), radius: 4, x: 0, y: 4))
+        .padding()
+//        .offset(y: self.isExpanded ? 0 : -150)
+    }
+}
 
 
 struct TipBoxView_Previews: PreviewProvider {

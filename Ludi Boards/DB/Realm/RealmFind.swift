@@ -14,6 +14,13 @@ extension Realm {
         return objects(type).filter("\(field) == %@", value).first
     }
     
+    func safeFindByField<T: Object>(_ type: T.Type, field: String = "id", value: String?, onSafe: (T) -> Void) {
+        guard let value = value else { return }
+        if let obj = objects(type).filter("\(field) == %@", value).first {
+            onSafe(obj)
+        }
+    }
+    
     func findAllByField<T: Object>(_ type: T.Type, field: String, value: Any) -> Results<T>? {
         return self.objects(type).filter("%K == %@", field, value)
     }

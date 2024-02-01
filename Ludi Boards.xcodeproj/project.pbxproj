@@ -40,6 +40,12 @@
 		FB18F1772B6988E200D89F8D /* ActivityPlanSingleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB18F1762B6988E100D89F8D /* ActivityPlanSingleView.swift */; };
 		FB18F1792B69A0DC00D89F8D /* SearchableTeamListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB18F1782B69A0DC00D89F8D /* SearchableTeamListView.swift */; };
 		FB18F17B2B69A26400D89F8D /* SearchablePlayerRefListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB18F17A2B69A26400D89F8D /* SearchablePlayerRefListView.swift */; };
+		FB18F17E2B6ABDA200D89F8D /* PdfImaging.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB18F17D2B6ABDA200D89F8D /* PdfImaging.swift */; };
+		FB18F1812B6AD6CE00D89F8D /* Recording.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB18F1802B6AD6CE00D89F8D /* Recording.swift */; };
+		FB18F1832B6AE54200D89F8D /* SearchableRecordingsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB18F1822B6AE54200D89F8D /* SearchableRecordingsListView.swift */; };
+		FB18F1852B6AEC2100D89F8D /* SearchableRecordingActionsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB18F1842B6AEC2100D89F8D /* SearchableRecordingActionsListView.swift */; };
+		FB18F1872B6B10CE00D89F8D /* RecordingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB18F1862B6B10CE00D89F8D /* RecordingView.swift */; };
+		FB18F1892B6B12FD00D89F8D /* RecordingTimeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB18F1882B6B12FD00D89F8D /* RecordingTimeline.swift */; };
 		FB3E02AF2B0C6B1200D8558C /* SessionPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02AE2B0C6B1200D8558C /* SessionPlan.swift */; };
 		FB3E02B12B0C6B1D00D8558C /* ActivityPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02B02B0C6B1D00D8558C /* ActivityPlan.swift */; };
 		FB3E02B32B0C6B5100D8558C /* SessionPlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02B22B0C6B5100D8558C /* SessionPlanView.swift */; };
@@ -272,6 +278,13 @@
 		FB18F1762B6988E100D89F8D /* ActivityPlanSingleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityPlanSingleView.swift; sourceTree = "<group>"; };
 		FB18F1782B69A0DC00D89F8D /* SearchableTeamListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchableTeamListView.swift; sourceTree = "<group>"; };
 		FB18F17A2B69A26400D89F8D /* SearchablePlayerRefListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchablePlayerRefListView.swift; sourceTree = "<group>"; };
+		FB18F17D2B6ABDA200D89F8D /* PdfImaging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PdfImaging.swift; sourceTree = "<group>"; };
+		FB18F17F2B6AC49600D89F8D /* Ludi-Boards-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Ludi-Boards-Info.plist"; sourceTree = SOURCE_ROOT; };
+		FB18F1802B6AD6CE00D89F8D /* Recording.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Recording.swift; sourceTree = "<group>"; };
+		FB18F1822B6AE54200D89F8D /* SearchableRecordingsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchableRecordingsListView.swift; sourceTree = "<group>"; };
+		FB18F1842B6AEC2100D89F8D /* SearchableRecordingActionsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchableRecordingActionsListView.swift; sourceTree = "<group>"; };
+		FB18F1862B6B10CE00D89F8D /* RecordingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingView.swift; sourceTree = "<group>"; };
+		FB18F1882B6B12FD00D89F8D /* RecordingTimeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingTimeline.swift; sourceTree = "<group>"; };
 		FB3E02AE2B0C6B1200D8558C /* SessionPlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionPlan.swift; sourceTree = "<group>"; };
 		FB3E02B02B0C6B1D00D8558C /* ActivityPlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityPlan.swift; sourceTree = "<group>"; };
 		FB3E02B22B0C6B5100D8558C /* SessionPlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionPlanView.swift; sourceTree = "<group>"; };
@@ -549,6 +562,8 @@
 		FB18F1632B68686B00D89F8D /* ListItems */ = {
 			isa = PBXGroup;
 			children = (
+				FB18F1822B6AE54200D89F8D /* SearchableRecordingsListView.swift */,
+				FB18F1842B6AEC2100D89F8D /* SearchableRecordingActionsListView.swift */,
 				FB18F1682B68718000D89F8D /* SearchableSessionListView.swift */,
 				FB18F1722B68CE6400D89F8D /* SearchableActivityListView.swift */,
 				FB18F1782B69A0DC00D89F8D /* SearchableTeamListView.swift */,
@@ -559,8 +574,17 @@
 				FB18F1662B686EA900D89F8D /* TeamList.swift */,
 				FB18F1642B68687900D89F8D /* PlayerRefList.swift */,
 				FB18F16A2B68A1CE00D89F8D /* SolListItem.swift */,
+				FB18F1882B6B12FD00D89F8D /* RecordingTimeline.swift */,
 			);
 			path = ListItems;
+			sourceTree = "<group>";
+		};
+		FB18F17C2B6ABD8400D89F8D /* Experimental */ = {
+			isa = PBXGroup;
+			children = (
+				FB18F17D2B6ABDA200D89F8D /* PdfImaging.swift */,
+			);
+			path = Experimental;
 			sourceTree = "<group>";
 		};
 		FB3E02CC2B0D45F000D8558C /* NavViews */ = {
@@ -579,6 +603,7 @@
 				FB9F1DD32B15307E00FD9078 /* UserSignUp.swift */,
 				FB18F15B2B68369400D89F8D /* TeamView.swift */,
 				FB18F15D2B6838B900D89F8D /* PlayerRefView.swift */,
+				FB18F1862B6B10CE00D89F8D /* RecordingView.swift */,
 			);
 			path = NavViews;
 			sourceTree = "<group>";
@@ -681,6 +706,7 @@
 				FB426A9E2B5346070058CD9D /* Connection.swift */,
 				FB18F1572B681A6800D89F8D /* Team.swift */,
 				FB18F1592B681A6F00D89F8D /* PlayerRef.swift */,
+				FB18F1802B6AD6CE00D89F8D /* Recording.swift */,
 			);
 			path = models;
 			sourceTree = "<group>";
@@ -815,6 +841,7 @@
 		FBD9AFA62AFF00BF005F8620 /* Ludi Boards */ = {
 			isa = PBXGroup;
 			children = (
+				FB18F17F2B6AC49600D89F8D /* Ludi-Boards-Info.plist */,
 				FBEBEF902B494DA600B8BA32 /* DB */,
 				FB829F152B3D4DE100FAC6E0 /* Extensions */,
 				FB15DD2B2B07448B00A21290 /* CanvasEngine */,
@@ -879,6 +906,7 @@
 		FBD9AFD32B008F5C005F8620 /* Providers */ = {
 			isa = PBXGroup;
 			children = (
+				FB18F17C2B6ABD8400D89F8D /* Experimental */,
 				FBD9AFD42B008F6F005F8620 /* Channels.swift */,
 				FBD9AFD82B01CB91005F8620 /* SoccerToolProvider.swift */,
 				FB58E8832B03169700FD9E2E /* TimeProvider.swift */,
@@ -1231,6 +1259,7 @@
 				FB3E02BD2B0C90E600D8558C /* RoomUserList.swift in Sources */,
 				FBD9AFD22B008CAB005F8620 /* MenuBarProvider.swift in Sources */,
 				FBD9AFD92B01CB91005F8620 /* SoccerToolProvider.swift in Sources */,
+				FB18F1892B6B12FD00D89F8D /* RecordingTimeline.swift in Sources */,
 				FBD9AFA82AFF00BF005F8620 /* LudiBoardsApp.swift in Sources */,
 				FBE2C62A2B1C2B67004C0116 /* SharedPrefs.swift in Sources */,
 				FBEBEF942B49504D00B8BA32 /* LiveConnections.swift in Sources */,
@@ -1272,6 +1301,7 @@
 				FB3E02BB2B0C90D700D8558C /* Buddy.swift in Sources */,
 				FB10AE0B2B0F162F00295F4B /* ActivityPlanThumbView.swift in Sources */,
 				FB18F15A2B681A6F00D89F8D /* PlayerRef.swift in Sources */,
+				FB18F1812B6AD6CE00D89F8D /* Recording.swift in Sources */,
 				FBE2C6172B1AF595004C0116 /* GrassFieldView.swift in Sources */,
 				FB50942A2B05856D000AEA96 /* LineToolView.swift in Sources */,
 				FB881A382B47397600C16198 /* RealmObserver.swift in Sources */,
@@ -1300,6 +1330,7 @@
 				FBC2FC6E2B5A0BB200D1AB77 /* TabView.swift in Sources */,
 				FB10AE072B0DCDB500295F4B /* FloatingEmoji.swift in Sources */,
 				FBDE4F5B2B4D1038007FE880 /* InternetProvider.swift in Sources */,
+				FB18F1852B6AEC2100D89F8D /* SearchableRecordingActionsListView.swift in Sources */,
 				FB881A402B48775800C16198 /* FirebaseSocial.swift in Sources */,
 				FB3E02C52B0D2A8500D8558C /* ThumbnailListView.swift in Sources */,
 				FBE2C62C2B1C3DBD004C0116 /* LoadingPopup.swift in Sources */,
@@ -1317,8 +1348,10 @@
 				FB10AE0D2B0F16B100295F4B /* ActivityPlanThumbList.swift in Sources */,
 				FB18F1582B681A6800D89F8D /* Team.swift in Sources */,
 				FBF1A5F92B5E342B0088150C /* SolIconButton.swift in Sources */,
+				FB18F1832B6AE54200D89F8D /* SearchableRecordingsListView.swift in Sources */,
 				FB07B6702B17A5B9009A0962 /* ManagedToolView.swift in Sources */,
 				FB15DD2A2B07443600A21290 /* BoardEngineView.swift in Sources */,
+				FB18F17E2B6ABDA200D89F8D /* PdfImaging.swift in Sources */,
 				FB9F1DD22B1529E400FD9078 /* LoadingView.swift in Sources */,
 				FBABDAC72B20456700321A00 /* ToolBarSettings.swift in Sources */,
 				FBDE4F5D2B4E2345007FE880 /* LiveRooms.swift in Sources */,
@@ -1331,6 +1364,7 @@
 				FB9F1DD02B1528FC00FD9078 /* Extensions.swift in Sources */,
 				FBDE4F592B4D0C12007FE880 /* SessionPlanService.swift in Sources */,
 				FBF1A5FC2B5F7BB70088150C /* Triangle.swift in Sources */,
+				FB18F1872B6B10CE00D89F8D /* RecordingView.swift in Sources */,
 				FB426A9F2B5346070058CD9D /* Connection.swift in Sources */,
 				FB18F16D2B68B10C00D89F8D /* SearchBar.swift in Sources */,
 				FBE2C62E2B1C3FDE004C0116 /* LoadingForm.swift in Sources */,
@@ -1541,8 +1575,11 @@
 				DEVELOPMENT_TEAM = 248J2GKL56;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Ludi-Boards-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = SOL;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.sports";
+				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "SOL will save screenshots of Activity Plans.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -1574,8 +1611,11 @@
 				DEVELOPMENT_TEAM = 248J2GKL56;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Ludi-Boards-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = SOL;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.sports";
+				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "SOL will save screenshots of Activity Plans.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

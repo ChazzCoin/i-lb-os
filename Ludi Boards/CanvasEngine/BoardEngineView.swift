@@ -88,6 +88,8 @@ class BoardEngineObject : ObservableObject {
     func deviceIsPhone() -> Bool { return self.deviceType == .phone }
     func deviceIsPad() -> Bool { return self.deviceType == .pad }
     
+    @Published var doSnapshot = false
+    
     // Current Session/Activity
     @Published var sessions: [SessionPlan] = []
     @Published var activities: [ActivityPlan] = []
@@ -105,16 +107,6 @@ class BoardEngineObject : ObservableObject {
             self.currentActivityId = activityId
             FirebaseRoomService.enterRoom(roomId: activityId)
         }
-    }
-    
-    // Recording
-    @Published var isRecording: Bool = false
-    func startRecording() {
-        isRecording = true
-    }
-    
-    func stopRecording() {
-        isRecording = false
     }
     
     func loadUser() {
@@ -238,6 +230,189 @@ class BoardEngineObject : ObservableObject {
             }
         }
         self.refreshBoard()
+    }
+    
+    // Recording
+    @ObservedResults(Recording.self) var allRecordings
+    @ObservedResults(RecordingAction.self) var allRecordingActions
+    var recordingsByActivityInInitialState: Results<RecordingAction> {
+        return allRecordingActions
+            .filter("boardId == %@ AND isInitialState == %@", self.currentActivityId, true)
+    }
+    var recordingsByActivity: Results<RecordingAction> {
+        return allRecordingActions
+            .filter("boardId == %@ AND isInitialState == %@", self.currentActivityId, false)
+            .sorted(byKeyPath: "orderIndex", ascending: true)
+    }
+    var recordingsByRecordingIdInInitState: Results<RecordingAction> {
+        return allRecordingActions
+            .filter("recordingId == %@ AND isInitialState == %@", self.playbackRecordingId, true)
+    }
+    var recordingsByRecordingId: Results<RecordingAction> {
+        return allRecordingActions
+            .filter("recordingId == %@ AND isInitialState == %@", self.playbackRecordingId, false)
+            .sorted(byKeyPath: "orderIndex", ascending: true)
+    }
+    @Published var playbackRecordingId: String = ""
+    @Published var isPlayingAnimation: Bool = false
+    @Published var currentRecordingId: String = ""
+    @Published var currentRecordingIndex: Int = 0
+    @Published var isRecording: Bool = false
+    @Published var startTime: DispatchTime?
+    @Published var endTime: DispatchTime?
+    @Published var recordingDuration: Double = 0.0
+    @Published var recordingNotificationToken: NotificationToken? = nil
+    @Published var ignoreUpdates: Bool = false
+    
+    func runAnimation() {
+        guard !recordingsByRecordingId.isEmpty else { return }
+        self.isPlayingAnimation = true
+        let dispatchGroup = DispatchGroup()
+        let initialDelay = 1.0 // Start with a delay of 1 second
+        var currentDelay = initialDelay
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
+            for item in self.recordingsByRecordingIdInInitState {
+                DispatchQueue.main.asyncAfter(deadline: .now()) {
+                    dispatchGroup.enter()  // Enter the group for each async task
+
+                    self.realmInstance.safeFindByField(ManagedView.self, value: item.toolId) { obj in
+                        obj.absorbRecordingAction(from: item, saveRealm: self.realmInstance)
+                        dispatchGroup.leave()  // Leave the group when the task is done
+                    }
+                }
+                currentDelay += 1.0 // Increase the delay for the next task
+            }
+            
+            // Notify when all tasks in the first loop are done
+            dispatchGroup.notify(queue: .main) {
+                var nextDelay = initialDelay
+
+                // Now start the second loop
+                var count = 0
+                var total = self.recordingsByRecordingId.count
+                for item in self.recordingsByRecordingId {
+                    if item.orderIndex == 0 { continue }
+                    count = count + 1
+                    DispatchQueue.main.asyncAfter(deadline: .now() + nextDelay) {
+                        self.realmInstance.safeFindByField(ManagedView.self, value: item.toolId) { obj in
+                            obj.absorbRecordingAction(from: item, saveRealm: self.realmInstance)
+                        }
+                        
+                        if count >= total {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + nextDelay + 3.0) {
+                                self.isPlayingAnimation = false
+                            }
+                        }
+                    }
+                    nextDelay += 1.0 // Increase the delay for the next task
+                }
+                
+            }
+            
+        }
+        
+    }
+
+
+    func startRecording() {
+        print("Starting Recording")
+        let newRecording = Recording()
+        self.currentRecordingId = newRecording.id
+        newRecording.boardId = self.currentActivityId
+        
+        self.realmInstance.safeWrite { r in
+            r.create(Recording.self, value: newRecording, update: .all)
+            // TODO: FIREBASE
+        }
+        
+        isRecording = true
+        startTimer()
+        startRecordingObserver()
+        print("Recording Started.")
+    }
+    
+    func stopRecording() {
+        print("Stopping Recording")
+        isRecording = false
+        stopTimer()
+        stopRecordingObserver()
+        self.realmInstance.safeFindByField(Recording.self, value: self.currentRecordingId) { obj in
+            self.realmInstance.safeWrite { _ in
+                obj.duration = self.recordingDuration
+                // TODO: FIREBASE
+            }
+        }
+        print("Recording Stopped.")
+    }
+    
+    private func startTimer() { startTime = DispatchTime.now() }
+    private func stopTimer() {
+        guard let startTime = startTime else { return }
+        endTime = DispatchTime.now()
+        DispatchQueue.main.async { [weak self] in
+            self?.updateDurationAttribute()
+        }
+    }
+    
+    private func updateDurationAttribute() {
+        guard let startTime = startTime, let endTime = endTime else { return }
+        self.recordingDuration = Double(endTime.uptimeNanoseconds - startTime.uptimeNanoseconds) / 1_000_000_000 // Convert to seconds
+        print("Recording duration: \(recordingDuration) seconds.")
+    }
+    
+    private func stopRecordingObserver() {
+        self.recordingNotificationToken?.invalidate()
+        self.recordingNotificationToken = nil
+    }
+    
+    private func startRecordingObserver() {
+        if self.currentActivityId.isEmpty { return }
+        // Realm
+        let umvs = self.realmInstance.findAllByField(ManagedView.self, field: "boardId", value: self.currentActivityId)
+        
+        self.realmInstance.executeWithRetry {
+            print("Starting Recording Listener")
+            self.recordingNotificationToken = umvs?.observe { (changes: RealmCollectionChange) in
+                DispatchQueue.main.async {
+                    switch changes {
+                        case .initial(let results):
+                            print("Recording Listener: initial")
+                            for i in results {
+                                if i.isInvalidated {continue}
+                                // Initial State
+                                let newAction = RecordingAction()
+                                newAction.recordingId = self.currentRecordingId
+                                newAction.isInitialState = true
+                                newAction.absorb(from: i)
+                                self.realmInstance.safeWrite { r in
+                                    r.create(RecordingAction.self, value: newAction, update: .all)
+                                }
+                            }
+                        case .update(let results, _, _, let modifications):
+                            if self.ignoreUpdates { return }
+                            print("Recording Listener: update")
+                            for index in modifications {
+                                let modifiedObject = results[index]
+                                self.currentRecordingIndex = self.currentRecordingIndex + 1
+                                print("NEW ACTION: \(modifiedObject): \(self.currentRecordingIndex)")
+                                let newAction = RecordingAction()
+                                newAction.recordingId = self.currentRecordingId
+                                newAction.isInitialState = false
+                                newAction.orderIndex = self.currentRecordingIndex
+                                newAction.absorb(from: modifiedObject)
+                                self.realmInstance.safeWrite { r in
+                                    r.create(RecordingAction.self, value: newAction, update: .all)
+                                }
+                            }
+                        case .error(let error):
+                            print("Recording Listener: \(error)")
+                            self.recordingNotificationToken?.invalidate()
+                            self.recordingNotificationToken = nil
+                    }
+                }
+                
+            }
+        }
     }
     
 }
@@ -365,6 +540,10 @@ struct BoardEngine: View {
             })
             .position(x: self.BEO.boardStartPosX, y: self.BEO.boardStartPosY).zIndex(2.0)
         )
+        .modifier(SnapshotViewModifier(takeSnapshot: self.$BEO.doSnapshot) { image in
+            // Do something with the image, like saving it to the photo album
+            UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
+        })
         .onDrop(of: [.text], delegate: self.BEO.dropDelegate!)
         .simultaneousGesture( self.BEO.isDraw ?
             DragGesture()
@@ -379,6 +558,11 @@ struct BoardEngine: View {
                     saveLineData(start: value.startLocation, end: value.location)
                 } : nil
         )
+        .onChange(of: self.BEO.doSnapshot) { snap in
+            if self.BEO.doSnapshot {
+                takeSnapshot()
+            }
+        }
         .onChange(of: self.deviceState) { newScenePhase in
             switch newScenePhase {
                 case .active:
@@ -640,6 +824,34 @@ struct BoardEngine: View {
             if activityPlan.id == "SOL" {return}
             activityPlan.fireSave(id: activityPlan.id)
         }
+    }
+    
+    func takeSnapshot() {
+        
+        self.captureAsImage(with: self.BEO) { capturedImage in
+            if let image = capturedImage {
+                // Do something with the image (e.g., save it to the photo library)
+                UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
+            }
+        }
+        
+//        if let image = snapshot(with: self.BEO) { // A4 size
+//            if let pdfData = createPDF(image: image, pageSize: CGSize(width: 595, height: 842)) {
+////                let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+////                let pdfPath = documentsPath.appendingPathComponent("yourView.pdf")
+//                let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+//                let pdfPath = documentsPath.appendingPathComponent("yourView.pdf")
+//                
+//                do {
+//                    try pdfData.write(to: pdfPath)
+//                    print("PDF file saved to: \(pdfPath)")
+//                } catch {
+//                    print("Could not save PDF: \(error)")
+//                }
+//            }
+//            
+//            
+//        }
     }
     
     // TODO: MOVE TO CENTRAL BOARD OBJECT
