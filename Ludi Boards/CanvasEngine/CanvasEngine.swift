@@ -292,6 +292,7 @@ struct CanvasEngine: View {
             handleSessionPlans()
             addChatWindow()
             addProfileWindow()
+            addMvSettings()
         }
         
     }
@@ -413,6 +414,14 @@ struct CanvasEngine: View {
             }))
         })
     }
+    func addMvSettings() {
+        let caller = "mv_settings"
+        managedWindowsObject.addNewViewToPool(viewId: caller, viewBuilder: {
+            AnyView(NavStackFloatingWindow(id: caller, viewBuilder: {
+                SettingsView(onDelete: {}).environmentObject(self.BEO)
+            }))
+        })
+    }
 //    func handleBuddyList() {
 //        let caller = MenuBarProvider.buddyList.tool.title
 //        let buddies = ManagedViewWindow(id: caller, viewBuilder: AnyView(BuddyListView()))
@@ -434,17 +443,7 @@ struct CanvasEngine: View {
    
 ////
 
-//    func handleMVSettings() {
-//        let caller = "mv_settings"
-//        let buddies = ManagedViewWindow(id: caller, viewBuilder: {
-//            NavStackFloatingWindow(id: caller, viewBuilder: {
-//                SettingsView(onDelete: {}).environmentObject(self.BEO)
-//            })
-//        })
-//        buddies.title = "Tool View Settings"
-//        buddies.windowId = caller
-//        managedWindowsObject.safelyAddItem(key: caller, item: buddies)
-//    }
+
 }
 
 

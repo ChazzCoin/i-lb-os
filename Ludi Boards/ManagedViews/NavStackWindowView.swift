@@ -213,33 +213,7 @@ struct NavStackWindow : View {
             CodiChannel.MENU_WINDOW_CONTROLLER.receive(on: RunLoop.main) { wc in
                 print(wc)
                 let temp = wc as! WindowController
-                
-//                if temp.windowId == "master" {
-//                    self.NavStack.isHidden = true
-//                    return
-//                }
-//                
-//                if temp.windowId != self.id {
-//                    if temp.stateAction == "toggle" {
-//                        if !self.NavStack.isHidden {
-//                            self.NavStack.isHidden = true
-//                        }
-//                    }
-//                    return
-//                }
                 self.NavStack.fullScreenPosition(gps: self.gps)
-//                if temp.stateAction == "toggle" {
-//                    if self.NavStack.isHidden {
-//                        self.NavStack.isHidden = false
-//                    } else {
-//                        
-//                        self.NavStack.isHidden = true
-//                    }
-//                } else if temp.stateAction == "open" {
-//                    self.NavStack.isHidden = false
-//                } else if temp.stateAction == "close" {
-//                    self.NavStack.isHidden = true
-//                }
             }.store(in: &cancellables)
         }
     }
@@ -263,7 +237,7 @@ struct NavStackFloatingWindow : View {
     @State var height = 0.0
 
     @State var cancellables = Set<AnyCancellable>()
-    @State private var isHidden = true
+    @State private var isHidden = false
     
     @State private var isLocked = false
     @State var unLockedImage = "lock.open.fill"
@@ -329,23 +303,23 @@ struct NavStackFloatingWindow : View {
 
         .onAppear() {
             resetSize()
-            CodiChannel.MENU_WINDOW_CONTROLLER.receive(on: RunLoop.main) { wc in
-                let temp = wc as! WindowController
-                
-                if temp.windowId != self.id { return }
-                
-                if temp.stateAction == "toggle" {
-                    if self.isHidden {
-                        self.isHidden = false
-                    } else {
-                        self.isHidden = true
-                    }
-                } else if temp.stateAction == "open" {
-                    self.isHidden = false
-                } else if temp.stateAction == "close" {
-                    self.isHidden = true
-                }
-            }.store(in: &cancellables)
+//            CodiChannel.MENU_WINDOW_CONTROLLER.receive(on: RunLoop.main) { wc in
+//                let temp = wc as! WindowController
+//                
+//                if temp.windowId != self.id { return }
+//                
+//                if temp.stateAction == "toggle" {
+//                    if self.isHidden {
+//                        self.isHidden = false
+//                    } else {
+//                        self.isHidden = true
+//                    }
+//                } else if temp.stateAction == "open" {
+//                    self.isHidden = false
+//                } else if temp.stateAction == "close" {
+//                    self.isHidden = true
+//                }
+//            }.store(in: &cancellables)
         }
     }
 
