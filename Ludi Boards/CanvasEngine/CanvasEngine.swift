@@ -121,33 +121,43 @@ struct CanvasEngine: View {
     @State var notificationIcon = ""
     @State var sessionPlan = SessionPlan()
     
+    @State var alertDeleteAllTools = false
+    @State var alertDeleteAllToolsTitle = "Delete All Tools"
+    @State var alertDeleteAllToolsMessage = "Are you sure you want to delete all tools?"
+    
+    @State var alertRecordAnimation = false
+    @State var alertRecordAnimationTitle = "Animation Recording"
+    var alertRecordAnimationMessage: String {
+        return "Are you sure you want to \(self.BEO.isRecording ? "Stop" : "Start") recording?"
+    }
+    
     var body: some View {
         
         GlobalPositioningZStack { geo, gps in
             
-            SolIconConfirmButton(
-                systemName: MenuBarProvider.trash.tool.image,
-                title: "Delete All Tools",
-                message: "Are you sure you want to delete all tools?"
-            ) {
-                self.BEO.deleteAllTools()
-            }.position(using: gps, at: .topRight, offsetX: 35, offsetY: 35)
-            
-            SolIconConfirmButton(
-                systemName: "video",
-                title: "Animation Recording",
-                message: "Are you sure you want to \(self.BEO.isRecording ? "Stop" : "Start") recording?"
-            ) {
-                if !self.BEO.isRecording {
-                    self.BEO.startRecording()
-                } else {
-                    self.BEO.stopRecording()
-                }
-            }.position(using: gps, at: .topRight, offsetX: 35, offsetY: 150)
-            
-            SolIconButton(systemName: "play") {
-                self.showRecordingsSheet = true
-            }.position(using: gps, at: .topRight, offsetX: 35, offsetY: 300)
+//            SolIconConfirmButton(
+//                systemName: MenuBarProvider.trash.tool.image,
+//                title: "Delete All Tools",
+//                message: "Are you sure you want to delete all tools?"
+//            ) {
+//                self.BEO.deleteAllTools()
+//            }.position(using: gps, at: .topRight, offsetX: 35, offsetY: 35)
+//            
+//            SolIconConfirmButton(
+//                systemName: "video",
+//                title: "Animation Recording",
+//                message: "Are you sure you want to \(self.BEO.isRecording ? "Stop" : "Start") recording?"
+//            ) {
+//                if !self.BEO.isRecording {
+//                    self.BEO.startRecording()
+//                } else {
+//                    self.BEO.stopRecording()
+//                }
+//            }.position(using: gps, at: .topRight, offsetX: 35, offsetY: 150)
+//            
+//            SolIconButton(systemName: "play") {
+//                self.showRecordingsSheet = true
+//            }.position(using: gps, at: .topRight, offsetX: 35, offsetY: 300)
             
             if self.BEO.isLoading {
                 ProgressView()
@@ -163,16 +173,12 @@ struct CanvasEngine: View {
             MenuBarStatic(showIcons: $menuIsOpen){}
                 .frame(width: 60, height: menuIsOpen ? (gps.screenSize.height - 100) : 60)
                 .position(using: gps, at: .topLeft, offsetX: 50, offsetY: menuIsOpen ? ((gps.screenSize.height - 100) / 2) : 30)
+                .environmentObject(self.BEO)
             
             // Navigation Bar
             NavPadView()
                 .environmentObject(self.BEO)
                 .position(using: gps, at: .bottomCenter, offsetX: 0, offsetY: 150)
-            
-            // NavStack Windows
-//            ForEach(Array(managedWindowsObject.managedViewGenerics.values)) { managedViewWindow in
-//                managedViewWindow.viewBuilder().environmentObject(self.BEO)
-//            }.zIndex(50.0)
             
             if !self.managedWindowsObject.reload {
                 ForEach(Array(managedWindowsObject.activeViews.keys), id: \.self) { key in
@@ -204,8 +210,8 @@ struct CanvasEngine: View {
             // Drawing Mode Popup
             if self.BEO.isPlayingAnimation {
                 GeometryReader { geo in
-                    RecordingFlasher(title: "Playing in Progress...", subTitle: "Playback Mode.", showButton: false) {
-                        
+                    ModeAlert(title: "Playing in Progress...", subTitle: "Playback Mode.", showButton: true) {
+                        self.BEO.stopAnimationRecording()
                     }
                 }
                 .frame(width: 300)
@@ -215,7 +221,7 @@ struct CanvasEngine: View {
             // Drawing Mode Popup
             if self.BEO.isRecording {
                 GeometryReader { geo in
-                    RecordingFlasher(title: "Recording in Progress...", subTitle: "Animation Mode.", showButton: true) {
+                    ModeAlert(title: "Recording in Progress...", subTitle: "Animation Mode.", showButton: true) {
                         self.BEO.stopRecording()
                     }
                 }
@@ -264,18 +270,16 @@ struct CanvasEngine: View {
             
             // Board/Canvas Level
             ZStack() {
-//                DrawGridLines().zIndex(1.0)
                 BoardEngine()
                     .zIndex(2.0)
                     .environmentObject(self.BEO)
-                
             }
             .zIndex(1.0)
             .frame(width: 20000, height: 20000)
             .offset(x: self.BEO.canvasOffset.x, y: self.BEO.canvasOffset.y)
             .scaleEffect(self.BEO.canvasScale)
             .rotationEffect(Angle(degrees: self.BEO.canvasRotation))
-            
+
         }
         .zIndex(0.0)
         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
@@ -286,8 +290,35 @@ struct CanvasEngine: View {
             RecordingListView(isShowing: self.$showRecordingsSheet)
                 .environmentObject(self.BEO)
         })
+        .alert(self.alertDeleteAllToolsTitle, isPresented: $alertDeleteAllTools) {
+            Button("Cancel", role: .cancel) {
+                alertDeleteAllTools = false
+            }
+            Button("OK", role: .none) {
+                alertDeleteAllTools = false
+                self.BEO.deleteAllTools()
+            }
+        } message: {
+            Text(self.alertDeleteAllToolsMessage)
+        }
+        .alert(self.alertRecordAnimationTitle, isPresented: $alertRecordAnimation) {
+            Button("Cancel", role: .cancel) {
+                alertRecordAnimation = false
+            }
+            Button("OK", role: .none) {
+                alertRecordAnimation = false
+                if !self.BEO.isRecording {
+                    self.BEO.startRecording()
+                } else {
+                    self.BEO.stopRecording()
+                }
+            }
+        } message: {
+            Text(self.alertRecordAnimationMessage)
+        }
         .onAppear() {
             self.BEO.loadUser()
+            menuBarButtonListener()
             handleSessionPlan()
             handleSessionPlans()
             addChatWindow()
@@ -329,7 +360,11 @@ struct CanvasEngine: View {
                 case .menuBar: return self.showMenuBar = !self.showMenuBar
                 case .info: return self.BEO.showTipViewStatic = !self.BEO.showTipViewStatic
                 case .toolbox: return self.toolBarIsEnabled = !self.toolBarIsEnabled
-                case .lock: return self.handleGestureLock() //self.BEO.isShowingPopUp = !self.BEO.isShowingPopUp //
+                case .trash: return self.alertDeleteAllTools = true
+                case .lock: return self.handleGestureLock()
+                case .video: return self.alertRecordAnimation = true
+                case .play: return self.showRecordingsSheet = true
+                //
                 case .canvasGrid: return
                 case .navHome: return 
                 case .buddyList: return
@@ -337,9 +372,8 @@ struct CanvasEngine: View {
                 case .boardCreate: return
                 case .boardDetails: return
                 case .reset: return
-                case .trash: return
                 case .boardBackground: return
-                case .profile: return// self.BEO.isLoading = !self.BEO.isLoading
+                case .profile: return
                 case .share: return
                 case .router: return
                 case .note: return

@@ -214,13 +214,33 @@ struct TipBoxViewStatic: View {
     }
 }
 
-struct RecordingFlasher: View {
+struct ModeAlert: View {
     @State var title: String
     @State var subTitle: String
     @State var showButton: Bool
     var onStop: () -> Void
+    @State var showImage: Bool = false
+    @State var imageName: String = "play"
     @State private var isFlashing = false
+    
+    init(title: String, subTitle: String, showButton: Bool, onStop: @escaping () -> Void = {}, isFlashing: Bool = false) {
+        self.title = title
+        self.subTitle = subTitle
+        self.showButton = showButton
+        self.onStop = onStop
+        self.isFlashing = isFlashing
+    }
 
+    init(title: String, subTitle: String, showButton: Bool, showImage: Bool, imageName: String = "play", onStop: @escaping () -> Void = {}, isFlashing: Bool = false) {
+        self.title = title
+        self.subTitle = subTitle
+        self.showButton = showButton
+        self.showImage = showImage
+        self.imageName = imageName
+        self.onStop = onStop
+        self.isFlashing = isFlashing
+    }
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
@@ -235,22 +255,34 @@ struct RecordingFlasher: View {
 
                 Spacer()
                 
-                Circle()
-                    .fill(Color.red)
-                    .frame(width: 15, height: 15)
-                    .opacity(isFlashing ? 1 : 0)
-                    .onAppear {
-                        withAnimation(Animation.easeInOut(duration: 0.5).repeatForever(autoreverses: true)) {
-                            isFlashing.toggle()
+                if showImage {
+                    Image(systemName: imageName)
+                        .resizable()
+                        .frame(width: 15, height: 15)
+                        .opacity(isFlashing ? 1 : 0)
+                        .onAppear {
+                            withAnimation(Animation.easeInOut(duration: 0.5).repeatForever(autoreverses: true)) {
+                                isFlashing.toggle()
+                            }
                         }
-                    }
+                } else {
+                    Circle()
+                        .fill(Color.red)
+                        .frame(width: 15, height: 15)
+                        .opacity(isFlashing ? 1 : 0)
+                        .onAppear {
+                            withAnimation(Animation.easeInOut(duration: 0.5).repeatForever(autoreverses: true)) {
+                                isFlashing.toggle()
+                            }
+                        }
+                }
+                
             }
             if showButton {
                 Button(action: {
-                    // Add code here to "Turn Off" the feature
                     onStop()
                 }) {
-                    Text("Stop Recording")
+                    Text("Stop")
                         .foregroundColor(.white)
                         .padding(.vertical, 10)
                         .frame(maxWidth: .infinity)

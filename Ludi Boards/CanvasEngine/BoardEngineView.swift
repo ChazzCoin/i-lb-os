@@ -264,15 +264,25 @@ class BoardEngineObject : ObservableObject {
     @Published var recordingNotificationToken: NotificationToken? = nil
     @Published var ignoreUpdates: Bool = false
     
-    func runAnimation() {
+    func playAnimationRecording() {
+        isPlayingAnimation = true
+        runAnimation()
+    }
+    func stopAnimationRecording() {
+        isPlayingAnimation = false
+    }
+    
+    private func runAnimation() {
         guard !recordingsByRecordingId.isEmpty else { return }
-        self.isPlayingAnimation = true
         let dispatchGroup = DispatchGroup()
         let initialDelay = 1.0 // Start with a delay of 1 second
         var currentDelay = initialDelay
+        if !self.isPlayingAnimation { return }
         DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
             for item in self.recordingsByRecordingIdInInitState {
+                if !self.isPlayingAnimation { return }
                 DispatchQueue.main.asyncAfter(deadline: .now()) {
+                    if !self.isPlayingAnimation { return }
                     dispatchGroup.enter()  // Enter the group for each async task
 
                     self.realmInstance.safeFindByField(ManagedView.self, value: item.toolId) { obj in
@@ -284,6 +294,7 @@ class BoardEngineObject : ObservableObject {
             }
             
             // Notify when all tasks in the first loop are done
+            if !self.isPlayingAnimation { return }
             dispatchGroup.notify(queue: .main) {
                 var nextDelay = initialDelay
 
@@ -291,9 +302,11 @@ class BoardEngineObject : ObservableObject {
                 var count = 0
                 var total = self.recordingsByRecordingId.count
                 for item in self.recordingsByRecordingId {
+                    if !self.isPlayingAnimation { return }
                     if item.orderIndex == 0 { continue }
                     count = count + 1
                     DispatchQueue.main.asyncAfter(deadline: .now() + nextDelay) {
+                        if !self.isPlayingAnimation { return }
                         self.realmInstance.safeFindByField(ManagedView.self, value: item.toolId) { obj in
                             obj.absorbRecordingAction(from: item, saveRealm: self.realmInstance)
                         }
@@ -336,10 +349,12 @@ class BoardEngineObject : ObservableObject {
         isRecording = false
         stopTimer()
         stopRecordingObserver()
-        self.realmInstance.safeFindByField(Recording.self, value: self.currentRecordingId) { obj in
-            self.realmInstance.safeWrite { _ in
-                obj.duration = self.recordingDuration
-                // TODO: FIREBASE
+        DispatchQueue.main.async {
+            self.realmInstance.safeFindByField(Recording.self, value: self.currentRecordingId) { obj in
+                self.realmInstance.safeWrite { _ in
+                    obj.duration = self.recordingDuration
+                    // TODO: FIREBASE
+                }
             }
         }
         print("Recording Stopped.")

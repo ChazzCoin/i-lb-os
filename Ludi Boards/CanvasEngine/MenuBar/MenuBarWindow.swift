@@ -11,9 +11,10 @@ import SwiftUI
 struct MenuBarStatic: View {
     @Binding var showIcons: Bool
     var onClick: () -> Void
+    @EnvironmentObject var BEO: BoardEngineObject
     @StateObject private var rcl = RealmObserver<CurrentSolUser>()
 //    @State private var showIcons = false
-    @State private var iconStates = Array(repeating: false, count: 8)
+    @State private var iconStates = Array(repeating: false, count: 11)
     @Environment(\.colorScheme) var colorScheme
     @State private var isLocked = false
     @State private var lifeColor = Color.black
@@ -24,6 +25,9 @@ struct MenuBarStatic: View {
         MenuBarProvider.info,
         MenuBarProvider.lock,
         MenuBarProvider.toolbox,
+        MenuBarProvider.trash,
+        MenuBarProvider.video,
+        MenuBarProvider.play,
         MenuBarProvider.navHome,
         MenuBarProvider.boardDetails,
         MenuBarProvider.boardCreate,
@@ -34,6 +38,9 @@ struct MenuBarStatic: View {
         MenuBarProvider.info,
         MenuBarProvider.lock,
         MenuBarProvider.toolbox,
+        MenuBarProvider.trash,
+        MenuBarProvider.video,
+        MenuBarProvider.play,
         MenuBarProvider.navHome,
         MenuBarProvider.boardDetails,
         MenuBarProvider.boardCreate,
@@ -80,6 +87,7 @@ struct MenuBarStatic: View {
                 if iconStates[index] {
                     MenuButtonIcon(icon: icons[index])
                         .transition(.opacity)
+                        .environmentObject(self.BEO)
                 }
             }
         }

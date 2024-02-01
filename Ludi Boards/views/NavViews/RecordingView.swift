@@ -18,6 +18,7 @@ struct RecordingListView: View {
             SearchableRecordingsListView(isShowing: self.$isShowing)
                 .environmentObject(self.BEO)
         }
+        .navigationTitle("Current Activity Recordings")
         .background(Color.gray.opacity(0.1))
         .cornerRadius(8)
         .padding()
@@ -80,7 +81,7 @@ struct RecordingView: View {
                     action: {
                         self.BEO.playbackRecordingId = self.recordingId
                         self.isShowing = false
-                        self.BEO.runAnimation()
+                        self.BEO.playAnimationRecording()
                     }
                 )
             }

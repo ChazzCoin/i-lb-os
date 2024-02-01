@@ -38,7 +38,7 @@ struct ToolBarPicker<Content: View>: View {
                 
             }.padding()
         }
-        .frame(width: Double(sWidth).bound(to: 200...sWidth) - 100, height: 75)
+        .frame(width: Double(sWidth).bound(to: 200...sWidth) - 150, height: 75)
         .background(
             RoundedRectangle(cornerRadius: 15)
                 .foregroundColor(backgroundColorForScheme(colorScheme))

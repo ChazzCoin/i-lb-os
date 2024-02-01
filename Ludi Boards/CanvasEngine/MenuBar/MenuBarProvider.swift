@@ -40,6 +40,8 @@ enum MenuBarProvider: IconProvider {
     case boardDetails
     case reset
     case trash
+    case video
+    case play
     case boardBackground
     case profile
     case share
@@ -56,6 +58,10 @@ enum MenuBarProvider: IconProvider {
             case .info: return Tool(title: "Tips", image: "info.circle", authLevel: 0, color: .white)
             case .toolbox: return Tool(title: "Toolbox", image: "wrench", authLevel: 0, color: .white)
             case .lock: return Tool(title: "Lock", image: "lock.fill", authLevel: 0, color: .white)
+            
+            case .video: return Tool(title: "Recording", image: "video", authLevel: 0, color: .white)
+            case .play: return Tool(title: "Play", image: "play", authLevel: 0, color: .white)
+            
             case .canvasGrid: return Tool(title: "Grid", image: "square.grid.3x3.fill", authLevel: 0, color: .white)
             case .navHome: return Tool(title: "NavPad", image: "location.north.line.fill", authLevel: 0, color: .white)
             case .buddyList: return Tool(title: "Buddy List", image: "person.2.fill", authLevel: 0, color: .white)
@@ -78,7 +84,7 @@ enum MenuBarProvider: IconProvider {
 
 
     static let allCases: [MenuBarProvider] = [
-        .menuBar, .info, .toolbox, .lock, .canvasGrid, .navHome, .buddyList, .boardList,
+        .menuBar, .info, .toolbox, .lock, .video, .play, .canvasGrid, .navHome, .buddyList, .boardList,
         .boardCreate, .boardDetails, .reset, .trash, .boardBackground,
         .profile, .share, .router, .note, .chat, .paint, .image, .webBrowser
     ]

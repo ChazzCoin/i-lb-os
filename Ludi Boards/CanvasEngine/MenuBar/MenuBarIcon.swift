@@ -12,15 +12,21 @@ import Combine
 struct MenuButtonIcon: View {
     var icon: IconProvider // Assuming IconProvider conforms to SwiftUI's View
     @Environment(\.colorScheme) var colorScheme
+    @EnvironmentObject var BEO: BoardEngineObject
     @State private var isLocked = false
-    @State private var lifeColor = Color.black
-    
-    func setColorScheme() { lifeColor = foregroundColorForScheme(colorScheme) }
+    @State private var lifeColor = Color.white
+        
+    func setupButton() {
+        if icon.tool.title == MenuBarProvider.lock.tool.title {
+            isLocked = self.BEO.gesturesAreLocked
+            lifeColor = isLocked ? Color.red : Color.white
+        }
+    }
     
     func handleTap() {
         if icon.tool.title == MenuBarProvider.lock.tool.title {
             isLocked = !isLocked
-            lifeColor = isLocked ? Color.red : foregroundColorForScheme(colorScheme)
+            lifeColor = isLocked ? Color.red : Color.white
         }
     }
 
@@ -30,9 +36,9 @@ struct MenuButtonIcon: View {
             Image(systemName: icon.tool.image)
                 .resizable()
                 .frame(width: 35, height: 35)
-                .foregroundColor(Color.white)
+                .foregroundColor(lifeColor)
                 .onAppear() {
-                    setColorScheme()
+                    setupButton()
                 }
         }
         .frame(width: 60, height: 60)
