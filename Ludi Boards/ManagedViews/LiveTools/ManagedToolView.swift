@@ -100,12 +100,13 @@ struct enableManagedViewTool : ViewModifier {
         DragGesture()
             .updating($dragOffset, body: { (value, state, transaction) in
                 if self.lifeIsLocked { return }
+                self.BEO.ignoreUpdates = true
                 state = value.translation
             })
             .onChanged { drag in
                 if self.lifeIsLocked { return }
-                self.isDragging = true
                 self.BEO.ignoreUpdates = true
+                self.isDragging = true
                 let translation = drag.translation
                 self.updateRealmPos(x: self.position.x + translation.width,
                                               y: self.position.y + translation.height)
@@ -114,11 +115,11 @@ struct enableManagedViewTool : ViewModifier {
             .onEnded { drag in
                 if self.lifeIsLocked { return }
                 self.BEO.ignoreUpdates = false
+                self.isDragging = false
                 let translation = drag.translation
                 self.position = CGPoint(x: self.position.x + translation.width,
                                                   y: self.position.y + translation.height)
                 self.updateRealm()
-                self.isDragging = false
             }.simultaneously(with: TapGesture(count: 2)
                 .onEnded { _ in
                     print("Tapped")
@@ -239,7 +240,6 @@ struct enableManagedViewTool : ViewModifier {
         minSizeCheck()
     }
     
-    // TODO: COPY THIS TO MVSETTINGS FOR REALTIME UPDATES.
     // Observe From Realm
     func observeFromRealm() {
         if isDisabledChecker() || isDeletedChecker() {return}
@@ -250,10 +250,16 @@ struct enableManagedViewTool : ViewModifier {
             DispatchQueue.main.async {
                 if self.isDragging {return}
                 
-                if temp.lastUserId != self.currentUserId {
-                    let newPosition = CGPoint(x: temp.x, y: temp.y)
-                    self.coordinateStack.append(newPosition)
-                    self.animateToNextCoordinate()
+                if self.BEO.isPlayingAnimation {
+                    withAnimation {
+                        position = CGPoint(x: temp.x, y: temp.y)
+                    }
+                } else {
+                    if temp.lastUserId != self.currentUserId {
+                        let newPosition = CGPoint(x: temp.x, y: temp.y)
+                        self.coordinateStack.append(newPosition)
+                        self.animateToNextCoordinate()
+                    }
                 }
                 
                 if self.activityId != temp.boardId {self.activityId = temp.boardId}

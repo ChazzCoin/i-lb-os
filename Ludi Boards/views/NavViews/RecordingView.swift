@@ -30,6 +30,7 @@ struct RecordingView: View {
     @State var recordingId: String
     @Binding var isShowing: Bool
     @EnvironmentObject var BEO: BoardEngineObject
+    @Environment(\.presentationMode) var presentationMode
     
     @State var name: String = ""
     @State var details: String = ""
@@ -69,7 +70,7 @@ struct RecordingView: View {
                         self.BEO.realmInstance.safeFindByField(Recording.self, value: self.recordingId) { obj in
                             self.BEO.realmInstance.safeWrite { r in
                                 r.delete(obj)
-                                self.isShowing = false
+                                presentationMode.wrappedValue.dismiss()
                             }
                         }
                     }

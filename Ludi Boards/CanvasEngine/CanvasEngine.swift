@@ -135,30 +135,6 @@ struct CanvasEngine: View {
         
         GlobalPositioningZStack { geo, gps in
             
-//            SolIconConfirmButton(
-//                systemName: MenuBarProvider.trash.tool.image,
-//                title: "Delete All Tools",
-//                message: "Are you sure you want to delete all tools?"
-//            ) {
-//                self.BEO.deleteAllTools()
-//            }.position(using: gps, at: .topRight, offsetX: 35, offsetY: 35)
-//            
-//            SolIconConfirmButton(
-//                systemName: "video",
-//                title: "Animation Recording",
-//                message: "Are you sure you want to \(self.BEO.isRecording ? "Stop" : "Start") recording?"
-//            ) {
-//                if !self.BEO.isRecording {
-//                    self.BEO.startRecording()
-//                } else {
-//                    self.BEO.stopRecording()
-//                }
-//            }.position(using: gps, at: .topRight, offsetX: 35, offsetY: 150)
-//            
-//            SolIconButton(systemName: "play") {
-//                self.showRecordingsSheet = true
-//            }.position(using: gps, at: .topRight, offsetX: 35, offsetY: 300)
-            
             if self.BEO.isLoading {
                 ProgressView()
                     .frame(width: 300, height: 300)
@@ -190,7 +166,7 @@ struct CanvasEngine: View {
             }
             
             // Tool Bar
-            if toolBarIsEnabled {
+            if toolBarIsEnabled && !self.BEO.isRecording && !self.BEO.isPlayingAnimation {
                 ToolBarPicker {
                     LineIconView(isBgColor: false)
                         .frame(width: 50, height: 50)

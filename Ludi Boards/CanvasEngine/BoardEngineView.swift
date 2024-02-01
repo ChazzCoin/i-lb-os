@@ -278,10 +278,10 @@ class BoardEngineObject : ObservableObject {
         let initialDelay = 1.0 // Start with a delay of 1 second
         var currentDelay = initialDelay
         if !self.isPlayingAnimation { return }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
             for item in self.recordingsByRecordingIdInInitState {
                 if !self.isPlayingAnimation { return }
-                DispatchQueue.main.asyncAfter(deadline: .now()) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     if !self.isPlayingAnimation { return }
                     dispatchGroup.enter()  // Enter the group for each async task
 
@@ -349,14 +349,6 @@ class BoardEngineObject : ObservableObject {
         isRecording = false
         stopTimer()
         stopRecordingObserver()
-        DispatchQueue.main.async {
-            self.realmInstance.safeFindByField(Recording.self, value: self.currentRecordingId) { obj in
-                self.realmInstance.safeWrite { _ in
-                    obj.duration = self.recordingDuration
-                    // TODO: FIREBASE
-                }
-            }
-        }
         print("Recording Stopped.")
     }
     
@@ -364,16 +356,14 @@ class BoardEngineObject : ObservableObject {
     private func stopTimer() {
         guard let startTime = startTime else { return }
         endTime = DispatchTime.now()
-        DispatchQueue.main.async { [weak self] in
-            self?.updateDurationAttribute()
-        }
-    }
-    
-    private func updateDurationAttribute() {
-        guard let startTime = startTime, let endTime = endTime else { return }
-        DispatchQueue.main.async {
-            self.recordingDuration = Double(endTime.uptimeNanoseconds - startTime.uptimeNanoseconds) / 1_000_000_000 // Convert to seconds
-            print("Recording duration: \(self.recordingDuration) seconds.")
+        guard let endTime = endTime else { return }
+        self.recordingDuration = Double(endTime.uptimeNanoseconds - startTime.uptimeNanoseconds) / 1_000_000_000 // Convert to seconds
+        print("Recording duration: \(self.recordingDuration) seconds.")
+        if let obj = self.realmInstance.findByField(Recording.self, value: self.currentRecordingId) {
+            self.realmInstance.safeWrite { _ in
+                obj.duration = self.recordingDuration
+                // TODO: FIREBASE
+            }
         }
     }
     

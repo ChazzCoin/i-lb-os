@@ -13,20 +13,19 @@ struct MenuButtonIcon: View {
     var icon: IconProvider // Assuming IconProvider conforms to SwiftUI's View
     @Environment(\.colorScheme) var colorScheme
     @EnvironmentObject var BEO: BoardEngineObject
-    @State private var isLocked = false
     @State private var lifeColor = Color.white
         
     func setupButton() {
         if icon.tool.title == MenuBarProvider.lock.tool.title {
-            isLocked = self.BEO.gesturesAreLocked
-            lifeColor = isLocked ? Color.red : Color.white
+            lifeColor = self.BEO.gesturesAreLocked ? Color.red : Color.white
         }
-    }
-    
-    func handleTap() {
-        if icon.tool.title == MenuBarProvider.lock.tool.title {
-            isLocked = !isLocked
-            lifeColor = isLocked ? Color.red : Color.white
+        
+        if icon.tool.title == MenuBarProvider.video.tool.title {
+            lifeColor = self.BEO.isRecording ? Color.red : Color.white
+        }
+        
+        if icon.tool.title == MenuBarProvider.play.tool.title {
+            lifeColor = self.BEO.isPlayingAnimation ? Color.red : Color.white
         }
     }
 
@@ -47,9 +46,17 @@ struct MenuButtonIcon: View {
                 .foregroundColor(Color.secondaryBackground)
                 .shadow(radius: 5)
         )
+        .onChange(of: self.BEO.gesturesAreLocked, perform: { value in
+            setupButton()
+        })
+        .onChange(of: self.BEO.isRecording, perform: { value in
+            setupButton()
+        })
+        .onChange(of: self.BEO.isPlayingAnimation, perform: { value in
+            setupButton()
+        })
         .onTapAnimation {
             print("CodiChannel SendTopic: \(icon.tool.title)")
-            handleTap()
             CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: icon.tool.title, stateAction: "toggle"))
         }
     }
