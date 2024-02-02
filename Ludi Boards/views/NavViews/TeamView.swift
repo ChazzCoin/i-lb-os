@@ -13,6 +13,7 @@ struct TeamView: View {
     @Binding var teamId: String
     @Binding var isShowing: Bool
     @State var team: Team = Team()
+    @Environment(\.colorScheme) var colorScheme
     @ObservedResults(PlayerRef.self) var players
     var roster: Results<PlayerRef> {
         return self.players.filter("teamId == %@", self.teamId)
@@ -36,6 +37,8 @@ struct TeamView: View {
     @State var showCurrentPlayerSheet = false
     @State var showAddPlayerSheet = false
     
+    @State var columns: [GridItem] = Array(repeating: .init(.flexible()), count: 2)
+    
     var body: some View {
         ScrollView {
             VStack {
@@ -58,33 +61,6 @@ struct TeamView: View {
                 Divider()
                 
                 Group {
-                    HStack {
-                        SubHeaderText("Sport: ")
-                            .fontWeight(.bold)
-                        SolPicker(selection: $sport, data: sports, title: "Select a Sport", isEnabled: $isEditMode)
-                        Spacer()
-                    }
-                    
-                    DStack {
-                        SubHeaderText("Team Name: ")
-                            .fontWeight(.bold)
-                        Spacer()
-                        SolTextField("Team Name", text: $teamName, isEditable: $isEditMode)
-                    }
-                    
-                    DStack {
-                        SubHeaderText("Coach: ")
-                            .fontWeight(.bold)
-                        Spacer()
-                        SolTextField("Coach Name", text: $teamCoach, isEditable: $isEditMode)
-                    }
-                    
-                    DStack {
-                        SubHeaderText("Year/Age: ")
-                            .fontWeight(.bold)
-                        Spacer()
-                        SolTextField("Year", text: $teamYear, isEditable: $isEditMode)
-                    }
                     DStack {
                         SolButton(
                             title: "Save Team",
@@ -107,6 +83,24 @@ struct TeamView: View {
                         )
                     }
                 }
+                
+                Group {
+                    
+                    SolTextField("Team Name", text: $teamName, isEditable: $isEditMode)
+                    
+                    DStack {
+                        SolTextField("Coach Name", text: $teamCoach, isEditable: $isEditMode)
+                        SolTextField("Year", text: $teamYear, isEditable: $isEditMode)
+                    }
+                    
+                    HStack {
+                        BodyText("Sport: ", color: colorScheme == .dark ? .white : .black)
+                            .fontWeight(.bold)
+                        SolPicker(selection: $sport, data: sports, title: "Select a Sport", isEnabled: $isEditMode)
+                        Spacer()
+                    }
+                    
+                }
                 .padding(.vertical, 4)
                 
                 Divider()
@@ -120,19 +114,19 @@ struct TeamView: View {
                 }
                 
                 Group {
-                    SubHeaderText("Players")
+                    HeaderText("Roster")
                         .font(.headline)
                         .padding(.top)
-                    
-                    ForEach(roster) { player in
-                        PlayerRefItemView(playerId: .constant(player.id))
-                            .onTapAnimation {
-                                currentPlayerId = player.id
-                                showCurrentPlayerSheet = true
-                            }
+                    LazyVGrid(columns: columns, spacing: 20) {
+                        ForEach(roster) { player in
+                            PlayerRefItemView(playerId: .constant(player.id))
+                                .onTapAnimation {
+                                    currentPlayerId = player.id
+                                    showCurrentPlayerSheet = true
+                                }
+                        }
+                        .onDelete(perform: deletePlayer)
                     }
-                    .onDelete(perform: deletePlayer)
-                    
                     
                 }
                 

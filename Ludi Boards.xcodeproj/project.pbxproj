@@ -187,6 +187,7 @@
 		FBB450022B052B180096F8EB /* FireLiveData.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBB450012B052B180096F8EB /* FireLiveData.swift */; };
 		FBBAD3BC2B1F8ECC004A4332 /* Timer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBBAD3BB2B1F8ECC004A4332 /* Timer.swift */; };
 		FBBAD3BE2B1FBF58004A4332 /* NavPad.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBBAD3BD2B1FBF58004A4332 /* NavPad.swift */; };
+		FBBDD0182B6C48840009844B /* Alerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBBDD0172B6C48840009844B /* Alerts.swift */; };
 		FBC2FC6C2B59C4A400D1AB77 /* DStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBC2FC6B2B59C4A400D1AB77 /* DStack.swift */; };
 		FBC2FC6E2B5A0BB200D1AB77 /* TabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBC2FC6D2B5A0BB200D1AB77 /* TabView.swift */; };
 		FBC2FC702B5BC04300D1AB77 /* Text.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBC2FC6F2B5BC04300D1AB77 /* Text.swift */; };
@@ -378,6 +379,7 @@
 		FBB450012B052B180096F8EB /* FireLiveData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireLiveData.swift; sourceTree = "<group>"; };
 		FBBAD3BB2B1F8ECC004A4332 /* Timer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timer.swift; sourceTree = "<group>"; };
 		FBBAD3BD2B1FBF58004A4332 /* NavPad.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavPad.swift; sourceTree = "<group>"; };
+		FBBDD0172B6C48840009844B /* Alerts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alerts.swift; sourceTree = "<group>"; };
 		FBC2FC6B2B59C4A400D1AB77 /* DStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DStack.swift; sourceTree = "<group>"; };
 		FBC2FC6D2B5A0BB200D1AB77 /* TabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabView.swift; sourceTree = "<group>"; };
 		FBC2FC6F2B5BC04300D1AB77 /* Text.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Text.swift; sourceTree = "<group>"; };
@@ -562,6 +564,7 @@
 		FB18F1632B68686B00D89F8D /* ListItems */ = {
 			isa = PBXGroup;
 			children = (
+				FB18F16A2B68A1CE00D89F8D /* SolListItem.swift */,
 				FB18F1822B6AE54200D89F8D /* SearchableRecordingsListView.swift */,
 				FB18F1842B6AEC2100D89F8D /* SearchableRecordingActionsListView.swift */,
 				FB18F1682B68718000D89F8D /* SearchableSessionListView.swift */,
@@ -573,7 +576,6 @@
 				FB10AE0C2B0F16B100295F4B /* ActivityPlanThumbList.swift */,
 				FB18F1662B686EA900D89F8D /* TeamList.swift */,
 				FB18F1642B68687900D89F8D /* PlayerRefList.swift */,
-				FB18F16A2B68A1CE00D89F8D /* SolListItem.swift */,
 				FB18F1882B6B12FD00D89F8D /* RecordingTimeline.swift */,
 			);
 			path = ListItems;
@@ -674,6 +676,7 @@
 		FB5094242B05820B000AEA96 /* views */ = {
 			isa = PBXGroup;
 			children = (
+				FBBDD0162B6C486B0009844B /* Modifiers */,
 				FB3E02CC2B0D45F000D8558C /* NavViews */,
 				FB18F1632B68686B00D89F8D /* ListItems */,
 				FBE2C61E2B1AFCA2004C0116 /* Social */,
@@ -817,6 +820,14 @@
 				FB6C0C502B525E8500163A6D /* LoginView.swift */,
 			);
 			path = SignUp;
+			sourceTree = "<group>";
+		};
+		FBBDD0162B6C486B0009844B /* Modifiers */ = {
+			isa = PBXGroup;
+			children = (
+				FBBDD0172B6C48840009844B /* Alerts.swift */,
+			);
+			path = Modifiers;
 			sourceTree = "<group>";
 		};
 		FBD9AF9B2AFF00BE005F8620 = {
@@ -1231,6 +1242,7 @@
 				FB58E8842B03169700FD9E2E /* TimeProvider.swift in Sources */,
 				FB18F1732B68CE6400D89F8D /* SearchableActivityListView.swift in Sources */,
 				FBF404432B19304700FA0545 /* BorderedView.swift in Sources */,
+				FBBDD0182B6C48840009844B /* Alerts.swift in Sources */,
 				FB18F17B2B69A26400D89F8D /* SearchablePlayerRefListView.swift in Sources */,
 				FBE385562B4BC6E70090901C /* LiveSolUser.swift in Sources */,
 				FB18F1792B69A0DC00D89F8D /* SearchableTeamListView.swift in Sources */,

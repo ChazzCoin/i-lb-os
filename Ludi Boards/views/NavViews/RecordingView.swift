@@ -41,13 +41,6 @@ struct RecordingView: View {
     var body: some View {
         Form {
             
-            SolTextField("Name", text: $name)
-            SolTextField("Details", text: $details)
-            
-            Text("Duration: \(duration, specifier: "%.2f") seconds")
-                .font(.subheadline)
-                .padding()
-            
             DStack {
                 SolConfirmButton(
                     title: "Save",
@@ -86,6 +79,12 @@ struct RecordingView: View {
                     }
                 )
             }
+            
+            SolTextField("Name", text: $name)
+            SolTextField("Details", text: $details)
+            
+            HeaderText("Duration: \(duration.rounded()) seconds")
+                .padding()
             
             // TODO: ADD TIMELINE OF ACTIONS
             Section(header: Text("Recorded Actions")) {
