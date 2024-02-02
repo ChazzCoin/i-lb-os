@@ -32,3 +32,29 @@ struct BorderedView<Content: View>: View {
         )
     }
 }
+
+struct BorderedVStack<Content: View>: View {
+    let content: Content
+    var borderColor: Color = .primaryBackground
+    var borderWidth: CGFloat = 2
+
+    init(@ViewBuilder content: () -> Content) {
+        self.content = content()
+    }
+    
+    init(color:Color, @ViewBuilder content: () -> Content) {
+        self.borderColor = color
+        self.content = content()
+    }
+
+    var body: some View {
+        VStack {
+            content
+        }
+        .padding()
+        .overlay(
+            RoundedRectangle(cornerRadius: 8) // Adjust corner radius as needed
+                .stroke(borderColor, lineWidth: borderWidth)
+        )
+    }
+}

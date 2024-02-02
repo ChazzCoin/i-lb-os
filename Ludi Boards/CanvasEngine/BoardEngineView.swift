@@ -19,7 +19,7 @@ class BoardEngineObject : ObservableObject {
     @ObservedResults(ManagedViewAction.self) var allToolActions
     
     let realmInstance = realm()
-    @Published var boards = Sports()
+    @State var boards = Sports()
     @Published var boardRefreshFlag = true
     
     @Published var globalWindowsIndex = 3.0
@@ -53,6 +53,11 @@ class BoardEngineObject : ObservableObject {
     @Published var lastScaleValue: CGFloat = 1.0
     @Published var dropPosition = CGPoint.zero
     @Published var dropDelegate: CustomDropDelegate?
+    
+    @Published var menuSettingsIsShowing = false
+    @Published var toolSettingsIsShowing = false
+    @Published var toolBarIsShowing = false
+    @Published var toolBarCurrentViewId = ""
     
     init() {
         dropDelegate = CustomDropDelegate(
@@ -115,6 +120,10 @@ class BoardEngineObject : ObservableObject {
             self.userId = su.userId
             self.userName = su.userName
         }
+    }
+    
+    func screenIsActiveAndLocked() -> Bool {
+        return self.isRecording && self.isPlayingAnimation
     }
     
     func runCanvasLoading() {

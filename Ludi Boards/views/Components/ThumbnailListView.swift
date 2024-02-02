@@ -20,19 +20,18 @@ struct ThumbnailListView: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 10) {
                 ForEach(imageNames, id: \.self) { imageName in
-                    Button(action: {
-                        self.selectedImage = imageName
-                        callback(imageName)
-                    }) {
-                        Image(imageName)
-                            .resizable()
-                            .frame(width: 100, height: 100)
-                            .cornerRadius(10)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 10)
-                                    .stroke(selectedImage == imageName ? Color.blue : Color.clear, lineWidth: 3)
-                            )
-                    }
+                    Image(imageName)
+                        .resizable()
+                        .frame(width: 100, height: 100)
+                        .cornerRadius(10)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(selectedImage == imageName ? Color.blue : Color.clear, lineWidth: 3)
+                        )
+                        .onTapAnimation {
+                            self.selectedImage = imageName
+                            callback(imageName)
+                        }
                 }
             }
             .padding()
@@ -48,12 +47,12 @@ struct ColorListPicker: View {
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 10) {
+            HStack(spacing: 8) {
                 ForEach(colorNamesProvider, id: \.self) { colorName in
                     RoundedRectangle(cornerRadius: 10)
                         .fill(colorName)
                         .frame(width: 50, height: 50)
-                        .cornerRadius(10)
+//                        .cornerRadius(10)
                         .overlay(
                             RoundedRectangle(cornerRadius: 10)
                                 .stroke(selectedImage == colorName ? Color.blue : Color.clear, lineWidth: 3)
@@ -66,7 +65,7 @@ struct ColorListPicker: View {
                         )
                 }
             }
-            .padding()
+//            .padding()
         }
     }
 }

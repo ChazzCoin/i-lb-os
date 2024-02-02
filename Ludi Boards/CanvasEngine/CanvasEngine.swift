@@ -27,7 +27,7 @@ struct CanvasEngine: View {
     
     @State private var offsetTwo = CGSize.zero
     @State private var isDragging = false
-    @State private var toolBarIsEnabled = true
+//    @State private var toolBarIsEnabled = true
     @State private var position = CGPoint(x: 0, y: 0) // Initial position
     @GestureState private var dragOffset = CGSize.zero
     
@@ -103,14 +103,14 @@ struct CanvasEngine: View {
         self.BEO.isDraw = true
         self.BEO.drawType = drawingType
         self.BEO.gesturesAreLocked = true
-        self.toolBarIsEnabled = false
+        self.BEO.toolBarIsShowing = false
         self.showMenuBar = false
     }
     
     func disableDrawing() {
         self.BEO.isDraw = false
         self.BEO.gesturesAreLocked = false
-        self.toolBarIsEnabled = true
+        self.BEO.toolBarIsShowing = true
         self.showMenuBar = true
     }
     
@@ -148,7 +148,7 @@ struct CanvasEngine: View {
             // Menu Bar
             MenuBarStatic(showIcons: $menuIsOpen){}
                 .frame(width: 60, height: menuIsOpen ? (gps.screenSize.height - 100) : 60)
-                .position(using: gps, at: .topLeft, offsetX: 50, offsetY: menuIsOpen ? ((gps.screenSize.height - 100) / 2) : 30)
+                .position(using: gps, at: .topLeft, offsetX: 50, offsetY: menuIsOpen ? ((gps.screenSize.height - 60) / 2) : 50)
                 .environmentObject(self.BEO)
             
             // Navigation Bar
@@ -165,8 +165,15 @@ struct CanvasEngine: View {
                 }
             }
             
+            if self.BEO.toolSettingsIsShowing && !self.BEO.screenIsActiveAndLocked() {
+                MvSettingsBar {}
+                    .zIndex(2.0)
+                    .position(using: gps, at: .bottomCenter, offsetY: 100)
+                    .environmentObject(self.BEO)
+            }
+            
             // Tool Bar
-            if toolBarIsEnabled && !self.BEO.isRecording && !self.BEO.isPlayingAnimation {
+            if self.BEO.toolBarIsShowing && !self.BEO.screenIsActiveAndLocked() {
                 ToolBarPicker {
                     LineIconView(isBgColor: false)
                         .frame(width: 50, height: 50)
@@ -180,7 +187,7 @@ struct CanvasEngine: View {
                         }
                 }
                 .zIndex(2.0)
-                .position(using: gps, at: .bottomCenter, offsetY: 50)
+                .position(using: gps, at: .bottomCenter, offsetY: 100)
             }
             
             // Drawing Mode Popup
@@ -335,7 +342,7 @@ struct CanvasEngine: View {
             switch MenuBarProvider.parseByTitle(title: buttonType) {
                 case .menuBar: return self.showMenuBar = !self.showMenuBar
                 case .info: return self.BEO.showTipViewStatic = !self.BEO.showTipViewStatic
-                case .toolbox: return self.toolBarIsEnabled = !self.toolBarIsEnabled
+                case .toolbox: return self.BEO.toolBarIsShowing = !self.BEO.toolBarIsShowing
                 case .trash: return self.alertDeleteAllTools = true
                 case .lock: return self.handleGestureLock()
                 case .video: return self.alertRecordAnimation = true

@@ -199,27 +199,37 @@ struct LineDrawingManaged: View {
     private func toggleMenuSettings() {
         anchorsAreVisible = !anchorsAreVisible
         popUpIsVisible = !popUpIsVisible
-        CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(
-           windowId: self.menuWindowId,
-           stateAction: popUpIsVisible ? "open" : "close",
-           viewId: viewId,
-           x: self.lifeStartX + 500,
-           y: self.lifeStartY
-        ))
-        if popUpIsVisible {
-            CodiChannel.TOOL_ATTRIBUTES.send(value: ViewAtts(
-               viewId: viewId,
-               color: lifeColor,
-               stroke: lifeWidth,
-               position: CGPoint(x: lifeStartX, y: lifeStartY),
-               headIsEnabled: lifeHeadIsEnabled,
-               lineDash: lifeLineDash,
-               toolType: "LINE",
-               level: ToolLevels.LINE.rawValue,
-               isLocked: lifeIsLocked,
-               stateAction: popUpIsVisible ? "open" : "close")
-            )
+        
+        
+        if self.popUpIsVisible {
+            self.BEO.toolBarCurrentViewId = self.viewId
+            self.BEO.toolSettingsIsShowing = true
+        } else {
+            self.BEO.toolSettingsIsShowing = false
         }
+        
+        
+//        CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(
+//           windowId: self.menuWindowId,
+//           stateAction: popUpIsVisible ? "open" : "close",
+//           viewId: viewId,
+//           x: self.lifeStartX + 500,
+//           y: self.lifeStartY
+//        ))
+//        if popUpIsVisible {
+//            CodiChannel.TOOL_ATTRIBUTES.send(value: ViewAtts(
+//               viewId: viewId,
+//               color: lifeColor,
+//               stroke: lifeWidth,
+//               position: CGPoint(x: lifeStartX, y: lifeStartY),
+//               headIsEnabled: lifeHeadIsEnabled,
+//               lineDash: lifeLineDash,
+//               toolType: "LINE",
+//               level: ToolLevels.LINE.rawValue,
+//               isLocked: lifeIsLocked,
+//               stateAction: popUpIsVisible ? "open" : "close")
+//            )
+//        }
     }
     
     // Gestures

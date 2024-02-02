@@ -128,6 +128,8 @@ enum CodiChannel {
     case SESSION_ON_ID_CHANGE
     case ACTIVITY_ON_ID_CHANGE
     case MENU_TOGGLER
+    case MENU_SETTINGS_TOGGLER
+    case TOOL_SETTINGS_TOGGLER
     case MENU_WINDOW_TOGGLER
     case MENU_WINDOW_CONTROLLER
     case TOOL_ON_CREATE
@@ -186,6 +188,10 @@ enum CodiChannel {
                 return OnLogInOutChannel.shared.subject
             case .ON_NOTIFICATION:
                 return OnNotificationChannel.shared.subject
+            case .MENU_SETTINGS_TOGGLER:
+                return MenuSettingsToggleChannel.shared.subject
+            case .TOOL_SETTINGS_TOGGLER:
+                return ToolSettingsToggleChannel.shared.subject
         }
     }
 
@@ -275,5 +281,14 @@ class OnLogInOutChannel {
 }
 class OnNotificationChannel {
     static let shared = OnNotificationChannel()
+    let subject = PassthroughSubject<Any, Never>()
+}
+
+class MenuSettingsToggleChannel {
+    static let shared = MenuSettingsToggleChannel()
+    let subject = PassthroughSubject<Any, Never>()
+}
+class ToolSettingsToggleChannel {
+    static let shared = ToolSettingsToggleChannel()
     let subject = PassthroughSubject<Any, Never>()
 }

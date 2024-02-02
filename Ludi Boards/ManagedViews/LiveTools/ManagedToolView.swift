@@ -164,12 +164,19 @@ struct enableManagedViewTool : ViewModifier {
         }.store(in: &cancellables)
     }
     func toggleMenuWindow() {
-        CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: self.menuWindowId, stateAction: self.popUpIsVisible ? "open" : "close", viewId: self.viewId, x: self.position.x, y: self.position.y))
+        
+        if self.popUpIsVisible {
+            self.BEO.toolBarCurrentViewId = self.viewId
+            self.BEO.toolSettingsIsShowing = true
+        } else {
+            self.BEO.toolSettingsIsShowing = false
+        }
+
     }
     
     @MainActor
     func recieveMenuWindowController() {
-        CodiChannel.MENU_WINDOW_CONTROLLER.receive(on: RunLoop.main) { vId in
+        CodiChannel.TOOL_SETTINGS_TOGGLER.receive(on: RunLoop.main) { vId in
             let temp = vId as! WindowController
             if temp.windowId != self.menuWindowId {return}
             if temp.stateAction == "close" {

@@ -28,6 +28,7 @@ struct TeamView: View {
     @State var teamYear: String = ""
     @State var teamCoach: String = ""
     @State var sport: String = ""
+    @State var teamImgUrl: String = ""
     
     @State var addPlayerName = ""
     @State var addPlayerId = ""
@@ -86,19 +87,49 @@ struct TeamView: View {
                 
                 Group {
                     
-                    SolTextField("Team Name", text: $teamName, isEditable: $isEditMode)
-                    
                     DStack {
-                        SolTextField("Coach Name", text: $teamCoach, isEditable: $isEditMode)
-                        SolTextField("Year", text: $teamYear, isEditable: $isEditMode)
+                        VStack {
+                            // Player's image
+                            if let imageUrl = URL(string: teamImgUrl), !teamImgUrl.isEmpty {
+                                AsyncImage(url: imageUrl) { image in
+                                    image.resizable()
+                                } placeholder: {
+                                    Color.gray
+                                }
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 100, height: 100)
+                                .clipShape(Circle())
+                                .shadow(radius: 10)
+                                .padding(.top, 20)
+                            } else {
+                                Circle()
+                                    .fill(Color.gray)
+                                    .frame(width: 100, height: 100)
+                                    .shadow(radius: 10)
+                                    .padding(.top, 20)
+                            }
+                            Spacer()
+                            HStack {
+                                BodyText("Sport: ", color: colorScheme == .dark ? .white : .black)
+                                    .fontWeight(.bold)
+                                SolPicker(selection: $sport, data: sports, title: "Select a Sport", isEnabled: $isEditMode)
+                            }.padding()
+                           
+                            
+                        }.frame(width: 250)
+                        
+                        VStack {
+                            SolTextField("Team Name", text: $teamName, isEditable: $isEditMode)
+                            DStack {
+                                SolTextField("Coach Name", text: $teamCoach, isEditable: $isEditMode)
+                                SolTextField("Year", text: $teamYear, isEditable: $isEditMode)
+                            }
+                            
+                            
+                        }
                     }
                     
-                    HStack {
-                        BodyText("Sport: ", color: colorScheme == .dark ? .white : .black)
-                            .fontWeight(.bold)
-                        SolPicker(selection: $sport, data: sports, title: "Select a Sport", isEnabled: $isEditMode)
-                        Spacer()
-                    }
+                    
                     
                 }
                 .padding(.vertical, 4)
