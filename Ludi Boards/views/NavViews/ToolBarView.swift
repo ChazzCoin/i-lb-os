@@ -11,6 +11,7 @@ import SwiftUI
 // SwiftUI View for the Emoji Picker
 struct ToolBarPicker<Content: View>: View {
     let content: Content
+    @EnvironmentObject var BEO: BoardEngineObject
     @Environment(\.colorScheme) var colorScheme
     init(@ViewBuilder content: () -> Content) {
         self.content = content()
@@ -26,6 +27,17 @@ struct ToolBarPicker<Content: View>: View {
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack {
+                
+                Image(systemName: "xmark")
+                    .resizable()
+                    .frame(width: 15, height: 15)
+                    .foregroundColor(.white)
+                    .padding()
+                    .onTapAnimation {
+                        self.BEO.toolBarIsShowing = false
+                    }
+                
+                
                 BorderedView(color: .red) {
                     content
                 }

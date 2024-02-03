@@ -187,7 +187,8 @@ struct CanvasEngine: View {
                         }
                 }
                 .zIndex(2.0)
-                .position(using: gps, at: .bottomCenter, offsetY: 100)
+                .position(using: gps, at: .bottomCenter, offsetY: 50)
+                .environmentObject(self.BEO)
             }
             
             // Drawing Mode Popup
@@ -269,6 +270,16 @@ struct CanvasEngine: View {
         .blur(radius: self.BEO.isLoading ? 10 : 0)
         .background(Color.white.opacity(0.001))
         .gesture(self.BEO.gesturesAreLocked ? nil : dragAngleGestures.simultaneously(with: scaleGestures))
+        .onChange(of: self.BEO.toolBarIsShowing, perform: { value in
+            if self.BEO.toolBarIsShowing {
+                self.BEO.toolSettingsIsShowing = false
+            }
+        })
+        .onChange(of: self.BEO.toolSettingsIsShowing, perform: { value in
+            if self.BEO.toolSettingsIsShowing {
+                self.BEO.toolBarIsShowing = false
+            }
+        })
         .sheet(isPresented: self.$showRecordingsSheet, content: {
             RecordingListView(isShowing: self.$showRecordingsSheet)
                 .environmentObject(self.BEO)

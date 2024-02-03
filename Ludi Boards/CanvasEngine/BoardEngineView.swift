@@ -509,23 +509,12 @@ struct BoardEngine: View {
              if self.BEO.boardRefreshFlag {
                  ForEach(self.BEO.basicTools) { item in
                      if !item.isDeleted {
-                         if item.toolType == "LINE" || item.toolType == "DOTTED-LINE" {
-                             LineDrawingManaged(viewId: item.id, activityId: self.BEO.currentActivityId)
-                                 .zIndex(20.0)
-                                 .environmentObject(self.BEO)
-                         }
-                         else if item.toolType == "CURVED-LINE" {
-                             CurvedLineDrawingManaged(viewId: item.id, activityId: self.BEO.currentActivityId)
-                                 .zIndex(20.0)
-                                 .environmentObject(self.BEO)
-                         }
-                         else {
-                             if let temp = SoccerToolProvider.parseByTitle(title: item.toolType)?.tool.image {
-                                 ManagedViewBoardTool(viewId: item.id, activityId: self.BEO.currentActivityId, toolType: temp)
-                                     .zIndex(20.0)
-                                     .environmentObject(self.BEO)
-                             }
-                         }
+                         
+                         // Main Tool Management Functionality
+                         ManagedViewToolFactory(toolType: item.toolType, viewId: item.id, activityId: item.boardId)
+                             .zIndex(20.0)
+                             .environmentObject(self.BEO)
+                         
                      }
                      
                  }

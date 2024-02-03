@@ -32,6 +32,11 @@ struct ManagedViewBoardTool: View {
     }
 }
 
+extension View {
+    func enableMVT(viewId: String, activityId: String) -> some View {
+        self.modifier(enableManagedViewTool(viewId: viewId, activityId: activityId))
+    }
+}
 
 struct enableManagedViewTool : ViewModifier {
     

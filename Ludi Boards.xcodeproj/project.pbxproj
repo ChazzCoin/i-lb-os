@@ -138,7 +138,6 @@
 		FB881A342B468F1E00C16198 /* FirebaseRemoteConfigSwift in Frameworks */ = {isa = PBXBuildFile; productRef = FB881A332B468F1E00C16198 /* FirebaseRemoteConfigSwift */; };
 		FB881A362B468F1E00C16198 /* FirebaseStorageCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = FB881A352B468F1E00C16198 /* FirebaseStorageCombine-Community */; };
 		FB881A382B47397600C16198 /* RealmObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB881A372B47397600C16198 /* RealmObserver.swift */; };
-		FB881A3A2B47997000C16198 /* Commander.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB881A392B47997000C16198 /* Commander.swift */; };
 		FB881A3C2B47CD4400C16198 /* UserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB881A3B2B47CD4400C16198 /* UserView.swift */; };
 		FB881A3E2B48732400C16198 /* RealmState.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB881A3D2B48732400C16198 /* RealmState.swift */; };
 		FB881A402B48775800C16198 /* FirebaseSocial.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB881A3F2B48775800C16198 /* FirebaseSocial.swift */; };
@@ -190,6 +189,7 @@
 		FBBDD0182B6C48840009844B /* Alerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBBDD0172B6C48840009844B /* Alerts.swift */; };
 		FBBDD01B2B6CA8000009844B /* LineIcons.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBBDD01A2B6CA8000009844B /* LineIcons.swift */; };
 		FBBDD01D2B6CA8A20009844B /* MvSettingsToolBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBBDD01C2B6CA8A20009844B /* MvSettingsToolBar.swift */; };
+		FBBDD0202B6E12BC0009844B /* ManagedViewFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBBDD01F2B6E12BC0009844B /* ManagedViewFactory.swift */; };
 		FBC2FC6C2B59C4A400D1AB77 /* DStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBC2FC6B2B59C4A400D1AB77 /* DStack.swift */; };
 		FBC2FC6E2B5A0BB200D1AB77 /* TabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBC2FC6D2B5A0BB200D1AB77 /* TabView.swift */; };
 		FBC2FC702B5BC04300D1AB77 /* Text.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBC2FC6F2B5BC04300D1AB77 /* Text.swift */; };
@@ -354,7 +354,6 @@
 		FB8819F02B464CA200C16198 /* ManagedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedView.swift; sourceTree = "<group>"; };
 		FB8819FF2B464D9700C16198 /* TimeProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeProvider.swift; sourceTree = "<group>"; };
 		FB881A372B47397600C16198 /* RealmObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmObserver.swift; sourceTree = "<group>"; };
-		FB881A392B47997000C16198 /* Commander.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Commander.swift; sourceTree = "<group>"; };
 		FB881A3B2B47CD4400C16198 /* UserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserView.swift; sourceTree = "<group>"; };
 		FB881A3D2B48732400C16198 /* RealmState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmState.swift; sourceTree = "<group>"; };
 		FB881A3F2B48775800C16198 /* FirebaseSocial.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseSocial.swift; sourceTree = "<group>"; };
@@ -384,6 +383,7 @@
 		FBBDD0172B6C48840009844B /* Alerts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alerts.swift; sourceTree = "<group>"; };
 		FBBDD01A2B6CA8000009844B /* LineIcons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineIcons.swift; sourceTree = "<group>"; };
 		FBBDD01C2B6CA8A20009844B /* MvSettingsToolBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MvSettingsToolBar.swift; sourceTree = "<group>"; };
+		FBBDD01F2B6E12BC0009844B /* ManagedViewFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedViewFactory.swift; sourceTree = "<group>"; };
 		FBC2FC6B2B59C4A400D1AB77 /* DStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DStack.swift; sourceTree = "<group>"; };
 		FBC2FC6D2B5A0BB200D1AB77 /* TabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabView.swift; sourceTree = "<group>"; };
 		FBC2FC6F2B5BC04300D1AB77 /* Text.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Text.swift; sourceTree = "<group>"; };
@@ -723,8 +723,6 @@
 		FB58E87A2B02B1E200FD9E2E /* modifiers */ = {
 			isa = PBXGroup;
 			children = (
-				FB58E87F2B02B26C00FD9E2E /* DragAndDrop.swift */,
-				FB58E87D2B02B21700FD9E2E /* CoreMods.swift */,
 			);
 			path = modifiers;
 			sourceTree = "<group>";
@@ -811,11 +809,11 @@
 		FB982F8F2B19C41100C0DA03 /* LiveTools */ = {
 			isa = PBXGroup;
 			children = (
-				FB881A392B47997000C16198 /* Commander.swift */,
 				FB07B66F2B17A5B9009A0962 /* ManagedToolView.swift */,
 				FB5094292B05856D000AEA96 /* LineToolView.swift */,
 				FBAE62AE2B2A3FD200E008D5 /* CurvedLineToolView.swift */,
 				FB18F1072B619B5700D89F8D /* ToolObservers */,
+				FBBDD01F2B6E12BC0009844B /* ManagedViewFactory.swift */,
 			);
 			path = LiveTools;
 			sourceTree = "<group>";
@@ -831,6 +829,8 @@
 		FBBDD0162B6C486B0009844B /* Modifiers */ = {
 			isa = PBXGroup;
 			children = (
+				FB58E87F2B02B26C00FD9E2E /* DragAndDrop.swift */,
+				FB58E87D2B02B21700FD9E2E /* CoreMods.swift */,
 				FBBDD0172B6C48840009844B /* Alerts.swift */,
 			);
 			path = Modifiers;
@@ -842,6 +842,13 @@
 				FBBDD01A2B6CA8000009844B /* LineIcons.swift */,
 			);
 			path = Icons;
+			sourceTree = "<group>";
+		};
+		FBBDD01E2B6E11950009844B /* experimental */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = experimental;
 			sourceTree = "<group>";
 		};
 		FBD9AF9B2AFF00BE005F8620 = {
@@ -919,6 +926,7 @@
 		FBD9AFCE2B008A6C005F8620 /* ManagedViews */ = {
 			isa = PBXGroup;
 			children = (
+				FBBDD01E2B6E11950009844B /* experimental */,
 				FB982F8F2B19C41100C0DA03 /* LiveTools */,
 				FB58E87A2B02B1E200FD9E2E /* modifiers */,
 				FB5094272B0584CA000AEA96 /* NavStackWindowView.swift */,
@@ -1328,6 +1336,7 @@
 				FB3E02BB2B0C90D700D8558C /* Buddy.swift in Sources */,
 				FB10AE0B2B0F162F00295F4B /* ActivityPlanThumbView.swift in Sources */,
 				FB18F15A2B681A6F00D89F8D /* PlayerRef.swift in Sources */,
+				FBBDD0202B6E12BC0009844B /* ManagedViewFactory.swift in Sources */,
 				FB18F1812B6AD6CE00D89F8D /* Recording.swift in Sources */,
 				FBE2C6172B1AF595004C0116 /* GrassFieldView.swift in Sources */,
 				FB50942A2B05856D000AEA96 /* LineToolView.swift in Sources */,
@@ -1343,7 +1352,6 @@
 				FB581BED2B1F8A6800F5C90F /* KeyboardListener.swift in Sources */,
 				FB18F16F2B68B6A500D89F8D /* SolTeamPicker.swift in Sources */,
 				FBF3902E2B2D78CF00C0508A /* TipProvider.swift in Sources */,
-				FB881A3A2B47997000C16198 /* Commander.swift in Sources */,
 				FBAE62AF2B2A3FD200E008D5 /* CurvedLineToolView.swift in Sources */,
 				FBD9AFBA2AFF03D7005F8620 /* CanvasEngine.swift in Sources */,
 				FB58E8762B01F3D200FD9E2E /* FireParser.swift in Sources */,

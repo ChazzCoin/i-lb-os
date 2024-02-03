@@ -13,10 +13,6 @@ extension View {
         self.modifier(lbDragger())
     }
     
-    func enableMVT(viewId: String, activityId: String) -> some View {
-        self.modifier(enableManagedViewTool(viewId: viewId, activityId: activityId))
-    }
-    
     func solEnabled(isEnabled: Bool) -> some View {
         self.modifier(SolButtonModifier(isEnabled: isEnabled))
     }
