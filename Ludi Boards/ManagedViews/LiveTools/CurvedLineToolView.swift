@@ -212,9 +212,16 @@ struct CurvedLineDrawingManaged: View {
                 .simultaneousGesture(longPressGesture())
         )
         .gesture(fullCurvedLineDragGesture())
-        .onChange(of: self.BEO.toolBarCurrentViewId, perform: { value in
+        .onChange(of: self.BEO.toolBarCurrentViewId, perform: { _ in
             if self.BEO.toolBarCurrentViewId != self.viewId {
                 self.popUpIsVisible = false
+                self.anchorsAreVisible = false
+            }
+        })
+        .onChange(of: self.BEO.toolSettingsIsShowing, perform: { _ in
+            if !self.BEO.toolSettingsIsShowing {
+                self.popUpIsVisible = false
+                self.anchorsAreVisible = false
             }
         })
         .onAppear() {

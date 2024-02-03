@@ -81,10 +81,11 @@ struct enableManagedViewTool : ViewModifier {
                   y: self.position.y + (self.isDragging ? self.dragOffset.height : 0) + (self.lifeHeight))
         .simultaneousGesture(gestureDragBasicTool())
         .opacity(!self.isDisabledChecker() && !self.isDeletedChecker() ? 1 : 0.0)
-        .onChange(of: self.BEO.toolBarCurrentViewId, perform: { value in
-            if self.BEO.toolBarCurrentViewId != self.viewId {
-                self.popUpIsVisible = false
-            }
+        .onChange(of: self.BEO.toolBarCurrentViewId, perform: { _ in
+            if self.BEO.toolBarCurrentViewId != self.viewId { self.popUpIsVisible = false }
+        })
+        .onChange(of: self.BEO.toolSettingsIsShowing, perform: { _ in
+            if !self.BEO.toolSettingsIsShowing { self.popUpIsVisible = false }
         })
         .onAppear {
             DispatchQueue.main.async {
@@ -243,6 +244,7 @@ struct enableManagedViewTool : ViewModifier {
                 
                 if self.activityId != temp.boardId {self.activityId = temp.boardId}
                 
+                // Adding withAnimation here just doesn't flow right. Didn't like it.
                 if self.lifeWidth != Double(temp.width) {self.lifeWidth = Double(temp.width)}
                 if self.lifeHeight != Double(temp.height) { self.lifeHeight = Double(temp.height)}
                 if self.lifeRotation != temp.rotation { self.lifeRotation = temp.rotation}

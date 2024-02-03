@@ -68,6 +68,19 @@ struct MvSettingsBar<Content: View>: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack {
                 
+                VStack {
+                    Image(systemName: "xmark")
+                        .resizable()
+                        .frame(width: 15, height: 15)
+                        .foregroundColor(.white)
+                        .padding()
+                        .onTapAnimation {
+                            closeWindow()
+                        }
+                    Spacer()
+                }
+                .frame(width: 20)
+                
                 Spacer().frame(width: 24)
                 
                 SolIconConfirmButton(

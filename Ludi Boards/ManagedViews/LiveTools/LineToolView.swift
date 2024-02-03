@@ -120,6 +120,8 @@ struct LineDrawingManaged: View {
                 .rotationEffect(Angle(degrees: calculateAngle(startX: lifeStartX, startY: lifeStartY, endX: lifeEndX, endY: lifeEndY)))
                 .position(x: lifeEndX, y: lifeEndY)
                 .gesture(singleAnchorDragGesture(isStart: false))
+                .simultaneousGesture(doubleTapGesture())
+                .simultaneousGesture(longPressGesture())
         )
         .overlay(
             Circle()
@@ -128,6 +130,8 @@ struct LineDrawingManaged: View {
                 .opacity(anchorsAreVisible ? 1 : 0) // Invisible
                 .position(x: lifeStartX, y: lifeStartY)
                 .gesture(singleAnchorDragGesture(isStart: true))
+                .simultaneousGesture(doubleTapGesture())
+                .simultaneousGesture(longPressGesture())
         )
         .overlay(
             Circle()
@@ -136,75 +140,42 @@ struct LineDrawingManaged: View {
                 .opacity(anchorsAreVisible && !lifeHeadIsEnabled  ? 1 : 0) // Invisible
                 .position(x: lifeEndX, y: lifeEndY)
                 .gesture(singleAnchorDragGesture(isStart: false))
+                .simultaneousGesture(doubleTapGesture())
+                .simultaneousGesture(longPressGesture())
         )
-//        .overlay(
-//            Rectangle()
-//                .fill(Color.white.opacity(0.001))
-//                .frame(width: boundedLength(start: CGPoint(x: lifeStartX, y: lifeStartY), end: CGPoint(x: lifeEndX, y: lifeEndY)), height: Double(lifeWidth+300))
-//                .rotationEffect(lifeRotation)
-//                .opacity(1)
-//                .position(x: lifeCenterPoint.x.isFinite ? lifeCenterPoint.x : 0, y: lifeCenterPoint.y.isFinite ? lifeCenterPoint.y : 0)
-//                .gesture(fullLineDragGesture())
-//        )
+        .overlay(
+            Rectangle()
+                .fill(Color.white.opacity(0.001))
+                .frame(width: boundedLength(start: CGPoint(x: lifeStartX, y: lifeStartY), end: CGPoint(x: lifeEndX, y: lifeEndY)), height: Double(lifeWidth+300))
+                .rotationEffect(lifeRotation)
+                .opacity(1)
+                .position(x: lifeCenterPoint.x.isFinite ? lifeCenterPoint.x : 0, y: lifeCenterPoint.y.isFinite ? lifeCenterPoint.y : 0)
+                .gesture(fullLineDragGesture())
+                .simultaneousGesture(doubleTapGesture())
+                .simultaneousGesture(longPressGesture())
+        )
         .gesture(fullLineDragGesture())
-        .onChange(of: self.BEO.toolBarCurrentViewId, perform: { value in
-            if self.BEO.toolBarCurrentViewId != self.viewId {
+        .onChange(of: self.BEO.toolBarCurrentViewId, perform: { _ in
+            if self.BEO.toolBarCurrentViewId != self.viewId { self.popUpIsVisible = false
+                self.anchorsAreVisible = false
+            }
+        })
+        .onChange(of: self.BEO.toolSettingsIsShowing, perform: { _ in
+            if !self.BEO.toolSettingsIsShowing { 
                 self.popUpIsVisible = false
+                self.anchorsAreVisible = false
             }
         })
         .onAppear() {
-        
             MVS.initialize(realm: self.BEO.realmInstance, activityId: self.activityId, viewId: self.viewId)
             loadFromRealm()
             observeView()
-
-            // Codi Channels
-            onToolAttributes()
-            onWindowController()
         }
-    }
-    
-    @MainActor
-    func onToolAttributes() {
-        CodiChannel.TOOL_ATTRIBUTES.receive(on: RunLoop.main) { vId in
-            let temp = vId as! ViewAtts
-            if viewId != temp.viewId {return}
-            if temp.isDeleted {
-                isDisabled = true
-                return
-            }
-            
-            if let tdash = temp.lineDash { lifeLineDash = tdash }
-            if let thead = temp.headIsEnabled { lifeHeadIsEnabled = thead }
-            if let ts = temp.size { lifeWidth = ts }
-            if let tc = temp.color { lifeColor = tc }
-            if let tstroke = temp.stroke { lifeWidth = tstroke }
-            if let tl = temp.isLocked { lifeIsLocked = tl }
-            
-            if temp.stateAction == "close" {
-                popUpIsVisible = false
-            }
-            
-            updateRealm()
-        }.store(in: &cancellables)
-    }
-    
-    @MainActor
-    func onWindowController() {
-        CodiChannel.MENU_WINDOW_CONTROLLER.receive(on: RunLoop.main) { vId in
-            let temp = vId as! WindowController
-            if temp.windowId != self.menuWindowId {return}
-            if temp.stateAction == "close" {
-                popUpIsVisible = false
-                anchorsAreVisible = false
-            }
-        }.store(in: &cancellables)
     }
     
     private func toggleMenuSettings() {
         anchorsAreVisible = !anchorsAreVisible
         popUpIsVisible = !popUpIsVisible
-        
         
         if self.popUpIsVisible {
             self.BEO.toolBarCurrentViewId = self.viewId
@@ -260,8 +231,6 @@ struct LineDrawingManaged: View {
                 self.originalLifeStart = .zero
                 self.originalLifeEnd = .zero
             }
-            .simultaneously(with: doubleTapGesture())
-            .simultaneously(with: longPressGesture())
     }
     
     private func singleAnchorDragGesture(isStart: Bool) -> some Gesture {
@@ -290,8 +259,7 @@ struct LineDrawingManaged: View {
                 updateRealmPos(start: CGPoint(x: lifeStartX, y: lifeStartY),
                             end: CGPoint(x: lifeEndX, y: lifeEndY))
             }
-            .simultaneously(with: doubleTapGesture())
-            .simultaneously(with: longPressGesture())
+            
     }
     
     
