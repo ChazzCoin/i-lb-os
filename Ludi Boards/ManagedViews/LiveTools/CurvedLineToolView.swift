@@ -49,6 +49,7 @@ struct CurvedLineDrawingManaged: View {
     @State private var lifeDateUpdated = Int(Date().timeIntervalSince1970)
     
     @State private var dragOffset: CGSize = .zero
+    @GestureState private var dragOffseter: CGSize = .zero
     @State private var lifeCenterX: CGFloat = 0.0
     @State private var lifeCenterY: CGFloat = 0.0
     @State private var lifeStartX: CGFloat = 0.0
@@ -76,6 +77,7 @@ struct CurvedLineDrawingManaged: View {
     
     @State private var offset = CGSize.zero
     @State private var position = CGPoint(x: 0, y: 0)
+//    @GestureState private var dragOffset = CGSize.zero
     @State private var isDragging = false
     @State var originalLifeStart = CGPoint.zero
     @State var originalLifeEnd = CGPoint.zero
@@ -152,14 +154,17 @@ struct CurvedLineDrawingManaged: View {
             path.addQuadCurve(to: CGPoint(x: lifeEndX, y: lifeEndY),
                               control: CGPoint(x: lifeCenterX, y: lifeCenterY))
         }
-        .stroke(lifeColor, style: StrokeStyle(lineWidth: lifeWidth, dash: [lifeLineDash]))
+        .stroke(lifeColor, style: StrokeStyle(lineWidth: lifeWidth.bound(to: 1...400), dash: [lifeLineDash]))
         .opacity(!isDisabledChecker() && !isDeletedChecker() ? 1 : 0.0)
         .overlay(
             MatchedShape(
                 startPoint: CGPoint(x: lifeStartX, y: lifeStartY),
                 endPoint: CGPoint(x: lifeEndX, y: lifeEndY),
                 controlPoint1: CGPoint(x: lifeCenterX, y: lifeCenterY)
-            ).gesture(fullCurvedLineDragGesture())
+            )
+            .gesture(fullCurvedLineDragGesture())
+            .simultaneousGesture(doubleTapForSettingsAndAnchors())
+            .simultaneousGesture(longPressGesture())
         )
         .overlay(
             Triangle()
@@ -169,75 +174,60 @@ struct CurvedLineDrawingManaged: View {
                 .rotationEffect(Angle(degrees: calculateAngleAtEndPointOfQuadCurve()))
                 .position(x: lifeEndX, y: lifeEndY)
                 .gesture(dragSingleAnchor(isStart: false))
+                .simultaneousGesture(fullCurvedLineDragGesture())
+                .simultaneousGesture(doubleTapForSettingsAndAnchors())
+                .simultaneousGesture(longPressGesture())
         )
         .overlay(
             Circle()
                 .fill(Color.AIMYellow)
-                .frame(width: 150, height: 150) // Adjust size for easier tapping
+                .frame(width: 300, height: 300) // Adjust size for easier tapping
                 .opacity(anchorsAreVisible ? 1 : 0) // Invisible
                 .position(x: lifeStartX, y: lifeStartY)
                 .gesture(dragSingleAnchor(isStart: true))
+                .simultaneousGesture(fullCurvedLineDragGesture())
+                .simultaneousGesture(doubleTapForSettingsAndAnchors())
+                .simultaneousGesture(longPressGesture())
         )
         .overlay(
             Circle()
                 .fill(Color.AIMYellow)
-                .frame(width: 150, height: 150) // Increase size for finger tapping
+                .frame(width: 300, height: 300) // Increase size for finger tapping
                 .opacity(anchorsAreVisible && !lifeHeadIsEnabled ? 1 : 0) // Invisible
                 .position(x: lifeEndX, y: lifeEndY)
                 .gesture(dragSingleAnchor(isStart: false))
+                .simultaneousGesture(fullCurvedLineDragGesture())
+                .simultaneousGesture(doubleTapForSettingsAndAnchors())
+                .simultaneousGesture(longPressGesture())
         )
         .overlay(
             Circle() // Use a circle for the control point
                 .fill(Color.AIMYellow)
-                .frame(width: 150, height: 150) // Adjust size as needed
+                .frame(width: 300, height: 300) // Adjust size as needed
                 .opacity(anchorsAreVisible ? 1 : 0)
                 .position(quadBezierPoint(start: CGPoint(x: lifeStartX, y: lifeStartY), end: CGPoint(x: lifeEndX, y: lifeEndY), control: CGPoint(x: lifeCenterX, y: lifeCenterY)))
                 .gesture(dragCurvedCenterAnchor())
+                .simultaneousGesture(fullCurvedLineDragGesture())
+                .simultaneousGesture(doubleTapForSettingsAndAnchors())
+                .simultaneousGesture(longPressGesture())
         )
         .gesture(fullCurvedLineDragGesture())
+        .onChange(of: self.BEO.toolBarCurrentViewId, perform: { value in
+            if self.BEO.toolBarCurrentViewId != self.viewId {
+                self.popUpIsVisible = false
+            }
+        })
         .onAppear() {
-        
             MVS.initialize(realm: self.realmInstance, activityId: self.activityId, viewId: self.viewId)
             loadFromRealm()
-            
             observeView()
-
-            CodiChannel.TOOL_ATTRIBUTES.receive(on: RunLoop.main) { vId in
-                let temp = vId as! ViewAtts
-                if viewId != temp.viewId {return}
-                if temp.isDeleted {
-                    isDisabled = true
-                    return
-                }
-                
-                if let tl = temp.isLocked { lifeIsLocked = tl }
-                if let tdash = temp.lineDash { lifeLineDash = tdash }
-                if let thead = temp.headIsEnabled { lifeHeadIsEnabled = thead }
-                if let ts = temp.size { lifeWidth = ts }
-                if let tc = temp.color { lifeColor = tc }
-                if let tstroke = temp.stroke { lifeWidth = tstroke }
-                
-                if temp.stateAction == "close" {
-                    popUpIsVisible = false
-                }
-                
-                updateRealm()
-            }.store(in: &cancellables)
-            CodiChannel.MENU_WINDOW_CONTROLLER.receive(on: RunLoop.main) { vId in
-                let temp = vId as! WindowController
-                if temp.windowId != self.menuWindowId {return}
-                if temp.stateAction == "close" {
-                    popUpIsVisible = false
-                    anchorsAreVisible = false
-                }
-            }.store(in: &cancellables)
         }
     }
     
     func fullCurvedLineDragGesture() -> some Gesture {
         DragGesture()
             .onChanged { value in
-                if self.lifeIsLocked { return }
+                if self.lifeIsLocked || anchorsAreVisible { return }
                 self.isDragging = true
                 self.BEO.ignoreUpdates = true
                 if self.originalLifeStart == .zero {
@@ -249,7 +239,7 @@ struct CurvedLineDrawingManaged: View {
                 handleFullDragTranslation(value: value)
             }
             .onEnded { value in
-                if self.lifeIsLocked { return }
+                if self.lifeIsLocked || anchorsAreVisible { return }
                 self.BEO.ignoreUpdates = false
                 handleFullDragTranslation(value: value)
                 self.isDragging = false
@@ -258,8 +248,7 @@ struct CurvedLineDrawingManaged: View {
                 self.originalLifeEnd = .zero
                 self.originalLifeCenter = .zero
             }
-            .simultaneously(with: doubleTapForSettingsAndAnchors())
-            .simultaneously(with: longPressGesture())
+            
     }
     
     func handleFullDragTranslation(value: DragGesture.Value) {
@@ -292,35 +281,17 @@ struct CurvedLineDrawingManaged: View {
             } else {
                 self.BEO.toolSettingsIsShowing = false
             }
-//            CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(
-//                windowId: self.menuWindowId,
-//                stateAction: popUpIsVisible ? "open" : "close",
-//                viewId: viewId,
-//                x: self.lifeStartX,
-//                y: self.lifeStartY
-//            ))
-//            if popUpIsVisible {
-//                CodiChannel.TOOL_ATTRIBUTES.send(value: ViewAtts(
-//                   viewId: viewId,
-//                   color: lifeColor,
-//                   stroke: lifeWidth,
-//                   position: CGPoint(x: lifeStartX, y: lifeStartY),
-//                   headIsEnabled: lifeHeadIsEnabled,
-//                   lineDash: lifeLineDash,
-//                   toolType: "LINE",
-//                   level: ToolLevels.LINE.rawValue,
-//                   isLocked: lifeIsLocked,
-//                   stateAction: popUpIsVisible ? "open" : "close")
-//                )
-//            }
+
         })
         
     }
     
+
+    
     func dragCurvedCenterAnchor() -> some Gesture {
         DragGesture()
             .onChanged { value in
-                if self.lifeIsLocked {return}
+                if self.lifeIsLocked || !anchorsAreVisible {return}
                 self.isDragging = true
                 self.BEO.ignoreUpdates = true
                 if dragOffset == .zero {
@@ -331,21 +302,19 @@ struct CurvedLineDrawingManaged: View {
                 lifeCenterY = (value.location.y + dragOffset.height)
             }
             .onEnded { _ in
+                if self.lifeIsLocked || !anchorsAreVisible { return }
                 dragOffset = .zero
                 self.isDragging = false
                 self.BEO.ignoreUpdates = false
                 updateRealm()
             }
-            .simultaneously(with: doubleTapForSettingsAndAnchors())
-            .simultaneously(with: longPressGesture())
     }
 
     // Drag gesture definition
     private func dragSingleAnchor(isStart: Bool) -> some Gesture {
         DragGesture()
             .onChanged { value in
-                if self.lifeIsLocked {return}
-                if !anchorsAreVisible {return}
+                if self.lifeIsLocked || !anchorsAreVisible {return}
                 self.isDragging = true
                 self.BEO.ignoreUpdates = true
                 if isStart {
@@ -366,15 +335,12 @@ struct CurvedLineDrawingManaged: View {
                             end: CGPoint(x: lifeEndX, y: lifeEndY))
             }
             .onEnded { _ in
-                if self.lifeIsLocked {return}
-                if !anchorsAreVisible {return}
+                if self.lifeIsLocked || !anchorsAreVisible {return}
                 self.isDragging = false
                 self.BEO.ignoreUpdates = false
                 updateRealmPos(start: CGPoint(x: lifeStartX, y: lifeStartY),
                             end: CGPoint(x: lifeEndX, y: lifeEndY))
             }
-            .simultaneously(with: doubleTapForSettingsAndAnchors())
-            .simultaneously(with: longPressGesture())
     }
     
     // Basic Gestures

@@ -81,6 +81,11 @@ struct enableManagedViewTool : ViewModifier {
                   y: self.position.y + (self.isDragging ? self.dragOffset.height : 0) + (self.lifeHeight))
         .simultaneousGesture(gestureDragBasicTool())
         .opacity(!self.isDisabledChecker() && !self.isDeletedChecker() ? 1 : 0.0)
+        .onChange(of: self.BEO.toolBarCurrentViewId, perform: { value in
+            if self.BEO.toolBarCurrentViewId != self.viewId {
+                self.popUpIsVisible = false
+            }
+        })
         .onAppear {
             DispatchQueue.main.async {
                 self.initChannels()
@@ -148,8 +153,6 @@ struct enableManagedViewTool : ViewModifier {
     @MainActor
     func initChannels() {
         receiveOnSessionChange()
-        recieveMenuWindowController()
-        receiveToolAttributes()
     }
     
     @MainActor
@@ -172,37 +175,6 @@ struct enableManagedViewTool : ViewModifier {
             self.BEO.toolSettingsIsShowing = false
         }
 
-    }
-    
-    @MainActor
-    func recieveMenuWindowController() {
-        CodiChannel.TOOL_SETTINGS_TOGGLER.receive(on: RunLoop.main) { vId in
-            let temp = vId as! WindowController
-            if temp.windowId != self.menuWindowId {return}
-            if temp.stateAction == "close" {
-                self.popUpIsVisible = false
-            }
-        }.store(in: &cancellables)
-    }
-    
-    @MainActor
-    func receiveToolAttributes() {
-        CodiChannel.TOOL_ATTRIBUTES.receive(on: RunLoop.main) { viewAtts in
-            let inVA = (viewAtts as! ViewAtts)
-            if self.viewId != inVA.viewId {
-                self.popUpIsVisible = false
-                return
-            }
-            if inVA.isDeleted { return }
-            if let inColor = inVA.color { self.lifeColor = ColorProvider.fromColor(inColor) }
-            if let inRotation = inVA.rotation { self.lifeRotation = inRotation }
-            if let isL = inVA.isLocked { self.lifeIsLocked = isL }
-            if let inSize = inVA.size {
-                self.lifeWidth = inSize
-                self.lifeHeight = inSize
-            }
-            self.updateRealm()
-        }.store(in: &cancellables)
     }
     
     @MainActor

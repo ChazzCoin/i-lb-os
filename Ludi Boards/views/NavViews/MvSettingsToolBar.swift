@@ -76,6 +76,7 @@ struct MvSettingsBar<Content: View>: View {
                     message: "Are you sure you want to delete this tool?",
                     onTap: {
                         deleteFromRealm()
+                        self.closeWindow()
                     }
                 )
                 
@@ -124,7 +125,7 @@ struct MvSettingsBar<Content: View>: View {
                             .font(.title)
                             .onTapAnimation {
                                 print("make view smaller")
-                                viewSize = viewSize - 10
+                                viewSize = (viewSize - 10).bounded(byMin: 50, andMax: 400)
                                 saveToRealm()
                             }
                         Image(systemName: "plus")
@@ -136,7 +137,7 @@ struct MvSettingsBar<Content: View>: View {
                             .font(.title)
                             .onTapAnimation {
                                 print("make view bigger")
-                                viewSize = viewSize + 10
+                                viewSize = (viewSize + 10).bounded(byMin: 50, andMax: 400)
                                 saveToRealm()
                             }
                     }
@@ -171,7 +172,7 @@ struct MvSettingsBar<Content: View>: View {
                                 .font(.title)
                                 .onTapAnimation {
                                     print("rotate left")
-                                    viewRotation = viewRotation - 22.5
+                                    rotateView(by: -22.5)
                                     saveToRealm()
                                 }
                             Image(systemName: "rotate.right")
@@ -183,7 +184,7 @@ struct MvSettingsBar<Content: View>: View {
                                 .font(.title)
                                 .onTapAnimation {
                                     print("rotate right")
-                                    viewRotation = viewRotation + 22.5
+                                    rotateView(by: 22.5)
                                     saveToRealm()
                                 }
                         }
@@ -288,7 +289,7 @@ struct MvSettingsBar<Content: View>: View {
                         ColorListPicker() { color in
                             print("Color Picker Tapper")
                             viewColor = color
-                            
+                            saveToRealm()
                         }
                     }
                     .frame(width: 300)
@@ -307,20 +308,14 @@ struct MvSettingsBar<Content: View>: View {
             loadFromRealm()
         })
         .onAppear() {
-            onCreate()
             loadFromRealm()
         }
     }
     
     
-    func closeSession() {
-        let va = ViewAtts(viewId: viewId, stateAction: "close")
-        CodiChannel.TOOL_ATTRIBUTES.send(value: va)
-        self.managedViewNotificationToken?.invalidate()
-    }
     
     func closeWindow() {
-        CodiChannel.TOOL_SETTINGS_TOGGLER.send(value: WindowController(windowId: "mv_settings", stateAction: "close", viewId: viewId))
+        self.BEO.toolSettingsIsShowing = false
     }
     
     func startRestartSession() {
@@ -331,37 +326,15 @@ struct MvSettingsBar<Content: View>: View {
         observeFromRealm()
     }
     
-    @MainActor
-    func onCreate() {
-        CodiChannel.TOOL_ATTRIBUTES.receive(on: RunLoop.main) { vId in
-            let temp = vId as! ViewAtts
-            if temp.viewId != self.viewId {
-                self.viewId = temp.viewId
-                startRestartSession()
-            }
-            if toolLevel != temp.level {
-                toolLevel = temp.level
-                if toolLevel == ToolLevels.BASIC.rawValue {showColor = false}
-                else if toolLevel == ToolLevels.LINE.rawValue {showColor = true}
-            }
-            if let ttype = temp.toolType { self.toolType = ttype }
-            if let tdash = temp.lineDash { self.lineDash = tdash }
-            if let thead = temp.headIsEnabled { self.headIsEnabled = thead }
-            if let ts = temp.size { self.viewSize = ts }
-            if let tr = temp.rotation { self.viewRotation = tr }
-            if let tc = temp.color { self.viewColor = tc }
-            if let lc = temp.isLocked { self.isLocked = lc }
-            
-//            hasPlayerRef = !attachedPlayer.isEmpty
-//            if hasPlayerRef {
-//                attachedPlayerIsOn = true
-//            } else {
-//                attachedPlayerIsOn = false
-//            }
-//            self.currentPlayerId = attachedPlayer.first?.id ?? "new"
-            
-        }.store(in: &cancellables)
-        startRestartSession()
+    // Function to rotate the view by a certain angle
+    private func rotateView(by degrees: Double) {
+        let newAngle = viewRotation + degrees
+
+        // Adjust the angle to be within the range 0-360
+        viewRotation = newAngle.truncatingRemainder(dividingBy: 360)
+        if viewRotation < 0 {
+            viewRotation += 360
+        }
     }
     
     // Observe From Realm
@@ -409,6 +382,12 @@ struct MvSettingsBar<Content: View>: View {
                 umv.rotation = viewRotation
                 umv.headIsEnabled = headIsEnabled
                 umv.lineDash = Int(lineDash)
+                if let lc = viewColor.toRGBA() {
+                    umv.colorRed = lc.red
+                    umv.colorGreen = lc.green
+                    umv.colorBlue = lc.blue
+                    umv.colorAlpha = lc.alpha
+                }
             }
         }
     }
@@ -437,10 +416,7 @@ struct MvSettingsBar<Content: View>: View {
             headIsEnabled = umv.headIsEnabled
             lineDash = CGFloat(umv.lineDash)
             lineDashIsEnabled = lineDash == 1 ? false : true
-//            lifeColorRed = umv.colorRed
-//            lifeColorGreen = umv.colorGreen
-//            lifeColorBlue = umv.colorBlue
-//            lifeColorAlpha = umv.colorAlpha
+            viewColor = colorFromRGBA(red: umv.colorRed, green: umv.colorGreen, blue: umv.colorBlue, alpha: umv.colorAlpha)
                         
         }
     }

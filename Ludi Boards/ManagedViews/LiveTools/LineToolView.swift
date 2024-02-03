@@ -137,16 +137,21 @@ struct LineDrawingManaged: View {
                 .position(x: lifeEndX, y: lifeEndY)
                 .gesture(singleAnchorDragGesture(isStart: false))
         )
-        .overlay(
-            Rectangle()
-                .fill(Color.white.opacity(0.001))
-                .frame(width: boundedLength(start: CGPoint(x: lifeStartX, y: lifeStartY), end: CGPoint(x: lifeEndX, y: lifeEndY)), height: Double(lifeWidth+300))
-                .rotationEffect(lifeRotation)
-                .opacity(1)
-                .position(x: lifeCenterPoint.x.isFinite ? lifeCenterPoint.x : 0, y: lifeCenterPoint.y.isFinite ? lifeCenterPoint.y : 0)
-                .gesture(fullLineDragGesture())
-        )
+//        .overlay(
+//            Rectangle()
+//                .fill(Color.white.opacity(0.001))
+//                .frame(width: boundedLength(start: CGPoint(x: lifeStartX, y: lifeStartY), end: CGPoint(x: lifeEndX, y: lifeEndY)), height: Double(lifeWidth+300))
+//                .rotationEffect(lifeRotation)
+//                .opacity(1)
+//                .position(x: lifeCenterPoint.x.isFinite ? lifeCenterPoint.x : 0, y: lifeCenterPoint.y.isFinite ? lifeCenterPoint.y : 0)
+//                .gesture(fullLineDragGesture())
+//        )
         .gesture(fullLineDragGesture())
+        .onChange(of: self.BEO.toolBarCurrentViewId, perform: { value in
+            if self.BEO.toolBarCurrentViewId != self.viewId {
+                self.popUpIsVisible = false
+            }
+        })
         .onAppear() {
         
             MVS.initialize(realm: self.BEO.realmInstance, activityId: self.activityId, viewId: self.viewId)
@@ -208,28 +213,6 @@ struct LineDrawingManaged: View {
             self.BEO.toolSettingsIsShowing = false
         }
         
-        
-//        CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(
-//           windowId: self.menuWindowId,
-//           stateAction: popUpIsVisible ? "open" : "close",
-//           viewId: viewId,
-//           x: self.lifeStartX + 500,
-//           y: self.lifeStartY
-//        ))
-//        if popUpIsVisible {
-//            CodiChannel.TOOL_ATTRIBUTES.send(value: ViewAtts(
-//               viewId: viewId,
-//               color: lifeColor,
-//               stroke: lifeWidth,
-//               position: CGPoint(x: lifeStartX, y: lifeStartY),
-//               headIsEnabled: lifeHeadIsEnabled,
-//               lineDash: lifeLineDash,
-//               toolType: "LINE",
-//               level: ToolLevels.LINE.rawValue,
-//               isLocked: lifeIsLocked,
-//               stateAction: popUpIsVisible ? "open" : "close")
-//            )
-//        }
     }
     
     // Gestures
@@ -513,7 +496,7 @@ struct MatchedShape: View {
             path.addQuadCurve(to: endPoint,
                               control: controlPoint1)
         }
-        .stroke(Color.white.opacity(0.01), style: StrokeStyle(lineWidth: 300.0, dash: [1]))
+        .stroke(Color.black.opacity(0.01), style: StrokeStyle(lineWidth: 300.0, dash: [1]))
     }
 }
 
