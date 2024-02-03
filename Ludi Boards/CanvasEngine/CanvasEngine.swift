@@ -165,6 +165,13 @@ struct CanvasEngine: View {
                 }
             }
             
+            if self.BEO.boardSettingsIsShowing && !self.BEO.screenIsActiveAndLocked() {
+                BoardSettingsBar()
+                    .zIndex(2.0)
+                    .position(using: gps, at: .bottomCenter, offsetY: 100)
+                    .environmentObject(self.BEO)
+            }
+            
             if self.BEO.toolSettingsIsShowing && !self.BEO.screenIsActiveAndLocked() {
                 MvSettingsBar {}
                     .zIndex(2.0)
@@ -354,7 +361,7 @@ struct CanvasEngine: View {
                 case .menuBar: return self.showMenuBar = !self.showMenuBar
                 case .info: return self.BEO.showTipViewStatic = !self.BEO.showTipViewStatic
                 case .toolbox: return self.BEO.toolBarIsShowing = !self.BEO.toolBarIsShowing
-                case .trash: return self.alertDeleteAllTools = true
+                case .trash: return self.BEO.boardSettingsIsShowing = !self.BEO.boardSettingsIsShowing
                 case .lock: return self.handleGestureLock()
                 case .video: return self.alertRecordAnimation = true
                 case .play: return self.showRecordingsSheet = true

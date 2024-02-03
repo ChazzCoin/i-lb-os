@@ -54,6 +54,7 @@ class BoardEngineObject : ObservableObject {
     @Published var dropPosition = CGPoint.zero
     @Published var dropDelegate: CustomDropDelegate?
     
+    @Published var boardSettingsIsShowing = false
     @Published var menuSettingsIsShowing = false
     @Published var toolSettingsIsShowing = false
     @Published var toolBarIsShowing = false
