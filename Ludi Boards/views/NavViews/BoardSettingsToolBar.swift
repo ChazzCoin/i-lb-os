@@ -38,8 +38,7 @@ struct BoardSettingsBar: View {
     @State private var bgColor = Color.clear
     @State private var fieldName = ""
     @State private var fieldRotation = 0.0
-    
-    
+    @State var backgroundView = ""
     
     
     let colors: [Color] = [Color.red, Color.blue]
@@ -58,6 +57,13 @@ struct BoardSettingsBar: View {
     @State var showAddPlayerPicker: Bool = false
     @State private var currentPlayerId = "new"
     @State private var showNewPlayerRefSheet = false
+   
+    @State var alertRecordAnimation = false
+    @State var showRecordingsSheet = false
+    @State var alertRecordAnimationTitle = "Animation Recording"
+    var alertRecordAnimationMessage: String {
+        return "Are you sure you want to \(self.BEO.isRecording ? "Stop" : "Start") recording?"
+    }
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
@@ -97,7 +103,7 @@ struct BoardSettingsBar: View {
                 SolIconButton(
                     systemName: "play",
                     onTap: {
-                        
+                        self.showRecordingsSheet = true
                     }
                 )
                 
@@ -114,7 +120,7 @@ struct BoardSettingsBar: View {
                     title: "Record Animation",
                     message: "Enter recording mode?",
                     onTap: {
-                        
+                        self.alertRecordAnimation = true
                     }
                 )
                 
@@ -148,8 +154,9 @@ struct BoardSettingsBar: View {
                                 print("make lineStroke smaller")
                                 lineStroke = (lineStroke - 10).bounded(byMin: 50, andMax: 400)
                                 self.BEO.boardFeildLineStroke = lineStroke
-//                                saveToRealm()
+                                saveToRealm()
                             }
+                        
                         Image(systemName: "plus")
                             .resizable()
                             .frame(width: 10, height: 10)
@@ -161,7 +168,7 @@ struct BoardSettingsBar: View {
                                 print("make lineStroke bigger")
                                 lineStroke = (lineStroke + 10).bounded(byMin: 50, andMax: 400)
                                 self.BEO.boardFeildLineStroke = lineStroke
-//                                saveToRealm()
+                                saveToRealm()
                             }
                     }
                     
@@ -195,7 +202,8 @@ struct BoardSettingsBar: View {
                             .onTapAnimation {
                                 print("rotate left")
                                 rotateView(by: -22.5)
-//                                saveToRealm()
+                                self.BEO.boardFeildRotation = fieldRotation
+                                saveToRealm()
                             }
                         Image(systemName: "rotate.right")
                             .resizable()
@@ -207,11 +215,21 @@ struct BoardSettingsBar: View {
                             .onTapAnimation {
                                 print("rotate right")
                                 rotateView(by: 22.5)
-//                                saveToRealm()
+                                self.BEO.boardFeildRotation = fieldRotation
+                                saveToRealm()
                             }
                     }
                     
                 }
+                
+//                Spacer().frame(width: 12)
+//                Rectangle()
+//                    .fill(Color.white)
+//                    .frame(width: 1, height: 50)
+//                    .padding()
+//                Spacer().frame(width: 12)
+                
+                
                 
                 Spacer().frame(width: 12)
                 Rectangle()
@@ -219,23 +237,24 @@ struct BoardSettingsBar: View {
                     .frame(width: 1, height: 50)
                     .padding()
                 Spacer().frame(width: 12)
-                
-                
-                
-//                Spacer().frame(width: 12)
-//                Rectangle()
-//                    .fill(Color.white)
-//                    .frame(width: 1, height: 50)
-//                    .padding()
-//                Spacer().frame(width: 12)
-//                
-//                
-//                Spacer().frame(width: 12)
-//                Rectangle()
-//                    .fill(Color.white)
-//                    .frame(width: 1, height: 50)
-//                    .padding()
-//                Spacer().frame(width: 12)
+      
+                BarListPicker(initialSelected: self.isCurrentPlan ? self.BEO.boardBgName : self.backgroundView, viewBuilder: self.BEO.boards.getAllMinis()) { v in
+                    fieldName = v
+                    self.BEO.setBoardBgView(boardName: v)
+                    saveToRealm()
+                }
+                .padding()
+                .border(Color.secondaryBackground, width: 1.0)
+                .cornerRadius(8)
+                .shadow(color: .gray, radius: 10, x: 0, y: 0)
+                .padding()
+   
+                Spacer().frame(width: 12)
+                Rectangle()
+                    .fill(Color.white)
+                    .frame(width: 1, height: 50)
+                    .padding()
+                Spacer().frame(width: 12)
                 
                 BorderedVStack {
                     Text("Background Color: \(bgColor.uiColor.accessibilityName)")
@@ -244,7 +263,7 @@ struct BoardSettingsBar: View {
                         print("Color Picker Tapper")
                         bgColor = color
                         self.BEO.setColor(colorIn: bgColor)
-//                        saveToRealm()
+                        saveToRealm()
                     }
                 }
                 .frame(width: 300)
@@ -261,18 +280,32 @@ struct BoardSettingsBar: View {
         .onChange(of: self.BEO.toolBarCurrentViewId, perform: { value in
             loadFromRealm()
         })
+        .alert(self.alertRecordAnimationTitle, isPresented: $alertRecordAnimation) {
+            Button("Cancel", role: .cancel) {
+                alertRecordAnimation = false
+            }
+            Button("OK", role: .none) {
+                alertRecordAnimation = false
+                if !self.BEO.isRecording {
+                    self.BEO.startRecording()
+                } else {
+                    self.BEO.stopRecording()
+                }
+            }
+        } message: {
+            Text(self.alertRecordAnimationMessage)
+        }
+        .sheet(isPresented: self.$showRecordingsSheet, content: {
+            RecordingListView(isShowing: self.$showRecordingsSheet)
+                .environmentObject(self.BEO)
+        })
         .onAppear() {
             loadFromRealm()
         }
     }
+
     
-    
-    
-    func closeWindow() {
-        self.BEO.toolSettingsIsShowing = false
-    }
-    
-   
+    func closeWindow() { self.BEO.boardSettingsIsShowing = false }
     
     // Function to rotate the view by a certain angle
     private func rotateView(by degrees: Double) {
@@ -285,57 +318,30 @@ struct BoardSettingsBar: View {
         }
     }
     
-//    // Observe From Realm
-//    func observeFromRealm() {
-//        self.managedViewNotificationToken?.invalidate()
-//        if let mv = self.BEO.realmInstance.object(ofType: ManagedView.self, forPrimaryKey: self.viewId) {
-//            self.BEO.realmInstance.executeWithRetry {
-//                self.managedViewNotificationToken = mv.observe { change in
-//                    switch change {
-//                        case .change(let obj, _):
-//                            let temp = obj as! ManagedView
-//                            if temp.id != self.viewId {return}
-//                            DispatchQueue.main.async {
-//                                if temp.id != self.viewId {return}
-//                                if self.activityId != temp.boardId {self.activityId = temp.boardId}
-//                                if self.viewSize != Double(temp.width) {self.viewSize = Double(temp.width)}
-//                                if self.viewRotation != temp.rotation { self.viewRotation = temp.rotation}
-//                                if self.isLocked != temp.isLocked { self.isLocked = temp.isLocked}
-//    //                            self.lifeLastUserId = temp.lastUserId
-//                            }
-//                            case .error(let error):
-//                                print("Error: \(error)")
-//                                self.managedViewNotificationToken?.invalidate()
-//                                self.managedViewNotificationToken = nil
-//                                self.observeFromRealm()
-//                            case .deleted:
-//                                print("Object has been deleted.")
-//                                self.isLocked = true
-//                                self.managedViewNotificationToken?.invalidate()
-//                                self.managedViewNotificationToken = nil
-//                        }
-//                    }
-//            }
-//            
-//            }
-//        
-//    }
-    
     func saveToRealm() {
-        if let umv = self.BEO.realmInstance.findByField(ManagedView.self, value: self.BEO.toolBarCurrentViewId) {
+        if let activityPlan = self.BEO.realmInstance.findByField(ActivityPlan.self, value: self.BEO.currentActivityId) {
             self.BEO.realmInstance.safeWrite { r in
+                 activityPlan.backgroundLineStroke = self.lineStroke
+                 activityPlan.backgroundLineAlpha = self.lineOpacity
+                 activityPlan.backgroundAlpha = self.colorOpacity
+                 activityPlan.backgroundRotation = self.fieldRotation
+                 activityPlan.backgroundView = self.fieldName
                 
-            }
-        }
-    }
-    
-    func deleteFromRealm() {
-        if let temp = self.BEO.realmInstance.findByField(ManagedView.self, value: self.BEO.toolBarCurrentViewId) {
-            self.BEO.realmInstance.safeWrite { r in
-//                temp.isDeleted = true
-//                firebaseDatabase { db in
-//                    db.child(self.activityId).child(self.viewId).setValue(temp.toDict())
-//                }
+                if let c = bgColor.toRGBA() {
+                    activityPlan.backgroundRed = c.red
+                    activityPlan.backgroundGreen = c.green
+                    activityPlan.backgroundBlue = c.blue
+                    activityPlan.backgroundAlpha = c.alpha
+                }
+                
+                if let lc = lineColor.toRGBA() {
+                    activityPlan.backgroundLineRed = lc.red
+                    activityPlan.backgroundLineGreen = lc.green
+                    activityPlan.backgroundLineBlue = lc.blue
+                    activityPlan.backgroundLineAlpha = lc.alpha
+                }
+                
+                // TODO: FIREBASE
             }
         }
     }
