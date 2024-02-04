@@ -31,7 +31,7 @@ struct ToolBarPicker<Content: View>: View {
                 Image(systemName: "xmark")
                     .resizable()
                     .frame(width: 15, height: 15)
-                    .foregroundColor(.white)
+                    .foregroundColor(getForegroundColor(colorScheme))
                     .padding()
                     .onTapAnimation {
                         self.BEO.toolBarIsShowing = false
@@ -51,11 +51,7 @@ struct ToolBarPicker<Content: View>: View {
             }.padding()
         }
         .frame(width: Double(sWidth).bound(to: 200...sWidth) - 150, height: 75)
-        .background(
-            RoundedRectangle(cornerRadius: 15)
-                .foregroundColor(backgroundColorForScheme(colorScheme))
-                .shadow(radius: 5)
-        )
+        .solBackground()
         
     }
     

@@ -48,31 +48,64 @@ extension View {
     }
 }
 
-func backgroundColorForScheme(_ scheme: ColorScheme) -> Color {
+func getBackgroundColor(_ scheme: ColorScheme) -> Color {
     switch scheme {
         case .light:
             // Use a color suitable for light mode
-            return Color.black.opacity(0.8)
+            return Color.white.opacity(0.8)
         case .dark:
             // Use a color suitable for dark mode
-            return Color.white.opacity(0.8)
+            return Color.secondaryBackground.opacity(0.8)
         @unknown default:
             // Fallback for future color schemes
             return Color.gray.opacity(0.8)
         }
 }
 
-func foregroundColorForScheme(_ scheme: ColorScheme) -> Color {
+
+func getBackgroundGradient(_ scheme: ColorScheme) -> LinearGradient {
+    switch scheme {
+        case .light:
+            // Use a color suitable for light mode
+        return LinearGradient(gradient: Gradient(colors: [Color(hex: "#FFFFFF"), Color(hex: "#F0F0F0"), Color(hex: "#E0E0E0")]), startPoint: .topLeading, endPoint: .bottomTrailing)
+        case .dark:
+            // Use a color suitable for dark mode
+            return LinearGradient(gradient: Gradient(colors: [Color.secondaryBackground, Color.secondaryGradientTwo, Color.secondaryGradientThree]), startPoint: .topLeading, endPoint: .bottomTrailing)
+        @unknown default:
+            // Fallback for future color schemes
+            return LinearGradient(gradient: Gradient(colors: [Color(hex: "#D7E8FA"), Color(hex: "#EAD1DC")]), startPoint: .topLeading, endPoint: .bottomTrailing)
+        }
+}
+
+func getBackgroundGradient() -> LinearGradient {
+    return LinearGradient(gradient: Gradient(colors: [Color.secondaryBackground, Color.secondaryGradientTwo, Color.secondaryGradientThree]), startPoint: .topLeading, endPoint: .bottomTrailing)
+}
+
+func getForegroundColor(_ scheme: ColorScheme) -> Color {
     switch scheme {
         case .dark:
             // Use a color suitable for light mode
-            return Color.black.opacity(0.8)
+            return Color.white.opacity(0.8)
         case .light:
             // Use a color suitable for dark mode
-            return Color.white.opacity(0.8)
+            return Color.black.opacity(0.8)
         @unknown default:
             // Fallback for future color schemes
             return Color.gray.opacity(0.8)
+        }
+}
+
+func getFontColor(_ scheme: ColorScheme) -> Color {
+    switch scheme {
+        case .dark:
+            // Use a color suitable for light mode
+            return Color.white
+        case .light:
+            // Use a color suitable for dark mode
+            return Color.black
+        @unknown default:
+            // Fallback for future color schemes
+            return Color.gray
         }
 }
 

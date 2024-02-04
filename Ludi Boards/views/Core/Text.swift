@@ -55,9 +55,10 @@ struct AlignCenter<Content: View>: View {
     }
 }
 
-func HeaderText(_ content: String) -> some View {
+func HeaderText(_ content: String, color:Color = .white) -> some View {
     Text(content)
         .font(.system(size: 24, weight: .bold))
+        .foregroundColor(color)
         .shadow(color: .gray, radius: 2, x: 0, y: 2)
         .mask(
             LinearGradient(gradient: Gradient(colors: [Color.blue, Color.purple]), startPoint: .top, endPoint: .bottom)
@@ -65,16 +66,18 @@ func HeaderText(_ content: String) -> some View {
 }
 
 
-func SubHeaderText(_ content: String) -> some View {
+func SubHeaderText(_ content: String, color:Color = .white) -> some View {
     Text(content)
         .font(.system(size: 20, weight: .semibold))
+        .foregroundColor(color)
         .kerning(1.5)
         .underline()
 }
 
-func TitleText(_ content: String) -> some View {
+func TitleText(_ content: String, color:Color = .white) -> some View {
     Text(content)
         .font(.system(size: 20, weight: .medium, design: .serif))
+        .foregroundColor(color)
         .italic()
         .padding(10)
         .overlay(
@@ -92,9 +95,10 @@ func BodyText(_ content: String, color:Color = .white) -> some View {
         .foregroundColor(color)
 }
 
-func DisclaimerText(_ content: String) -> some View {
+func DisclaimerText(_ content: String, color:Color = .white) -> some View {
     Text(content)
         .font(.system(size: 14))
+        .foregroundColor(color)
         .italic()
         .opacity(0.6)
 }

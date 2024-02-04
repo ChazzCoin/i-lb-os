@@ -192,6 +192,7 @@
 		FBBDD0202B6E12BC0009844B /* ManagedViewFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBBDD01F2B6E12BC0009844B /* ManagedViewFactory.swift */; };
 		FBBDD0222B6E186E0009844B /* BoardSettingsToolBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBBDD0212B6E186E0009844B /* BoardSettingsToolBar.swift */; };
 		FBBDD0242B6F6D8B0009844B /* CanvasExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBBDD0232B6F6D8B0009844B /* CanvasExtensions.swift */; };
+		FBBDD0262B7022570009844B /* Backgrounds.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBBDD0252B7022570009844B /* Backgrounds.swift */; };
 		FBC2FC6C2B59C4A400D1AB77 /* DStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBC2FC6B2B59C4A400D1AB77 /* DStack.swift */; };
 		FBC2FC6E2B5A0BB200D1AB77 /* TabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBC2FC6D2B5A0BB200D1AB77 /* TabView.swift */; };
 		FBC2FC702B5BC04300D1AB77 /* Text.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBC2FC6F2B5BC04300D1AB77 /* Text.swift */; };
@@ -388,6 +389,7 @@
 		FBBDD01F2B6E12BC0009844B /* ManagedViewFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedViewFactory.swift; sourceTree = "<group>"; };
 		FBBDD0212B6E186E0009844B /* BoardSettingsToolBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardSettingsToolBar.swift; sourceTree = "<group>"; };
 		FBBDD0232B6F6D8B0009844B /* CanvasExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasExtensions.swift; sourceTree = "<group>"; };
+		FBBDD0252B7022570009844B /* Backgrounds.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backgrounds.swift; sourceTree = "<group>"; };
 		FBC2FC6B2B59C4A400D1AB77 /* DStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DStack.swift; sourceTree = "<group>"; };
 		FBC2FC6D2B5A0BB200D1AB77 /* TabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabView.swift; sourceTree = "<group>"; };
 		FBC2FC6F2B5BC04300D1AB77 /* Text.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Text.swift; sourceTree = "<group>"; };
@@ -838,6 +840,7 @@
 				FB58E87F2B02B26C00FD9E2E /* DragAndDrop.swift */,
 				FB58E87D2B02B21700FD9E2E /* CoreMods.swift */,
 				FBBDD0172B6C48840009844B /* Alerts.swift */,
+				FBBDD0252B7022570009844B /* Backgrounds.swift */,
 			);
 			path = Modifiers;
 			sourceTree = "<group>";
@@ -1293,6 +1296,7 @@
 				FBD9AFCD2B008457005F8620 /* UserToActivity.swift in Sources */,
 				FBAE62AD2B295A8100E008D5 /* ManagedPopUpView.swift in Sources */,
 				FB18F13E2B6391B500D89F8D /* Square.swift in Sources */,
+				FBBDD0262B7022570009844B /* Backgrounds.swift in Sources */,
 				FB581BEB2B1EF39C00F5C90F /* Stopwatch.swift in Sources */,
 				FB426AA12B55B6A30058CD9D /* NotificationView.swift in Sources */,
 				FB4840962B1D43AD0003377A /* BarListPicker.swift in Sources */,
@@ -1614,7 +1618,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 10;
 				DEVELOPMENT_ASSET_PATHS = "\"Ludi Boards/Preview Content\"";
 				DEVELOPMENT_TEAM = 248J2GKL56;
 				ENABLE_PREVIEWS = YES;
@@ -1633,7 +1637,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.9;
+				MARKETING_VERSION = 1.10;
 				PRODUCT_BUNDLE_IDENTIFIER = io.ludi.sol;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1650,7 +1654,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 10;
 				DEVELOPMENT_ASSET_PATHS = "\"Ludi Boards/Preview Content\"";
 				DEVELOPMENT_TEAM = 248J2GKL56;
 				ENABLE_PREVIEWS = YES;
@@ -1669,7 +1673,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.9;
+				MARKETING_VERSION = 1.10;
 				PRODUCT_BUNDLE_IDENTIFIER = io.ludi.sol;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

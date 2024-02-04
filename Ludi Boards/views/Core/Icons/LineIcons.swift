@@ -27,7 +27,7 @@ struct LineIconView: View {
                 path.move(to: startPoint)
                 path.addLine(to: endPoint)
             }
-            .stroke(isBgColor ? backgroundColorForScheme(colorScheme) : foregroundColorForScheme(colorScheme), lineWidth: 2)
+            .stroke(isBgColor ? getBackgroundColor(colorScheme) : getForegroundColor(colorScheme), lineWidth: 2)
         }
         .rotationEffect(Angle(degrees: 45))
         .aspectRatio(1, contentMode: .fit)
@@ -50,7 +50,7 @@ struct DottedLineIconView: View {
                 path.move(to: startPoint)
                 path.addLine(to: endPoint)
             }
-            .stroke(foregroundColorForScheme(colorScheme), style: StrokeStyle(lineWidth: 2, dash: [5]))
+            .stroke(getForegroundColor(colorScheme), style: StrokeStyle(lineWidth: 2, dash: [5]))
         }
         .rotationEffect(Angle(degrees: 45))
         .aspectRatio(1, contentMode: .fit)
@@ -81,7 +81,7 @@ struct CurvedLineIconView: View {
                 path.move(to: startPoint)
                 path.addCurve(to: endPoint, control1: control1, control2: control2)
             }
-            .stroke(foregroundColorForScheme(colorScheme), lineWidth: 2)
+            .stroke(getForegroundColor(colorScheme), lineWidth: 2)
         }
         .aspectRatio(1, contentMode: .fit)
     }

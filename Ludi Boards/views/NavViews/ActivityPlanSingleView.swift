@@ -19,6 +19,7 @@ struct ActivityPlanSingleView: View {
     @EnvironmentObject var BEO: BoardEngineObject
     @EnvironmentObject var NavStack: NavStackWindowObservable
     @Environment(\.presentationMode) var presentationMode
+    @Environment(\.colorScheme) var colorScheme
     @State var isLoading: Bool = false
     @State var realmInstance = realm()
     
@@ -108,7 +109,7 @@ struct ActivityPlanSingleView: View {
             .clearSectionBackground()
             
             // Details Section
-            Section(header: AlignLeft { HeaderText("Activity Details") }) {
+            Section(header: AlignLeft { HeaderText("Activity Details", color: getFontColor(colorScheme)) }) {
                 
                 DStack {
                     SolTextField("Title", text: $title)
@@ -137,9 +138,9 @@ struct ActivityPlanSingleView: View {
                 
             }.clearSectionBackground()
 
-            Section(header: AlignLeft { HeaderText("Board Settings") }) {
+            Section(header: AlignLeft { BodyText("Board Settings", color: getFontColor(colorScheme)) }) {
                 AlignLeft {
-                    SubHeaderText("Field Type: \(fieldName)")
+                    BodyText("Field Type: \(fieldName)")
                         .padding()
                 }
                 BarListPicker(initialSelected: self.isCurrentPlan ? self.BEO.boardBgName : self.backgroundView, viewBuilder: self.BEO.boards.getAllMinis()) { v in
@@ -157,7 +158,7 @@ struct ActivityPlanSingleView: View {
                 DStack {
                     VStack {
                         AlignLeft {
-                            SubHeaderText("Background Color: \(colorOpacity)")
+                            BodyText("Background Color: \(colorOpacity)", color: getFontColor(colorScheme))
                                 .padding()
                         }
                         ColorListPicker() { color in
@@ -175,7 +176,7 @@ struct ActivityPlanSingleView: View {
                     
                     VStack {
                         AlignLeft {
-                            SubHeaderText("Background Color Transparency: \(colorOpacity)")
+                            SubHeaderText("Background Color Transparency: \(colorOpacity)", color: getFontColor(colorScheme))
                                 .padding()
                         }
                         Slider(
@@ -204,7 +205,7 @@ struct ActivityPlanSingleView: View {
                 DStack {
                     VStack {
                         AlignLeft {
-                            SubHeaderText("Line Color: \(lineColor.uiColor.accessibilityName)")
+                            SubHeaderText("Line Color: \(lineColor.uiColor.accessibilityName)", color: getFontColor(colorScheme))
                                 .padding()
                         }
                         ColorListPicker() { color in
@@ -222,7 +223,7 @@ struct ActivityPlanSingleView: View {
                     
                     VStack {
                         AlignLeft {
-                            SubHeaderText("Rotate Field: \(Int(fieldRotation))")
+                            SubHeaderText("Rotate Field: \(Int(fieldRotation))", color: getFontColor(colorScheme))
                                 .padding()
                         }
                         Slider(
@@ -250,7 +251,7 @@ struct ActivityPlanSingleView: View {
                     
                     VStack {
                         AlignLeft {
-                            SubHeaderText("Line Width: \(Int(lineStroke))")
+                            SubHeaderText("Line Width: \(Int(lineStroke))", color: getFontColor(colorScheme))
                                 .padding()
                         }
                         Slider(
@@ -274,7 +275,7 @@ struct ActivityPlanSingleView: View {
                     
                     VStack {
                         AlignLeft {
-                            SubHeaderText("Line Transparency: \(lineOpacity)")
+                            SubHeaderText("Line Transparency: \(lineOpacity)", color: getFontColor(colorScheme))
                                 .padding()
                         }
                         Slider(
@@ -302,6 +303,7 @@ struct ActivityPlanSingleView: View {
                     
 
         }
+        .background(getBackgroundColor(colorScheme))
         .onChange(of: self.inComingAP) { newPlan in
             DispatchQueue.main.async {
                 self.fetchActivityPlan(activityPlan: newPlan)

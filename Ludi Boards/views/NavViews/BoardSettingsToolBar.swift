@@ -76,7 +76,7 @@ struct BoardSettingsBar: View {
                     Image(systemName: "xmark")
                         .resizable()
                         .frame(width: 15, height: 15)
-                        .foregroundColor(.white)
+                        .foregroundColor(getForegroundColor(colorScheme))
                         .padding()
                         .padding(.top)
                         .padding(.leading)
@@ -103,7 +103,7 @@ struct BoardSettingsBar: View {
                     )
                     
                     Rectangle()
-                        .fill(Color.white)
+                        .fill(getForegroundColor(colorScheme))
                         .frame(width: 50, height: 1)
                     
                     SolIconConfirmButton(
@@ -120,7 +120,7 @@ struct BoardSettingsBar: View {
                 
                 Spacer().frame(width: 12)
                 Rectangle()
-                    .fill(Color.white)
+                    .fill(getForegroundColor(colorScheme))
                     .frame(width: 1, height: 50)
                     .padding()
                 Spacer().frame(width: 12)
@@ -136,7 +136,7 @@ struct BoardSettingsBar: View {
                     )
                     
                     Rectangle()
-                        .fill(Color.white)
+                        .fill(getForegroundColor(colorScheme))
                         .frame(width: 50, height: 1)
                     
                     SolIconConfirmButton(
@@ -153,7 +153,7 @@ struct BoardSettingsBar: View {
                 
                 Spacer().frame(width: 12)
                 Rectangle()
-                    .fill(Color.white)
+                    .fill(getForegroundColor(colorScheme))
                     .frame(width: 1, height: 50)
                     .padding()
                 Spacer().frame(width: 12)
@@ -167,7 +167,7 @@ struct BoardSettingsBar: View {
                             self.showBoardPicker = !self.showBoardPicker
                         }
                     )
-                    BodyText("Boards")
+                    BodyText("Boards", color: getFontColor(colorScheme))
                 }
                 
                 if self.showBoardPicker {
@@ -182,7 +182,7 @@ struct BoardSettingsBar: View {
                 
                 Spacer().frame(width: 12)
                 Rectangle()
-                    .fill(Color.white)
+                    .fill(getForegroundColor(colorScheme))
                     .frame(width: 1, height: 50)
                     .padding()
                 Spacer().frame(width: 12)
@@ -193,8 +193,8 @@ struct BoardSettingsBar: View {
                         Image(systemName: "arrow.clockwise")
                             .resizable()
                             .frame(width: 25, height: 25)
-                            .foregroundColor(.white)
-                        BodyText("\(fieldRotation)")
+                            .foregroundColor(getForegroundColor(colorScheme))
+                        BodyText("\(fieldRotation)", color: getFontColor(colorScheme))
                     }
                     
                     HStack {
@@ -230,7 +230,7 @@ struct BoardSettingsBar: View {
    
                 Spacer().frame(width: 12)
                 Rectangle()
-                    .fill(Color.white)
+                    .fill(getForegroundColor(colorScheme))
                     .frame(width: 1, height: 50)
                     .padding()
                 Spacer().frame(width: 12)
@@ -244,8 +244,8 @@ struct BoardSettingsBar: View {
                             self.showBoardBgColorPicker = !self.showBoardBgColorPicker
                         }
                     )
-                    BodyText("Background")
-                    BodyText("Color")
+                    BodyText("Background", color: getFontColor(colorScheme))
+                    BodyText("Color", color: getFontColor(colorScheme))
                 }
                 
                 if self.showBoardBgColorPicker {
@@ -261,7 +261,7 @@ struct BoardSettingsBar: View {
                 
                 Spacer().frame(width: 12)
                 Rectangle()
-                    .fill(Color.white)
+                    .fill(getForegroundColor(colorScheme))
                     .frame(width: 1, height: 50)
                     .padding()
                 Spacer().frame(width: 12)
@@ -275,8 +275,8 @@ struct BoardSettingsBar: View {
                         Image(systemName: "arrow.up.left.and.arrow.down.right")
                             .resizable()
                             .frame(width: 25, height: 25)
-                            .foregroundColor(.white)
-                        BodyText("\(lineStroke)")
+                            .foregroundColor(getForegroundColor(colorScheme))
+                        BodyText("\(lineStroke)", color: getFontColor(colorScheme))
                     }
                     
                     HStack {
@@ -313,7 +313,7 @@ struct BoardSettingsBar: View {
                 
                 Spacer().frame(width: 12)
                 Rectangle()
-                    .fill(Color.white)
+                    .fill(getForegroundColor(colorScheme))
                     .frame(width: 1, height: 50)
                     .padding()
                 Spacer().frame(width: 12)
@@ -327,7 +327,7 @@ struct BoardSettingsBar: View {
                             self.showBoardLineColorPicker = !self.showBoardLineColorPicker
                         }
                     )
-                    BodyText("Line Color")
+                    BodyText("Line Color", color: getFontColor(colorScheme))
                 }
                 
                 if self.showBoardLineColorPicker {
@@ -344,11 +344,7 @@ struct BoardSettingsBar: View {
             }.padding()
         }
         .frame(width: Double(sWidth).bound(to: 200...sWidth) - 150, height: 150)
-        .background(
-            RoundedRectangle(cornerRadius: 15)
-                .foregroundColor(backgroundColorForScheme(colorScheme))
-                .shadow(radius: 5)
-        )
+        .solBackground()
         .onChange(of: self.BEO.toolBarCurrentViewId, perform: { value in
             loadFromRealm()
         })

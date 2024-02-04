@@ -34,7 +34,7 @@ struct ToolBarSettingsPicker<Content: View>: View {
         .frame(height: 200)
         .background(
             RoundedRectangle(cornerRadius: 15)
-                .foregroundColor(backgroundColorForScheme(colorScheme))
+                .foregroundColor(getBackgroundColor(colorScheme))
                 .shadow(radius: 5)
         )
         

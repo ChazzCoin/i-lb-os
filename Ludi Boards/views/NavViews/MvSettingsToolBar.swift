@@ -74,7 +74,7 @@ struct MvSettingsBar<Content: View>: View {
                     Image(systemName: "xmark")
                         .resizable()
                         .frame(width: 15, height: 15)
-                        .foregroundColor(.white)
+                        .foregroundColor(getForegroundColor(colorScheme))
                         .padding()
                         .onTapAnimation {
                             closeWindow()
@@ -97,7 +97,7 @@ struct MvSettingsBar<Content: View>: View {
                 
                 Spacer().frame(width: 12)
                 Rectangle()
-                    .fill(Color.white)
+                    .fill(getForegroundColor(colorScheme))
                     .frame(width: 1, height: 50)
                     .padding()
                 Spacer().frame(width: 12)
@@ -106,7 +106,7 @@ struct MvSettingsBar<Content: View>: View {
                     Image(systemName: isLocked ? "lock" : "lock.open")
                         .resizable()
                         .frame(width: 25, height: 25)
-                        .foregroundColor(isLocked ? .red : .white)
+                        .foregroundColor(isLocked ? .red : getForegroundColor(colorScheme))
                     Toggle("", isOn: $isLocked)
                         .onChange(of: isLocked, perform: { _ in
                             saveToRealm()
@@ -115,7 +115,7 @@ struct MvSettingsBar<Content: View>: View {
                 
                 Spacer().frame(width: 12)
                 Rectangle()
-                    .fill(Color.white)
+                    .fill(getForegroundColor(colorScheme))
                     .frame(width: 1, height: 50)
                     .padding()
                 Spacer().frame(width: 12)
@@ -126,8 +126,8 @@ struct MvSettingsBar<Content: View>: View {
                         Image(systemName: "arrow.up.left.and.arrow.down.right")
                             .resizable()
                             .frame(width: 25, height: 25)
-                            .foregroundColor(.white)
-                        BodyText("\(viewSize)")
+                            .foregroundColor(getForegroundColor(colorScheme))
+                        BodyText("\(viewSize)", color: getFontColor(colorScheme))
                     }
                     
                     HStack {
@@ -162,7 +162,7 @@ struct MvSettingsBar<Content: View>: View {
                 if !isLineTool {
                     Spacer().frame(width: 12)
                     Rectangle()
-                        .fill(Color.white)
+                        .fill(getForegroundColor(colorScheme))
                         .frame(width: 1, height: 50)
                         .padding()
                     Spacer().frame(width: 12)
@@ -173,8 +173,8 @@ struct MvSettingsBar<Content: View>: View {
                             Image(systemName: "arrow.clockwise")
                                 .resizable()
                                 .frame(width: 25, height: 25)
-                                .foregroundColor(.white)
-                            BodyText("\(viewRotation)")
+                                .foregroundColor(getForegroundColor(colorScheme))
+                            BodyText("\(viewRotation)", color: getFontColor(colorScheme))
                         }
                         
                         HStack {
@@ -211,7 +211,7 @@ struct MvSettingsBar<Content: View>: View {
                     
                     Spacer().frame(width: 12)
                     Rectangle()
-                        .fill(Color.white)
+                        .fill(getForegroundColor(colorScheme))
                         .frame(width: 1, height: 50)
                         .padding()
                     Spacer().frame(width: 12)
@@ -272,7 +272,7 @@ struct MvSettingsBar<Content: View>: View {
                 if isLineTool {
                     Spacer().frame(width: 12)
                     Rectangle()
-                        .fill(Color.white)
+                        .fill(getForegroundColor(colorScheme))
                         .frame(width: 1, height: 50)
                         .padding()
                     Spacer().frame(width: 12)
@@ -281,7 +281,7 @@ struct MvSettingsBar<Content: View>: View {
                         Image(systemName: headIsEnabled ? "arrowtriangle.up" : "multiply")
                             .resizable()
                             .frame(width: 25, height: 25)
-                            .foregroundColor(headIsEnabled ? .red : .white)
+                            .foregroundColor(headIsEnabled ? .red : getForegroundColor(colorScheme))
                         Toggle("", isOn: $headIsEnabled)
                             .onChange(of: headIsEnabled, perform: { _ in
                                 saveToRealm()
@@ -293,7 +293,7 @@ struct MvSettingsBar<Content: View>: View {
                     
                     Spacer().frame(width: 12)
                     Rectangle()
-                        .fill(Color.white)
+                        .fill(getForegroundColor(colorScheme))
                         .frame(width: 1, height: 50)
                         .padding()
                     Spacer().frame(width: 12)
@@ -307,7 +307,7 @@ struct MvSettingsBar<Content: View>: View {
                                 self.showColorPicker = !self.showColorPicker
                             }
                         )
-                        BodyText("Color")
+                        BodyText("Color", color: getFontColor(colorScheme))
                     }
                     
                     if self.showColorPicker {
@@ -317,30 +317,17 @@ struct MvSettingsBar<Content: View>: View {
                             saveToRealm()
                         }
                         .frame(width: 100)
+//                        .offset(x: 0.0, y: -(UIScreen.main.bounds.height/2))
                         .padding(.bottom, UIScreen.main.bounds.height/2)
                     }
                     
-//                    BorderedVStack {
-//                        Text("Color: \(viewColor.uiColor.accessibilityName)")
-//                            .foregroundColor(viewColor)
-//                        ColorListPicker() { color in
-//                            print("Color Picker Tapper")
-//                            viewColor = color
-//                            saveToRealm()
-//                        }
-//                    }
-//                    .frame(width: 300)
                     Spacer().frame(width: 24)
                 }
                 
             }.padding()
         }
         .frame(width: Double(sWidth).bound(to: 200...sWidth) - 150, height: 150)
-        .background(
-            RoundedRectangle(cornerRadius: 15)
-                .foregroundColor(backgroundColorForScheme(colorScheme))
-                .shadow(radius: 5)
-        )
+        .solBackground()
         .onChange(of: self.BEO.toolBarCurrentViewId, perform: { value in
             loadFromRealm()
         })

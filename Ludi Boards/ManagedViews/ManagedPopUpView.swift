@@ -258,7 +258,7 @@ struct MenuOptionButton: View {
         }
         .padding()
         .frame(maxWidth: 200, maxHeight: 50)
-        .background(foregroundColorForScheme(colorScheme))
+        .background(getForegroundColor(colorScheme))
         .cornerRadius(8)
         .scaleEffect(0.8) // Enhanced scale effect
         .onTapAnimation {
@@ -287,7 +287,7 @@ struct MenuCheckBoxButton: View {
         }
         .padding()
         .frame(maxWidth: 200, maxHeight: 50)
-        .background(foregroundColorForScheme(colorScheme))
+        .background(getForegroundColor(colorScheme))
         .cornerRadius(8)
         .scaleEffect(0.8) // Enhanced scale effect
     }
@@ -315,7 +315,7 @@ struct MenuOptionRotation: View {
             }
         ).padding()
         .frame(maxWidth: 200, maxHeight: 50)
-        .background(foregroundColorForScheme(colorScheme))
+        .background(getForegroundColor(colorScheme))
         .cornerRadius(8)
         .scaleEffect(1.0) // Enhanced scale effect
     }
@@ -352,7 +352,7 @@ struct MenuOptionSize: View {
             }
         ).padding()
         .frame(maxWidth: 200, maxHeight: 50)
-        .background(foregroundColorForScheme(colorScheme))
+        .background(getForegroundColor(colorScheme))
         .cornerRadius(8)
         .scaleEffect(1.0) // Enhanced scale effect
         
@@ -384,7 +384,7 @@ struct MenuOptionStroke: View {
             }
         ).padding()
         .frame(maxWidth: 200, maxHeight: 50)
-        .background(foregroundColorForScheme(colorScheme))
+        .background(getForegroundColor(colorScheme))
         .cornerRadius(8)
         .scaleEffect(1.0) // Enhanced scale effect
         
@@ -410,7 +410,7 @@ struct MenuOptionColor: View {
         }
         
         .frame(width: 200, height: 50)
-        .background(foregroundColorForScheme(colorScheme))
+        .background(getForegroundColor(colorScheme))
         .cornerRadius(8)
         .scaleEffect(1.0) // Enhanced scale effect
         .padding()

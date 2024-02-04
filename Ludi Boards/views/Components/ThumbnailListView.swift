@@ -108,7 +108,7 @@ struct ColorListPickerView: View {
         .frame(height: screenHeight * 0.75, alignment: .leading)
         .background(
             RoundedRectangle(cornerRadius: 15)
-                .foregroundColor(backgroundColorForScheme(colorScheme))
+                .foregroundColor(getBackgroundColor(colorScheme))
                 .shadow(radius: 5)
         )
     }

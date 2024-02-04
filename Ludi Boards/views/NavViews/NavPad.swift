@@ -35,7 +35,7 @@ struct NavPadView: View {
         .frame(width: 55 * 8, height: 75)
         .background(
             RoundedRectangle(cornerRadius: 15)
-                .foregroundColor(backgroundColorForScheme(colorScheme))
+                .foregroundColor(getBackgroundColor(colorScheme))
                 .shadow(radius: 5)
         )
         .opacity(isHidden ? 0 : 1)
@@ -95,7 +95,7 @@ struct NavButton: View {
     @State private var lifeColor = Color.black
     @State private var lifeWindowState = true
     
-    func setColorScheme() { lifeColor = foregroundColorForScheme(colorScheme) }
+    func setColorScheme() { lifeColor = getForegroundColor(colorScheme) }
 
     var body: some View {
         Image(systemName: label)

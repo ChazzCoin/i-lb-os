@@ -19,7 +19,7 @@ struct MenuBarStatic: View {
     @State private var isLocked = false
     @State private var lifeColor = Color.black
     
-    func setColorScheme() { lifeColor = foregroundColorForScheme(colorScheme) }
+    func setColorScheme() { lifeColor = getForegroundColor(colorScheme) }
 
     let iconsLoggedOut = [
         MenuBarProvider.info,

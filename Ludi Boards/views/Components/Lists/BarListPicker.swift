@@ -35,7 +35,7 @@ struct BarListPicker: View {
                         .cornerRadius(10.0)
                         .overlay(
                             RoundedRectangle(cornerRadius: 10)
-                                .stroke(selectedImage == key ? backgroundColorForScheme(colorScheme) : Color.clear, lineWidth: 3)
+                                .stroke(selectedImage == key ? getBackgroundColor(colorScheme) : Color.clear, lineWidth: 3)
                         )
                         .onTapAnimation {
                             self.selectedImage = key
@@ -86,8 +86,8 @@ struct BoardListPicker: View {
                                 self.selectedImage = key
                                 callback(key)
                             }
-                        BodyText(key)
-                            .foregroundColor(.white)
+                        BodyText(key, color: getFontColor(colorScheme))
+                            
                         Spacer()
                     }
                 }
@@ -97,7 +97,7 @@ struct BoardListPicker: View {
         .frame(height: screenHeight * 0.75, alignment: .leading)
         .background(
             RoundedRectangle(cornerRadius: 15)
-                .foregroundColor(backgroundColorForScheme(colorScheme))
+                .foregroundColor(getBackgroundColor(colorScheme))
                 .shadow(radius: 5)
         )
         .onAppear() {
