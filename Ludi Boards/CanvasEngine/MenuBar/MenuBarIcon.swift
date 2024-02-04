@@ -19,14 +19,6 @@ struct MenuButtonIcon: View {
         if icon.tool.title == MenuBarProvider.lock.tool.title {
             lifeColor = self.BEO.gesturesAreLocked ? Color.red : Color.white
         }
-        
-        if icon.tool.title == MenuBarProvider.video.tool.title {
-            lifeColor = self.BEO.isRecording ? Color.red : Color.white
-        }
-        
-        if icon.tool.title == MenuBarProvider.play.tool.title {
-            lifeColor = self.BEO.isPlayingAnimation ? Color.red : Color.white
-        }
     }
 
     var body: some View {
@@ -47,12 +39,6 @@ struct MenuButtonIcon: View {
                 .shadow(radius: 5)
         )
         .onChange(of: self.BEO.gesturesAreLocked, perform: { value in
-            setupButton()
-        })
-        .onChange(of: self.BEO.isRecording, perform: { value in
-            setupButton()
-        })
-        .onChange(of: self.BEO.isPlayingAnimation, perform: { value in
             setupButton()
         })
         .onTapAnimation {

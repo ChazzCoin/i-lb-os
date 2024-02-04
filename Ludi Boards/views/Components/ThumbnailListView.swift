@@ -52,7 +52,6 @@ struct ColorListPicker: View {
                     RoundedRectangle(cornerRadius: 10)
                         .fill(colorName)
                         .frame(width: 50, height: 50)
-//                        .cornerRadius(10)
                         .overlay(
                             RoundedRectangle(cornerRadius: 10)
                                 .stroke(selectedImage == colorName ? Color.blue : Color.clear, lineWidth: 3)
@@ -65,15 +64,53 @@ struct ColorListPicker: View {
                         )
                 }
             }
-//            .padding()
         }
     }
 }
 
-//struct ThumbnailListView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        ThumbnailListView() { item in
-//            print(item)
-//        }
-//    }
-//}
+struct ColorListPickerView: View {
+    var id: String
+    var callback: (Color) -> Void
+    
+    @State var colorNamesProvider = Array(colorDict().values)
+    @State var selectedColor: Color = .white
+    @State var screenHeight = UIScreen.main.bounds.height
+    @State var screenWidth = UIScreen.main.bounds.width
+    @Environment(\.colorScheme) var colorScheme
+    
+    init(_ id: String = "", initialSelected: Color = .white, callback: @escaping (Color) -> Void) {
+        self.id = id
+        self.callback = callback
+        self.selectedColor = initialSelected
+    }
+    
+    var body: some View {
+        ScrollView(.vertical, showsIndicators: false) {
+            VStack(alignment: .leading) {
+                ForEach(colorNamesProvider, id: \.self) { colorName in
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(colorName)
+                        .frame(width: 50, height: 50)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(selectedColor == colorName ? Color.blue : Color.clear, lineWidth: 3)
+                        )
+                        .highPriorityGesture(TapGesture()
+                            .onEnded { _ in
+                                self.selectedColor = colorName
+                                callback(colorName)
+                            }
+                        )
+                }
+                .padding()
+            }
+        }
+        .frame(height: screenHeight * 0.75, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: 15)
+                .foregroundColor(backgroundColorForScheme(colorScheme))
+                .shadow(radius: 5)
+        )
+    }
+    
+}

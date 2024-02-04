@@ -191,6 +191,7 @@
 		FBBDD01D2B6CA8A20009844B /* MvSettingsToolBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBBDD01C2B6CA8A20009844B /* MvSettingsToolBar.swift */; };
 		FBBDD0202B6E12BC0009844B /* ManagedViewFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBBDD01F2B6E12BC0009844B /* ManagedViewFactory.swift */; };
 		FBBDD0222B6E186E0009844B /* BoardSettingsToolBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBBDD0212B6E186E0009844B /* BoardSettingsToolBar.swift */; };
+		FBBDD0242B6F6D8B0009844B /* CanvasExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBBDD0232B6F6D8B0009844B /* CanvasExtensions.swift */; };
 		FBC2FC6C2B59C4A400D1AB77 /* DStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBC2FC6B2B59C4A400D1AB77 /* DStack.swift */; };
 		FBC2FC6E2B5A0BB200D1AB77 /* TabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBC2FC6D2B5A0BB200D1AB77 /* TabView.swift */; };
 		FBC2FC702B5BC04300D1AB77 /* Text.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBC2FC6F2B5BC04300D1AB77 /* Text.swift */; };
@@ -386,6 +387,7 @@
 		FBBDD01C2B6CA8A20009844B /* MvSettingsToolBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MvSettingsToolBar.swift; sourceTree = "<group>"; };
 		FBBDD01F2B6E12BC0009844B /* ManagedViewFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedViewFactory.swift; sourceTree = "<group>"; };
 		FBBDD0212B6E186E0009844B /* BoardSettingsToolBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardSettingsToolBar.swift; sourceTree = "<group>"; };
+		FBBDD0232B6F6D8B0009844B /* CanvasExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasExtensions.swift; sourceTree = "<group>"; };
 		FBC2FC6B2B59C4A400D1AB77 /* DStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DStack.swift; sourceTree = "<group>"; };
 		FBC2FC6D2B5A0BB200D1AB77 /* TabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabView.swift; sourceTree = "<group>"; };
 		FBC2FC6F2B5BC04300D1AB77 /* Text.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Text.swift; sourceTree = "<group>"; };
@@ -519,6 +521,7 @@
 				FBD9AFB92AFF03D7005F8620 /* CanvasEngine.swift */,
 				FB15DD292B07443600A21290 /* BoardEngineView.swift */,
 				FB9F1E3F2B159F6A00FD9078 /* OrientationInfo.swift */,
+				FBBDD0232B6F6D8B0009844B /* CanvasExtensions.swift */,
 			);
 			path = CanvasEngine;
 			sourceTree = "<group>";
@@ -942,6 +945,7 @@
 		FBD9AFD32B008F5C005F8620 /* Providers */ = {
 			isa = PBXGroup;
 			children = (
+				FB4840992B1EBC940003377A /* Sports.swift */,
 				FB18F17C2B6ABD8400D89F8D /* Experimental */,
 				FBD9AFD42B008F6F005F8620 /* Channels.swift */,
 				FBD9AFD82B01CB91005F8620 /* SoccerToolProvider.swift */,
@@ -964,7 +968,6 @@
 				FBE2C6162B1AF595004C0116 /* GrassFieldView.swift */,
 				FBE2C6192B1AF7D5004C0116 /* FootballFieldView.swift */,
 				FBE2C61B2B1AF961004C0116 /* BoardBackgrounder.swift */,
-				FB4840992B1EBC940003377A /* Sports.swift */,
 			);
 			path = Backgrounds;
 			sourceTree = "<group>";
@@ -1362,6 +1365,7 @@
 				FB5094262B058215000AEA96 /* LazyRow.swift in Sources */,
 				FB3E02C92B0D2D8D00D8558C /* ExpandingTextEditor.swift in Sources */,
 				FBEBEF982B49507500B8BA32 /* LiveCurrentUser.swift in Sources */,
+				FBBDD0242B6F6D8B0009844B /* CanvasExtensions.swift in Sources */,
 				FB881A3C2B47CD4400C16198 /* UserView.swift in Sources */,
 				FB18F16B2B68A1CE00D89F8D /* SolListItem.swift in Sources */,
 				FB3E02C72B0D2C3100D8558C /* InputSwitch.swift in Sources */,

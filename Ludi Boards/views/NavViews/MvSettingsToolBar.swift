@@ -63,6 +63,8 @@ struct MvSettingsBar<Content: View>: View {
     @State var showAddPlayerPicker: Bool = false
     @State private var currentPlayerId = "new"
     @State private var showNewPlayerRefSheet = false
+    
+    @State private var showColorPicker = false
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
@@ -296,16 +298,38 @@ struct MvSettingsBar<Content: View>: View {
                         .padding()
                     Spacer().frame(width: 12)
                     
-                    BorderedVStack {
-                        Text("Color: \(viewColor.uiColor.accessibilityName)")
-                            .foregroundColor(viewColor)
-                        ColorListPicker() { color in
+                    VStack {
+                        SolIconButton(
+                            systemName: "paintpalette",
+                            width: 40.0,
+                            height: 40.0,
+                            onTap: {
+                                self.showColorPicker = !self.showColorPicker
+                            }
+                        )
+                        BodyText("Color")
+                    }
+                    
+                    if self.showColorPicker {
+                        ColorListPickerView() { color in
                             print("Color Picker Tapper")
                             viewColor = color
                             saveToRealm()
                         }
+                        .frame(width: 100)
+                        .padding(.bottom, UIScreen.main.bounds.height/2)
                     }
-                    .frame(width: 300)
+                    
+//                    BorderedVStack {
+//                        Text("Color: \(viewColor.uiColor.accessibilityName)")
+//                            .foregroundColor(viewColor)
+//                        ColorListPicker() { color in
+//                            print("Color Picker Tapper")
+//                            viewColor = color
+//                            saveToRealm()
+//                        }
+//                    }
+//                    .frame(width: 300)
                     Spacer().frame(width: 24)
                 }
                 

@@ -284,51 +284,46 @@ struct CanvasEngine: View {
                 self.BEO.toolBarIsShowing = false
             }
         })
-        .sheet(isPresented: self.$showRecordingsSheet, content: {
-            RecordingListView(isShowing: self.$showRecordingsSheet)
-                .environmentObject(self.BEO)
-        })
-        .alert(self.alertDeleteAllToolsTitle, isPresented: $alertDeleteAllTools) {
-            Button("Cancel", role: .cancel) {
-                alertDeleteAllTools = false
-            }
-            Button("OK", role: .none) {
-                alertDeleteAllTools = false
-                self.BEO.deleteAllTools()
-            }
-        } message: {
-            Text(self.alertDeleteAllToolsMessage)
-        }
-        .alert(self.alertRecordAnimationTitle, isPresented: $alertRecordAnimation) {
-            Button("Cancel", role: .cancel) {
-                alertRecordAnimation = false
-            }
-            Button("OK", role: .none) {
-                alertRecordAnimation = false
-                if !self.BEO.isRecording {
-                    self.BEO.startRecording()
-                } else {
-                    self.BEO.stopRecording()
-                }
-            }
-        } message: {
-            Text(self.alertRecordAnimationMessage)
-        }
+//        .sheet(isPresented: self.$showRecordingsSheet, content: {
+//            RecordingListView(isShowing: self.$showRecordingsSheet)
+//                .environmentObject(self.BEO)
+//        })
+//        .alert(self.alertDeleteAllToolsTitle, isPresented: $alertDeleteAllTools) {
+//            Button("Cancel", role: .cancel) {
+//                alertDeleteAllTools = false
+//            }
+//            Button("OK", role: .none) {
+//                alertDeleteAllTools = false
+//                self.BEO.deleteAllTools()
+//            }
+//        } message: {
+//            Text(self.alertDeleteAllToolsMessage)
+//        }
+//        .alert(self.alertRecordAnimationTitle, isPresented: $alertRecordAnimation) {
+//            Button("Cancel", role: .cancel) {
+//                alertRecordAnimation = false
+//            }
+//            Button("OK", role: .none) {
+//                alertRecordAnimation = false
+//                if !self.BEO.isRecording {
+//                    self.BEO.startRecording()
+//                } else {
+//                    self.BEO.stopRecording()
+//                }
+//            }
+//        } message: {
+//            Text(self.alertRecordAnimationMessage)
+//        }
         .onAppear() {
             self.BEO.loadUser()
             menuBarButtonListener()
-            handleSessionPlan()
-            handleSessionPlans()
-            addChatWindow()
-            addProfileWindow()
-            addMvSettings()
+            addWindowsToNavManager()
         }
         
     }
     
     @MainActor
     func notificationListener() {
-        
         CodiChannel.ON_NOTIFICATION.receive(on: RunLoop.main) { message in
             if let message = message as? NotificationController {
                 print("Received on ON_NOTIFICATION channel: \(message.message)")
@@ -340,55 +335,24 @@ struct CanvasEngine: View {
                         self.showNotification = false
                     }
                 })
-                
             }
         }.store(in: &cancellables)
-        
     }
     
     @MainActor
     func menuBarButtonListener() {
-        
         CodiChannel.MENU_WINDOW_CONTROLLER.receive(on: RunLoop.main) { controller in
             print("Received on MENU_TOGGLER channel: \(controller)")
             let temp = controller as! WindowController
-            let buttonType = temp.windowId
-            
-            switch MenuBarProvider.parseByTitle(title: buttonType) {
+            switch MenuBarProvider.parseByTitle(title: temp.windowId) {
                 case .menuBar: return self.showMenuBar = !self.showMenuBar
                 case .info: return self.BEO.showTipViewStatic = !self.BEO.showTipViewStatic
                 case .toolbox: return self.BEO.toolBarIsShowing = !self.BEO.toolBarIsShowing
-                case .trash: return self.BEO.boardSettingsIsShowing = !self.BEO.boardSettingsIsShowing
+                case .boardSettings: return self.BEO.boardSettingsIsShowing = !self.BEO.boardSettingsIsShowing
                 case .lock: return self.handleGestureLock()
-                case .video: return self.alertRecordAnimation = true
-                case .play: return self.showRecordingsSheet = true
-                //
-                case .canvasGrid: return
-                case .navHome: return 
-                case .buddyList: return
-                case .boardList: return
-                case .boardCreate: return
-                case .boardDetails: return
-                case .reset: return
-                case .boardBackground: return
-                case .profile: return
-                case .share: return
-                case .router: return
-                case .note: return
-                case .chat: return
-                
-                case .none:
-                    return
-                case .some(.paint):
-                    return
-                case .some(.image):
-                    return
-                case .some(.webBrowser):
-                    return
+                default: return
             }
-            
         }.store(in: &cancellables)
-        
     }
     func handleGestureLock() {
         if self.BEO.gesturesAreLocked {
@@ -397,18 +361,14 @@ struct CanvasEngine: View {
             self.BEO.gesturesAreLocked = true
         }
     }
-
-//    func handleTimeManagement() {
-//        let caller = MenuBarProvider.chat.tool.title
-//        let temp = ManagedViewWindow(id: caller, viewBuilder: {
-//            NavStackWindow(id: caller, viewBuilder: {
-//                StopwatchView()
-//            })
-//        })
-//        temp.title = "Stop-Watch"
-//        temp.windowId = caller
-//        managedWindowsObject.safelyAddItem(key: caller, item: temp)
-//    }
+    
+    func addWindowsToNavManager() {
+        addSessionPlanWindow()
+        addSessionPlansWindow()
+        addChatWindow()
+        addProfileWindow()
+        addMvSettingsWindow()
+    }
     
     func handleNavPad() {
         let caller = MenuBarProvider.navHome.tool.title
@@ -430,7 +390,7 @@ struct CanvasEngine: View {
             }))
         })
     }
-    func handleSessionPlan() {
+    func addSessionPlanWindow() {
         let caller = MenuBarProvider.boardDetails.tool.title
         managedWindowsObject.addNewViewToPool(viewId: caller, viewBuilder: {
             AnyView(NavStackWindow(id: caller, viewBuilder: {
@@ -438,7 +398,7 @@ struct CanvasEngine: View {
             }))
         })
     }
-    func handleSessionPlans() {
+    func addSessionPlansWindow() {
         let caller = MenuBarProvider.boardCreate.tool.title
         managedWindowsObject.addNewViewToPool(viewId: caller, viewBuilder: {
             AnyView(NavStackWindow(id: caller, viewBuilder: {
@@ -446,7 +406,7 @@ struct CanvasEngine: View {
             }))
         })
     }
-    func addMvSettings() {
+    func addMvSettingsWindow() {
         let caller = "mv_settings"
         managedWindowsObject.addNewViewToPool(viewId: caller, viewBuilder: {
             AnyView(NavStackFloatingWindow(id: caller, viewBuilder: {
@@ -454,28 +414,6 @@ struct CanvasEngine: View {
             }))
         })
     }
-//    func handleBuddyList() {
-//        let caller = MenuBarProvider.buddyList.tool.title
-//        let buddies = ManagedViewWindow(id: caller, viewBuilder: AnyView(BuddyListView()))
-//        buddies.title = "Buddy List"
-//        buddies.windowId = caller
-//        managedWindowsObject.toggleItem(key: caller, item: AnyView(NavStackWindow(managedViewWindow: buddies)))
-//    }
-//    
-//    func handleBuddyProfile() {
-//        let caller = MenuBarProvider.profile.tool.title
-//        let buddies = ManagedViewWindow(id: caller, viewBuilder: AnyView(BuddyProfileView()))
-//        buddies.title = "Buddy Profile"
-//        buddies.windowId = caller
-//        managedWindowsObject.toggleItem(key: caller, item: AnyView(NavStackWindow(managedViewWindow: buddies)))
-//    }
-//    
-
-//    
-   
-////
-
-
 }
 
 

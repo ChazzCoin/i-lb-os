@@ -25,7 +25,6 @@ struct BoardSettingsBar: View {
     @EnvironmentObject var BEO: BoardEngineObject
     @StateObject var managedViews = ManagedViewListener()
     @State var managedViewNotificationToken: NotificationToken? = nil
-    
 
     @State private var refreshView = false
     @State private var showLoading = false
@@ -40,23 +39,27 @@ struct BoardSettingsBar: View {
     @State private var fieldRotation = 0.0
     @State var backgroundView = ""
     
-    
     let colors: [Color] = [Color.red, Color.blue]
     private let circleSize: CGFloat = 40
     private let spacing: CGFloat = 10
 
+    @State private var lockIconColor: Color = .white
     @State private var showColor = false
     @State private var isShowing = false
     @State private var isLoading = false
     @State var cancellables = Set<AnyCancellable>()
     
-    @State var attachedPlayerIsOn: Bool = false
-    @State var hasPlayerRef: Bool = false
-    @State var addPlayerName = ""
-    @State var addPlayerId = "new"
-    @State var showAddPlayerPicker: Bool = false
-    @State private var currentPlayerId = "new"
-    @State private var showNewPlayerRefSheet = false
+//    @State var attachedPlayerIsOn: Bool = false
+//    @State var hasPlayerRef: Bool = false
+//    @State var addPlayerName = ""
+//    @State var addPlayerId = "new"
+//    @State var showAddPlayerPicker: Bool = false
+//    @State private var currentPlayerId = "new"
+//    @State private var showNewPlayerRefSheet = false
+    
+    @State var showBoardPicker = false
+    @State var showBoardBgColorPicker = false
+    @State var showBoardLineColorPicker = false
    
     @State var alertRecordAnimation = false
     @State var showRecordingsSheet = false
@@ -75,6 +78,8 @@ struct BoardSettingsBar: View {
                         .frame(width: 15, height: 15)
                         .foregroundColor(.white)
                         .padding()
+                        .padding(.top)
+                        .padding(.leading)
                         .onTapAnimation {
                             closeWindow()
                         }
@@ -84,14 +89,34 @@ struct BoardSettingsBar: View {
                 
                 Spacer().frame(width: 24)
                 
-                SolIconConfirmButton(
-                    systemName: "trash",
-                    title: "Delete All Tools",
-                    message: "Are you sure you want to delete all tools?",
-                    onTap: {
-                        self.BEO.deleteAllTools()
-                    }
-                )
+                VStack {
+                    SolIconButton(
+                        systemName: self.BEO.gesturesAreLocked ? "lock.fill" : "lock.open",
+                        width: 40.0,
+                        height: 40.0,
+                        fontColor: Color.red,
+                        onTap: {
+                            withAnimation {
+                                self.BEO.gesturesAreLocked = !self.BEO.gesturesAreLocked
+                            }
+                        }
+                    )
+                    
+                    Rectangle()
+                        .fill(Color.white)
+                        .frame(width: 50, height: 1)
+                    
+                    SolIconConfirmButton(
+                        systemName: "trash",
+                        title: "Delete All Tools",
+                        message: "Are you sure you want to delete all tools?",
+                        width: 40.0,
+                        height: 40.0,
+                        onTap: {
+                            self.BEO.deleteAllTools()
+                        }
+                    )
+                }
                 
                 Spacer().frame(width: 12)
                 Rectangle()
@@ -100,13 +125,31 @@ struct BoardSettingsBar: View {
                     .padding()
                 Spacer().frame(width: 12)
                 
-                SolIconButton(
-                    systemName: "play",
-                    onTap: {
-                        self.showRecordingsSheet = true
-                    }
-                )
-                
+                VStack {
+                    SolIconButton(
+                        systemName: "play",
+                        width: 40.0,
+                        height: 40.0,
+                        onTap: {
+                            self.showRecordingsSheet = true
+                        }
+                    )
+                    
+                    Rectangle()
+                        .fill(Color.white)
+                        .frame(width: 50, height: 1)
+                    
+                    SolIconConfirmButton(
+                        systemName: "video",
+                        title: "Record Animation",
+                        message: "Enter recording mode?",
+                        width: 40.0,
+                        height: 40.0,
+                        onTap: {
+                            self.alertRecordAnimation = true
+                        }
+                    )
+                }
                 
                 Spacer().frame(width: 12)
                 Rectangle()
@@ -115,15 +158,27 @@ struct BoardSettingsBar: View {
                     .padding()
                 Spacer().frame(width: 12)
                 
-                SolIconConfirmButton(
-                    systemName: "video",
-                    title: "Record Animation",
-                    message: "Enter recording mode?",
-                    onTap: {
-                        self.alertRecordAnimation = true
-                    }
-                )
+                VStack {
+                    SolIconButton(
+                        systemName: "photo",
+                        width: 40.0,
+                        height: 40.0,
+                        onTap: {
+                            self.showBoardPicker = !self.showBoardPicker
+                        }
+                    )
+                    BodyText("Boards")
+                }
                 
+                if self.showBoardPicker {
+                    BoardListPicker(initialSelected: self.isCurrentPlan ? self.BEO.boardBgName : self.backgroundView, viewBuilder: self.BEO.boards.getAllMinis()) { v in
+                        fieldName = v
+                        self.BEO.setBoardBgView(boardName: v)
+                        saveToRealm()
+                    }
+                    .frame(width: 400)
+                    .padding(.bottom, UIScreen.main.bounds.height/2)
+                }
                 
                 Spacer().frame(width: 12)
                 Rectangle()
@@ -131,6 +186,88 @@ struct BoardSettingsBar: View {
                     .frame(width: 1, height: 50)
                     .padding()
                 Spacer().frame(width: 12)
+                
+                VStack {
+                    
+                    HStack {
+                        Image(systemName: "arrow.clockwise")
+                            .resizable()
+                            .frame(width: 25, height: 25)
+                            .foregroundColor(.white)
+                        BodyText("\(fieldRotation)")
+                    }
+                    
+                    HStack {
+                        Image(systemName: "rotate.left")
+                            .resizable()
+                            .frame(width: 10, height: 10)
+                            .foregroundColor(.white)
+                            .padding()
+                            .background(Circle().fill(Color.secondaryBackground.opacity(0.75)))
+                            .font(.title)
+                            .onTapAnimation {
+                                print("rotate left")
+                                rotateView(by: -22.5)
+                                self.BEO.boardFeildRotation = fieldRotation
+                                saveToRealm()
+                            }
+                        Image(systemName: "rotate.right")
+                            .resizable()
+                            .frame(width: 10, height: 10)
+                            .foregroundColor(.white)
+                            .padding()
+                            .background(Circle().fill(Color.secondaryBackground.opacity(0.75)))
+                            .font(.title)
+                            .onTapAnimation {
+                                print("rotate right")
+                                rotateView(by: 22.5)
+                                self.BEO.boardFeildRotation = fieldRotation
+                                saveToRealm()
+                            }
+                    }
+                    
+                }
+   
+                Spacer().frame(width: 12)
+                Rectangle()
+                    .fill(Color.white)
+                    .frame(width: 1, height: 50)
+                    .padding()
+                Spacer().frame(width: 12)
+                
+                VStack {
+                    SolIconButton(
+                        systemName: "paintpalette",
+                        width: 40.0,
+                        height: 40.0,
+                        onTap: {
+                            self.showBoardBgColorPicker = !self.showBoardBgColorPicker
+                        }
+                    )
+                    BodyText("Background")
+                    BodyText("Color")
+                }
+                
+                if self.showBoardBgColorPicker {
+                    ColorListPickerView() { color in
+                        print("Background Color Picker Tapper")
+                        bgColor = color
+                        self.BEO.setColor(colorIn: bgColor)
+                        saveToRealm()
+                    }
+                    .frame(width: 100)
+                    .padding(.bottom, UIScreen.main.bounds.height/2)
+                }
+                
+                Spacer().frame(width: 12)
+                Rectangle()
+                    .fill(Color.white)
+                    .frame(width: 1, height: 50)
+                    .padding()
+                Spacer().frame(width: 12)
+                
+                
+                // LINE SETTINGS
                 
                 VStack {
                     
@@ -182,92 +319,27 @@ struct BoardSettingsBar: View {
                 Spacer().frame(width: 12)
                 
                 VStack {
-                    
-                    HStack {
-                        Image(systemName: "arrow.clockwise")
-                            .resizable()
-                            .frame(width: 25, height: 25)
-                            .foregroundColor(.white)
-                        BodyText("\(fieldRotation)")
-                    }
-                    
-                    HStack {
-                        Image(systemName: "rotate.left")
-                            .resizable()
-                            .frame(width: 10, height: 10)
-                            .foregroundColor(.white)
-                            .padding()
-                            .background(Circle().fill(Color.secondaryBackground.opacity(0.75)))
-                            .font(.title)
-                            .onTapAnimation {
-                                print("rotate left")
-                                rotateView(by: -22.5)
-                                self.BEO.boardFeildRotation = fieldRotation
-                                saveToRealm()
-                            }
-                        Image(systemName: "rotate.right")
-                            .resizable()
-                            .frame(width: 10, height: 10)
-                            .foregroundColor(.white)
-                            .padding()
-                            .background(Circle().fill(Color.secondaryBackground.opacity(0.75)))
-                            .font(.title)
-                            .onTapAnimation {
-                                print("rotate right")
-                                rotateView(by: 22.5)
-                                self.BEO.boardFeildRotation = fieldRotation
-                                saveToRealm()
-                            }
-                    }
-                    
+                    SolIconButton(
+                        systemName: "paintbrush",
+                        width: 40.0,
+                        height: 40.0,
+                        onTap: {
+                            self.showBoardLineColorPicker = !self.showBoardLineColorPicker
+                        }
+                    )
+                    BodyText("Line Color")
                 }
                 
-//                Spacer().frame(width: 12)
-//                Rectangle()
-//                    .fill(Color.white)
-//                    .frame(width: 1, height: 50)
-//                    .padding()
-//                Spacer().frame(width: 12)
-                
-                
-                
-                Spacer().frame(width: 12)
-                Rectangle()
-                    .fill(Color.white)
-                    .frame(width: 1, height: 50)
-                    .padding()
-                Spacer().frame(width: 12)
-      
-                BarListPicker(initialSelected: self.isCurrentPlan ? self.BEO.boardBgName : self.backgroundView, viewBuilder: self.BEO.boards.getAllMinis()) { v in
-                    fieldName = v
-                    self.BEO.setBoardBgView(boardName: v)
-                    saveToRealm()
-                }
-                .padding()
-                .border(Color.secondaryBackground, width: 1.0)
-                .cornerRadius(8)
-                .shadow(color: .gray, radius: 10, x: 0, y: 0)
-                .padding()
-   
-                Spacer().frame(width: 12)
-                Rectangle()
-                    .fill(Color.white)
-                    .frame(width: 1, height: 50)
-                    .padding()
-                Spacer().frame(width: 12)
-                
-                BorderedVStack {
-                    Text("Background Color: \(bgColor.uiColor.accessibilityName)")
-                        .foregroundColor(bgColor)
-                    ColorListPicker() { color in
-                        print("Color Picker Tapper")
-                        bgColor = color
-                        self.BEO.setColor(colorIn: bgColor)
+                if self.showBoardLineColorPicker {
+                    ColorListPickerView() { color in
+                        print("Background Color Picker Tapper")
+                        lineColor = color
+                        self.BEO.setFieldLineColor(colorIn: lineColor)
                         saveToRealm()
                     }
+                    .frame(width: 100)
+                    .padding(.bottom, UIScreen.main.bounds.height/2)
                 }
-                .frame(width: 300)
-                Spacer().frame(width: 24)
                 
             }.padding()
         }
@@ -359,7 +431,6 @@ struct BoardSettingsBar: View {
                         
         }
     }
-    
     
 }
 

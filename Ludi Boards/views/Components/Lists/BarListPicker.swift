@@ -43,9 +43,63 @@ struct BarListPicker: View {
                         }
                 }
                 
-            }.padding()
+            }
+//            .padding()
         }
-        .frame(height: 100)
+        .frame(height: 75)
+        .onAppear() {
+            self.selectedImage = self.initialSelected
+        }
+        
+    }
+    
+}
+
+
+// SwiftUI View for the Emoji Picker
+struct BoardListPicker: View {
+    var id: String
+    var initialSelected: String
+    var viewBuilder: [String: () -> AnyView]
+    var callback: (String) -> Void
+    @State var selectedImage: String = ""
+    @State var screenHeight = UIScreen.main.bounds.height
+    @State var screenWidth = UIScreen.main.bounds.width
+    @Environment(\.colorScheme) var colorScheme
+    
+    init(_ id: String="", initialSelected: String="", viewBuilder:  [String:() -> AnyView], callback: @escaping (String) -> Void) {
+        self.id = id
+        self.initialSelected = initialSelected
+        self.viewBuilder = viewBuilder
+        self.callback = callback
+    }
+    
+    var body: some View {
+        ScrollView(.vertical, showsIndicators: false) {
+            VStack(alignment: .leading) {
+                ForEach(viewBuilder.keys.sorted(), id: \.self) { key in
+                    HStack {
+                        viewBuilder[key]?()
+                            .padding(5)
+                            .cornerRadius(10.0)
+                            .onTapAnimation {
+                                self.selectedImage = key
+                                callback(key)
+                            }
+                        BodyText(key)
+                            .foregroundColor(.white)
+                        Spacer()
+                    }
+                }
+                .padding()
+            }
+        }
+        .frame(height: screenHeight * 0.75, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: 15)
+                .foregroundColor(backgroundColorForScheme(colorScheme))
+                .shadow(radius: 5)
+        )
         .onAppear() {
             self.selectedImage = self.initialSelected
         }

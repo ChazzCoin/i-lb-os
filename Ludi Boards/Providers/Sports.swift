@@ -43,7 +43,7 @@ struct SolBackground : View {
     var body: some View {
         Image("sol_bg_trans")
             .resizable()
-            .frame(width: isMini ? 100 : 5000, height: isMini ? 100 : 5000)
+            .frame(width: isMini ? 100: 5000, height: isMini ? 100 : 5000)
     }
 }
 
