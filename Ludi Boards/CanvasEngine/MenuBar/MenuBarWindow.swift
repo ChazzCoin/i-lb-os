@@ -60,11 +60,7 @@ struct MenuBarStatic: View {
                     }
             }
             .frame(width: 60, height: 60)
-            .background(
-                RoundedRectangle(cornerRadius: 15)
-                    .foregroundColor(Color.primaryBackground)
-                    .shadow(radius: 5)
-            )
+            .solBackgroundPrimaryGradient()
             .onTapAnimation {
                 showIcons.toggle()
                 animateIcons()

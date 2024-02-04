@@ -16,8 +16,11 @@ struct MenuButtonIcon: View {
     @State private var lifeColor = Color.white
         
     func setupButton() {
+        
+        lifeColor = getForegroundColor(colorScheme)
+        
         if icon.tool.title == MenuBarProvider.lock.tool.title {
-            lifeColor = self.BEO.gesturesAreLocked ? Color.red : Color.white
+            lifeColor = self.BEO.gesturesAreLocked ? Color.red : getForegroundColor(colorScheme)
         }
     }
 
@@ -33,11 +36,7 @@ struct MenuButtonIcon: View {
                 }
         }
         .frame(width: 60, height: 60)
-        .background(
-            RoundedRectangle(cornerRadius: 15)
-                .foregroundColor(Color.secondaryBackground)
-                .shadow(radius: 5)
-        )
+        .solBackgroundDark()
         .onChange(of: self.BEO.gesturesAreLocked, perform: { value in
             setupButton()
         })
@@ -82,11 +81,8 @@ struct TrashCanButtonIcon: View {
         }
         .zIndex(2.0)
         .frame(width: 60, height: 60)
-        .background(
-            RoundedRectangle(cornerRadius: 15)
-                .foregroundColor(backgroundColorForScheme(colorScheme))
-                .shadow(radius: 5)
-        ).onAppear() {
+        .solBackgroundPrimaryGradient()
+        .onAppear() {
             
             CodiChannel.TOOL_ON_FOLLOW.receive(on: RunLoop.main) { viewFollow in
                 let vf = viewFollow as! ViewFollowing

@@ -67,17 +67,25 @@ func getBackgroundGradient(_ scheme: ColorScheme) -> LinearGradient {
     switch scheme {
         case .light:
             // Use a color suitable for light mode
-        return LinearGradient(gradient: Gradient(colors: [Color(hex: "#FFFFFF"), Color(hex: "#F0F0F0"), Color(hex: "#E0E0E0")]), startPoint: .topLeading, endPoint: .bottomTrailing)
+        return getBackgroundLightGradient()
         case .dark:
             // Use a color suitable for dark mode
-            return LinearGradient(gradient: Gradient(colors: [Color.secondaryBackground, Color.secondaryGradientTwo, Color.secondaryGradientThree]), startPoint: .topLeading, endPoint: .bottomTrailing)
+            return getBackgroundDarkGradient()
         @unknown default:
             // Fallback for future color schemes
             return LinearGradient(gradient: Gradient(colors: [Color(hex: "#D7E8FA"), Color(hex: "#EAD1DC")]), startPoint: .topLeading, endPoint: .bottomTrailing)
         }
 }
 
-func getBackgroundGradient() -> LinearGradient {
+func getPrimaryGradient() -> LinearGradient {
+    return LinearGradient(gradient: Gradient(colors: [Color(hex: "#3E7167"), Color(hex: "#5A8D80"), Color(hex: "#48756E")]), startPoint: .topLeading, endPoint: .bottomTrailing)
+}
+
+func getBackgroundLightGradient() -> LinearGradient {
+    return LinearGradient(gradient: Gradient(colors: [Color(hex: "#FFFFFF"), Color(hex: "#F0F0F0"), Color(hex: "#E0E0E0")]), startPoint: .topLeading, endPoint: .bottomTrailing)
+}
+
+func getBackgroundDarkGradient() -> LinearGradient {
     return LinearGradient(gradient: Gradient(colors: [Color.secondaryBackground, Color.secondaryGradientTwo, Color.secondaryGradientThree]), startPoint: .topLeading, endPoint: .bottomTrailing)
 }
 

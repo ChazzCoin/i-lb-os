@@ -13,6 +13,8 @@ import Combine
 struct CanvasEngine: View {
     
     @ObservedObject var BEO = BoardEngineObject()
+    @ObservedObject var DO = OrientationInfo()
+//    @Environment(\.interfaceOrientation) var io
     
     @State var cancellables = Set<AnyCancellable>()
     @State var showMenuBar: Bool = true
@@ -131,194 +133,178 @@ struct CanvasEngine: View {
         return "Are you sure you want to \(self.BEO.isRecording ? "Stop" : "Start") recording?"
     }
     
+    @State var masterResetCanvas = false
+    func masterResetTheCanvas() {
+        self.masterResetCanvas = true
+        self.masterResetCanvas = false
+    }
+    
     var body: some View {
         
-        GlobalPositioningZStack { geo, gps in
-            
-            if self.BEO.isLoading {
-                ProgressView()
-                    .frame(width: 300, height: 300)
-                    .progressViewStyle(.circular)
-                    .scaleEffect(5) // Adjust the size as needed
-                    .padding(20)
-                    .cornerRadius(10)
-                    .position(using: gps, at: .center)
-            }
-            
-            // Menu Bar
-            MenuBarStatic(showIcons: $menuIsOpen){}
-                .frame(width: 60, height: menuIsOpen ? (gps.screenSize.height - 100) : 60)
-                .position(using: gps, at: .topLeft, offsetX: 50, offsetY: menuIsOpen ? ((gps.screenSize.height - 60) / 2) : 50)
-                .environmentObject(self.BEO)
-            
-            // Navigation Bar
-            NavPadView()
-                .environmentObject(self.BEO)
-                .position(using: gps, at: .bottomCenter, offsetX: 0, offsetY: 150)
-            
-            if !self.managedWindowsObject.reload {
-                ForEach(Array(managedWindowsObject.activeViews.keys), id: \.self) { key in
-                    managedWindowsObject.getView(withId: key)
-                        .viewBuilder()
-                        .zIndex(50.0)
+        if !masterResetCanvas {
+            GlobalPositioningZStack { geo, gps in
+                
+                if self.BEO.isLoading {
+                    ProgressView()
+                        .frame(width: 300, height: 300)
+                        .progressViewStyle(.circular)
+                        .scaleEffect(5) // Adjust the size as needed
+                        .padding(20)
+                        .cornerRadius(10)
+                        .position(using: gps, at: .center)
+                }
+                
+                // Menu Bar
+                MenuBarStatic(showIcons: $menuIsOpen){}
+                    .frame(width: 60, height: menuIsOpen ? (gps.screenSize.height - 100) : 60)
+                    .position(using: gps, at: .topLeft, offsetX: 50, offsetY: menuIsOpen ? ((gps.screenSize.height - 60) / 2) : 50)
+                    .environmentObject(self.BEO)
+                
+                // Navigation Bar
+                NavPadView()
+                    .environmentObject(self.BEO)
+                    .position(using: gps, at: .bottomCenter, offsetX: 0, offsetY: 150)
+                
+                if !self.managedWindowsObject.reload {
+                    ForEach(Array(managedWindowsObject.activeViews.keys), id: \.self) { key in
+                        managedWindowsObject.getView(withId: key)
+                            .viewBuilder()
+                            .zIndex(50.0)
+                            .environmentObject(self.BEO)
+                    }
+                }
+                
+                if self.BEO.boardSettingsIsShowing && !self.BEO.screenIsActiveAndLocked() {
+                    BoardSettingsBar()
+                        .zIndex(2.0)
+                        .position(using: gps, at: .bottomCenter, offsetY: 100)
                         .environmentObject(self.BEO)
                 }
-            }
-            
-            if self.BEO.boardSettingsIsShowing && !self.BEO.screenIsActiveAndLocked() {
-                BoardSettingsBar()
+                
+                if self.BEO.toolSettingsIsShowing && !self.BEO.screenIsActiveAndLocked() {
+                    MvSettingsBar {}
+                        .zIndex(2.0)
+                        .position(using: gps, at: .bottomCenter, offsetY: 100)
+                        .environmentObject(self.BEO)
+                }
+                
+                // Tool Bar
+                if self.BEO.toolBarIsShowing && !self.BEO.screenIsActiveAndLocked() {
+                    ToolBarPicker {
+                        LineIconView(isBgColor: false)
+                            .frame(width: 50, height: 50)
+                            .onTapAnimation {
+                                enableDrawing(drawingType: "LINE")
+                            }
+                        CurvedLineIconView()
+                            .frame(width: 50, height: 50)
+                            .onTapAnimation {
+                                enableDrawing(drawingType: "CURVED-LINE")
+                            }
+                    }
                     .zIndex(2.0)
-                    .position(using: gps, at: .bottomCenter, offsetY: 100)
+                    .position(using: gps, at: .bottomCenter, offsetY: 50)
                     .environmentObject(self.BEO)
-            }
-            
-            if self.BEO.toolSettingsIsShowing && !self.BEO.screenIsActiveAndLocked() {
-                MvSettingsBar {}
-                    .zIndex(2.0)
-                    .position(using: gps, at: .bottomCenter, offsetY: 100)
-                    .environmentObject(self.BEO)
-            }
-            
-            // Tool Bar
-            if self.BEO.toolBarIsShowing && !self.BEO.screenIsActiveAndLocked() {
-                ToolBarPicker {
-                    LineIconView(isBgColor: false)
-                        .frame(width: 50, height: 50)
-                        .onTapAnimation {
-                            enableDrawing(drawingType: "LINE")
+                }
+                
+                // Drawing Mode Popup
+                if self.BEO.isPlayingAnimation {
+                    GeometryReader { geo in
+                        ModeAlert(title: "Playing in Progress...", subTitle: "Playback Mode.", showButton: true) {
+                            self.BEO.stopAnimationRecording()
                         }
-                    CurvedLineIconView()
-                        .frame(width: 50, height: 50)
-                        .onTapAnimation {
-                            enableDrawing(drawingType: "CURVED-LINE")
+                    }
+                    .frame(width: 300)
+                    .position(using: gps, at: .topRight, offsetX: 150, offsetY: 0)
+                }
+                
+                // Drawing Mode Popup
+                if self.BEO.isRecording {
+                    GeometryReader { geo in
+                        ModeAlert(title: "Recording in Progress...", subTitle: "Animation Mode.", showButton: true) {
+                            self.BEO.stopRecording()
                         }
-                }
-                .zIndex(2.0)
-                .position(using: gps, at: .bottomCenter, offsetY: 50)
-                .environmentObject(self.BEO)
-            }
-            
-            // Drawing Mode Popup
-            if self.BEO.isPlayingAnimation {
-                GeometryReader { geo in
-                    ModeAlert(title: "Playing in Progress...", subTitle: "Playback Mode.", showButton: true) {
-                        self.BEO.stopAnimationRecording()
                     }
+                    .frame(width: 300)
+                    .position(using: gps, at: .topRight, offsetX: 150, offsetY: 0)
                 }
-                .frame(width: 300)
-                .position(using: gps, at: .topRight, offsetX: 150, offsetY: 0)
-            }
-            
-            // Drawing Mode Popup
-            if self.BEO.isRecording {
-                GeometryReader { geo in
-                    ModeAlert(title: "Recording in Progress...", subTitle: "Animation Mode.", showButton: true) {
-                        self.BEO.stopRecording()
+                
+                // Drawing Mode Popup
+                if self.BEO.isDraw {
+                    GeometryReader { geo in
+                        TipBoxViewFlasher(tips: TipLineDrawing){
+                            disableDrawing()
+                        }
                     }
+                    .frame(width: 300)
+                    .position(using: gps, at: .topRight, offsetX: 150, offsetY: 0)
                 }
-                .frame(width: 300)
-                .position(using: gps, at: .topRight, offsetX: 150, offsetY: 0)
-            }
-            
-            // Drawing Mode Popup
-            if self.BEO.isDraw {
-                GeometryReader { geo in
-                    TipBoxViewFlasher(tips: TipLineDrawing){
-                        disableDrawing()
+                
+                // Tip Box
+                if self.BEO.showTipViewStatic {
+                    GeometryReader { geo in
+                        TipBoxViewStatic(tips: TipLineGestures, subTitle: "General Tips"){
+                            self.BEO.showTipViewStatic = false
+                        }
                     }
+                    .frame(width: 300)
+                    .position(using: gps, at: .topLeft, offsetX: 150, offsetY: 0)
                 }
-                .frame(width: 300)
-                .position(using: gps, at: .topRight, offsetX: 150, offsetY: 0)
-            }
-            
-            // Tip Box
-            if self.BEO.showTipViewStatic {
-                GeometryReader { geo in
-                    TipBoxViewStatic(tips: TipLineGestures, subTitle: "General Tips"){
-                        self.BEO.showTipViewStatic = false
+                
+                // Notify Box
+                if self.showNotification {
+                    GeometryReader { geo in
+                        NotificationView(message: self.$notificationMessage, icon: self.$notificationIcon)
                     }
+                    .zIndex(50.0)
+                    .position(using: gps, at: .topRight, offsetX: 150, offsetY: 0)
                 }
-                .frame(width: 300)
-                .position(using: gps, at: .topLeft, offsetX: 150, offsetY: 0)
+                
             }
+            .zIndex(3.0)
             
-            // Notify Box
-            if self.showNotification {
-                GeometryReader { geo in
-                    NotificationView(message: self.$notificationMessage, icon: self.$notificationIcon)
-                }
-                .zIndex(50.0)
-                .position(using: gps, at: .topRight, offsetX: 150, offsetY: 0)
-            }
-            
-        }
-        .zIndex(3.0)
-        
-        ZStack() {
-            
-            // Board/Canvas Level
             ZStack() {
-                BoardEngine()
-                    .zIndex(2.0)
-                    .environmentObject(self.BEO)
-            }
-            .zIndex(1.0)
-            .frame(width: 20000, height: 20000)
-            .offset(x: self.BEO.canvasOffset.x, y: self.BEO.canvasOffset.y)
-            .scaleEffect(self.BEO.canvasScale)
-            .rotationEffect(Angle(degrees: self.BEO.canvasRotation))
+                
+                // Board/Canvas Level
+                ZStack() {
+                    BoardEngine()
+                        .zIndex(2.0)
+                        .environmentObject(self.BEO)
+                }
+                .zIndex(1.0)
+                .frame(width: 20000, height: 20000)
+                .offset(x: self.BEO.canvasOffset.x, y: self.BEO.canvasOffset.y)
+                .scaleEffect(self.BEO.canvasScale)
+                .rotationEffect(Angle(degrees: self.BEO.canvasRotation))
 
-        }
-        .zIndex(0.0)
-        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-        .blur(radius: self.BEO.isLoading ? 10 : 0)
-        .background(Color.white.opacity(0.001))
-        .gesture(self.BEO.gesturesAreLocked ? nil : dragAngleGestures.simultaneously(with: scaleGestures))
-        .onChange(of: self.BEO.toolBarIsShowing, perform: { value in
-            if self.BEO.toolBarIsShowing {
-                self.BEO.toolSettingsIsShowing = false
             }
-        })
-        .onChange(of: self.BEO.toolSettingsIsShowing, perform: { value in
-            if self.BEO.toolSettingsIsShowing {
-                self.BEO.toolBarIsShowing = false
+            .zIndex(0.0)
+            .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+            .blur(radius: self.BEO.isLoading ? 10 : 0)
+            .background(Color.white.opacity(0.001))
+            .gesture(self.BEO.gesturesAreLocked ? nil : dragAngleGestures.simultaneously(with: scaleGestures))
+            .onChange(of: self.DO.orientation, perform: { value in
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    masterResetTheCanvas()
+                }
+            })
+            .onChange(of: self.BEO.toolBarIsShowing, perform: { value in
+                if self.BEO.toolBarIsShowing {
+                    self.BEO.toolSettingsIsShowing = false
+                }
+            })
+            .onChange(of: self.BEO.toolSettingsIsShowing, perform: { value in
+                if self.BEO.toolSettingsIsShowing {
+                    self.BEO.toolBarIsShowing = false
+                }
+            })
+            .onAppear() {
+                self.BEO.loadUser()
+                menuBarButtonListener()
+                addWindowsToNavManager()
             }
-        })
-//        .sheet(isPresented: self.$showRecordingsSheet, content: {
-//            RecordingListView(isShowing: self.$showRecordingsSheet)
-//                .environmentObject(self.BEO)
-//        })
-//        .alert(self.alertDeleteAllToolsTitle, isPresented: $alertDeleteAllTools) {
-//            Button("Cancel", role: .cancel) {
-//                alertDeleteAllTools = false
-//            }
-//            Button("OK", role: .none) {
-//                alertDeleteAllTools = false
-//                self.BEO.deleteAllTools()
-//            }
-//        } message: {
-//            Text(self.alertDeleteAllToolsMessage)
-//        }
-//        .alert(self.alertRecordAnimationTitle, isPresented: $alertRecordAnimation) {
-//            Button("Cancel", role: .cancel) {
-//                alertRecordAnimation = false
-//            }
-//            Button("OK", role: .none) {
-//                alertRecordAnimation = false
-//                if !self.BEO.isRecording {
-//                    self.BEO.startRecording()
-//                } else {
-//                    self.BEO.stopRecording()
-//                }
-//            }
-//        } message: {
-//            Text(self.alertRecordAnimationMessage)
-//        }
-        .onAppear() {
-            self.BEO.loadUser()
-            menuBarButtonListener()
-            addWindowsToNavManager()
         }
+        
         
     }
     

@@ -9,18 +9,21 @@ import Foundation
 import SwiftUI
 
 
-// 3. Create the Modifier Extension
 extension View {
     func solBackground() -> some View {
         self.modifier(SOLBackgroundModifier())
     }
+    func solBackgroundDark() -> some View {
+        self.modifier(SOLBackgroundDarkModifier())
+    }
+    func solBackgroundPrimaryGradient() -> some View {
+        self.modifier(SOLBackgroundPrimaryModifier())
+    }
 }
 
 
-// 1. Define the ViewModifier
 struct SOLBackgroundModifier: ViewModifier {
     @Environment(\.colorScheme) var colorScheme
-
     func body(content: Content) -> some View {
         content
             .background(
@@ -29,6 +32,24 @@ struct SOLBackgroundModifier: ViewModifier {
                     .shadow(radius: 5)
             )
     }
-
-    
+}
+struct SOLBackgroundDarkModifier: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .background(
+                RoundedRectangle(cornerRadius: 15)
+                    .fill(getBackgroundDarkGradient())
+                    .shadow(radius: 5)
+            )
+    }
+}
+struct SOLBackgroundPrimaryModifier: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .background(
+                RoundedRectangle(cornerRadius: 15)
+                    .fill(getPrimaryGradient())
+                    .shadow(radius: 5)
+            )
+    }
 }

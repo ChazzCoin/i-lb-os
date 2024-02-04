@@ -11,10 +11,12 @@ struct SolIconButton: View {
     var systemName: String
     var onTap: () -> Void
     
-    @State var fontColor: Color = .white
+    @State var fontColor: Color? = nil
     @State var width = 60.0
     @State var height = 60.0
     @State private var sheetIsShowing = false
+    
+    @Environment(\.colorScheme) var colorScheme
     
     init(systemName: String, onTap: @escaping () -> Void) {
         self.systemName = systemName
@@ -23,17 +25,17 @@ struct SolIconButton: View {
     
     init(systemName: String, width: Double, height: Double, onTap: @escaping () -> Void) {
         self.systemName = systemName
+        self.onTap = onTap
         self.width = width
         self.height = height
-        self.onTap = onTap
     }
     
     init(systemName: String, width: Double, height: Double, fontColor: Color, onTap: @escaping () -> Void) {
         self.systemName = systemName
+        self.onTap = onTap
         self.fontColor = fontColor
         self.width = width
         self.height = height
-        self.onTap = onTap
     }
     
     var body: some View {
@@ -41,14 +43,10 @@ struct SolIconButton: View {
             Image(systemName: systemName)
                 .resizable()
                 .frame(width: width/2, height: height/2)
-                .foregroundColor(fontColor)
+                .foregroundColor(fontColor != nil ? fontColor : getForegroundColor(colorScheme))
         }
         .frame(width: width, height: height)
-        .background(
-            RoundedRectangle(cornerRadius: 15)
-                .foregroundColor(Color.primaryBackground)
-                .shadow(radius: 5)
-        )
+        .solBackgroundPrimaryGradient()
         .onTapAnimation {
            onTap()
         }
@@ -64,6 +62,8 @@ struct SolIconConfirmButton: View {
     var isEnabled: Bool = true
     @State private var sheetIsShowing = false
     
+    @Environment(\.colorScheme) var colorScheme
+    
     @State var width = 60.0
     @State var height = 60.0
     
@@ -78,9 +78,9 @@ struct SolIconConfirmButton: View {
         self.systemName = systemName
         self.title = title
         self.message = message
+        self.onTap = onTap
         self.width = width
         self.height = height
-        self.onTap = onTap
     }
     
     var body: some View {
@@ -88,14 +88,10 @@ struct SolIconConfirmButton: View {
             Image(systemName: systemName)
                 .resizable()
                 .frame(width: width/2, height: height/2)
-                .foregroundColor(Color.white)
+                .foregroundColor(getForegroundColor(colorScheme))
         }
         .frame(width: width, height: height)
-        .background(
-            RoundedRectangle(cornerRadius: 15)
-                .foregroundColor(Color.primaryBackground)
-                .shadow(radius: 5)
-        )
+        .solBackgroundPrimaryGradient()
         .solEnabled(isEnabled: isEnabled)
         .onTapAnimation(enabled: isEnabled) {
             if isEnabled {
