@@ -157,6 +157,51 @@ struct CurvedLineDrawingManaged: View {
         .stroke(lifeColor, style: StrokeStyle(lineWidth: lifeWidth.bound(to: 1...400), dash: [lifeLineDash]))
         .opacity(!isDisabledChecker() && !isDeletedChecker() ? 1 : 0.0)
         .overlay(
+            Triangle()
+                .fill(anchorsAreVisible ? Color.AIMYellow : lifeColor)
+                .frame(width: (lifeWidth*2).bound(to: 125...1000), height: (lifeWidth*2).bound(to: 125...1000)) // Increase size for finger tapping
+                .opacity(lifeHeadIsEnabled ? 1 : 0) // Invisible
+                .rotationEffect(Angle(degrees: calculateAngleAtEndPointOfQuadCurve()))
+                .position(x: lifeEndX, y: lifeEndY)
+                .gesture(!anchorsAreVisible ? nil : dragSingleAnchor(isStart: false))
+                .gesture(anchorsAreVisible ? nil : fullCurvedLineDragGesture())
+                .simultaneousGesture(!anchorsAreVisible ? nil : doubleTapForSettingsAndAnchors())
+                .simultaneousGesture(!anchorsAreVisible ? nil : longPressGesture())
+        )
+        .overlay(
+            Circle()
+                .fill(Color.AIMYellow)
+                .frame(width: 300, height: 300) // Adjust size for easier tapping
+                .opacity(anchorsAreVisible ? 1 : 0) // Invisible
+                .position(x: lifeStartX, y: lifeStartY)
+                .gesture(!anchorsAreVisible ? nil : dragSingleAnchor(isStart: true))
+                .gesture(anchorsAreVisible ? nil : fullCurvedLineDragGesture())
+                .simultaneousGesture(!anchorsAreVisible ? nil : doubleTapForSettingsAndAnchors())
+                .simultaneousGesture(!anchorsAreVisible ? nil : longPressGesture())
+        )
+        .overlay(
+            Circle()
+                .fill(Color.AIMYellow)
+                .frame(width: 300, height: 300) // Increase size for finger tapping
+                .opacity(anchorsAreVisible ? 1 : 0) // Invisible
+                .position(x: lifeEndX, y: lifeEndY)
+                .gesture(!anchorsAreVisible ? nil : dragSingleAnchor(isStart: false))
+                .gesture(anchorsAreVisible ? nil : fullCurvedLineDragGesture())
+                .simultaneousGesture(!anchorsAreVisible ? nil : doubleTapForSettingsAndAnchors())
+                .simultaneousGesture(!anchorsAreVisible ? nil : longPressGesture())
+        )
+        .overlay(
+            Circle() // Use a circle for the control point
+                .fill(Color.AIMYellow)
+                .frame(width: 300, height: 300) // Adjust size as needed
+                .opacity(anchorsAreVisible ? 1 : 0)
+                .position(quadBezierPoint(start: CGPoint(x: lifeStartX, y: lifeStartY), end: CGPoint(x: lifeEndX, y: lifeEndY), control: CGPoint(x: lifeCenterX, y: lifeCenterY)))
+                .gesture(!anchorsAreVisible ? nil : dragCurvedCenterAnchor())
+                .gesture(anchorsAreVisible ? nil : fullCurvedLineDragGesture())
+                .simultaneousGesture(!anchorsAreVisible ? nil : doubleTapForSettingsAndAnchors())
+                .simultaneousGesture(!anchorsAreVisible ? nil : longPressGesture())
+        )
+        .overlay(
             MatchedShape(
                 startPoint: CGPoint(x: lifeStartX, y: lifeStartY),
                 endPoint: CGPoint(x: lifeEndX, y: lifeEndY),
@@ -166,52 +211,9 @@ struct CurvedLineDrawingManaged: View {
             .simultaneousGesture(doubleTapForSettingsAndAnchors())
             .simultaneousGesture(longPressGesture())
         )
-        .overlay(
-            Triangle()
-                .fill(anchorsAreVisible ? Color.AIMYellow : lifeColor)
-                .frame(width: (lifeWidth*2).bound(to: 125...1000), height: (lifeWidth*2).bound(to: 125...1000)) // Increase size for finger tapping
-                .opacity(lifeHeadIsEnabled ? 1 : 0) // Invisible
-                .rotationEffect(Angle(degrees: calculateAngleAtEndPointOfQuadCurve()))
-                .position(x: lifeEndX, y: lifeEndY)
-                .gesture(dragSingleAnchor(isStart: false))
-                .simultaneousGesture(fullCurvedLineDragGesture())
-                .simultaneousGesture(doubleTapForSettingsAndAnchors())
-                .simultaneousGesture(longPressGesture())
-        )
-        .overlay(
-            Circle()
-                .fill(Color.AIMYellow)
-                .frame(width: 300, height: 300) // Adjust size for easier tapping
-                .opacity(anchorsAreVisible ? 1 : 0) // Invisible
-                .position(x: lifeStartX, y: lifeStartY)
-                .gesture(dragSingleAnchor(isStart: true))
-                .simultaneousGesture(fullCurvedLineDragGesture())
-                .simultaneousGesture(doubleTapForSettingsAndAnchors())
-                .simultaneousGesture(longPressGesture())
-        )
-        .overlay(
-            Circle()
-                .fill(Color.AIMYellow)
-                .frame(width: 300, height: 300) // Increase size for finger tapping
-                .opacity(anchorsAreVisible && !lifeHeadIsEnabled ? 1 : 0) // Invisible
-                .position(x: lifeEndX, y: lifeEndY)
-                .gesture(dragSingleAnchor(isStart: false))
-                .simultaneousGesture(fullCurvedLineDragGesture())
-                .simultaneousGesture(doubleTapForSettingsAndAnchors())
-                .simultaneousGesture(longPressGesture())
-        )
-        .overlay(
-            Circle() // Use a circle for the control point
-                .fill(Color.AIMYellow)
-                .frame(width: 300, height: 300) // Adjust size as needed
-                .opacity(anchorsAreVisible ? 1 : 0)
-                .position(quadBezierPoint(start: CGPoint(x: lifeStartX, y: lifeStartY), end: CGPoint(x: lifeEndX, y: lifeEndY), control: CGPoint(x: lifeCenterX, y: lifeCenterY)))
-                .gesture(dragCurvedCenterAnchor())
-                .simultaneousGesture(fullCurvedLineDragGesture())
-                .simultaneousGesture(doubleTapForSettingsAndAnchors())
-                .simultaneousGesture(longPressGesture())
-        )
         .gesture(fullCurvedLineDragGesture())
+//        .simultaneousGesture(doubleTapForSettingsAndAnchors())
+//        .simultaneousGesture(longPressGesture())
         .onChange(of: self.BEO.toolBarCurrentViewId, perform: { _ in
             if self.BEO.toolBarCurrentViewId != self.viewId {
                 self.popUpIsVisible = false
