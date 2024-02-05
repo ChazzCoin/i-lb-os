@@ -17,9 +17,40 @@ class BoardEngineObject : ObservableObject {
     @ObservedResults(ActivityPlan.self) var allActivityPlans
     @ObservedResults(ManagedView.self) var allTools
     @ObservedResults(ManagedViewAction.self) var allToolActions
+    var currentToolActionIndex: Int = 0
+    
+    func loadToolAction(viewId:String, actionId:String) {
+        
+        if let action = self.realmInstance.findByField(ManagedViewAction.self, value: actionId) {
+            self.realmInstance.safeFindByField(ManagedView.self, value: viewId) { obj in
+                obj.absorbAction(from: action, saveRealm: self.realmInstance)
+            }
+        }
+    }
+    
+    func resetHistoryIndex() {
+        self.currentToolActionIndex = allToolActions
+            .filter("boardId == %@", self.currentActivityId).count - 1
+    }
+    
+    func undoLastToolAction() {
+        if self.currentToolActionIndex == 0 { resetHistoryIndex() }
+        if self.currentToolActionIndex >= allToolActions
+            .filter("boardId == %@", self.currentActivityId).count {
+            self.currentToolActionIndex = self.currentToolActionIndex - 1
+            return
+        }
+        self.currentToolActionIndex = self.currentToolActionIndex - 1
+        let lastAction = allToolActions
+            .filter("boardId == %@", self.currentActivityId)
+            .sorted(byKeyPath: "dateCreated", ascending: false)[self.currentToolActionIndex]
+        self.realmInstance.safeFindByField(ManagedView.self, value: lastAction.viewId) { obj in
+            obj.absorbAction(from: lastAction, saveRealm: self.realmInstance)
+        }
+    }
     
     let realmInstance = realm()
-    @State var boards = Sports()
+    let boards = Sports()
     @Published var boardRefreshFlag = true
     
     @Published var globalWindowsIndex = 3.0
@@ -112,6 +143,7 @@ class BoardEngineObject : ObservableObject {
             FirebaseRoomService.leaveRoom(roomId: self.currentActivityId)
             self.currentActivityId = activityId
             FirebaseRoomService.enterRoom(roomId: activityId)
+            self.currentToolActionIndex = 0
         }
     }
     
@@ -209,14 +241,8 @@ class BoardEngineObject : ObservableObject {
         }
     }
   
-    func setBoardBgView(boardName: String) {
-        boardBgName = boardName
-    }
-
-    func boardBgView() -> AnyView {
-        AnyView(SoccerFieldFullView(isMini: false))
-    }
-    
+    func setBoardBgView(boardName: String) { boardBgName = boardName }
+    func boardBgView() -> AnyView { AnyView(SoccerFieldFullView(isMini: false)) }
     func foregroundColor() -> Color { return Color.primaryBackground }
     func backgroundColor() -> Color { return Color.secondaryBackground }
     
@@ -456,6 +482,13 @@ struct CustomDropDelegate: DropDelegate {
                     r.create(ManagedView.self, value: newTool, update: .all)
                 }
                 
+                let toolHistory = ManagedViewAction()
+                toolHistory.absorb(from: newTool)
+                toolHistory.isStart = true
+                BEO.realmInstance.safeWrite { r in
+                    r.create(ManagedViewAction.self, value: toolHistory, update: .all)
+                }
+                
                 // TODO: Firebase Users ONLY
                 firebaseDatabase(safeFlag: userIsVerifiedToProceed()) { fdb in
                     fdb.child(DatabasePaths.managedViews.rawValue)
@@ -632,10 +665,12 @@ struct BoardEngine: View {
             let newTool = ManagedView()
             newTool.toolType = tool as! String
             newTool.boardId = self.BEO.currentActivityId
+            newTool.x = 0.0
+            newTool.y = 0.0
             self.BEO.realmInstance.safeWrite { r in
                 r.create(ManagedView.self, value: newTool, update: .all)
             }
-            
+            createHistoricalSnapShotAtStart(tool: newTool)
             if userIsVerifiedToProceed() {
                 newTool.fireSave(parentId: self.BEO.currentActivityId, id: newTool.id)
             }
@@ -792,7 +827,6 @@ struct BoardEngine: View {
             .child(DatabasePaths.managedViews.rawValue)
             .child(self.BEO.currentActivityId)
             .observe(.childAdded, with: { snapshot in
-                
                 if let temp = snapshot.value as? [String:Any] {
                     let mv = ManagedView(dictionary: temp)
                     if self.BEO.basicTools.hasView(mv) {
@@ -801,9 +835,9 @@ struct BoardEngine: View {
                     self.BEO.realmInstance.safeWrite { r in
                         r.create(ManagedView.self, value: mv, update: .all)
                     }
+//                    createHistoricalSnapShotAtStart(tool: mv)
                     self.BEO.basicTools.safeAddManagedView(mv)
                 }
-                
             })
         
         observerHandleTwo = reference
@@ -815,6 +849,15 @@ struct BoardEngine: View {
                     self.BEO.basicTools.safeRemoveById(tempId)
                 }
             })
+    }
+    
+    func createHistoricalSnapShotAtStart(tool: ManagedView) {
+        let toolHistory = ManagedViewAction()
+        toolHistory.absorb(from: tool)
+        toolHistory.isStart = true
+        BEO.realmInstance.safeWrite { r in
+            r.create(ManagedViewAction.self, value: toolHistory, update: .all)
+        }
     }
     
     // TODO: MOVE TO CENTRAL BOARD OBJECT

@@ -196,6 +196,8 @@
 		FBC2FC6C2B59C4A400D1AB77 /* DStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBC2FC6B2B59C4A400D1AB77 /* DStack.swift */; };
 		FBC2FC6E2B5A0BB200D1AB77 /* TabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBC2FC6D2B5A0BB200D1AB77 /* TabView.swift */; };
 		FBC2FC702B5BC04300D1AB77 /* Text.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBC2FC6F2B5BC04300D1AB77 /* Text.swift */; };
+		FBD3DD492B70695500D9242C /* ToolHistoryObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD3DD482B70695500D9242C /* ToolHistoryObserver.swift */; };
+		FBD3DD4B2B7072E600D9242C /* HistoryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD3DD4A2B7072E600D9242C /* HistoryListView.swift */; };
 		FBD9AFA82AFF00BF005F8620 /* LudiBoardsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFA72AFF00BF005F8620 /* LudiBoardsApp.swift */; };
 		FBD9AFAA2AFF00BF005F8620 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFA92AFF00BF005F8620 /* ContentView.swift */; };
 		FBD9AFAC2AFF00BF005F8620 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FBD9AFAB2AFF00BF005F8620 /* Assets.xcassets */; };
@@ -393,6 +395,8 @@
 		FBC2FC6B2B59C4A400D1AB77 /* DStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DStack.swift; sourceTree = "<group>"; };
 		FBC2FC6D2B5A0BB200D1AB77 /* TabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabView.swift; sourceTree = "<group>"; };
 		FBC2FC6F2B5BC04300D1AB77 /* Text.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Text.swift; sourceTree = "<group>"; };
+		FBD3DD482B70695500D9242C /* ToolHistoryObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolHistoryObserver.swift; sourceTree = "<group>"; };
+		FBD3DD4A2B7072E600D9242C /* HistoryListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryListView.swift; sourceTree = "<group>"; };
 		FBD9AFA42AFF00BF005F8620 /* Ludi Boards.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Ludi Boards.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FBD9AFA72AFF00BF005F8620 /* LudiBoardsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LudiBoardsApp.swift; sourceTree = "<group>"; };
 		FBD9AFA92AFF00BF005F8620 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -543,6 +547,7 @@
 			children = (
 				FBABDAC82B20469900321A00 /* ManagedViewManager.swift */,
 				FBDF0DC82B224EB500FADE44 /* AllManagedViewsService.swift */,
+				FBD3DD482B70695500D9242C /* ToolHistoryObserver.swift */,
 			);
 			path = ToolObservers;
 			sourceTree = "<group>";
@@ -817,11 +822,11 @@
 		FB982F8F2B19C41100C0DA03 /* LiveTools */ = {
 			isa = PBXGroup;
 			children = (
+				FBBDD01F2B6E12BC0009844B /* ManagedViewFactory.swift */,
 				FB07B66F2B17A5B9009A0962 /* ManagedToolView.swift */,
 				FB5094292B05856D000AEA96 /* LineToolView.swift */,
 				FBAE62AE2B2A3FD200E008D5 /* CurvedLineToolView.swift */,
 				FB18F1072B619B5700D89F8D /* ToolObservers */,
-				FBBDD01F2B6E12BC0009844B /* ManagedViewFactory.swift */,
 			);
 			path = LiveTools;
 			sourceTree = "<group>";
@@ -941,6 +946,7 @@
 				FB5094272B0584CA000AEA96 /* NavStackWindowView.swift */,
 				FB829F182B3D540100FAC6E0 /* ManagedWindowObjects.swift */,
 				FBAE62AC2B295A8100E008D5 /* ManagedPopUpView.swift */,
+				FBD3DD4A2B7072E600D9242C /* HistoryListView.swift */,
 			);
 			path = ManagedViews;
 			sourceTree = "<group>";
@@ -1305,6 +1311,7 @@
 				FBD9AFD22B008CAB005F8620 /* MenuBarProvider.swift in Sources */,
 				FBD9AFD92B01CB91005F8620 /* SoccerToolProvider.swift in Sources */,
 				FB18F1892B6B12FD00D89F8D /* RecordingTimeline.swift in Sources */,
+				FBD3DD492B70695500D9242C /* ToolHistoryObserver.swift in Sources */,
 				FBD9AFA82AFF00BF005F8620 /* LudiBoardsApp.swift in Sources */,
 				FBE2C62A2B1C2B67004C0116 /* SharedPrefs.swift in Sources */,
 				FBEBEF942B49504D00B8BA32 /* LiveConnections.swift in Sources */,
@@ -1405,6 +1412,7 @@
 				FBDE4F5D2B4E2345007FE880 /* LiveRooms.swift in Sources */,
 				FBB450022B052B180096F8EB /* FireLiveData.swift in Sources */,
 				FB18F1672B686EA900D89F8D /* TeamList.swift in Sources */,
+				FBD3DD4B2B7072E600D9242C /* HistoryListView.swift in Sources */,
 				FBBAD3BE2B1FBF58004A4332 /* NavPad.swift in Sources */,
 				FB881A442B48C61400C16198 /* BuddyRequestListView.swift in Sources */,
 				FBA4FB572B15AA2700BF409E /* GlobalPositioning.swift in Sources */,

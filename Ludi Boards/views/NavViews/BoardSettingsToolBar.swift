@@ -57,6 +57,7 @@ struct BoardSettingsBar: View {
 //    @State private var currentPlayerId = "new"
 //    @State private var showNewPlayerRefSheet = false
     
+    @State var showToolHistory = false
     @State var showBoardPicker = false
     @State var showBoardBgColorPicker = false
     @State var showBoardLineColorPicker = false
@@ -71,7 +72,7 @@ struct BoardSettingsBar: View {
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack {
-                
+                Spacer()
                 VStack {
                     Image(systemName: "xmark")
                         .resizable()
@@ -92,8 +93,8 @@ struct BoardSettingsBar: View {
                 VStack {
                     SolIconButton(
                         systemName: self.BEO.gesturesAreLocked ? "lock.fill" : "lock.open",
-                        width: 40.0,
-                        height: 40.0,
+                        width: 30.0,
+                        height: 30.0,
                         fontColor: Color.red,
                         onTap: {
                             withAnimation {
@@ -110,8 +111,8 @@ struct BoardSettingsBar: View {
                         systemName: "trash",
                         title: "Delete All Tools",
                         message: "Are you sure you want to delete all tools?",
-                        width: 40.0,
-                        height: 40.0,
+                        width: 30.0,
+                        height: 30.0,
                         onTap: {
                             self.BEO.deleteAllTools()
                         }
@@ -128,12 +129,13 @@ struct BoardSettingsBar: View {
                 VStack {
                     SolIconButton(
                         systemName: "play",
-                        width: 40.0,
-                        height: 40.0,
+                        width: 30.0,
+                        height: 30.0,
                         onTap: {
                             self.showRecordingsSheet = true
                         }
                     )
+                    MenuBarText("Recordings", color: getFontColor(colorScheme))
                     
                     Rectangle()
                         .fill(getForegroundColor(colorScheme))
@@ -143,12 +145,59 @@ struct BoardSettingsBar: View {
                         systemName: "video",
                         title: "Record Animation",
                         message: "Enter recording mode?",
-                        width: 40.0,
-                        height: 40.0,
+                        width: 30.0,
+                        height: 30.0,
                         onTap: {
                             self.alertRecordAnimation = true
                         }
                     )
+                    MenuBarText("Record", color: getFontColor(colorScheme))
+                }
+                
+                Spacer().frame(width: 12)
+                Rectangle()
+                    .fill(getForegroundColor(colorScheme))
+                    .frame(width: 1, height: 50)
+                    .padding()
+                Spacer().frame(width: 12)
+                
+                VStack {
+                    
+                    SolIconButton(
+                        systemName: "arrow.uturn.left",
+                        width: 15.0,
+                        height: 15.0,
+                        onTap: {
+                            DispatchQueue.main.async {
+                                self.BEO.undoLastToolAction()
+                            }
+                        }
+                    )
+                    MenuBarText("Undo", color: getFontColor(colorScheme))
+                    
+                    Rectangle()
+                        .fill(getForegroundColor(colorScheme))
+                        .frame(width: 50, height: 1)
+                    
+                    
+                    SolIconButton(
+                        systemName: "archivebox",
+                        width: 15.0,
+                        height: 15.0,
+                        onTap: {
+                            DispatchQueue.main.async {
+                                self.showToolHistory = !self.showToolHistory
+                            }
+                        }
+                    )
+                    MenuBarText("History", color: getFontColor(colorScheme))
+                }
+                
+                if self.showToolHistory {
+                    ToolHistoryList()
+                        .frame(width: 200)
+                        .padding(.bottom, UIScreen.main.bounds.height/2)
+                        .environmentObject(self.BEO)
                 }
                 
                 Spacer().frame(width: 12)
@@ -161,13 +210,13 @@ struct BoardSettingsBar: View {
                 VStack {
                     SolIconButton(
                         systemName: "photo",
-                        width: 40.0,
-                        height: 40.0,
+                        width: 15.0,
+                        height: 15.0,
                         onTap: {
                             self.showBoardPicker = !self.showBoardPicker
                         }
                     )
-                    BodyText("Boards", color: getFontColor(colorScheme))
+                    MenuBarText("Boards", color: getFontColor(colorScheme))
                 }
                 
                 if self.showBoardPicker {
@@ -179,6 +228,8 @@ struct BoardSettingsBar: View {
                     .frame(width: 400)
                     .padding(.bottom, UIScreen.main.bounds.height/2)
                 }
+                
+                
                 
                 Spacer().frame(width: 12)
                 Rectangle()
@@ -194,7 +245,7 @@ struct BoardSettingsBar: View {
                             .resizable()
                             .frame(width: 25, height: 25)
                             .foregroundColor(getForegroundColor(colorScheme))
-                        BodyText("\(fieldRotation)", color: getFontColor(colorScheme))
+                        MenuBarText("\(fieldRotation)", color: getFontColor(colorScheme))
                     }
                     
                     HStack {
@@ -244,8 +295,8 @@ struct BoardSettingsBar: View {
                             self.showBoardBgColorPicker = !self.showBoardBgColorPicker
                         }
                     )
-                    BodyText("Background", color: getFontColor(colorScheme))
-                    BodyText("Color", color: getFontColor(colorScheme))
+                    MenuBarText("Background", color: getFontColor(colorScheme))
+                    MenuBarText("Color", color: getFontColor(colorScheme))
                 }
                 
                 if self.showBoardBgColorPicker {
@@ -276,7 +327,7 @@ struct BoardSettingsBar: View {
                             .resizable()
                             .frame(width: 25, height: 25)
                             .foregroundColor(getForegroundColor(colorScheme))
-                        BodyText("\(lineStroke)", color: getFontColor(colorScheme))
+                        MenuBarText("\(lineStroke)", color: getFontColor(colorScheme))
                     }
                     
                     HStack {
@@ -327,7 +378,7 @@ struct BoardSettingsBar: View {
                             self.showBoardLineColorPicker = !self.showBoardLineColorPicker
                         }
                     )
-                    BodyText("Line Color", color: getFontColor(colorScheme))
+                    MenuBarText("Line Color", color: getFontColor(colorScheme))
                 }
                 
                 if self.showBoardLineColorPicker {

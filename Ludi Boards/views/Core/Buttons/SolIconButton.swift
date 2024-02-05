@@ -12,8 +12,8 @@ struct SolIconButton: View {
     var onTap: () -> Void
     
     @State var fontColor: Color? = nil
-    @State var width = 60.0
-    @State var height = 60.0
+    @State var width = 40.0
+    @State var height = 40.0
     @State private var sheetIsShowing = false
     
     @Environment(\.colorScheme) var colorScheme
@@ -64,8 +64,8 @@ struct SolIconConfirmButton: View {
     
     @Environment(\.colorScheme) var colorScheme
     
-    @State var width = 60.0
-    @State var height = 60.0
+    @State var width = 40.0
+    @State var height = 40.0
     
     init(systemName: String, title: String, message: String, onTap: @escaping () -> Void) {
         self.systemName = systemName

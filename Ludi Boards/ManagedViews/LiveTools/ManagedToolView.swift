@@ -12,6 +12,19 @@ import RealmSwift
 import Combine
 
 
+struct ManagedViewBoardToolIcon: View {
+    let toolType: String
+    
+    @State private var color: Color = .black
+    @State private var rotation = 0.0
+
+    var body: some View {
+        Image(toolType)
+            .resizable()
+    }
+}
+
+
 struct ManagedViewBoardTool: View {
     let viewId: String
     let activityId: String
@@ -78,7 +91,7 @@ struct enableManagedViewTool : ViewModifier {
         GeometryReader { geo in
             content
         }
-        .zIndex(5.0)
+        .zIndex(self.isDisabled || self.lifeIsLocked ? 3.0 : 5.0)
         .frame(width: self.lifeWidth * 2, height: self.lifeHeight * 2)
         .rotationEffect(.degrees(self.lifeRotation))
         .border(self.popUpIsVisible ? self.lifeBorderColor : Color.clear, width: 10) // Border modifier
@@ -110,13 +123,13 @@ struct enableManagedViewTool : ViewModifier {
     func gestureDragBasicTool() -> some Gesture {
         DragGesture()
             .updating($dragOffset, body: { (value, state, transaction) in
+                DispatchQueue.main.async { self.BEO.ignoreUpdates = true }
                 if self.lifeIsLocked { return }
-                self.BEO.ignoreUpdates = true
                 state = value.translation
             })
             .onChanged { drag in
+                DispatchQueue.main.async { self.BEO.ignoreUpdates = true }
                 if self.lifeIsLocked { return }
-                self.BEO.ignoreUpdates = true
                 self.isDragging = true
                 let translation = drag.translation
                 self.updateRealmPos(x: self.position.x + translation.width,
@@ -124,12 +137,14 @@ struct enableManagedViewTool : ViewModifier {
                 self.sendXY(width: translation.width, height: translation.height)
             }
             .onEnded { drag in
+                DispatchQueue.main.async { self.BEO.ignoreUpdates = false }
                 if self.lifeIsLocked { return }
-                self.BEO.ignoreUpdates = false
                 self.isDragging = false
                 let translation = drag.translation
-                self.position = CGPoint(x: self.position.x + translation.width,
-                                                  y: self.position.y + translation.height)
+                self.position = CGPoint(
+                    x: self.position.x + translation.width,
+                    y: self.position.y + translation.height
+                )
                 self.updateRealm()
             }.simultaneously(with: TapGesture(count: 2)
                 .onEnded { _ in
@@ -290,12 +305,43 @@ struct enableManagedViewTool : ViewModifier {
                             mv.colorAlpha = self.lifeColorAlpha
                             mv.isLocked = self.lifeIsLocked
                             mv.lastUserId = self.currentUserId
-                            // TODO: Firebase Users ONLY
                             self.MVS.updateFirebase(mv: mv)
+                            // save historical copy
+//                            self.saveSnapshotToHistoryInRealm()
                         }
                     }
                 } catch {
-                    // Handle error
+                    print("Realm error: \(error)")
+                }
+            }
+        }
+    }
+    
+    func saveSnapshotToHistoryInRealm() {
+        DispatchQueue.global(qos: .background).async {
+            autoreleasepool {
+                do {
+                    let history = ManagedViewAction()
+                    history.viewId = self.viewId
+                    history.boardId = self.activityId
+                    history.x = self.position.x
+                    history.y = self.position.y
+                    history.rotation = self.lifeRotation
+                    history.toolType = self.lifeToolType
+                    history.width = Int(self.lifeWidth)
+                    history.height = Int(self.lifeHeight)
+                    history.colorRed = self.lifeColorRed
+                    history.colorGreen = self.lifeColorGreen
+                    history.colorBlue = self.lifeColorBlue
+                    history.colorAlpha = self.lifeColorAlpha
+                    history.isLocked = self.lifeIsLocked
+                    history.lastUserId = self.currentUserId
+                    let realm = try Realm()
+                    realm.safeWrite { r in
+                        r.create(ManagedViewAction.self, value: history, update: .all)
+                    }
+                    
+                } catch {
                     print("Realm error: \(error)")
                 }
             }
@@ -326,15 +372,12 @@ struct enableManagedViewTool : ViewModifier {
     // Animations
     func animateToNextCoordinate() {
         guard !coordinateStack.isEmpty else { return }
-        
         if self.isDragging {
             coordinateStack.removeAll()
             return
         }
-        
         let nextCoordinate = coordinateStack.removeFirst()
         withAnimation { self.position = nextCoordinate }
-
         // Schedule the next animation after a delay
         DispatchQueue.main.asyncAfter(deadline: .now()) {
             if !self.coordinateStack.isEmpty {
@@ -342,7 +385,5 @@ struct enableManagedViewTool : ViewModifier {
             }
         }
     }
-    
-   
 
 }

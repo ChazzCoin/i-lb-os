@@ -95,6 +95,13 @@ func BodyText(_ content: String, color:Color = .white) -> some View {
         .foregroundColor(color)
 }
 
+func MenuBarText(_ content: String, color:Color = .white) -> some View {
+    Text(content)
+        .font(.system(size: 12))
+        .lineSpacing(4)
+        .foregroundColor(color)
+}
+
 func DisclaimerText(_ content: String, color:Color = .white) -> some View {
     Text(content)
         .font(.system(size: 14))

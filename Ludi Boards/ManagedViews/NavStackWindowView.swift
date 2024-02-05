@@ -204,10 +204,8 @@ struct NavStackWindow : View {
             )
             .onChange(of: self.DO.orientation, perform: { value in
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-//                    self.NavStack.fullScreenPosition(gps: self.gps)
                     self.NavStack.resetNavStack(gps: self.gps)
                     self.masterResetTheWindow()
-
                 }
             })
             .onChange(of: self.NavStack.isHidden) { _ in
@@ -216,9 +214,6 @@ struct NavStackWindow : View {
                         hideKeyboard()
                     }
                 }
-            }
-            .onDisappear() {
-    //            fullScreenPosition()
             }
             .onAppear() {
                 self.NavStack.fullScreenPosition(gps: self.gps)

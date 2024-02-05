@@ -23,3 +23,19 @@ func ManagedViewToolFactory(toolType: String, viewId: String, activityId: String
         }
     }
 }
+
+func ToolIconFactory(toolType: String) -> AnyView {
+    switch toolType {
+    case "LINE", "DOTTED-LINE":
+        return AnyView(LineIconView(isBgColor: true))
+    case "CURVED-LINE":
+        return AnyView(CurvedLineIconView())
+    default:
+        if let temp = SoccerToolProvider.parseByTitle(title: toolType)?.tool.image {
+            return AnyView(ManagedViewBoardToolIcon(toolType: temp))
+        } else {
+            // Return a default view or an error view
+            return AnyView(Text("Unsupported tool type"))
+        }
+    }
+}

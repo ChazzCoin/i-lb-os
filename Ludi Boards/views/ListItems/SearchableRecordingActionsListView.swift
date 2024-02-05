@@ -127,3 +127,21 @@ struct TimelineItemView: View {
         .cornerRadius(8)
     }
 }
+struct HistoryItemView: View {
+    let action: ManagedViewAction
+    
+    var body: some View {
+        VStack {
+            Spacer()
+            ToolIconFactory(toolType: action.toolType)
+            Text("Action")
+                .font(.subheadline)
+                .padding(.top, 5)
+            Spacer()
+        }
+        .frame(width: 50, height: 75)
+        .background(Color.blue)
+        .foregroundColor(.white)
+        .cornerRadius(8)
+    }
+}
