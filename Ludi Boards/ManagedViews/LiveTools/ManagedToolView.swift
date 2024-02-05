@@ -307,7 +307,7 @@ struct enableManagedViewTool : ViewModifier {
                             mv.lastUserId = self.currentUserId
                             self.MVS.updateFirebase(mv: mv)
                             // save historical copy
-//                            self.saveSnapshotToHistoryInRealm()
+                            self.saveSnapshotToHistoryInRealm()
                         }
                     }
                 } catch {

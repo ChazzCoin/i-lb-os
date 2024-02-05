@@ -32,9 +32,9 @@ extension View {
         modifier(DoubleTapExplodeModifier(scale: scale, duration: duration, completion: completion))
     }
     
-//    func doubleTapExplode(scale: CGFloat = 2.0, duration: Double = 0.5, completion: @escaping () -> Void = {}) -> some View {
-//       self.modifier(DoubleTapExplodeAnimationModifier(scale: scale, duration: duration, completion: completion))
-//   }
+    func onLongPress(minimumDuration: Double = 0.5, perform action: @escaping () -> Void) -> some View {
+        modifier(LongPressModifier(minimumDuration: minimumDuration, onLongPress: action))
+    }
     
     // Method to set the position of the view based on a specified ScreenArea
     func position(using gps: GlobalPositioningSystem, at area: ScreenArea, offsetX: CGFloat = 0, offsetY: CGFloat = 0) -> some View {
@@ -175,6 +175,24 @@ struct DoubleTapExplodeModifier: ViewModifier {
                     completion()
                 }
             }
+    }
+}
+
+// 1. Define the LongPressModifier
+struct LongPressModifier: ViewModifier {
+    var minimumDuration: Double
+    var onLongPress: () -> Void
+
+    func body(content: Content) -> some View {
+        content
+            // 2. Add the gesture to the modifier
+            .onLongPressGesture(minimumDuration: minimumDuration, pressing: { isPressing in
+                if isPressing {
+                    // Handle the gesture start (optional)
+                } else {
+                    // Handle the gesture end (optional)
+                }
+            }, perform: onLongPress)
     }
 }
 

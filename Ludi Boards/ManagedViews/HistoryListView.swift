@@ -17,6 +17,11 @@ struct ToolHistoryList: View {
     @State var screenWidth = UIScreen.main.bounds.width
     @Environment(\.colorScheme) var colorScheme
     
+    @State var showLoadAlert = false
+    @State var showDeleteAlert = false
+    @State var currentActionId = ""
+    @State var currentViewId = ""
+    
     
     @ObservedResults(ManagedViewAction.self) var allToolActions
     var allToolActionsInCurrentActivity: Results<ManagedViewAction> {
@@ -37,6 +42,15 @@ struct ToolHistoryList: View {
         }
     }
     
+    func deleteToolAction(actionId:String) {
+        if let action = self.BEO.realmInstance.findByField(ManagedViewAction.self, value: actionId) {
+            self.BEO.realmInstance.safeWrite { r in
+                if action.isInvalidated { return }
+                r.delete(action)
+            }
+        }
+    }
+    
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack(alignment: .leading) {
@@ -45,7 +59,13 @@ struct ToolHistoryList: View {
                         
                         HistoryItemView(action: key)
                             .onTapAnimation {
-                                self.loadToolAction(viewId: key.viewId, actionId: key.id)
+                                self.currentActionId = key.id
+                                self.currentViewId = key.viewId
+                                self.showLoadAlert = true
+                            }
+                            .onLongPress {
+                                self.currentActionId = key.id
+                                self.showDeleteAlert = true
                             }
                         
                         BodyText(TimeProvider.convertTimestampToReadableDate(timestamp: key.dateCreated) ?? key.dateCreated)
@@ -57,11 +77,13 @@ struct ToolHistoryList: View {
             }
         }
         .frame(height: screenHeight * 0.75, alignment: .leading)
-        .background(
-            RoundedRectangle(cornerRadius: 15)
-                .foregroundColor(getBackgroundColor(colorScheme))
-                .shadow(radius: 5)
-        )
+        .solBackground()
+        .alertConfirm(isPresented: $showLoadAlert, title: "Load Action", message: "Do you want to load this tool action?", action: {
+            self.loadToolAction(viewId: self.currentViewId, actionId: self.currentActionId)
+        })
+        .alertDelete(isPresented: $showDeleteAlert, deleteAction: {
+            self.deleteToolAction(actionId: self.currentActionId)
+        })
         
     }
     

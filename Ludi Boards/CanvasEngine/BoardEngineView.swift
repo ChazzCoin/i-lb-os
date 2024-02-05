@@ -17,35 +17,39 @@ class BoardEngineObject : ObservableObject {
     @ObservedResults(ActivityPlan.self) var allActivityPlans
     @ObservedResults(ManagedView.self) var allTools
     @ObservedResults(ManagedViewAction.self) var allToolActions
-    var currentToolActionIndex: Int = 0
+    var currentToolActionIndex: Int?
+    var sortedFilteredActions: Results<ManagedViewAction>?
+
+    func setupToolActions() {
+        sortedFilteredActions = allToolActions
+            .filter("boardId == %@", self.currentActivityId)
+            .sorted(byKeyPath: "dateCreated", ascending: false)
+        resetHistoryIndex()
+    }
+
+    func resetHistoryIndex() {
+        guard let actions = sortedFilteredActions else { return }
+        self.currentToolActionIndex = actions.count > 0 ? actions.count - 1 : nil
+    }
+
+    func undoLastToolAction() {
+        guard let index = currentToolActionIndex, let actions = sortedFilteredActions, index >= 0 else {
+            resetHistoryIndex()
+            return
+        }
+        let lastAction = actions[index]
+        self.realmInstance.safeFindByField(ManagedView.self, value: lastAction.viewId) { obj in
+            obj.absorbAction(from: lastAction, saveRealm: self.realmInstance)
+        }
+        self.currentToolActionIndex = index > 0 ? index - 1 : nil
+    }
+    
     
     func loadToolAction(viewId:String, actionId:String) {
-        
         if let action = self.realmInstance.findByField(ManagedViewAction.self, value: actionId) {
             self.realmInstance.safeFindByField(ManagedView.self, value: viewId) { obj in
                 obj.absorbAction(from: action, saveRealm: self.realmInstance)
             }
-        }
-    }
-    
-    func resetHistoryIndex() {
-        self.currentToolActionIndex = allToolActions
-            .filter("boardId == %@", self.currentActivityId).count - 1
-    }
-    
-    func undoLastToolAction() {
-        if self.currentToolActionIndex == 0 { resetHistoryIndex() }
-        if self.currentToolActionIndex >= allToolActions
-            .filter("boardId == %@", self.currentActivityId).count {
-            self.currentToolActionIndex = self.currentToolActionIndex - 1
-            return
-        }
-        self.currentToolActionIndex = self.currentToolActionIndex - 1
-        let lastAction = allToolActions
-            .filter("boardId == %@", self.currentActivityId)
-            .sorted(byKeyPath: "dateCreated", ascending: false)[self.currentToolActionIndex]
-        self.realmInstance.safeFindByField(ManagedView.self, value: lastAction.viewId) { obj in
-            obj.absorbAction(from: lastAction, saveRealm: self.realmInstance)
         }
     }
     
@@ -143,7 +147,7 @@ class BoardEngineObject : ObservableObject {
             FirebaseRoomService.leaveRoom(roomId: self.currentActivityId)
             self.currentActivityId = activityId
             FirebaseRoomService.enterRoom(roomId: activityId)
-            self.currentToolActionIndex = 0
+            self.setupToolActions()
         }
     }
     
@@ -995,7 +999,7 @@ struct BoardEngine: View {
         self.BEO.realmInstance.safeWrite { r in
             let line = ManagedView()
             line.boardId = self.BEO.currentActivityId
-            line.lastUserId = getFirebaseUserId() ?? CURRENT_USER_ID
+            line.lastUserId = getFirebaseUserIdOrCurrentLocalId()
             line.startX = Double(start.x)
             line.startY = Double(start.y)
             line.endX = Double(end.x)
@@ -1009,6 +1013,10 @@ struct BoardEngine: View {
             line.dateUpdated = Int(Date().timeIntervalSince1970)
             r.create(ManagedView.self, value: line, update: .all)
             line.fireSave(id: line.id)
+            // History
+            let history = ManagedViewAction()
+            history.absorb(from: line)
+            r.create(ManagedViewAction.self, value: history, update: .all)
         }
     }
 }

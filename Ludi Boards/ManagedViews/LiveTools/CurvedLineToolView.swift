@@ -48,6 +48,8 @@ struct CurvedLineDrawingManaged: View {
     @State private var lifeIsLocked = false
     @State private var lifeDateUpdated = Int(Date().timeIntervalSince1970)
     
+    @State var lifeToolType = "CURVED-LINE"
+    
     @State private var dragOffset: CGSize = .zero
     @GestureState private var dragOffseter: CGSize = .zero
     @State private var lifeCenterX: CGFloat = 0.0
@@ -275,6 +277,7 @@ struct CurvedLineDrawingManaged: View {
         
         updateRealmPos(start: CGPoint(x: lifeStartX, y: lifeStartY),
                     end: CGPoint(x: lifeEndX, y: lifeEndY))
+        saveSnapshotToHistoryInRealm()
     }
     
     
@@ -347,8 +350,10 @@ struct CurvedLineDrawingManaged: View {
                 if self.lifeIsLocked || !anchorsAreVisible {return}
                 self.isDragging = false
                 self.BEO.ignoreUpdates = false
+//                updateRealm()
                 updateRealmPos(start: CGPoint(x: lifeStartX, y: lifeStartY),
                             end: CGPoint(x: lifeEndX, y: lifeEndY))
+                saveSnapshotToHistoryInRealm()
             }
     }
     
@@ -506,6 +511,47 @@ struct CurvedLineDrawingManaged: View {
             mv?.lastUserId = getFirebaseUserIdOrCurrentLocalId()
             // TODO: Firebase Users ONLY
             MVS.updateFirebase(mv: mv)
+            self.saveSnapshotToHistoryInRealm()
+        }
+    }
+    
+    func saveSnapshotToHistoryInRealm() {
+        DispatchQueue.global(qos: .background).async {
+            autoreleasepool {
+                do {
+                    let history = ManagedViewAction()
+                    history.viewId = self.viewId
+                    history.boardId = self.activityId
+                    history.x = self.position.x
+                    history.y = self.position.y
+                    history.startX = Double(lifeStartX)
+                    history.startY = Double(lifeStartY)
+                    history.centerX = Double(lifeCenterX)
+                    history.centerY = Double(lifeCenterY)
+                    history.endX = Double(lifeEndX)
+                    history.endY = Double(lifeEndY)
+                    history.rotation = self.lifeRotation.degrees
+                    history.toolType = self.lifeToolType
+                    history.width = Int(self.lifeWidth)
+                    history.height = Int(self.lifeWidth)
+                    history.lineDash = Int(lifeLineDash)
+                    if let lc = lifeColor.toRGBA() {
+                        history.colorRed = lc.red
+                        history.colorGreen = lc.green
+                        history.colorBlue = lc.blue
+                        history.colorAlpha = lc.alpha
+                    }
+                    history.isLocked = self.lifeIsLocked
+                    history.lastUserId = "history"
+                    let realm = try Realm()
+                    realm.safeWrite { r in
+                        r.create(ManagedViewAction.self, value: history, update: .all)
+                    }
+                    
+                } catch {
+                    print("Realm error: \(error)")
+                }
+            }
         }
     }
     

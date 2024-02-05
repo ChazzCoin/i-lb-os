@@ -141,10 +141,8 @@ struct BoardSettingsBar: View {
                         .fill(getForegroundColor(colorScheme))
                         .frame(width: 50, height: 1)
                     
-                    SolIconConfirmButton(
+                    SolIconButton(
                         systemName: "video",
-                        title: "Record Animation",
-                        message: "Enter recording mode?",
                         width: 30.0,
                         height: 30.0,
                         onTap: {

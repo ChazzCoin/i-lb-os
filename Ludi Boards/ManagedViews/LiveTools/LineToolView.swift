@@ -26,6 +26,7 @@ struct LineDrawingManaged: View {
     @State private var lifeIsLocked = false
     @State private var lifeDateUpdated = Int(Date().timeIntervalSince1970)
     
+    @State private var lifeToolType = "LINE"
     @State private var lifeHeadIsEnabled = true
     @State private var lifeCenterPoint = CGPoint.zero
     @State private var lifeStartX: CGFloat = 0.0
@@ -194,9 +195,9 @@ struct LineDrawingManaged: View {
                 state = value.translation
             })
             .onChanged { value in
+                DispatchQueue.main.async { self.BEO.ignoreUpdates = true }
                 if self.lifeIsLocked {return}
                 self.isDragging = true
-                self.BEO.ignoreUpdates = true
                 if self.originalLifeStart == .zero {
                     self.originalLifeStart = CGPoint(x: lifeStartX, y: lifeStartY)
                     self.originalLifeEnd = CGPoint(x: lifeEndX, y: lifeEndY)
@@ -217,6 +218,7 @@ struct LineDrawingManaged: View {
                             end: CGPoint(x: lifeEndX, y: lifeEndY))
             }
             .onEnded { value in
+                DispatchQueue.main.async { self.BEO.ignoreUpdates = false }
                 if self.lifeIsLocked {return}
                 let translation = value.translation
                 lifeStartX = self.originalLifeStart.x + translation.width
@@ -224,10 +226,10 @@ struct LineDrawingManaged: View {
                 lifeEndX = self.originalLifeEnd.x + translation.width
                 lifeEndY = self.originalLifeEnd.y + translation.height
                 loadCenterPoint()
-                self.isDragging = false
-                self.BEO.ignoreUpdates = false
-                updateRealmPos(start: CGPoint(x: lifeStartX, y: lifeStartY),
-                            end: CGPoint(x: lifeEndX, y: lifeEndY))
+                self.isDragging = false              
+                updateRealm()
+//                updateRealmPos(start: CGPoint(x: lifeStartX, y: lifeStartY),
+//                            end: CGPoint(x: lifeEndX, y: lifeEndY))
                 self.originalLifeStart = .zero
                 self.originalLifeEnd = .zero
             }
@@ -256,8 +258,9 @@ struct LineDrawingManaged: View {
                 if self.lifeIsLocked || !anchorsAreVisible { return }
                 self.isDragging = false
                 self.BEO.ignoreUpdates = false
-                updateRealmPos(start: CGPoint(x: lifeStartX, y: lifeStartY),
-                            end: CGPoint(x: lifeEndX, y: lifeEndY))
+                updateRealm()
+//                updateRealmPos(start: CGPoint(x: lifeStartX, y: lifeStartY),
+//                            end: CGPoint(x: lifeEndX, y: lifeEndY))
             }
             
     }
@@ -323,7 +326,7 @@ struct LineDrawingManaged: View {
                 
                 //
                 
-                if temp.lastUserId != (getFirebaseUserId() ?? CURRENT_USER_ID) {
+                if temp.lastUserId != getFirebaseUserIdOrCurrentLocalId() {
                     let startPosition = CGPoint(x: temp.startX, y: temp.startY)
                     let endPosition = CGPoint(x: temp.endX, y: temp.endY)
                     let centerPosition = getCenterOfLine(start: startPosition, end: endPosition)
@@ -420,6 +423,45 @@ struct LineDrawingManaged: View {
             mv?.lastUserId = getFirebaseUserIdOrCurrentLocalId()
             mv?.headIsEnabled = lifeHeadIsEnabled
             MVS.updateFirebase(mv: mv)
+            self.saveSnapshotToHistoryInRealm()
+        }
+    }
+    
+    func saveSnapshotToHistoryInRealm() {
+        DispatchQueue.global(qos: .background).async {
+            autoreleasepool {
+                do {
+                    let history = ManagedViewAction()
+                    history.viewId = self.viewId
+                    history.boardId = self.activityId
+                    history.x = self.position.x
+                    history.y = self.position.y
+                    history.startX = Double(lifeStartX)
+                    history.startY = Double(lifeStartY)
+                    history.endX = Double(lifeEndX)
+                    history.endY = Double(lifeEndY)
+                    history.rotation = self.lifeRotation.degrees
+                    history.toolType = self.lifeToolType
+                    history.width = Int(self.lifeWidth)
+                    history.height = Int(self.lifeWidth)
+                    history.lineDash = Int(lifeLineDash)
+                    if let lc = lifeColor.toRGBA() {
+                        history.colorRed = lc.red
+                        history.colorGreen = lc.green
+                        history.colorBlue = lc.blue
+                        history.colorAlpha = lc.alpha
+                    }
+                    history.isLocked = self.lifeIsLocked
+                    history.lastUserId = "history"
+                    let realm = try Realm()
+                    realm.safeWrite { r in
+                        r.create(ManagedViewAction.self, value: history, update: .all)
+                    }
+                    
+                } catch {
+                    print("Realm error: \(error)")
+                }
+            }
         }
     }
     
