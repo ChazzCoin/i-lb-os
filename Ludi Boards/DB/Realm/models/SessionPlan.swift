@@ -25,6 +25,6 @@ class SessionPlan: Object, ObjectKeyIdentifiable {
     @Persisted var isHost: Bool = false
     @Persisted var isOpen: Bool = false
     @Persisted var isLive: Bool = false
-    
+    @Persisted var isDeleted: Bool = false
 }
 

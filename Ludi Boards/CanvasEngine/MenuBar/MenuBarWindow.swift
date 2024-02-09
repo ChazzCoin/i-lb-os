@@ -10,6 +10,7 @@ import SwiftUI
 
 struct MenuBarStatic: View {
     @Binding var showIcons: Bool
+    @State var gps: GlobalPositioningSystem
     var onClick: () -> Void
     @EnvironmentObject var BEO: BoardEngineObject
     @StateObject private var rcl = RealmObserver<CurrentSolUser>()
@@ -83,7 +84,9 @@ struct MenuBarStatic: View {
                 }
             }
         }
+        .frame(width: self.BEO.guideModeIsEnabled ? 100 : 60, height: showIcons ? (gps.screenSize.height - 100) : 60)
         .background(Color.clear)
+        .position(using: gps, at: .topLeft, offsetX: 50, offsetY: showIcons ? ((gps.screenSize.height - 60) / 2) : 50)
         .onAppear() {
             if userIsVerifiedToProceed() {
                 icons = iconsLoggedIn

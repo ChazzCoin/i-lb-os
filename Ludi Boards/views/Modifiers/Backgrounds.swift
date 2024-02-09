@@ -29,7 +29,7 @@ struct SOLBackgroundModifier: ViewModifier {
             .background(
                 RoundedRectangle(cornerRadius: 15)
                     .fill(getBackgroundGradient(colorScheme))
-                    .shadow(radius: 5)
+//                    .shadow(radius: 5)
             )
     }
 }
@@ -39,7 +39,7 @@ struct SOLBackgroundDarkModifier: ViewModifier {
             .background(
                 RoundedRectangle(cornerRadius: 15)
                     .fill(getBackgroundDarkGradient())
-                    .shadow(radius: 5)
+//                    .shadow(radius: 5)
             )
     }
 }

@@ -155,9 +155,7 @@ struct CanvasEngine: View {
                 }
                 
                 // Menu Bar
-                MenuBarStatic(showIcons: $menuIsOpen){}
-                    .frame(width: 60, height: menuIsOpen ? (gps.screenSize.height - 100) : 60)
-                    .position(using: gps, at: .topLeft, offsetX: 50, offsetY: menuIsOpen ? ((gps.screenSize.height - 60) / 2) : 50)
+                MenuBarStatic(showIcons: $menuIsOpen, gps: gps){}
                     .environmentObject(self.BEO)
                 
                 // Navigation Bar

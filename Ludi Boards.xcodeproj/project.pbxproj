@@ -46,6 +46,9 @@
 		FB18F1852B6AEC2100D89F8D /* SearchableRecordingActionsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB18F1842B6AEC2100D89F8D /* SearchableRecordingActionsListView.swift */; };
 		FB18F1872B6B10CE00D89F8D /* RecordingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB18F1862B6B10CE00D89F8D /* RecordingView.swift */; };
 		FB18F1892B6B12FD00D89F8D /* RecordingTimeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB18F1882B6B12FD00D89F8D /* RecordingTimeline.swift */; };
+		FB2AA1032B74137800BD631C /* SolIconTextButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB2AA1022B74137800BD631C /* SolIconTextButton.swift */; };
+		FB2AA1052B74305E00BD631C /* IconProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB2AA1042B74305E00BD631C /* IconProvider.swift */; };
+		FB2AA1072B74352A00BD631C /* SolToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB2AA1062B74352A00BD631C /* SolToggle.swift */; };
 		FB3E02AF2B0C6B1200D8558C /* SessionPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02AE2B0C6B1200D8558C /* SessionPlan.swift */; };
 		FB3E02B12B0C6B1D00D8558C /* ActivityPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02B02B0C6B1D00D8558C /* ActivityPlan.swift */; };
 		FB3E02B32B0C6B5100D8558C /* SessionPlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02B22B0C6B5100D8558C /* SessionPlanView.swift */; };
@@ -90,6 +93,7 @@
 		FB829F112B36A83400FAC6E0 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FB829F102B36A83400FAC6E0 /* Preview Assets.xcassets */; };
 		FB829F172B3D4DF500FAC6E0 /* DispatchQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB829F162B3D4DF500FAC6E0 /* DispatchQueue.swift */; };
 		FB829F192B3D540100FAC6E0 /* ManagedWindowObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB829F182B3D540100FAC6E0 /* ManagedWindowObjects.swift */; };
+		FB87BE092B734425003B880D /* Michael.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB87BE082B734425003B880D /* Michael.swift */; };
 		FB8819D12B46436300C16198 /* CanvasEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB8819D02B46436300C16198 /* CanvasEngine.swift */; };
 		FB8819D32B4649CC00C16198 /* BoardEngineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB8819D22B4649CC00C16198 /* BoardEngineView.swift */; };
 		FB8819D52B464A9B00C16198 /* GridLines.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB8819D42B464A9B00C16198 /* GridLines.swift */; };
@@ -293,6 +297,9 @@
 		FB18F1842B6AEC2100D89F8D /* SearchableRecordingActionsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchableRecordingActionsListView.swift; sourceTree = "<group>"; };
 		FB18F1862B6B10CE00D89F8D /* RecordingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingView.swift; sourceTree = "<group>"; };
 		FB18F1882B6B12FD00D89F8D /* RecordingTimeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingTimeline.swift; sourceTree = "<group>"; };
+		FB2AA1022B74137800BD631C /* SolIconTextButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolIconTextButton.swift; sourceTree = "<group>"; };
+		FB2AA1042B74305E00BD631C /* IconProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconProvider.swift; sourceTree = "<group>"; };
+		FB2AA1062B74352A00BD631C /* SolToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolToggle.swift; sourceTree = "<group>"; };
 		FB3E02AE2B0C6B1200D8558C /* SessionPlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionPlan.swift; sourceTree = "<group>"; };
 		FB3E02B02B0C6B1D00D8558C /* ActivityPlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityPlan.swift; sourceTree = "<group>"; };
 		FB3E02B22B0C6B5100D8558C /* SessionPlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionPlanView.swift; sourceTree = "<group>"; };
@@ -339,6 +346,7 @@
 		FB829F102B36A83400FAC6E0 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		FB829F162B3D4DF500FAC6E0 /* DispatchQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatchQueue.swift; sourceTree = "<group>"; };
 		FB829F182B3D540100FAC6E0 /* ManagedWindowObjects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedWindowObjects.swift; sourceTree = "<group>"; };
+		FB87BE082B734425003B880D /* Michael.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Michael.swift; sourceTree = "<group>"; };
 		FB8819D02B46436300C16198 /* CanvasEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasEngine.swift; sourceTree = "<group>"; };
 		FB8819D22B4649CC00C16198 /* BoardEngineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardEngineView.swift; sourceTree = "<group>"; };
 		FB8819D42B464A9B00C16198 /* GridLines.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridLines.swift; sourceTree = "<group>"; };
@@ -536,8 +544,8 @@
 			isa = PBXGroup;
 			children = (
 				FBD9AFD12B008CAB005F8620 /* MenuBarProvider.swift */,
-				FB15DD2F2B0745DF00A21290 /* MenuBarIcon.swift */,
 				FB15DD312B07461500A21290 /* MenuBarWindow.swift */,
+				FB15DD2F2B0745DF00A21290 /* MenuBarIcon.swift */,
 			);
 			path = MenuBar;
 			sourceTree = "<group>";
@@ -574,6 +582,7 @@
 				FB426A992B5343C30058CD9D /* Forms */,
 				FB426A982B5343840058CD9D /* Switches */,
 				FB18F16C2B68B10C00D89F8D /* SearchBar.swift */,
+				FB2AA1062B74352A00BD631C /* SolToggle.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -649,6 +658,7 @@
 			children = (
 				FBE2C6272B1C26BF004C0116 /* SolButtons.swift */,
 				FBF1A5F82B5E342B0088150C /* SolIconButton.swift */,
+				FB2AA1022B74137800BD631C /* SolIconTextButton.swift */,
 			);
 			path = Buttons;
 			sourceTree = "<group>";
@@ -900,6 +910,7 @@
 				FBD9AFAB2AFF00BF005F8620 /* Assets.xcassets */,
 				FBD9AFAD2AFF00BF005F8620 /* Preview Content */,
 				FBD9AFB72AFF0253005F8620 /* GridLines.swift */,
+				FB87BE082B734425003B880D /* Michael.swift */,
 			);
 			path = "Ludi Boards";
 			sourceTree = "<group>";
@@ -966,6 +977,7 @@
 				FBE2C6292B1C2B67004C0116 /* SharedPrefs.swift */,
 				FB581BEC2B1F8A6800F5C90F /* KeyboardListener.swift */,
 				FBDE4F5A2B4D1038007FE880 /* InternetProvider.swift */,
+				FB2AA1042B74305E00BD631C /* IconProvider.swift */,
 			);
 			path = Providers;
 			sourceTree = "<group>";
@@ -1271,6 +1283,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FB2AA1072B74352A00BD631C /* SolToggle.swift in Sources */,
 				FB15DD342B074E6E00A21290 /* ChatUI.swift in Sources */,
 				FB10AE052B0DC8E600295F4B /* Tips.swift in Sources */,
 				FBBDD01D2B6CA8A20009844B /* MvSettingsToolBar.swift in Sources */,
@@ -1313,6 +1326,7 @@
 				FB18F1892B6B12FD00D89F8D /* RecordingTimeline.swift in Sources */,
 				FBD3DD492B70695500D9242C /* ToolHistoryObserver.swift in Sources */,
 				FBD9AFA82AFF00BF005F8620 /* LudiBoardsApp.swift in Sources */,
+				FB2AA1032B74137800BD631C /* SolIconTextButton.swift in Sources */,
 				FBE2C62A2B1C2B67004C0116 /* SharedPrefs.swift in Sources */,
 				FBEBEF942B49504D00B8BA32 /* LiveConnections.swift in Sources */,
 				FB15DD302B0745DF00A21290 /* MenuBarIcon.swift in Sources */,
@@ -1369,11 +1383,13 @@
 				FB581BED2B1F8A6800F5C90F /* KeyboardListener.swift in Sources */,
 				FB18F16F2B68B6A500D89F8D /* SolTeamPicker.swift in Sources */,
 				FBF3902E2B2D78CF00C0508A /* TipProvider.swift in Sources */,
+				FB2AA1052B74305E00BD631C /* IconProvider.swift in Sources */,
 				FBAE62AF2B2A3FD200E008D5 /* CurvedLineToolView.swift in Sources */,
 				FBD9AFBA2AFF03D7005F8620 /* CanvasEngine.swift in Sources */,
 				FB58E8762B01F3D200FD9E2E /* FireParser.swift in Sources */,
 				FB829F172B3D4DF500FAC6E0 /* DispatchQueue.swift in Sources */,
 				FB5094262B058215000AEA96 /* LazyRow.swift in Sources */,
+				FB87BE092B734425003B880D /* Michael.swift in Sources */,
 				FB3E02C92B0D2D8D00D8558C /* ExpandingTextEditor.swift in Sources */,
 				FBEBEF982B49507500B8BA32 /* LiveCurrentUser.swift in Sources */,
 				FBBDD0242B6F6D8B0009844B /* CanvasExtensions.swift in Sources */,
@@ -1626,7 +1642,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_ASSET_PATHS = "\"Ludi Boards/Preview Content\"";
 				DEVELOPMENT_TEAM = 248J2GKL56;
 				ENABLE_PREVIEWS = YES;
@@ -1645,7 +1661,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.10;
+				MARKETING_VERSION = 1.11;
 				PRODUCT_BUNDLE_IDENTIFIER = io.ludi.sol;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1662,7 +1678,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_ASSET_PATHS = "\"Ludi Boards/Preview Content\"";
 				DEVELOPMENT_TEAM = 248J2GKL56;
 				ENABLE_PREVIEWS = YES;
@@ -1681,7 +1697,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.10;
+				MARKETING_VERSION = 1.11;
 				PRODUCT_BUNDLE_IDENTIFIER = io.ludi.sol;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

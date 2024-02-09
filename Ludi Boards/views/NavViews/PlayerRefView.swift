@@ -37,7 +37,58 @@ struct PlayerRefView: View {
     var body: some View {
         ScrollView {
             
+//            HStack {
+//                // Edit Button
+//                if isEditMode {
+//                    
+//                    DStack {
+//                        SOLCON(
+//                            icon: SolIcon.save,
+//                            onTap: {
+//                                savePlayer()
+//                                isEditMode.toggle()
+//                                if !isEditMode { isShowing = false }
+//                            }
+//                        ).solEnabled(isEnabled: self.isEditMode)
+//                        
+//                        SOLCON(
+//                            icon: SolIcon.delete,
+//                            onTap: {
+//                                deletePlayer()
+//                                isEditMode.toggle()
+//                                if !isEditMode { isShowing = false }
+//                            }
+//                        ).solEnabled(isEnabled: isEditMode && playerId != "new")
+//                    }
+//                    
+//                } else {
+//                    SolButton(title: "Edit Player", action: {
+//                        isEditMode.toggle()
+//                        if !isEditMode { isShowing = false }
+//                    }, isEnabled: isEditMode)
+//                }
+//            }
+            
             HStack {
+                
+                SOLCON(
+                    icon: SolIcon.save,
+                    onTap: {
+                        savePlayer()
+                        isEditMode.toggle()
+                        if !isEditMode { isShowing = false }
+                    }
+                ).solEnabled(isEnabled: self.isEditMode)
+                
+                SOLCON(
+                    icon: SolIcon.delete,
+                    onTap: {
+                        deletePlayer()
+                        isEditMode.toggle()
+                        if !isEditMode { isShowing = false }
+                    }
+                ).solEnabled(isEnabled: isEditMode && playerId != "new")
+                
                 Text(playerName)
                     .font(.largeTitle)
                     .fontWeight(.bold)
@@ -118,33 +169,7 @@ struct PlayerRefView: View {
             Divider()
                 .padding(.vertical)
 
-            // Edit Button
-            if isEditMode {
-                
-                DStack {
-                    SolButton(title: "Save Player", action: {
-                        savePlayer()
-                        isEditMode.toggle()
-                        if !isEditMode { isShowing = false }
-                    }, isEnabled: isEditMode)
-                    
-                    SolConfirmButton(
-                        title: "Delete Player",
-                        message: "Are you sure you want to delete this player?",
-                        action: {
-                            deletePlayer()
-                            isEditMode.toggle()
-                            if !isEditMode { isShowing = false }
-                        }, isEnabled: isEditMode && playerId != "new")
-                }
-                
-                
-            } else {
-                SolButton(title: "Edit Player", action: {
-                    isEditMode.toggle()
-                    if !isEditMode { isShowing = false }
-                }, isEnabled: isEditMode)
-            }
+            
             
         }
         .padding()

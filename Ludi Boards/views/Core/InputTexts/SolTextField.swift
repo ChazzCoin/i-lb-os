@@ -13,6 +13,7 @@ struct SolTextField: View {
     var onChange: (String) -> Void
     var placeholder: String = ""
     @Binding var isEditable: Bool // Add this line to bind an external state for edit/view mode.
+    @Environment(\.colorScheme) var colorScheme
 
     init(_ placeholder: String, text: Binding<String>, isEditable: Binding<Bool>, onChange: @escaping (String) -> Void = { _ in }) {
         self._text = text
@@ -34,8 +35,8 @@ struct SolTextField: View {
             TextField("", text: $text)
                 .disabled(!isEditable) // Use the isEditable state to enable or disable the text field.
                 .padding(15)
-                .background(isEditable ? Color.secondaryBackground : Color.secondaryBackground.opacity(0.9)) // Change background based on isEditable.
-                .foregroundColor(isEditable ? .white : .white) // Change text color based on isEditable.
+                .background(getForegroundGradient(colorScheme)) // Change background based on isEditable.
+                .foregroundColor(getTextColor(colorScheme)) // Change text color based on isEditable.
                 .cornerRadius(10)
                 .shadow(color: .gray.opacity(isEditable ? 0.4 : 0.1), radius: 5, x: 0, y: 2)
                 .overlay(

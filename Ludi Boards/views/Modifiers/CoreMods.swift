@@ -62,6 +62,47 @@ func getBackgroundColor(_ scheme: ColorScheme) -> Color {
         }
 }
 
+func getTextColor(_ scheme: ColorScheme) -> Color {
+    switch scheme {
+        case .dark:
+            // Use a color suitable for light mode
+            return .black
+        case .light:
+            // Use a color suitable for dark mode
+            return .white
+        @unknown default:
+            // Fallback for future color schemes
+            return Color.black
+    }
+}
+
+func getTextColorOnBackground(_ scheme: ColorScheme) -> Color {
+    switch scheme {
+        case .light:
+            // Use a color suitable for light mode
+            return .black
+        case .dark:
+            // Use a color suitable for dark mode
+            return .white
+        @unknown default:
+            // Fallback for future color schemes
+            return Color.black
+    }
+}
+
+func getForegroundGradient(_ scheme: ColorScheme) -> LinearGradient {
+    switch scheme {
+        case .dark:
+            // Use a color suitable for light mode
+        return getBackgroundLightGradient()
+        case .light:
+            // Use a color suitable for dark mode
+            return getBackgroundDarkGradient()
+        @unknown default:
+            // Fallback for future color schemes
+            return LinearGradient(gradient: Gradient(colors: [Color(hex: "#D7E8FA"), Color(hex: "#EAD1DC")]), startPoint: .topLeading, endPoint: .bottomTrailing)
+        }
+}
 
 func getBackgroundGradient(_ scheme: ColorScheme) -> LinearGradient {
     switch scheme {

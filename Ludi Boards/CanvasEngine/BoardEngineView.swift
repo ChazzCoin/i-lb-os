@@ -55,6 +55,7 @@ class BoardEngineObject : ObservableObject {
     
     let realmInstance = realm()
     let boards = Sports()
+    @Published var guideModeIsEnabled = true
     @Published var boardRefreshFlag = true
     
     @Published var globalWindowsIndex = 3.0

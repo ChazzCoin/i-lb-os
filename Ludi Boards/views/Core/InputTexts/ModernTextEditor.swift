@@ -7,12 +7,14 @@
 
 import Foundation
 import SwiftUI
+import DispatchIntrospection
 
 struct SolTextEditor: View {
     @Binding var text: String
     var placeholder: String
     var title: String
-    @State var color: Color
+    var color: Color
+    @Environment(\.colorScheme) var colorScheme
 
     init(_ placeholder: String, text: Binding<String>, color: Color = .white) {
         self._text = text
@@ -25,16 +27,12 @@ struct SolTextEditor: View {
         
         VStack {
             
-            AlignLeft {
-                BodyText(title, color: self.color)
-            }
-            
             ZStack(alignment: .topLeading) {
                 
                 TextEditor(text: $text)
                     .padding(10)
-                    .background(Color.secondaryBackground)
-                    .foregroundColor(.white)
+                    .foregroundColor(getTextColor(colorScheme))
+                    .background(getForegroundGradient(colorScheme))
                     .cornerRadius(10)
                     .shadow(color: .gray.opacity(0.4), radius: 5, x: 0, y: 2)
                     .animation(.easeInOut, value: text)
@@ -53,8 +51,83 @@ struct SolTextEditor: View {
     }
 }
 
-struct ModernTextEditor_Previews: PreviewProvider {
-    static var previews: some View {
-        SolTextEditor("Enter text here...", text: .constant(""))
+struct CustomTextEditor: View {
+    @Binding var text: String
+    var placeholder: String
+    
+    init(_ placeholder: String, text: Binding<String>) {
+        self._text = text
+        self.placeholder = placeholder
+    }
+    
+    @State private var editorHeight: CGFloat = 40 // Default height
+    private let minHeight: CGFloat = 100
+    private let maxHeight: CGFloat = 150 // Adjust as needed
+    @Environment(\.colorScheme) var colorScheme
+    
+    var body: some View {
+        ScrollView(.vertical) {
+            ZStack(alignment: .topLeading) {
+                if text.isEmpty {
+                    Text(placeholder)
+                        .foregroundColor(.gray) // Placeholder color
+                        .padding(.leading, 12)
+                        .padding(.top, 12)
+                }
+                TextView(text: $text, height: $editorHeight, textColor: getTextColor(colorScheme))
+                    .frame(minHeight: editorHeight)
+                    .background(Color.clear)
+                    .padding(4)
+            }
+            .background(Color.clear)
+            .onAppear {
+                UITextView.appearance().backgroundColor = .clear
+            }
+        }
+        .frame(minHeight: minHeight, maxHeight: maxHeight)
+        .background(getForegroundGradient(colorScheme))
+        .cornerRadius(8)
+        
+    }
+}
+
+struct TextView: UIViewRepresentable {
+    @Binding var text: String
+    @Binding var height: CGFloat
+    var textColor: Color
+    
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
+
+    func makeUIView(context: Context) -> UITextView {
+        let textView = UITextView()
+        textView.delegate = context.coordinator
+        textView.font = UIFont.preferredFont(forTextStyle: .body)
+        textView.isScrollEnabled = true
+        textView.showsVerticalScrollIndicator = false
+        textView.backgroundColor = UIColor.clear // Make the UITextView's background transparent
+        textView.textColor = UIColor(textColor)
+        return textView
+    }
+
+    func updateUIView(_ uiView: UITextView, context: Context) {
+        uiView.text = text
+        DispatchQueue.main.async {
+            self.height = uiView.contentSize.height
+        }
+    }
+
+    class Coordinator: NSObject, UITextViewDelegate {
+        var parent: TextView
+        
+        init(_ textView: TextView) {
+            self.parent = textView
+        }
+        
+        func textViewDidChange(_ textView: UITextView) {
+            self.parent.text = textView.text
+            self.parent.height = textView.contentSize.height
+        }
     }
 }

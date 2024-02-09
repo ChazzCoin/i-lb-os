@@ -76,32 +76,46 @@ struct SessionPlanOverview: View {
                 Section(header: Text("Manage")) {
                     
                     DStack {
-                        SolButton(title: "Create Session", action: {
-                            print("New Session Button")
-                            showNewPlanSheet = true
-                        })
                         
-                        SolButton(title: "Create Team", action: {
-                            print("Create Team Button")
-                            showNewTeamSheet = true
-                        })
+                        SOLCON(
+                            icon: SolIcon.add,
+                            title: "Session",
+                            isConfirmEnabled: false,
+                            onTap: {
+                                print("New Session Button")
+                                showNewPlanSheet = true
+                            }
+                        ).padding()
                         
-                        SolButton(title: "Create Player", action: {
-                            print("Create Player Button")
-                            showNewPlayerRefSheet = true
-                        })
+                        SOLCON(
+                            icon: SolIcon.add,
+                            title: "Team",
+                            isConfirmEnabled: false,
+                            onTap: {
+                                print("Create Team Button")
+                                showNewTeamSheet = true
+                            }
+                        ).padding()
+                        
+                        SOLCON(
+                            icon: SolIcon.add,
+                            title: "Player",
+                            isConfirmEnabled: false,
+                            onTap: {
+                                print("Create Player Button")
+                                showNewPlayerRefSheet = true
+                            }
+                        ).padding()
+                        
                     }
                     
                 }.clearSectionBackground()
-                
-                
                 
 //                Section(header: Text("Recorded Actions")) {
 //                    SearchableRecordingActionsListView()
 //                        .environmentObject(self.BEO)
 //                        .environmentObject(self.NavStack)
 //                }.clearSectionBackground()
-                
                 
                 Section(header: Text("Sessions")) {
                     SearchableSessionListView()

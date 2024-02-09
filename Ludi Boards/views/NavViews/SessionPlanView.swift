@@ -20,6 +20,8 @@ struct SessionPlanView: View {
     @State private var objective = ""
     @State private var isLive = true
     
+    @Environment(\.colorScheme) var colorScheme
+    
     @ObservedResults(ActivityPlan.self) var allActivities
     var activities: Results<ActivityPlan> {
         return self.allActivities.filter("sessionId == %@", self.sessionId)
@@ -66,77 +68,109 @@ struct SessionPlanView: View {
         
         LoadingForm(isLoading: $isLoading, showCompletion: $showCompletion) { runLoading in
             
-            DStack {
-                
-                SolConfirmButton(
-                    title: "Save Session",
-                    message: "Are you sure you want to save this session?",
-                    action: {
-                        print("save button")
-                        runLoading()
-                        if self.sessionId == "new" {
-                            saveNewSessionPlan()
-                        } else {
-                            updateSessionPlan()
-                        }
-                        isShowing = false
-                    })
-                Spacer()
-                if self.sessionId == "new" {
-                    
-                    SolButton(title: "Cancel", action: {
-                        self.isShowing = false
-                    }, isEnabled: self.isShowing)
-                    
-                } else {
-                    
-                    if !self.shareIds.contains(self.sessionId) && sessionId != "SOL-LIVE-DEMO" && sessionId != "SOL"  {
-                        SolConfirmButton(
-                            title: "Delete Session",
-                            message: "Are you sure you want to delete this session?",
-                            action: {
-                                runLoading()
-                                deleteSessionPlan()
-                            }
-                        )
-                    }
-                }
-                
-                Spacer()
-                if self.sessionId != "new" {
-                    SolConfirmButton(
-                        title: "Load Session",
-                        message: "Would you like to load this session onto the board?",
-                        action: {
-                            runLoading()
-                            CodiChannel.SESSION_ON_ID_CHANGE.send(value: SessionChange(sessionId: sessionId, activityId: self.activities.first?.id ?? "nil"))
-                            isCurrentPlan = true
-                        },
-                        isEnabled: !self.isCurrentPlan)
-                }
-            }
+//            DStack {
+//                
+//                SolConfirmButton(
+//                    title: "Save Session",
+//                    message: "Are you sure you want to save this session?",
+//                    action: {
+//                        print("save button")
+//                        runLoading()
+//                        if self.sessionId == "new" {
+//                            saveNewSessionPlan()
+//                        } else {
+//                            updateSessionPlan()
+//                        }
+//                        isShowing = false
+//                    })
+//                Spacer()
+//                if self.sessionId == "new" {
+//                    
+//                    SolButton(title: "Cancel", action: {
+//                        self.isShowing = false
+//                    }, isEnabled: self.isShowing)
+//                    
+//                } else {
+//                    
+//                    if !self.shareIds.contains(self.sessionId) && sessionId != "SOL-LIVE-DEMO" && sessionId != "SOL"  {
+//                        SolConfirmButton(
+//                            title: "Delete Session",
+//                            message: "Are you sure you want to delete this session?",
+//                            action: {
+//                                runLoading()
+//                                deleteSessionPlan()
+//                            }
+//                        )
+//                    }
+//                }
+//                
+//                Spacer()
+//                if self.sessionId != "new" {
+//                    SolConfirmButton(
+//                        title: "Load Session",
+//                        message: "Would you like to load this session onto the board?",
+//                        action: {
+//                            runLoading()
+//                            CodiChannel.SESSION_ON_ID_CHANGE.send(value: SessionChange(sessionId: sessionId, activityId: self.activities.first?.id ?? "nil"))
+//                            isCurrentPlan = true
+//                        },
+//                        isEnabled: !self.isCurrentPlan)
+//                }
+//            }
             
             Section {
                 
                 DStack {
-                    Toggle("Is Live", isOn: $isLive)
-                        .opacity(1.0)
-                        .disabled(!self.isSharable)
-                        .onChange(of: isLive) { newValue in
-                            if let s = self.BEO.realmInstance.findByField(SessionPlan.self, value: self.sessionId) {
-                                self.BEO.realmInstance.safeWrite { r in
-                                    s.isLive = self.isLive
-                                    s.fireSave(id: s.id)
-                                }
+                    
+                    Spacer()
+                    
+                    SOLCON(
+                        icon: SolIcon.save,
+                        onTap: {
+                            print("save button")
+                            runLoading()
+                            if self.sessionId == "new" {
+                                saveNewSessionPlan()
+                            } else {
+                                updateSessionPlan()
+                            }
+                            isShowing = false
+                        }
+                    )
+                    SOLCON(
+                        icon: SolIcon.load,
+                        onTap: {
+                            runLoading()
+                            CodiChannel.SESSION_ON_ID_CHANGE.send(value: SessionChange(sessionId: sessionId, activityId: self.activities.first?.id ?? "nil"))
+                            isCurrentPlan = true
+                        }
+                    ).solEnabled(isEnabled: !self.isCurrentPlan && self.sessionId != "new")
+                    SOLCON(
+                        icon: SolIcon.delete,
+                        onTap: {
+                            runLoading()
+                            deleteSessionPlan()
+                        }
+                    ).solEnabled(isEnabled: self.sessionId != "new")
+                    
+                    Spacer().padding()
+                    
+                    SolToggle(labelText: "Is Live", isOn: $isLive, onToggleChange: { isL in
+                        if let s = self.BEO.realmInstance.findByField(SessionPlan.self, value: self.sessionId) {
+                            self.BEO.realmInstance.safeWrite { _ in
+                                s.isLive = self.isLive
+                                s.fireSave(id: s.id)
                             }
                         }
+                    }).solEnabled(isEnabled: self.isSharable)
                     
-                    SolButton(title: "Share Session", action: {
+                    SolIconTextButton(title: "Share Session", systemName: SolIcon.share.icon, onTap: {
                         self.showShareSheet = true
-                    }, isEnabled: self.isSharable && self.isLive)
+                    }).solEnabled(isEnabled: self.isSharable && self.isLive)
                     
                 }
-            }
+                
+            }.clearSectionBackground()
             
             Section(header: AlignLeft { HeaderText("Session Details") }) {
                 SolTextField("Title", text: $title)
@@ -153,40 +187,15 @@ struct SessionPlanView: View {
                 
             }.clearSectionBackground()
 
-            Section(header: AlignLeft { HeaderText("Activities") }) {
-                
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack {
-                        ForEach(tabItems, id: \.id) { item in
-                            Text("Title: \(item.id)")
-                                .frame(width: 200, height: 50)
-                                .padding()
-                                .background(self.currentTab.id == item.id ? Color.primaryBackground : Color.gray)
-                                .foregroundColor(Color.white)
-                                .cornerRadius(10)
-                                .shadow(radius: 5)
-                                .animation(.easeInOut, value: self.currentTab)
-                                .onTapGesture {
-                                    withAnimation(.spring()) {
-                                        self.currentTab = item
-                                    }
-                                }
-                        }
-                    }
-                }
-                
+            ScrollView(.vertical, showsIndicators: false) {
                 VStack {
-                    ActivityPlanBindingView(inComingAP: self.$currentTab, sessionId: self.$sessionId, isShowing: .constant(true))
-                        .environmentObject(self.BEO)
-                        .environmentObject(self.NavStack)
-                }
-                .padding()
-                .background(Color.AOLGray)
-                .cornerRadius(15)
-                .shadow(color: .gray, radius: 10, x: 0, y: 0)
-                .padding()
-                   
-            }
+                    ForEach(tabItems, id: \.id) { item in
+                        ActivityPlanBindingView(inComingAP: .constant(item), sessionId: .constant(item.sessionId), isShowing: .constant(true))
+                            .environmentObject(self.BEO)
+                            .environmentObject(self.NavStack)
+                    }.clearSectionBackground()
+                }.clearSectionBackground()
+            }.clearSectionBackground()
             
         }.clearSectionBackground()
         .onChange(of: self.BEO.currentSessionId) { _ in
@@ -288,7 +297,7 @@ struct SessionPlanView: View {
     func deleteSessionPlan() {
         if let sess = self.allActivities.realm?.findByField(SessionPlan.self, value: self.sessionId) {
             self.allActivities.realm?.safeWrite { r in
-                r.delete(sess)
+                sess.isDeleted = true
             }
             // TODO: FIREBASE ONLY
             deleteSessionPlanFromFirebase(spId: self.sessionId)

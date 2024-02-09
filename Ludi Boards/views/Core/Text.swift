@@ -98,6 +98,7 @@ func BodyText(_ content: String, color:Color = .white) -> some View {
 func MenuBarText(_ content: String, color:Color = .white) -> some View {
     Text(content)
         .font(.system(size: 12))
+        .bold()
         .lineSpacing(4)
         .foregroundColor(color)
 }

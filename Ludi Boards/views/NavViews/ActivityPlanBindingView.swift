@@ -19,6 +19,7 @@ struct ActivityPlanBindingView: View {
     @EnvironmentObject var BEO: BoardEngineObject
     @EnvironmentObject var NavStack: NavStackWindowObservable
     @Environment(\.presentationMode) var presentationMode
+    @Environment(\.colorScheme) var colorScheme
     @State var isLoading: Bool = false
     @State var realmInstance = realm()
     
@@ -59,249 +60,75 @@ struct ActivityPlanBindingView: View {
     
     var body: some View {
         
-        VStack {
-        
-            DStack {
-                // SAVE BUTTON
-                SolConfirmButton(
-                    title: "Save Activity",
-                    message: "Would you like to save this activity?",
-                    action: {
-                        saveActivityPlan()
-                        isShowing = false
-                    }
-                ).zIndex(2.0)
+        HStack {
             
-                if self.sessionId != "SOL-LIVE-DEMO" && self.sessionId != "SOL" && self.activityId != "new" {
-                    // Delete BUTTON
-                    SolConfirmButton(
-                        title: "Delete Activity",
-                        message: "Would you like to delete this activity?",
-                        action: {
-                            startLoadingProcess()
-                            if let item = realmInstance.findByField(ActivityPlan.self, field: "id", value: self.activityId) {
-                                realmInstance.safeWrite { r in
-                                    item.isDeleted = true
-                                }
-                                // TODO: FIREBASE ONLY
-                                deleteActivityPlanFromFirebase(apId: self.activityId)
-                                self.presentationMode.wrappedValue.dismiss()
-                            }
+            VStack {
+                Image("soccer_one")
+                    .resizable()
+                    .frame(maxWidth: 100, maxHeight: 150)
+                
+                DStack {
+                    SOLCON(
+                        icon: SolIcon.save,
+                        onTap: {
+                        
                         }
-                    ).zIndex(2.0)
-                }
-            
-                if self.activityId != "new" {
-                    SolConfirmButton(
-                        title: "Load Activity onto Board",
-                        message: "Would you like to load this activity?",
-                        action: {
-                            CodiChannel.SESSION_ON_ID_CHANGE.send(value: SessionChange(sessionId: self.sessionId, activityId: self.activityId))
-                            self.isCurrentPlan = true
-                        },
-                        isEnabled: !self.isCurrentPlan
-                    ).zIndex(2.0)
+                    )
+                    SOLCON(
+                        icon: SolIcon.load,
+                        onTap: {
+                        
+                        }
+                    ).solEnabled(isEnabled: !self.isCurrentPlan)
+                    SOLCON(
+                        icon: SolIcon.delete, 
+                        onTap: {
+                        
+                        }
+                    )
                 }
                 
             }
-            .zIndex(1.0)
-            .clearSectionBackground()
+            .padding(.leading)
+         
+            VStack {
             
-            // Details Section
-            Section(header: AlignLeft { HeaderText("Activity Details") }) {
-                
                 DStack {
                     SolTextField("Title", text: $title)
                     SolTextField("Sub Title", text: $subTitle)
                 }
-                
+                .padding(.top)
+                .padding(.leading)
+                .padding(.trailing)
                 DStack {
                     SolTextField("Date", text: $date)
                     SolTextField("Time Period", text: $timePeriod)
                 }
-                
+                .padding(.leading)
+                .padding(.trailing)
                 DStack {
                     SolTextField("Duration", text: $duration)
                     SolTextField("Age Level", text: $ageLevel)
                 }
-                
+                .padding(.leading)
+                .padding(.trailing)
                 DStack {
-                    SolTextEditor("Objective", text: $objectiveDetails)
-                        .padding()
-                        .frame(minHeight: 100)
                     
-                    SolTextEditor("Description", text: $activityDetails)
+                    CustomTextEditor("Objective", text: $objectiveDetails)
                         .padding()
-                        .frame(minHeight: 100)
+                    
+                    CustomTextEditor("Description", text: $activityDetails)
+                        .padding()
+                        
                 }
-                
+                        
             }.clearSectionBackground()
-
-            Section(header: AlignLeft { HeaderText("Board Settings") }) {
-                AlignLeft {
-                    SubHeaderText("Field Type: \(fieldName)")
-                        .padding()
-                }
-                BarListPicker(initialSelected: self.isCurrentPlan ? self.BEO.boardBgName : self.backgroundView, viewBuilder: self.BEO.boards.getAllMinis()) { v in
-                    fieldName = v
-                    if self.isCurrentPlan {
-                        self.BEO.setBoardBgView(boardName: v)
-                    }
-                }
-                .padding()
-                .border(Color.secondaryBackground, width: 1.0)
-                .cornerRadius(8)
-                .shadow(color: .gray, radius: 10, x: 0, y: 0)
-                .padding()
-                
-                DStack {
-                    VStack {
-                        AlignLeft {
-                            SubHeaderText("Background Color: \(colorOpacity)")
-                                .padding()
-                        }
-                        ColorListPicker() { color in
-                            bgColor = color
-                            if self.isCurrentPlan {
-                                self.BEO.setColor(colorIn: color)
-                            }
-                            
-                        }
-                    }
-                    .border(Color.secondaryBackground, width: 1.0)
-                    .cornerRadius(8)
-                    .shadow(color: .gray, radius: 10, x: 0, y: 0)
-                    .padding()
-                    
-                    VStack {
-                        AlignLeft {
-                            SubHeaderText("Background Color Transparency: \(colorOpacity)")
-                                .padding()
-                        }
-                        Slider(
-                            value: $colorOpacity,
-                            in: 0.0...1.0,
-                            step: 0.1,
-                            onEditingChanged: { editing in
-                                if !editing {
-                                    if self.isCurrentPlan {
-                                        self.BEO.boardBgAlpha = colorOpacity
-                                        self.BEO.boardBgColor = self.BEO.getColor()
-                                    }
-                                    
-                                }
-                            }
-                        )
-                        .padding()
-                    }
-                    .border(Color.secondaryBackground, width: 1.0)
-                    .cornerRadius(8)
-                    .shadow(color: .gray, radius: 10, x: 0, y: 0)
-                    .padding()
-                    
-                }
-                
-                DStack {
-                    VStack {
-                        AlignLeft {
-                            SubHeaderText("Line Color: \(lineColor.uiColor.accessibilityName)")
-                                .padding()
-                        }
-                        ColorListPicker() { color in
-                            lineColor = color
-                            if self.isCurrentPlan {
-                                self.BEO.setFieldLineColor(colorIn: color)
-                            }
-                            
-                        }
-                    }
-                    .border(Color.secondaryBackground, width: 1.0)
-                    .cornerRadius(8)
-                    .shadow(color: .gray, radius: 10, x: 0, y: 0)
-                    .padding()
-                    
-                    VStack {
-                        AlignLeft {
-                            SubHeaderText("Rotate Field: \(Int(fieldRotation))")
-                                .padding()
-                        }
-                        Slider(
-                            value: $fieldRotation,
-                            in: 0...360,
-                            step: 45,
-                            onEditingChanged: { editing in
-                                if !editing {
-                                    if self.isCurrentPlan {
-                                        self.BEO.boardFeildRotation = fieldRotation
-                                    }
-                                    
-                                }
-                            }
-                        ).padding()
-                    }
-                    .border(Color.secondaryBackground, width: 1.0)
-                    .cornerRadius(8)
-                    .shadow(color: .gray, radius: 10, x: 0, y: 0)
-                    .padding()
-                    
-                }
-                
-                DStack {
-                    
-                    VStack {
-                        AlignLeft {
-                            SubHeaderText("Line Width: \(Int(lineStroke))")
-                                .padding()
-                        }
-                        Slider(
-                            value: $lineStroke,
-                            in: 1.0...50.0,
-                            step: 1,
-                            onEditingChanged: { editing in
-                                if !editing {
-                                    if self.isCurrentPlan {
-                                        self.BEO.boardFeildLineStroke = lineStroke
-                                    }
-                                }
-                            }
-                        ).padding()
-                    }
-                    .border(Color.secondaryBackground, width: 1.0)
-                    .cornerRadius(8)
-                    .shadow(color: .gray, radius: 10, x: 0, y: 0)
-                    .padding()
-                    
-                    
-                    VStack {
-                        AlignLeft {
-                            SubHeaderText("Line Transparency: \(lineOpacity)")
-                                .padding()
-                        }
-                        Slider(
-                            value: $lineOpacity,
-                            in: 0.0...1.0,
-                            step: 0.1,
-                            onEditingChanged: { editing in
-                                if !editing {
-                                    if self.isCurrentPlan {
-                                        self.BEO.boardFieldLineAlpha = lineOpacity
-                                        self.BEO.boardFieldLineColor = self.BEO.getFieldLineColor()
-                                    }
-                                }
-                            }
-                        ).padding()
-                    }
-                    .border(Color.secondaryBackground, width: 1.0)
-                    .cornerRadius(8)
-                    .shadow(color: .gray, radius: 10, x: 0, y: 0)
-                    .padding()
-                       
-                }
-                
-            }.clearSectionBackground()
-                    
-
+            
         }
+        .background(getBackgroundGradient(colorScheme))
+        .cornerRadius(15)
+        .shadow(color: .gray, radius: 10, x: 0, y: 0)
+        .padding()
         .onChange(of: self.inComingAP) { newPlan in
             DispatchQueue.main.async {
                 self.fetchActivityPlan(activityPlan: newPlan)
@@ -311,7 +138,6 @@ struct ActivityPlanBindingView: View {
             self.fetchActivityPlan(activityPlan: self.inComingAP)
             self.BEO.windowIsOpen = true
         }
-        
 
     }
     
