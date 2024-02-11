@@ -61,52 +61,39 @@ struct ActivityPlanSingleView: View {
     var body: some View {
         
         Form {
-        
+            
             DStack {
-                // SAVE BUTTON
-                SolConfirmButton(
-                    title: "Save Activity",
-                    message: "Would you like to save this activity?",
-                    action: {
+                SOLCON(
+                    icon: SolIcon.save,
+                    onTap: {
                         saveActivityPlan()
                         isShowing = false
                     }
-                ).zIndex(2.0)
-            
-                if self.sessionId != "SOL-LIVE-DEMO" && self.sessionId != "SOL" && self.activityId != "new" {
-                    // Delete BUTTON
-                    SolConfirmButton(
-                        title: "Delete Activity",
-                        message: "Would you like to delete this activity?",
-                        action: {
-                            startLoadingProcess()
-                            if let item = realmInstance.findByField(ActivityPlan.self, field: "id", value: self.activityId) {
-                                realmInstance.safeWrite { r in
-                                    item.isDeleted = true
-                                }
-                                // TODO: FIREBASE ONLY
-                                deleteActivityPlanFromFirebase(apId: self.activityId)
-                                self.presentationMode.wrappedValue.dismiss()
-                            }
-                        }
-                    ).zIndex(2.0)
-                }
-            
-                if self.activityId != "new" {
-                    SolConfirmButton(
-                        title: "Load Activity onto Board",
-                        message: "Would you like to load this activity?",
-                        action: {
-                            CodiChannel.SESSION_ON_ID_CHANGE.send(value: SessionChange(sessionId: self.sessionId, activityId: self.activityId))
-                            self.isCurrentPlan = true
-                        },
-                        isEnabled: !self.isCurrentPlan
-                    ).zIndex(2.0)
-                }
+                )
                 
+                SOLCON(
+                    icon: SolIcon.load,
+                    onTap: {
+                        CodiChannel.SESSION_ON_ID_CHANGE.send(value: SessionChange(sessionId: self.sessionId, activityId: self.activityId))
+                        self.isCurrentPlan = true
+                    }
+                ).solEnabled(isEnabled: !self.isCurrentPlan)
+                
+                SOLCON(
+                    icon: SolIcon.delete,
+                    onTap: {
+                        startLoadingProcess()
+                        if let item = realmInstance.findByField(ActivityPlan.self, field: "id", value: self.activityId) {
+                            realmInstance.safeWrite { r in
+                                item.isDeleted = true
+                            }
+                            // TODO: FIREBASE ONLY
+                            deleteActivityPlanFromFirebase(apId: self.activityId)
+                            self.presentationMode.wrappedValue.dismiss()
+                        }
+                    }
+                ).solEnabled(isEnabled: self.sessionId != "SOL-LIVE-DEMO" && self.sessionId != "SOL" && self.activityId != "new")
             }
-            .zIndex(1.0)
-            .clearSectionBackground()
             
             // Details Section
             Section(header: AlignLeft { HeaderText("Activity Details", color: getFontColor(colorScheme)) }) {

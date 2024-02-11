@@ -37,38 +37,6 @@ struct PlayerRefView: View {
     var body: some View {
         ScrollView {
             
-//            HStack {
-//                // Edit Button
-//                if isEditMode {
-//                    
-//                    DStack {
-//                        SOLCON(
-//                            icon: SolIcon.save,
-//                            onTap: {
-//                                savePlayer()
-//                                isEditMode.toggle()
-//                                if !isEditMode { isShowing = false }
-//                            }
-//                        ).solEnabled(isEnabled: self.isEditMode)
-//                        
-//                        SOLCON(
-//                            icon: SolIcon.delete,
-//                            onTap: {
-//                                deletePlayer()
-//                                isEditMode.toggle()
-//                                if !isEditMode { isShowing = false }
-//                            }
-//                        ).solEnabled(isEnabled: isEditMode && playerId != "new")
-//                    }
-//                    
-//                } else {
-//                    SolButton(title: "Edit Player", action: {
-//                        isEditMode.toggle()
-//                        if !isEditMode { isShowing = false }
-//                    }, isEnabled: isEditMode)
-//                }
-//            }
-            
             HStack {
                 
                 SOLCON(

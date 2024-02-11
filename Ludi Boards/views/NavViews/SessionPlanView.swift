@@ -67,57 +67,7 @@ struct SessionPlanView: View {
     var body: some View {
         
         LoadingForm(isLoading: $isLoading, showCompletion: $showCompletion) { runLoading in
-            
-//            DStack {
-//                
-//                SolConfirmButton(
-//                    title: "Save Session",
-//                    message: "Are you sure you want to save this session?",
-//                    action: {
-//                        print("save button")
-//                        runLoading()
-//                        if self.sessionId == "new" {
-//                            saveNewSessionPlan()
-//                        } else {
-//                            updateSessionPlan()
-//                        }
-//                        isShowing = false
-//                    })
-//                Spacer()
-//                if self.sessionId == "new" {
-//                    
-//                    SolButton(title: "Cancel", action: {
-//                        self.isShowing = false
-//                    }, isEnabled: self.isShowing)
-//                    
-//                } else {
-//                    
-//                    if !self.shareIds.contains(self.sessionId) && sessionId != "SOL-LIVE-DEMO" && sessionId != "SOL"  {
-//                        SolConfirmButton(
-//                            title: "Delete Session",
-//                            message: "Are you sure you want to delete this session?",
-//                            action: {
-//                                runLoading()
-//                                deleteSessionPlan()
-//                            }
-//                        )
-//                    }
-//                }
-//                
-//                Spacer()
-//                if self.sessionId != "new" {
-//                    SolConfirmButton(
-//                        title: "Load Session",
-//                        message: "Would you like to load this session onto the board?",
-//                        action: {
-//                            runLoading()
-//                            CodiChannel.SESSION_ON_ID_CHANGE.send(value: SessionChange(sessionId: sessionId, activityId: self.activities.first?.id ?? "nil"))
-//                            isCurrentPlan = true
-//                        },
-//                        isEnabled: !self.isCurrentPlan)
-//                }
-//            }
-            
+                        
             Section {
                 
                 DStack {

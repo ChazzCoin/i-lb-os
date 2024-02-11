@@ -12,6 +12,7 @@ import RealmSwift
 struct SessionPlanOverview: View {
     @State var userId: String = getFirebaseUserId() ?? "SOL"
     
+    @Environment(\.colorScheme) var colorScheme
     @EnvironmentObject var BEO: BoardEngineObject
     @EnvironmentObject var NavStack: NavStackWindowObservable
   
@@ -50,9 +51,9 @@ struct SessionPlanOverview: View {
         
         DSidebarWindow {
             Spacer()
-                .frame(height: 50)
+                .frame(height: 25)
                 .clearSectionBackground()
-            HeaderText("Team Management")
+            HeaderText("Team Management", color: getTextColorOnBackground(colorScheme))
             SearchableTeamListView()
                 .clearSectionBackground()
                 .environmentObject(self.BEO)
@@ -73,49 +74,39 @@ struct SessionPlanOverview: View {
             
             Form {
                 
-                Section(header: Text("Manage")) {
+                HStack {
                     
-                    DStack {
-                        
-                        SOLCON(
-                            icon: SolIcon.add,
-                            title: "Session",
-                            isConfirmEnabled: false,
-                            onTap: {
-                                print("New Session Button")
-                                showNewPlanSheet = true
-                            }
-                        ).padding()
-                        
-                        SOLCON(
-                            icon: SolIcon.add,
-                            title: "Team",
-                            isConfirmEnabled: false,
-                            onTap: {
-                                print("Create Team Button")
-                                showNewTeamSheet = true
-                            }
-                        ).padding()
-                        
-                        SOLCON(
-                            icon: SolIcon.add,
-                            title: "Player",
-                            isConfirmEnabled: false,
-                            onTap: {
-                                print("Create Player Button")
-                                showNewPlayerRefSheet = true
-                            }
-                        ).padding()
-                        
-                    }
+                    SOLCON(
+                        icon: SolIcon.add,
+                        title: "Session",
+                        isConfirmEnabled: false,
+                        onTap: {
+                            print("New Session Button")
+                            showNewPlanSheet = true
+                        }
+                    ).padding()
+                    
+                    SOLCON(
+                        icon: SolIcon.add,
+                        title: "Team",
+                        isConfirmEnabled: false,
+                        onTap: {
+                            print("Create Team Button")
+                            showNewTeamSheet = true
+                        }
+                    ).padding()
+                    
+                    SOLCON(
+                        icon: SolIcon.add,
+                        title: "Player",
+                        isConfirmEnabled: false,
+                        onTap: {
+                            print("Create Player Button")
+                            showNewPlayerRefSheet = true
+                        }
+                    ).padding()
                     
                 }.clearSectionBackground()
-                
-//                Section(header: Text("Recorded Actions")) {
-//                    SearchableRecordingActionsListView()
-//                        .environmentObject(self.BEO)
-//                        .environmentObject(self.NavStack)
-//                }.clearSectionBackground()
                 
                 Section(header: Text("Sessions")) {
                     SearchableSessionListView()

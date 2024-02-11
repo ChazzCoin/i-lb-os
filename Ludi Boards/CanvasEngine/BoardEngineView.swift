@@ -794,28 +794,30 @@ struct BoardEngine: View {
         
         self.BEO.realmInstance.executeWithRetry {
             self.managedViewNotificationToken = umvs?.observe { (changes: RealmCollectionChange) in
-                switch changes {
-                    case .initial(let results):
-                        print("Realm Listener: initial")
-                        for i in results {
-                            if i.isInvalidated {continue}
-                            self.BEO.basicTools.safeAddManagedView(i)
-                        }
-                    case .update(let results, let de, _, _):
-                        print("Realm Listener: update")
-                        
-                        for d in de {
-                            self.BEO.basicTools.remove(at: d)
-                        }
-                        
-                        for i in results {
-                            if i.isInvalidated {continue}
-                            self.BEO.basicTools.safeAddManagedView(i)
-                        }
-                    case .error(let error):
-                        print("Realm Listener: \(error)")
-                        self.managedViewNotificationToken?.invalidate()
-                        self.managedViewNotificationToken = nil
+                DispatchQueue.main.async {
+                    switch changes {
+                        case .initial(let results):
+                            print("Realm Listener: initial")
+                            for i in results {
+                                if i.isInvalidated {continue}
+                                self.BEO.basicTools.safeAddManagedView(i)
+                            }
+                        case .update(let results, let de, _, _):
+                            print("Realm Listener: update")
+                            
+                            for d in de {
+                                self.BEO.basicTools.remove(at: d)
+                            }
+                            
+                            for i in results {
+                                if i.isInvalidated {continue}
+                                self.BEO.basicTools.safeAddManagedView(i)
+                            }
+                        case .error(let error):
+                            print("Realm Listener: \(error)")
+                            self.managedViewNotificationToken?.invalidate()
+                            self.managedViewNotificationToken = nil
+                    }
                 }
             }
         }

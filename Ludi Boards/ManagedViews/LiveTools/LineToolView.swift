@@ -55,6 +55,7 @@ struct LineDrawingManaged: View {
     @State private var position = CGPoint(x: 0, y: 0)
     @GestureState private var dragOffset = CGSize.zero
     @State private var isDragging = false
+    @State private var useOriginal = true
     @State var originalLifeStart = CGPoint.zero
     @State var originalLifeEnd = CGPoint.zero
     
@@ -72,7 +73,9 @@ struct LineDrawingManaged: View {
     func loadRotationOfLine() {
         let lineStart = CGPoint(x: lifeStartX, y: lifeStartY)
         let lineEnd = CGPoint(x: lifeEndX, y: lifeEndY)
-        lifeRotation = rotationAngleOfLine(from: lineStart, to: lineEnd)
+        let temp = rotationAngleOfLine(from: lineStart, to: lineEnd)
+        if temp.radians == 0.0 { return }
+        lifeRotation = temp
         print(lifeRotation)
     }
     
@@ -80,6 +83,7 @@ struct LineDrawingManaged: View {
         let lineStart = CGPoint(x: lifeStartX, y: lifeStartY)
         let lineEnd = CGPoint(x: lifeEndX, y: lifeEndY)
         lifeCenterPoint = getCenterOfLine(start: lineStart, end: lineEnd)
+        
     }
     func loadWidthAndHeight() {
         let lineStart = CGPoint(x: lifeStartX, y: lifeStartY)
@@ -168,6 +172,7 @@ struct LineDrawingManaged: View {
             }
         })
         .onAppear() {
+            print("OnAppear: LineTool.")
             MVS.initialize(realm: self.BEO.realmInstance, activityId: self.activityId, viewId: self.viewId)
             loadFromRealm()
             observeView()
@@ -198,9 +203,10 @@ struct LineDrawingManaged: View {
                 DispatchQueue.main.async { self.BEO.ignoreUpdates = true }
                 if self.lifeIsLocked {return}
                 self.isDragging = true
-                if self.originalLifeStart == .zero {
+                if useOriginal {
                     self.originalLifeStart = CGPoint(x: lifeStartX, y: lifeStartY)
                     self.originalLifeEnd = CGPoint(x: lifeEndX, y: lifeEndY)
+                    self.useOriginal = false
                 }
 
                 let translation = value.translation
@@ -208,12 +214,13 @@ struct LineDrawingManaged: View {
                 lifeStartY = self.originalLifeStart.y + translation.height
                 lifeEndX = self.originalLifeEnd.x + translation.width
                 lifeEndY = self.originalLifeEnd.y + translation.height
-                loadCenterPoint()
-                CodiChannel.TOOL_ON_FOLLOW.send(value: ViewFollowing(
-                    viewId: self.viewId,
-                    x: lifeStartX,
-                    y: lifeStartY
-                ))
+                if !useOriginal { loadCenterPoint() }
+//                loadCenterPoint()
+//                CodiChannel.TOOL_ON_FOLLOW.send(value: ViewFollowing(
+//                    viewId: self.viewId,
+//                    x: lifeStartX,
+//                    y: lifeStartY
+//                ))
                 updateRealmPos(start: CGPoint(x: lifeStartX, y: lifeStartY),
                             end: CGPoint(x: lifeEndX, y: lifeEndY))
             }
@@ -225,13 +232,14 @@ struct LineDrawingManaged: View {
                 lifeStartY = self.originalLifeStart.y + translation.height
                 lifeEndX = self.originalLifeEnd.x + translation.width
                 lifeEndY = self.originalLifeEnd.y + translation.height
-                loadCenterPoint()
+//                loadCenterPoint()
                 self.isDragging = false              
                 updateRealm()
 //                updateRealmPos(start: CGPoint(x: lifeStartX, y: lifeStartY),
 //                            end: CGPoint(x: lifeEndX, y: lifeEndY))
-                self.originalLifeStart = .zero
-                self.originalLifeEnd = .zero
+//                self.originalLifeStart = .zero
+//                self.originalLifeEnd = .zero
+                self.useOriginal = true
             }
     }
     
@@ -307,6 +315,7 @@ struct LineDrawingManaged: View {
                 if self.isDragging {return}
                 if activityId != temp.boardId { activityId = temp.boardId }
                 self.MVS.isDeleted = temp.isDeleted
+                print("Observing LineTool.")
                 
                 withAnimation {
                     if lifeWidth != Double(temp.width) {lifeWidth = Double(temp.width)}
@@ -327,6 +336,15 @@ struct LineDrawingManaged: View {
                 //
                 
                 if temp.lastUserId != getFirebaseUserIdOrCurrentLocalId() {
+                    
+                    if temp.startX == 0.0 && temp.startY == 0.0 {
+                        return
+                    }
+                    
+                    if temp.endX == 0.0 && temp.endY == 0.0 {
+                        return
+                    }
+                    
                     let startPosition = CGPoint(x: temp.startX, y: temp.startY)
                     let endPosition = CGPoint(x: temp.endX, y: temp.endY)
                     let centerPosition = getCenterOfLine(start: startPosition, end: endPosition)
@@ -336,7 +354,7 @@ struct LineDrawingManaged: View {
                         "end":endPosition,
                         "center":centerPosition
                     ]
-                    
+                    print("Updating Line: \(coords)")
                     self.coordinateStack.append(coords)
                     animateToNextCoordinate()
                 }
@@ -382,7 +400,6 @@ struct LineDrawingManaged: View {
         }
         
         let nextCoordinate = coordinateStack.removeFirst()
-
         withAnimation {
             lifeStartX = nextCoordinate["start"]?.x ?? lifeStartX
             lifeStartY = nextCoordinate["start"]?.y ?? lifeStartY
@@ -469,6 +486,7 @@ struct LineDrawingManaged: View {
         if isDisabledChecker() || isDeletedChecker() {return}
         if let umv = self.BEO.realmInstance.object(ofType: ManagedView.self, forPrimaryKey: viewId) {
             // set attributes
+            print("Loading in LineTool.")
             activityId = umv.boardId
             lifeIsLocked = umv.isLocked
             

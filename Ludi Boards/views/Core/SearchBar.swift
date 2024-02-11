@@ -12,12 +12,14 @@ struct SearchBar : View {
     @Binding var text: String
     @State var placeholder: String
     
+//    @Environment(\.colorScheme) var colorScheme
+    
     var body: some View {
         ZStack {
-            SearchBarView(text: $text, placeholder: placeholder)
+            SearchBarView(text: $text, textColor: Color.white, placeholder: placeholder)
         }
         .frame(height: 50)
-        .background(Color.secondaryBackground)
+        .background(getBackgroundDarkGradient())
         .foregroundColor(.white)
         .cornerRadius(10)
         .shadow(color: .gray.opacity(0.4), radius: 5, x: 0, y: 2)
@@ -26,6 +28,7 @@ struct SearchBar : View {
 
 struct SearchBarView: UIViewRepresentable {
     @Binding var text: String
+    var textColor: Color
     var placeholder: String
 
     class Coordinator: NSObject, UISearchBarDelegate {
@@ -52,10 +55,10 @@ struct SearchBarView: UIViewRepresentable {
         searchBar.autocapitalizationType = .none
         searchBar.autocorrectionType = .no
         searchBar.backgroundImage = UIImage()
-        searchBar.searchTextField.backgroundColor = .secondaryBackground
+        searchBar.searchTextField.backgroundColor = .clear
         
-        searchBar.searchTextField.textColor = .white
-        searchBar.searchTextField.attributedPlaceholder = NSAttributedString(string: placeholder, attributes: [NSAttributedString.Key.foregroundColor: UIColor.white])
+        searchBar.searchTextField.textColor = textColor.uiColor
+        searchBar.searchTextField.attributedPlaceholder = NSAttributedString(string: placeholder, attributes: [NSAttributedString.Key.foregroundColor: textColor.opacity(0.5).uiColor])
             
         return searchBar
     }

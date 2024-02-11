@@ -63,27 +63,38 @@ struct ActivityPlanBindingView: View {
         HStack {
             
             VStack {
-                Image("soccer_one")
-                    .resizable()
-                    .frame(maxWidth: 100, maxHeight: 150)
+//                Image("soccer_one")
+//                    .resizable()
+//                    .frame(maxWidth: 150, maxHeight: 200)
+                
+                FieldOverlayView(width: 150, height: 200, background: {
+                    Color.gray
+                }, overlay: {
+                    if let CurrentBoardBackground = self.BEO.boards.getAllMinis()[self.fieldName] {
+                        CurrentBoardBackground()
+                            .zIndex(2.0)
+                            .environmentObject(self.BEO)
+                    }
+                }).frame(maxWidth: 150, maxHeight: 200)
                 
                 DStack {
                     SOLCON(
                         icon: SolIcon.save,
                         onTap: {
-                        
+                            saveNewActivityPlan()
                         }
                     )
                     SOLCON(
                         icon: SolIcon.load,
                         onTap: {
-                        
+                            CodiChannel.SESSION_ON_ID_CHANGE.send(value: SessionChange(sessionId: self.sessionId, activityId: self.activityId))
+                            self.isCurrentPlan = true
                         }
                     ).solEnabled(isEnabled: !self.isCurrentPlan)
                     SOLCON(
                         icon: SolIcon.delete, 
                         onTap: {
-                        
+                            
                         }
                     )
                 }

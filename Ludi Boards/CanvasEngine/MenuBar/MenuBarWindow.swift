@@ -20,6 +20,9 @@ struct MenuBarStatic: View {
     @State private var isLocked = false
     @State private var lifeColor = Color.black
     
+    @State var isAnimating = false
+    
+    
     func setColorScheme() { lifeColor = getForegroundColor(colorScheme) }
 
     let iconsLoggedOut = [
@@ -49,7 +52,7 @@ struct MenuBarStatic: View {
     @State var icons: [IconProvider] = []
 
     var body: some View {
-        ScrollView(.vertical, showsIndicators: false) {
+        VStack {
             // Toggle Button
             VStack {
                 Image(systemName: MenuBarProvider.menuBar.tool.image)
@@ -63,26 +66,25 @@ struct MenuBarStatic: View {
             .frame(width: 60, height: 60)
             .solBackgroundPrimaryGradient()
             .onTapAnimation {
+                if isAnimating { return }
                 showIcons.toggle()
                 animateIcons()
-                
-                if !showIcons {
-                    delayThenMain(1) {
-                        onClick()
+                onClick()
+            }
+            
+            ScrollView(.vertical, showsIndicators: false) {
+               
+                // Icons
+                ForEach(0..<icons.count, id: \.self) { index in
+                    if iconStates[index] {
+                        MenuButtonIcon(icon: icons[index])
+                            .transition(.opacity)
+                            .environmentObject(self.BEO)
                     }
-                } else {
-                    onClick()
-                }
-                
-            }
-            // Icons
-            ForEach(0..<icons.count, id: \.self) { index in
-                if iconStates[index] {
-                    MenuButtonIcon(icon: icons[index])
-                        .transition(.opacity)
-                        .environmentObject(self.BEO)
                 }
             }
+            
+            
         }
         .frame(width: self.BEO.guideModeIsEnabled ? 100 : 60, height: showIcons ? (gps.screenSize.height - 100) : 60)
         .background(Color.clear)
@@ -111,6 +113,7 @@ struct MenuBarStatic: View {
     
     private func animateIcons() {
         if showIcons {
+            isAnimating = true
             // Show icons one by one
             for index in 0..<icons.count {
                 DispatchQueue.main.asyncAfter(deadline: .now() + Double(index) * 0.1) {
@@ -119,7 +122,11 @@ struct MenuBarStatic: View {
                     }
                 }
             }
+            delayThenMain(1, mainBlock: {
+                isAnimating = false
+            })
         } else {
+            isAnimating = true
             // Hide icons one by one, in reverse order
             for index in (0..<icons.count).reversed() {
                 DispatchQueue.main.asyncAfter(deadline: .now() + Double(icons.count - index) * 0.1) {
@@ -128,6 +135,9 @@ struct MenuBarStatic: View {
                     }
                 }
             }
+            delayThenMain(0.75, mainBlock: {
+                isAnimating = false
+            })
         }
     }
 }

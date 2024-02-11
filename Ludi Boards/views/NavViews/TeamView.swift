@@ -44,6 +44,25 @@ struct TeamView: View {
         ScrollView {
             VStack {
                 HStack {
+                    
+                    SOLCON(
+                        icon: SolIcon.save,
+                        onTap: {
+                            if teamId == "new" {
+                                addTeam()
+                            } else {
+                                saveTeam()
+                            }
+                        }
+                    ).solEnabled(isEnabled: self.isEditMode)
+                    
+                    SOLCON(
+                        icon: SolIcon.delete,
+                        onTap: {
+                            deleteTeam()
+                        }
+                    ).solEnabled(isEnabled: isEditMode && teamId != "new")
+                    
                     Text(teamName)
                         .font(.largeTitle)
                         .fontWeight(.bold)
@@ -60,30 +79,6 @@ struct TeamView: View {
                 }
                 
                 Divider()
-                
-                Group {
-                    DStack {
-                        SolButton(
-                            title: "Save Team",
-                            action: {
-                                if teamId == "new" {
-                                    addTeam()
-                                } else {
-                                    saveTeam()
-                                }
-                            },
-                            isEnabled: isEditMode
-                        )
-                        SolConfirmButton(
-                            title: "Delete Team",
-                            message: "Are you sure you want to delete this team?",
-                            action: {
-                                deleteTeam()
-                            },
-                            isEnabled: isEditMode && teamId != "new"
-                        )
-                    }
-                }
                 
                 Group {
                     
@@ -125,11 +120,8 @@ struct TeamView: View {
                                 SolTextField("Year", text: $teamYear, isEditable: $isEditMode)
                             }
                             
-                            
                         }
                     }
-                    
-                    
                     
                 }
                 .padding(.vertical, 4)
