@@ -256,9 +256,9 @@ struct LineDrawingManaged: View {
                     self.lifeEndX = value.location.x
                     self.lifeEndY = value.location.y
                 }
-                loadCenterPoint()
-                loadWidthAndHeight()
-                loadRotationOfLine()
+//                loadCenterPoint()
+//                loadWidthAndHeight()
+//                loadRotationOfLine()
                 updateRealmPos(start: CGPoint(x: lifeStartX, y: lifeStartY),
                             end: CGPoint(x: lifeEndX, y: lifeEndY))
             }
@@ -267,8 +267,7 @@ struct LineDrawingManaged: View {
                 self.isDragging = false
                 self.BEO.ignoreUpdates = false
                 updateRealm()
-//                updateRealmPos(start: CGPoint(x: lifeStartX, y: lifeStartY),
-//                            end: CGPoint(x: lifeEndX, y: lifeEndY))
+//                self.useOriginal = true
             }
             
     }
@@ -316,34 +315,10 @@ struct LineDrawingManaged: View {
                 if activityId != temp.boardId { activityId = temp.boardId }
                 self.MVS.isDeleted = temp.isDeleted
                 print("Observing LineTool.")
-                
-                withAnimation {
-                    if lifeWidth != Double(temp.width) {lifeWidth = Double(temp.width)}
-                    if lifeLineDash != Double(temp.lineDash) {lifeLineDash = Double(temp.lineDash)}
-                    
-                    var colorHasChanged = false
-                    if lifeColorRed != temp.colorRed { colorHasChanged = true; lifeColorRed = temp.colorRed}
-                    if lifeColorGreen != temp.colorGreen { colorHasChanged = true; lifeColorGreen = temp.colorGreen}
-                    if lifeColorBlue != temp.colorBlue { colorHasChanged = true; lifeColorBlue = temp.colorBlue }
-                    if lifeColorAlpha != temp.colorAlpha { colorHasChanged = true; lifeColorAlpha = temp.colorAlpha }
-                    if colorHasChanged {
-                        lifeColor = colorFromRGBA(red: lifeColorRed, green: lifeColorGreen, blue: lifeColorBlue, alpha: lifeColorAlpha)
-                    }
-                    loadWidthAndHeight()
-                    loadRotationOfLine()
-                }
-                
-                //
-                
                 if temp.lastUserId != getFirebaseUserIdOrCurrentLocalId() {
                     
-                    if temp.startX == 0.0 && temp.startY == 0.0 {
-                        return
-                    }
-                    
-                    if temp.endX == 0.0 && temp.endY == 0.0 {
-                        return
-                    }
+                    if temp.startX == 0.0 && temp.startY == 0.0 { return }
+                    if temp.endX == 0.0 && temp.endY == 0.0 { return }
                     
                     let startPosition = CGPoint(x: temp.startX, y: temp.startY)
                     let endPosition = CGPoint(x: temp.endX, y: temp.endY)
@@ -359,8 +334,24 @@ struct LineDrawingManaged: View {
                     animateToNextCoordinate()
                 }
                 
-                lifeHeadIsEnabled = temp.headIsEnabled
+                withAnimation {
+                    var colorHasChanged = false
+                    if lifeColorRed != temp.colorRed { colorHasChanged = true; lifeColorRed = temp.colorRed}
+                    if lifeColorGreen != temp.colorGreen { colorHasChanged = true; lifeColorGreen = temp.colorGreen}
+                    if lifeColorBlue != temp.colorBlue { colorHasChanged = true; lifeColorBlue = temp.colorBlue }
+                    if lifeColorAlpha != temp.colorAlpha { colorHasChanged = true; lifeColorAlpha = temp.colorAlpha }
+                    if colorHasChanged {
+                        lifeColor = colorFromRGBA(red: lifeColorRed, green: lifeColorGreen, blue: lifeColorBlue, alpha: lifeColorAlpha)
+                    }
+                }
                 
+                //
+                if lifeWidth != Double(temp.width) {lifeWidth = Double(temp.width)}
+                if lifeLineDash != Double(temp.lineDash) {lifeLineDash = Double(temp.lineDash)}
+//                loadWidthAndHeight()
+//                loadRotationOfLine()
+                
+                lifeHeadIsEnabled = temp.headIsEnabled
                 if lifeIsLocked != temp.isLocked { lifeIsLocked = temp.isLocked}
             }
             
@@ -406,6 +397,8 @@ struct LineDrawingManaged: View {
             lifeEndX = nextCoordinate["end"]?.x ?? lifeEndX
             lifeEndY = nextCoordinate["end"]?.y ?? lifeEndY
             lifeCenterPoint = nextCoordinate["center"] ?? lifeCenterPoint
+            loadWidthAndHeight()
+            loadRotationOfLine()
         }
 
         // Schedule the next animation after a delay
