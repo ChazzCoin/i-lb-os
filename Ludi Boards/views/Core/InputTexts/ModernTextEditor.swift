@@ -27,15 +27,16 @@ struct SolTextEditor: View {
         
         VStack {
             
+            AlignLeft {
+                Text(placeholder)
+            }
+           
             ZStack(alignment: .topLeading) {
                 
                 TextEditor(text: $text)
                     .padding(10)
-                    .foregroundColor(getTextColor(colorScheme))
-                    .background(getForegroundGradient(colorScheme))
-                    .cornerRadius(10)
-                    .shadow(color: .gray.opacity(0.4), radius: 5, x: 0, y: 2)
                     .animation(.easeInOut, value: text)
+                    
                 
                 if text.isEmpty {
                     Text(placeholder)
@@ -46,8 +47,14 @@ struct SolTextEditor: View {
                 }
 
             }
+            .overlay(
+               RoundedRectangle(cornerRadius: 10)
+                .stroke(getForegroundGradient(colorScheme), lineWidth: 1)
+            )
+            .cornerRadius(10)
+            .shadow(color: .gray.opacity(0.5), radius: 3, x: 0, y: 0)
         }
-        
+        .padding(.top)
     }
 }
 

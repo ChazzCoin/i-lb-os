@@ -39,3 +39,25 @@ struct SolToggle: View {
 }
 
 
+struct SwitchOnOff: View {
+    var title: String
+    @Binding var status: Bool
+    
+    var body: some View {
+        HStack {
+            Text(title)
+            Spacer()
+            Button("ON") {
+                status = true
+            }
+            .buttonStyle(.bordered)
+            .tint(status == true ? .green : .gray)
+            
+            Button("OFF") {
+                status = false
+            }
+            .buttonStyle(.bordered)
+            .tint(status == false ? .red : .gray)
+        }
+    }
+}

@@ -28,11 +28,16 @@ struct ActivityPlanBindingView: View {
     @State var activityId = ""
     @State var title = ""
     @State var subTitle = ""
-    @State var date = ""
+    @State var date: Date = Date()
     
     @State var timePeriod = ""
     @State var duration = ""
     @State var ageLevel = ""
+    @State var intensity = ""
+    
+    @State var numOfGroups = 0
+    @State var numPerGroup = 0
+    @State var numOfPlayers = 0
     
     @State var objectiveDetails = ""
     @State var activityDetails = ""
@@ -60,14 +65,11 @@ struct ActivityPlanBindingView: View {
     
     var body: some View {
         
-        HStack {
-            
-            VStack {
-//                Image("soccer_one")
-//                    .resizable()
-//                    .frame(maxWidth: 150, maxHeight: 200)
+        Form {
+                     
+            HStack {
                 
-                FieldOverlayView(width: 150, height: 200, background: {
+                FieldOverlayView(width: 75, height: 75, background: {
                     Color.gray
                 }, overlay: {
                     if let CurrentBoardBackground = self.BEO.boards.getAllMinis()[self.fieldName] {
@@ -75,70 +77,55 @@ struct ActivityPlanBindingView: View {
                             .zIndex(2.0)
                             .environmentObject(self.BEO)
                     }
-                }).frame(maxWidth: 150, maxHeight: 200)
+                })
+                .frame(width: 50, height: 50)
                 
-                DStack {
-                    SOLCON(
-                        icon: SolIcon.save,
-                        onTap: {
-                            saveNewActivityPlan()
-                        }
-                    )
-                    SOLCON(
-                        icon: SolIcon.load,
-                        onTap: {
-                            CodiChannel.SESSION_ON_ID_CHANGE.send(value: SessionChange(sessionId: self.sessionId, activityId: self.activityId))
-                            self.isCurrentPlan = true
-                        }
-                    ).solEnabled(isEnabled: !self.isCurrentPlan)
-                    SOLCON(
-                        icon: SolIcon.delete, 
-                        onTap: {
-                            
-                        }
-                    )
-                }
+                Spacer().padding()
                 
+                SOLCON(
+                    icon: SolIcon.save,
+                    onTap: {
+                        addUpdateActivityPlan()
+                    }
+                )
+                SOLCON(
+                    icon: SolIcon.load,
+                    onTap: {
+                        CodiChannel.SESSION_ON_ID_CHANGE.send(value: SessionChange(sessionId: self.sessionId, activityId: self.activityId))
+                        self.isCurrentPlan = true
+                    }
+                ).solEnabled(isEnabled: !self.isCurrentPlan)
+                SOLCON(
+                    icon: SolIcon.delete,
+                    onTap: {
+                        deleteActivityPlan()
+                    }
+                )
             }
-            .padding(.leading)
-         
-            VStack {
             
-                DStack {
-                    SolTextField("Title", text: $title)
-                    SolTextField("Sub Title", text: $subTitle)
-                }
-                .padding(.top)
-                .padding(.leading)
-                .padding(.trailing)
-                DStack {
-                    SolTextField("Date", text: $date)
-                    SolTextField("Time Period", text: $timePeriod)
-                }
-                .padding(.leading)
-                .padding(.trailing)
-                DStack {
-                    SolTextField("Duration", text: $duration)
-                    SolTextField("Age Level", text: $ageLevel)
-                }
-                .padding(.leading)
-                .padding(.trailing)
-                DStack {
-                    
-                    CustomTextEditor("Objective", text: $objectiveDetails)
-                        .padding()
-                    
-                    CustomTextEditor("Description", text: $activityDetails)
-                        .padding()
-                        
-                }
-                        
-            }.clearSectionBackground()
+            SolTextField("Title", text: $title)
+            PickerTimeDuration(selection: $duration)
+            PickerIntensity(selection: $intensity)
+            PickerAgeLevel(selection: $ageLevel)
+            PickerNumberOfPlayers(selection: $numOfPlayers)
             
+            DStack {
+                PickerGroupCount(selection: $numOfGroups)
+                PickerNumPerGroup(selection: $numPerGroup)
+            }
+            
+            DStack {
+                SolTextEditor("Description", text: $objectiveDetails, color: .black)
+                    .frame(minHeight: 125)
+                SolTextEditor("Objective", text: $activityDetails, color: .black)
+                    .frame(minHeight: 125)
+            }.padding(.bottom)
+                        
         }
-        .background(getBackgroundGradient(colorScheme))
+        .frame(minHeight: 500)
+        .background(getBackgroundColor(colorScheme))
         .cornerRadius(15)
-        .shadow(color: .gray, radius: 10, x: 0, y: 0)
+        .shadow(color: .gray, radius: 3, x: 0, y: 0)
         .padding()
         .onChange(of: self.inComingAP) { newPlan in
             DispatchQueue.main.async {
@@ -158,7 +145,7 @@ struct ActivityPlanBindingView: View {
         
         self.title = activityPlan.title
         self.subTitle = activityPlan.subTitle
-        self.date = activityPlan.dateOf
+//        self.date = activityPlan.dateOf
         self.activityDetails = activityPlan.activityDetails
         
         self.ageLevel = activityPlan.ageLevel
@@ -190,50 +177,32 @@ struct ActivityPlanBindingView: View {
         }
     }
     
-    func saveActivityPlan() {
+    func addUpdateActivityPlan() {
         if self.activityId == "new" {
             saveNewActivityPlan()
         } else {
-            saveCurrentActivityPlan()
+            updateCurrentActivityPlan()
         }
     }
     
-    func saveCurrentActivityPlan() {
+    func updateCurrentActivityPlan() {
         
         if let currentAp = self.realmInstance.findByField(ActivityPlan.self, value: self.activityId) {
             self.realmInstance.safeWrite { _ in
                 currentAp.sessionId = self.sessionId
                 currentAp.orderIndex = 0
                 
-                currentAp.ownerId = getFirebaseUserId() ?? "SOL"
+                currentAp.ownerId = getFirebaseUserIdOrCurrentLocalId()
                 
                 currentAp.title = title
                 currentAp.subTitle = subTitle
                 currentAp.duration = duration
-                currentAp.dateOf = date
+//                currentAp.dateOf = date
                 currentAp.ageLevel = ageLevel
                 currentAp.timePeriod = timePeriod
                 currentAp.activityDetails = activityDetails
                 currentAp.objectiveDetails = objectiveDetails
-                
-                currentAp.backgroundView = fieldName
-                currentAp.backgroundRotation = fieldRotation
-                currentAp.backgroundLineStroke = lineStroke
-                
-                if let c = bgColor.toRGBA() {
-                    currentAp.backgroundRed = c.red
-                    currentAp.backgroundGreen = c.green
-                    currentAp.backgroundBlue = c.blue
-                    currentAp.backgroundAlpha = c.alpha
-                }
-                
-                if let lc = lineColor.toRGBA() {
-                    currentAp.backgroundLineRed = lc.red
-                    currentAp.backgroundLineGreen = lc.green
-                    currentAp.backgroundLineBlue = lc.blue
-                    currentAp.backgroundLineAlpha = lc.alpha
-                }
-                
+                                
                 // TODO: Firebase Users ONLY
                 updateInFirebase(newAP: currentAp)
             }
@@ -254,7 +223,7 @@ struct ActivityPlanBindingView: View {
         newAP.title = title
         newAP.subTitle = subTitle
         newAP.duration = duration
-        newAP.dateOf = date
+//        newAP.dateOf = date
         newAP.ageLevel = ageLevel
         newAP.timePeriod = timePeriod
         newAP.activityDetails = activityDetails
@@ -298,15 +267,12 @@ struct ActivityPlanBindingView: View {
         }
     }
     
-    func updateActivityPlan() {
-        realmInstance.safeWrite { r in
-//            if let temp = self.activityPlan.thaw() {
-//                temp.ownerId = getFirebaseUserId() ?? "SOL"
-//                r.create(ActivityPlan.self, value: temp, update: .all)
-//                //TODO: FIREBASE ONLY
-//                updateInFirebase(newAP: temp)
-//            }
-            
+    func deleteActivityPlan() {
+        
+        if let currentAp = self.realmInstance.findByField(ActivityPlan.self, value: self.activityId) {
+            realmInstance.safeWrite { r in
+                currentAp.isDeleted = true
+            }
         }
         
     }

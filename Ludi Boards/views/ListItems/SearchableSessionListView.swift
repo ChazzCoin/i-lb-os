@@ -24,7 +24,7 @@ struct SearchableSessionListView: View {
         return temp
     }
     
-    @ObservedResults(SessionPlan.self) var allItems
+    @ObservedResults(SessionPlan.self, where: { $0.isDeleted != true }) var allItems
     @State private var searchText = ""
     @State private var filteredItems: [SessionPlan] = []
     
@@ -38,12 +38,14 @@ struct SearchableSessionListView: View {
             ScrollView {
                 LazyVGrid(columns: columns, spacing: 20) {
                     ForEach(filteredItems) { item in
-                        NavigationLink(
-                            destination: SessionPlanView(sessionId: item.id, isShowing: .constant(true), isMasterWindow: false)
-                                .environmentObject(self.BEO)
-                                .environmentObject(self.NavStack)
-                        ){
-                            SolListItem(title: item.title, subTitle: item.subTitle, isShared: self.sharedSessionIds.contains(item.id))
+                        if !item.isDeleted {
+                            NavigationLink(
+                                destination: SessionPlanView(sessionId: item.id, isShowing: .constant(true), isMasterWindow: false)
+                                    .environmentObject(self.BEO)
+                                    .environmentObject(self.NavStack)
+                            ){
+                                SolListItem(title: item.title, subTitle: item.subTitle, isShared: self.sharedSessionIds.contains(item.id))
+                            }
                         }
                     }
                 }

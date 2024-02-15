@@ -14,13 +14,21 @@ class SessionPlan: Object, ObjectKeyIdentifiable {
     @Persisted var dateCreated: String = getTimeStamp()
     @Persisted var dateUpdated: String = getTimeStamp()
     @Persisted var dateOf: String = getTimeStamp()
-    @Persisted var timePeriod: String = "24/7"
-    @Persisted var duration: String = "24/7"
-    @Persisted var ageLevel: String = "Any Age?"
+    
     @Persisted var title: String = "Session: \(TimeProvider.getMonthDayYearTime())"
     @Persisted var subTitle: String = "A Basic Session"
     @Persisted var objectiveDetails: String = "To show off SOL!"
     @Persisted var sessionDetails: String = "Add some details here!"
+    @Persisted var timePeriod: String = ""
+    @Persisted var duration: String = ""
+    @Persisted var ageLevel: String = ""
+    @Persisted var intensity: String = ""
+    @Persisted var keyQualities: String = ""
+    @Persisted var numOfPlayers: Int = 0
+    @Persisted var principles: String = ""
+    @Persisted var goal: String = ""
+    @Persisted var stages: String = ""
+    
     @Persisted var ownerId: String = "temp"
     @Persisted var isHost: Bool = false
     @Persisted var isOpen: Bool = false

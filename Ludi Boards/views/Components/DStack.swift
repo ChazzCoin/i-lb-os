@@ -9,18 +9,21 @@ import SwiftUI
 
 struct DStack<Content: View>: View {
     @State var isPhone: Bool = UIDevice.current.userInterfaceIdiom == .phone
+    @State var isPortrait: Bool = UIDevice.current.orientation == .portrait
     let content: () -> Content
 
     init(@ViewBuilder content: @escaping () -> Content) {
         self.content = content
     }
-
+    
     var body: some View {
-        if isPhone {
+        
+        if isPhone || isPortrait {
             VStack { content() }
         } else {
             HStack { content() }
         }
+        
     }
 }
 

@@ -31,6 +31,7 @@ enum SolIcon {
             case .delete: return "Delete"
             case .load: return "Load"
             case .share: return "Share"
+            case .add: return "Add"
             default: return ""
         }
     }

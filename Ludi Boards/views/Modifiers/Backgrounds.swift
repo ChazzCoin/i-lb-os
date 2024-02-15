@@ -29,8 +29,11 @@ struct SOLBackgroundModifier: ViewModifier {
             .background(
                 RoundedRectangle(cornerRadius: 15)
                     .fill(getBackgroundGradient(colorScheme))
-//                    .shadow(radius: 5)
             )
+            .overlay(
+               RoundedRectangle(cornerRadius: 15)
+                   .stroke(getForegroundGradient(colorScheme), lineWidth: 1) // Adjust lineWidth as needed
+           )
     }
 }
 struct SOLBackgroundDarkModifier: ViewModifier {

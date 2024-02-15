@@ -84,6 +84,8 @@
 		FB58E8802B02B26C00FD9E2E /* DragAndDrop.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58E87F2B02B26C00FD9E2E /* DragAndDrop.swift */; };
 		FB58E8822B030F1D00FD9E2E /* RealmFind.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58E8812B030F1D00FD9E2E /* RealmFind.swift */; };
 		FB58E8842B03169700FD9E2E /* TimeProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58E8832B03169700FD9E2E /* TimeProvider.swift */; };
+		FB65D2C92B7D5E2E00564C37 /* SessionProviders.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB65D2C82B7D5E2E00564C37 /* SessionProviders.swift */; };
+		FB65D2CB2B7DC16300564C37 /* SolPickers.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB65D2CA2B7DC16300564C37 /* SolPickers.swift */; };
 		FB6C0C4F2B525B2500163A6D /* SolTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB6C0C4E2B525B2500163A6D /* SolTextField.swift */; };
 		FB6C0C512B525E8500163A6D /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB6C0C502B525E8500163A6D /* LoginView.swift */; };
 		FB6C0C532B52706B00163A6D /* ModernTextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB6C0C522B52706B00163A6D /* ModernTextEditor.swift */; };
@@ -336,6 +338,8 @@
 		FB58E87F2B02B26C00FD9E2E /* DragAndDrop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragAndDrop.swift; sourceTree = "<group>"; };
 		FB58E8812B030F1D00FD9E2E /* RealmFind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmFind.swift; sourceTree = "<group>"; };
 		FB58E8832B03169700FD9E2E /* TimeProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeProvider.swift; sourceTree = "<group>"; };
+		FB65D2C82B7D5E2E00564C37 /* SessionProviders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionProviders.swift; sourceTree = "<group>"; };
+		FB65D2CA2B7DC16300564C37 /* SolPickers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolPickers.swift; sourceTree = "<group>"; };
 		FB6C0C4E2B525B2500163A6D /* SolTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolTextField.swift; sourceTree = "<group>"; };
 		FB6C0C502B525E8500163A6D /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		FB6C0C522B52706B00163A6D /* ModernTextEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModernTextEditor.swift; sourceTree = "<group>"; };
@@ -583,6 +587,7 @@
 				FB426A982B5343840058CD9D /* Switches */,
 				FB18F16C2B68B10C00D89F8D /* SearchBar.swift */,
 				FB2AA1062B74352A00BD631C /* SolToggle.swift */,
+				FB65D2CA2B7DC16300564C37 /* SolPickers.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -704,9 +709,9 @@
 		FB5094242B05820B000AEA96 /* views */ = {
 			isa = PBXGroup;
 			children = (
+				FB3E02CC2B0D45F000D8558C /* NavViews */,
 				FB18F1622B6842C600D89F8D /* Core */,
 				FBBDD0162B6C486B0009844B /* Modifiers */,
-				FB3E02CC2B0D45F000D8558C /* NavViews */,
 				FB18F1632B68686B00D89F8D /* ListItems */,
 				FBE2C61E2B1AFCA2004C0116 /* Social */,
 				FBE2C61D2B1AFC8F004C0116 /* Experimental */,
@@ -978,6 +983,7 @@
 				FB581BEC2B1F8A6800F5C90F /* KeyboardListener.swift */,
 				FBDE4F5A2B4D1038007FE880 /* InternetProvider.swift */,
 				FB2AA1042B74305E00BD631C /* IconProvider.swift */,
+				FB65D2C82B7D5E2E00564C37 /* SessionProviders.swift */,
 			);
 			path = Providers;
 			sourceTree = "<group>";
@@ -1299,6 +1305,7 @@
 				FB18F1792B69A0DC00D89F8D /* SearchableTeamListView.swift in Sources */,
 				FB58E8822B030F1D00FD9E2E /* RealmFind.swift in Sources */,
 				FB986F0B2B5774C30042BED2 /* BoardSessionObserver.swift in Sources */,
+				FB65D2CB2B7DC16300564C37 /* SolPickers.swift in Sources */,
 				FB881A3E2B48732400C16198 /* RealmState.swift in Sources */,
 				FBDF0DC92B224EB500FADE44 /* AllManagedViewsService.swift in Sources */,
 				FBE2C6242B1B2E01004C0116 /* SessionPlanOverview.swift in Sources */,
@@ -1357,6 +1364,7 @@
 				FBABDAC52B20376F00321A00 /* ConfirmationPopup.swift in Sources */,
 				FB15DD362B074F5C00A21290 /* Chat.swift in Sources */,
 				FB3E02C32B0D19A300D8558C /* User.swift in Sources */,
+				FB65D2C92B7D5E2E00564C37 /* SessionProviders.swift in Sources */,
 				FB5094282B0584CA000AEA96 /* NavStackWindowView.swift in Sources */,
 				FB6C0C512B525E8500163A6D /* LoginView.swift in Sources */,
 				FB18F1752B697E2800D89F8D /* DSideBarWindow.swift in Sources */,

@@ -14,13 +14,23 @@ class ActivityPlan: Object, ObjectKeyIdentifiable {
     @Persisted var dateCreated: String = getTimeStamp()
     @Persisted var dateUpdated: String = getTimeStamp()
     @Persisted var dateOf: String = getTimeStamp()
-    @Persisted var timePeriod: String = ""
-    @Persisted var duration: String = "24/7"
-    @Persisted var ageLevel: String = "ALL"
-    @Persisted var title: String = "SOL Activity Plan"
-    @Persisted var subTitle: String = "SOL Board!"
+
+    @Persisted var title: String = ""
+    @Persisted var subTitle: String = ""
     @Persisted var objectiveDetails: String = ""
     @Persisted var activityDetails: String = ""
+    @Persisted var timePeriod: String = ""
+    @Persisted var duration: String = ""
+    @Persisted var ageLevel: String = ""
+    
+    @Persisted var principles: String = ""
+    @Persisted var keyQualities: String = ""
+    @Persisted var coachingPoints: String = ""
+    @Persisted var guidedAnswers: String = ""
+    @Persisted var answers: String = ""
+    @Persisted var numOfPlayers: Int = 0
+    @Persisted var numOfGroups: Int = 0
+    @Persisted var numPerGroup: Int = 0
     
     @Persisted var ownerId: String = ""
     @Persisted var isHost: Bool = false

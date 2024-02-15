@@ -14,17 +14,30 @@ struct SessionPlanView: View {
     @State var sessionId: String
     @Binding var isShowing: Bool
     @State var isMasterWindow: Bool
+    
+    // Session Details
     @State private var sport = "soccer"
     @State private var title = "SOL Session"
+    
+    @State private var scheduledDate: Date = Date()
+    @State private var duration = ""
+    
+    @State private var ageLevel = ""
+    @State private var intensity = ""
+    @State private var numOfPlayers = 0
+    @State private var principles = ""
+    
     @State private var description = ""
     @State private var objective = ""
     @State private var isLive = true
+    
+    @State private var ages = ["U7", "U8", "U9", "U10"]
     
     @Environment(\.colorScheme) var colorScheme
     
     @ObservedResults(ActivityPlan.self) var allActivities
     var activities: Results<ActivityPlan> {
-        return self.allActivities.filter("sessionId == %@", self.sessionId)
+        return self.allActivities.filter("sessionId == %@ AND isDeleted != true", self.sessionId)
     }
     
     var isSharable: Bool {
@@ -51,6 +64,12 @@ struct SessionPlanView: View {
     @State private var sheetTitle = ""
     @State private var sheetMessage = ""
     @State private var sheetIsShowing = false
+    
+    @State private var reloadList = false
+    func doReloadOfList() {
+        reloadList = true
+        reloadList = false
+    }
 
     func runLoadingProcess() {
         isLoading = true
@@ -70,7 +89,7 @@ struct SessionPlanView: View {
                         
             Section {
                 
-                DStack {
+                HStack {
                     
                     Spacer()
                     
@@ -105,47 +124,76 @@ struct SessionPlanView: View {
                     
                     Spacer().padding()
                     
-                    SolToggle(labelText: "Is Live", isOn: $isLive, onToggleChange: { isL in
-                        if let s = self.BEO.realmInstance.findByField(SessionPlan.self, value: self.sessionId) {
-                            self.BEO.realmInstance.safeWrite { _ in
-                                s.isLive = self.isLive
-                                s.fireSave(id: s.id)
-                            }
+                    SOLCON(
+                        icon: SolIcon.add,
+                        title: "Add Activity",
+                        isConfirmEnabled: false,
+                        onTap: {
+                            showNewActivity = true
                         }
-                    }).solEnabled(isEnabled: self.isSharable)
-                    
-                    SolIconTextButton(title: "Share Session", systemName: SolIcon.share.icon, onTap: {
-                        self.showShareSheet = true
-                    }).solEnabled(isEnabled: self.isSharable && self.isLive)
+                    ).solEnabled(isEnabled: true)
                     
                 }
                 
             }.clearSectionBackground()
             
-            Section(header: AlignLeft { HeaderText("Session Details") }) {
+            HStack {
+                SwitchOnOff(title: "Is Live and Sharable", status: $isLive)
+                SolIconTextButton(title: "Share Session", systemName: SolIcon.share.icon, onTap: {
+                    self.showShareSheet = true
+                }).solEnabled(isEnabled: self.isSharable && self.isLive)
+            }
+            
+            Section(header: AlignLeft { HeaderText("Session Details", color: getTextColorOnBackground(colorScheme)) }) {
+                
                 SolTextField("Title", text: $title)
                 
                 DStack {
+                    PickerDate(selection: $scheduledDate)
+                    PickerTimeDuration(selection: $duration)
+                }
+                .padding(.leading)
+                .padding(.trailing)
+                
+                DStack {
+                    PickerIntensity(selection: $intensity)
+                    PickerAgeLevel(selection: $ageLevel)
+                }
+                .padding(.leading)
+                .padding(.trailing)
+                
+                DStack {
+                    PickerNumberOfPlayers(selection: $numOfPlayers)
+                }
+                .padding(.leading)
+                .padding(.trailing)
+                
+                DStack {
                     SolTextEditor("Description", text: $description, color: .black)
-                        .padding()
                         .frame(minHeight: 125)
+                        .padding(.leading)
+                        .padding(.trailing)
                     
                     SolTextEditor("Objective", text: $objective, color: .black)
-                        .padding()
                         .frame(minHeight: 125)
                 }
+                .padding(.bottom)
                 
-            }.clearSectionBackground()
-
-            ScrollView(.vertical, showsIndicators: false) {
-                VStack {
-                    ForEach(tabItems, id: \.id) { item in
-                        ActivityPlanBindingView(inComingAP: .constant(item), sessionId: .constant(item.sessionId), isShowing: .constant(true))
-                            .environmentObject(self.BEO)
-                            .environmentObject(self.NavStack)
-                    }.clearSectionBackground()
-                }.clearSectionBackground()
-            }.clearSectionBackground()
+            }
+            
+            Section(header: HeaderText("Activities: \(activities.count)", color: getTextColorOnBackground(colorScheme))) {
+                ScrollView(.vertical, showsIndicators: false) {
+                    VStack {
+                        if !reloadList {
+                            ForEach(activities, id: \.id) { item in
+                                ActivityPlanBindingView(inComingAP: .constant(item), sessionId: .constant(item.sessionId), isShowing: .constant(true))
+                                    .environmentObject(self.BEO)
+                                    .environmentObject(self.NavStack)
+                            }
+                        }
+                    }
+                }
+            }
             
         }.clearSectionBackground()
         .onChange(of: self.BEO.currentSessionId) { _ in
@@ -245,8 +293,8 @@ struct SessionPlanView: View {
     }
     
     func deleteSessionPlan() {
-        if let sess = self.allActivities.realm?.findByField(SessionPlan.self, value: self.sessionId) {
-            self.allActivities.realm?.safeWrite { r in
+        if let sess = self.BEO.realmInstance.findByField(SessionPlan.self, value: self.sessionId) {
+            self.BEO.realmInstance.safeWrite { r in
                 sess.isDeleted = true
             }
             // TODO: FIREBASE ONLY
@@ -279,7 +327,7 @@ struct SessionPlanView: View {
         newAP.orderIndex = 0
         newAP.isLocal = isLive
         
-        self.allActivities.realm?.safeWrite { r in
+        self.BEO.realmInstance.safeWrite { r in
             r.create(SessionPlan.self, value: newSP, update: .all)
             r.create(ActivityPlan.self, value: newAP, update: .all)
         }
@@ -305,7 +353,6 @@ struct SessionPlanView: View {
     func loadActivities() {
         var temp = false
         tabItems.removeAll()
-        tabItems.append(newActivityPlan())
         if self.sessionId == "new" { return }
         for act in allActivities {
             if act.sessionId != self.sessionId { continue }
