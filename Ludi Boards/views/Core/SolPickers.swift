@@ -11,13 +11,19 @@ import SwiftUI
 
 struct PickerNumberOfPlayers: View {
     @Binding var selection: Int
+    @Binding var isEdit: Bool
 
     var body: some View {
-        Picker("Number of Players", selection: $selection) {
-            ForEach(PlayerNumbers.numbers, id: \.self) { number in
-                Text(String(number)).tag(number)
+        if !isEdit {
+            TextLabel("Number of Players", text: String(selection))
+        } else {
+            Picker("Number of Players", selection: $selection) {
+                ForEach(PlayerNumbers.numbers, id: \.self) { number in
+                    Text(String(number)).tag(number)
+                }
             }
         }
+        
 //        .pickerStyle(WheelPickerStyle())
     }
 }
@@ -25,23 +31,33 @@ struct PickerNumberOfPlayers: View {
 
 struct PickerDate: View {
     @Binding var selection: Date
+    @Binding var isEdit: Bool
 
     var body: some View {
-        DatePicker("Scheduled Date", selection: $selection, displayedComponents: .date)
-//            .datePickerStyle(GraphicalDatePickerStyle())
+        if !isEdit {
+            TextLabel("Scheduled Date", text: "\(selection)")
+        } else {
+            DatePicker("Scheduled Date", selection: $selection, displayedComponents: .date)
+        }
     }
 }
 
 
 struct PickerIntensity: View {
     @Binding var selection: String
+    @Binding var isEdit: Bool
 
     var body: some View {
-        Picker("Intensity", selection: $selection) {
-            ForEach(IntensityLevel.allCases) { intensityLevel in
-                Text(intensityLevel.rawValue).tag(intensityLevel.rawValue)
+        if !isEdit {
+            TextLabel("Intensity", text: selection)
+        } else {
+            Picker("Intensity", selection: $selection) {
+                ForEach(IntensityLevel.allCases) { intensityLevel in
+                    Text(intensityLevel.rawValue).tag(intensityLevel.rawValue)
+                }
             }
         }
+        
 //        .pickerStyle(SegmentedPickerStyle())
     }
 }
@@ -49,53 +65,70 @@ struct PickerIntensity: View {
 
 struct PickerAgeLevel: View {
     @Binding var selection: String
+    @Binding var isEdit: Bool
 
     var body: some View {
-        Picker("Age Level", selection: $selection) {
-            ForEach(AgeLevel.allCases) { age in
-                Text(age.rawValue).tag(age.rawValue)
+        if !isEdit {
+            TextLabel("Age Level", text: selection)
+        } else {
+            Picker("Age Level", selection: $selection) {
+                ForEach(AgeLevel.allCases) { age in
+                    Text(age.rawValue).tag(age.rawValue)
+                }
             }
         }
-//        .pickerStyle(WheelPickerStyle())
     }
 }
 
 
 struct PickerTimeDuration: View {
     @Binding var selection: String
+    @Binding var isEdit: Bool
 
     var body: some View {
-        Picker("Time Duration", selection: $selection) {
-            ForEach(TimeDuration.allCases) { duration in
-                Text("\(duration.rawValue) Minutes").tag(String(duration.rawValue))
+        if !isEdit {
+            TextLabel("Time Duration", text: selection)
+        } else {
+            Picker("Time Duration", selection: $selection) {
+                ForEach(TimeDuration.allCases) { duration in
+                    Text("\(duration.rawValue) Minutes").tag(String(duration.rawValue))
+                }
             }
         }
-//        .pickerStyle(MenuPickerStyle())
     }
 }
 
 struct PickerGroupCount: View {
     @Binding var selection: Int
+    @Binding var isEdit: Bool
 
     var body: some View {
-        Picker("Group Count", selection: $selection) {
-            ForEach(PlayerNumbers.groups, id: \.self) { groupCount in
-                Text("\(groupCount) Groups").tag(groupCount)
+        if !isEdit {
+            TextLabel("Group Count", text: "\(selection)")
+        } else {
+            Picker("Group Count", selection: $selection) {
+                ForEach(PlayerNumbers.groups, id: \.self) { groupCount in
+                    Text("\(groupCount) Groups").tag(groupCount)
+                }
             }
         }
-//        .pickerStyle(WheelPickerStyle())
     }
 }
 
 struct PickerNumPerGroup: View {
     @Binding var selection: Int
+    @Binding var isEdit: Bool
 
     var body: some View {
-        Picker("Players in Group", selection: $selection) {
-            ForEach(PlayerNumbers.numbers, id: \.self) { number in
-                Text("\(number) Per Group").tag(number)
+        
+        if !isEdit {
+            TextLabel("Players in Group", text: "\(selection)")
+        } else {
+            Picker("Players in Group", selection: $selection) {
+                ForEach(PlayerNumbers.numbers, id: \.self) { number in
+                    Text("\(number) Per Group").tag(number)
+                }
             }
         }
-//        .pickerStyle(WheelPickerStyle())
     }
 }

@@ -39,6 +39,14 @@ struct ActivityPlanBindingView: View {
     @State var numPerGroup = 0
     @State var numOfPlayers = 0
     
+    @State var coachingPoints = ""
+    @State var guidedAnswers = ""
+    @State var keyQualities = ""
+    @State var principles = ""
+    
+    @State var equipment = ""
+    @State var spaceDimensions = ""
+    
     @State var objectiveDetails = ""
     @State var activityDetails = ""
     @State var backgroundView = ""
@@ -65,7 +73,7 @@ struct ActivityPlanBindingView: View {
     
     var body: some View {
         
-        Form {
+        VStack {
                      
             HStack {
                 
@@ -88,13 +96,13 @@ struct ActivityPlanBindingView: View {
                         addUpdateActivityPlan()
                     }
                 )
-                SOLCON(
-                    icon: SolIcon.load,
-                    onTap: {
-                        CodiChannel.SESSION_ON_ID_CHANGE.send(value: SessionChange(sessionId: self.sessionId, activityId: self.activityId))
-                        self.isCurrentPlan = true
-                    }
-                ).solEnabled(isEnabled: !self.isCurrentPlan)
+//                SOLCON(
+//                    icon: SolIcon.load,
+//                    onTap: {
+//                        CodiChannel.SESSION_ON_ID_CHANGE.send(value: SessionChange(sessionId: self.sessionId, activityId: self.activityId))
+//                        self.isCurrentPlan = true
+//                    }
+//                ).solEnabled(isEnabled: !self.isCurrentPlan)
                 SOLCON(
                     icon: SolIcon.delete,
                     onTap: {
@@ -103,30 +111,34 @@ struct ActivityPlanBindingView: View {
                 )
             }
             
-            SolTextField("Title", text: $title)
-            PickerTimeDuration(selection: $duration)
-            PickerIntensity(selection: $intensity)
-            PickerAgeLevel(selection: $ageLevel)
-            PickerNumberOfPlayers(selection: $numOfPlayers)
-            
-            DStack {
-                PickerGroupCount(selection: $numOfGroups)
-                PickerNumPerGroup(selection: $numPerGroup)
+            Form {
+                SolTextField("Title", text: $title)
+                PickerTimeDuration(selection: $duration, isEdit: .constant(true))
+                PickerIntensity(selection: $intensity, isEdit: .constant(true))
+                PickerAgeLevel(selection: $ageLevel, isEdit: .constant(true))
+                PickerNumberOfPlayers(selection: $numOfPlayers, isEdit: .constant(true))
+                
+                DStack {
+                    PickerGroupCount(selection: $numOfGroups, isEdit: .constant(true))
+                    PickerNumPerGroup(selection: $numPerGroup, isEdit: .constant(true))
+                }
+                
+                DStack {
+                    SolTextEditor("Description", text: $objectiveDetails, color: .black)
+                        .frame(minHeight: 125)
+                    SolTextEditor("Objective", text: $activityDetails, color: .black)
+                        .frame(minHeight: 125)
+                }.padding(.bottom)
             }
             
-            DStack {
-                SolTextEditor("Description", text: $objectiveDetails, color: .black)
-                    .frame(minHeight: 125)
-                SolTextEditor("Objective", text: $activityDetails, color: .black)
-                    .frame(minHeight: 125)
-            }.padding(.bottom)
+            
                         
         }
-        .frame(minHeight: 500)
-        .background(getBackgroundColor(colorScheme))
-        .cornerRadius(15)
-        .shadow(color: .gray, radius: 3, x: 0, y: 0)
-        .padding()
+//        .frame(minHeight: 500)
+//        .background(getBackgroundColor(colorScheme))
+//        .cornerRadius(15)
+//        .shadow(color: .gray, radius: 3, x: 0, y: 0)
+//        .padding()
         .onChange(of: self.inComingAP) { newPlan in
             DispatchQueue.main.async {
                 self.fetchActivityPlan(activityPlan: newPlan)
@@ -286,3 +298,205 @@ struct ActivityPlanBindingView: View {
 
 }
 
+struct ActivityItemView: View {
+    @Binding var item: ActivityPlan // Assuming Activity is your model
+    @State private var isExpanded: Bool = false
+    
+    @EnvironmentObject var BEO: BoardEngineObject
+    @EnvironmentObject var NavStack: NavStackWindowObservable
+    
+    @State private var scheduledDate: Date = Date()
+    @State private var duration = ""
+    
+    var body: some View {
+        VStack {
+            
+            if !isExpanded {
+                
+                HStack {
+                    TextField("Title", text: .constant(item.title))
+                    
+                    SOLCON(
+                        icon: SolIcon.load,
+                        onTap: {
+                            CodiChannel.SESSION_ON_ID_CHANGE.send(value: SessionChange(sessionId: item.sessionId, activityId: item.id))
+//                            self.isCurrentPlan = true
+                        }
+                    ).solEnabled(isEnabled: true)
+                    
+                    SwitchShowHide(status: $isExpanded)
+                        .onChange(of: isExpanded, perform: { value in
+                            withAnimation(.easeInOut) {
+                                isExpanded.toggle()
+                            }
+                        })
+                }.padding()
+                
+            } else {
+                
+                HStack {
+                    TextField("Title", text: .constant(item.title))
+                    
+                    SOLCON(
+                        icon: SolIcon.load,
+                        onTap: {
+                            CodiChannel.SESSION_ON_ID_CHANGE.send(value: SessionChange(sessionId: item.sessionId, activityId: item.id))
+//                            self.isCurrentPlan = true
+                        }
+                    ).solEnabled(isEnabled: true)
+                    
+                    SwitchShowHide(status: $isExpanded)
+                        .onChange(of: isExpanded, perform: { value in
+                            withAnimation(.easeInOut) {
+                                isExpanded.toggle()
+                            }
+                        })
+                }.padding()
+//                ExpandableFormView()
+//                ActivityPlanBindingView(inComingAP: .constant(item), sessionId: .constant(item.sessionId), isShowing: .constant(true))
+//                    .environmentObject(self.BEO)
+//                    .environmentObject(self.NavStack)
+            }
+//            Button(action: {
+//                withAnimation(.easeInOut) {
+//                    isExpanded.toggle()
+//                }
+//            }) {
+//                Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
+//                    .resizable()
+//                    .frame(width: 20, height: 20)
+//                    .foregroundColor(.blue)
+//            }
+        }
+        .frame(height: isExpanded ? 600 : 100)
+        .animation(.easeInOut, value: isExpanded)
+    }
+}
+
+
+//                ActivityPlanBindingView(inComingAP: .constant(item), sessionId: .constant(item.sessionId), isShowing: .constant(true))
+//                    .environmentObject(self.BEO)
+//                    .environmentObject(self.NavStack)
+
+
+struct ExpandableFormView: View {
+    @Binding var incomingAP: ActivityPlan
+    @State private var isExpanded = false
+    @State var title = ""
+    @State var subTitle = ""
+    @State var date: Date = Date()
+    
+    @State var timePeriod = ""
+    @State var duration = ""
+    @State var ageLevel = ""
+    @State var intensity = ""
+    
+    @State var numOfGroups = 0
+    @State var numPerGroup = 0
+    @State var numOfPlayers = 0
+    @State private var objectiveDetails: String = ""
+    @State private var activityDetails: String = ""
+
+    var body: some View {
+        Form {
+            Section(header: Text(title)) {
+                SolTextField("Title", text: $title)
+                AdaptiveStack {
+                    PickerTimeDuration(selection: $duration, isEdit: .constant(true))
+                    PickerIntensity(selection: $intensity, isEdit: .constant(true))
+                }
+                
+                DisclosureGroup("More Attributes and Settings", isExpanded: $isExpanded) {
+                    
+                    AdaptiveStack {
+                        PickerAgeLevel(selection: $ageLevel, isEdit: .constant(true))
+                        PickerNumberOfPlayers(selection: $numOfPlayers, isEdit: .constant(true))
+                    }
+                    
+                    AdaptiveStack {
+                        PickerGroupCount(selection: $numOfGroups, isEdit: .constant(true))
+                        PickerNumPerGroup(selection: $numPerGroup, isEdit: .constant(true))
+                    }
+
+                    AdaptiveStack {
+                        SolTextEditor("Description", text: $objectiveDetails, color: .black)
+                            .frame(minHeight: 125)
+                        SolTextEditor("Objective", text: $activityDetails, color: .black)
+                            .frame(minHeight: 125)
+                    }
+                    .padding(.bottom)
+                    .frame(minHeight: 150)
+                    
+                    Section {
+                        
+                        HStack {
+                            Spacer()
+                            FieldOverlayView(width: 75, height: 75, background: {
+                                Color.gray
+                            }, overlay: {
+                                if let CurrentBoardBackground = Sports().getAllMinis()["Soccer Field 1"] {
+                                    CurrentBoardBackground()
+                                        .zIndex(2.0)
+                                }
+                            })
+                            .frame(width: 50, height: 50)
+                            Spacer()
+                        }.frame(height: 200)
+                        
+                    }.clearSectionBackground()
+                    
+                    
+                }
+                
+                HStack {
+                    Spacer().padding()
+                    SOLCON(
+                        icon: SolIcon.save,
+                        onTap: {
+//                            addUpdateActivityPlan()
+                        }
+                    )
+                    SOLCON(
+                        icon: SolIcon.delete,
+                        onTap: {
+//                            deleteActivityPlan()
+                        }
+                    )
+                }
+                
+            }
+
+            
+        }
+        .frame(minHeight: isExpanded ? 600 : 300)
+        .onAppear() {
+            fetchActivityPlan(activityPlan: incomingAP)
+        }
+    }
+    
+    private func fetchActivityPlan(activityPlan: ActivityPlan) {
+        
+//        self.activityId = activityPlan.id
+        
+        self.title = activityPlan.title
+        self.subTitle = activityPlan.subTitle
+//        self.date = activityPlan.dateOf
+        self.activityDetails = activityPlan.activityDetails
+        
+        self.ageLevel = activityPlan.ageLevel
+        self.timePeriod = activityPlan.timePeriod
+        self.activityDetails = activityPlan.activityDetails
+        self.objectiveDetails = activityPlan.objectiveDetails
+        
+//        self.lineStroke = activityPlan.backgroundLineStroke
+//        self.lineOpacity = activityPlan.backgroundLineAlpha
+//        self.colorOpacity = activityPlan.backgroundAlpha
+//        self.fieldRotation = activityPlan.backgroundRotation
+//        self.fieldName = activityPlan.backgroundView
+//        if self.BEO.currentActivityId == self.activityId {
+//            self.isCurrentPlan = true
+//        } else {
+//            self.isCurrentPlan = false
+//        }
+    }
+}

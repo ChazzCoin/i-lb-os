@@ -14,6 +14,7 @@ struct SolTextEditor: View {
     var placeholder: String
     var title: String
     var color: Color
+    @Binding var isEdit: Bool
     @Environment(\.colorScheme) var colorScheme
 
     init(_ placeholder: String, text: Binding<String>, color: Color = .white) {
@@ -21,40 +22,58 @@ struct SolTextEditor: View {
         self.placeholder = placeholder
         self.title = placeholder
         self.color = color
+        self._isEdit = .constant(false)
+    }
+    
+    init(_ placeholder: String, text: Binding<String>, color: Color = .white, isEdit: Binding<Bool>) {
+        self._text = text
+        self.placeholder = placeholder
+        self.title = placeholder
+        self.color = color
+        self._isEdit = isEdit
     }
 
     var body: some View {
         
-        VStack {
-            
-            AlignLeft {
-                Text(placeholder)
-            }
-           
-            ZStack(alignment: .topLeading) {
+        if !isEdit {
+            TextLabel(self.title, text: text)
+        } else {
+            VStack {
                 
-                TextEditor(text: $text)
-                    .padding(10)
-                    .animation(.easeInOut, value: text)
-                    
-                
-                if text.isEmpty {
+                AlignLeft {
                     Text(placeholder)
-                        .foregroundColor(.gray)
-                        .padding(.top, 15)
-                        .padding(.leading, 20)
-                        .transition(.move(edge: .leading))
+                        .foregroundColor(.blue)
                 }
+               
+                ZStack(alignment: .topLeading) {
+                    
+                    TextEditor(text: $text)
+                        .padding(10)
+                        .animation(.easeInOut, value: text)
+                        
+                    
+                    if text.isEmpty {
+                        Text(placeholder)
+                            .foregroundColor(.gray)
+                            .padding(.top, 15)
+                            .padding(.leading, 20)
+                            .transition(.move(edge: .leading))
+                    }
 
+                }
+                .overlay(
+                   RoundedRectangle(cornerRadius: 10)
+                    .stroke(getForegroundGradient(colorScheme), lineWidth: 1)
+                )
+                .cornerRadius(10)
+                .shadow(color: .gray.opacity(0.5), radius: 3, x: 0, y: 0)
             }
-            .overlay(
-               RoundedRectangle(cornerRadius: 10)
-                .stroke(getForegroundGradient(colorScheme), lineWidth: 1)
-            )
-            .cornerRadius(10)
-            .shadow(color: .gray.opacity(0.5), radius: 3, x: 0, y: 0)
+            .frame(minHeight: 125)
+            .padding(.top)
+            
         }
-        .padding(.top)
+        
+        
     }
 }
 

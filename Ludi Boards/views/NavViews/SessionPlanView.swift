@@ -15,6 +15,8 @@ struct SessionPlanView: View {
     @Binding var isShowing: Bool
     @State var isMasterWindow: Bool
     
+    @State var isEditMode: Bool = false
+    
     // Session Details
     @State private var sport = "soccer"
     @State private var title = "SOL Session"
@@ -26,6 +28,13 @@ struct SessionPlanView: View {
     @State private var intensity = ""
     @State private var numOfPlayers = 0
     @State private var principles = ""
+    
+    @State var coachingPoints = ""
+    @State var guidedAnswers = ""
+    @State var keyQualities = ""
+    
+    @State var equipment = ""
+    @State var spaceDimensions = ""
     
     @State private var description = ""
     @State private var objective = ""
@@ -64,6 +73,8 @@ struct SessionPlanView: View {
     @State private var sheetTitle = ""
     @State private var sheetMessage = ""
     @State private var sheetIsShowing = false
+    
+    @State private var isExpanded = false
     
     @State private var reloadList = false
     func doReloadOfList() {
@@ -133,50 +144,73 @@ struct SessionPlanView: View {
                         }
                     ).solEnabled(isEnabled: true)
                     
+                    SolIconTextButton(
+                        title: "Share Session",
+                        systemName: SolIcon.share.icon, onTap: {
+                            self.showShareSheet = true
+                        }
+                    ).solEnabled(isEnabled: self.isSharable && self.isLive)
                 }
                 
             }.clearSectionBackground()
             
-            HStack {
-                SwitchOnOff(title: "Is Live and Sharable", status: $isLive)
-                SolIconTextButton(title: "Share Session", systemName: SolIcon.share.icon, onTap: {
-                    self.showShareSheet = true
-                }).solEnabled(isEnabled: self.isSharable && self.isLive)
-            }
+//            Section(header: AlignLeft { HeaderText("View", color: getTextColorOnBackground(colorScheme)) }) {
+//                
+//                TextLabel("Session Name:", text: title)
+//                SwitchOnOff(title: "Is Live and Sharable", status: $isLive, isEnabled: false)
+//                    .padding(.leading)
+//                    .padding(.trailing)
+//                AdaptiveStack {
+//                    TextLabel("Duration:", text: duration)
+//                    TextLabel("Date:", text: "\(scheduledDate)")
+//                }
+//                
+//                AdaptiveStack {
+//                    TextLabel("Intensity:", text: intensity)
+//                    TextLabel("Age Level:", text: ageLevel)
+//                }
+//                
+//                AdaptiveStack {
+//                    TextLabel("Number of Players:", text: "\(numOfPlayers)")
+//                }
+//                
+//                TextLabel("Description:", text: description)
+//                TextLabel("Objective:", text: objective)
+//                
+//            }
             
-            Section(header: AlignLeft { HeaderText("Session Details", color: getTextColorOnBackground(colorScheme)) }) {
+            Section(header: AlignLeft { HeaderText("Edit", color: getTextColorOnBackground(colorScheme)) }) {
                 
-                SolTextField("Title", text: $title)
                 
-                DStack {
-                    PickerDate(selection: $scheduledDate)
-                    PickerTimeDuration(selection: $duration)
-                }
-                .padding(.leading)
-                .padding(.trailing)
-                
-                DStack {
-                    PickerIntensity(selection: $intensity)
-                    PickerAgeLevel(selection: $ageLevel)
-                }
-                .padding(.leading)
-                .padding(.trailing)
-                
-                DStack {
-                    PickerNumberOfPlayers(selection: $numOfPlayers)
-                }
-                .padding(.leading)
-                .padding(.trailing)
-                
-                DStack {
-                    SolTextEditor("Description", text: $description, color: .black)
-                        .frame(minHeight: 125)
-                        .padding(.leading)
-                        .padding(.trailing)
+                SwitchOnOff(title: "Is Edit Mode", status: $isEditMode)
+                    .padding()
+                EditableTextField(label: "Title", text: $title, isEdit: $isEditMode)
                     
-                    SolTextEditor("Objective", text: $objective, color: .black)
-                        .frame(minHeight: 125)
+                AdaptiveStack {
+                    PickerDate(selection: $scheduledDate, isEdit: $isEditMode)
+                    PickerTimeDuration(selection: $duration, isEdit: $isEditMode)
                 }
+                
+                AdaptiveStack {
+                    PickerAgeLevel(selection: $ageLevel, isEdit: $isEditMode)
+                    PickerNumberOfPlayers(selection: $numOfPlayers, isEdit: $isEditMode)
+                }
+                
+                DisclosureGroup("More Attributes and Settings", isExpanded: $isExpanded) {
+                    
+                    PickerIntensity(selection: $intensity, isEdit: $isEditMode)
+                    SolTextEditor("Coaching Points", text: $coachingPoints, color: .black, isEdit: $isEditMode)
+                    SolTextEditor("Key Qualities", text: $keyQualities, color: .black, isEdit: $isEditMode)
+                    SolTextEditor("Principles", text: $coachingPoints, color: .black, isEdit: $isEditMode)
+                }
+                
+                AdaptiveStack {
+                    SolTextEditor("Description", text: $description, color: .black, isEdit: $isEditMode)
+                        .padding()
+                    SolTextEditor("Objective", text: $objective, color: .black, isEdit: $isEditMode)
+                        .padding()
+                }
+                .frame(minHeight: isEditMode ? 150 : 35)
                 .padding(.bottom)
                 
             }
@@ -186,9 +220,7 @@ struct SessionPlanView: View {
                     VStack {
                         if !reloadList {
                             ForEach(activities, id: \.id) { item in
-                                ActivityPlanBindingView(inComingAP: .constant(item), sessionId: .constant(item.sessionId), isShowing: .constant(true))
-                                    .environmentObject(self.BEO)
-                                    .environmentObject(self.NavStack)
+                                ExpandableFormView(incomingAP: .constant(item))
                             }
                         }
                     }

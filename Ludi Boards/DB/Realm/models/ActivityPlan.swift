@@ -23,6 +23,9 @@ class ActivityPlan: Object, ObjectKeyIdentifiable {
     @Persisted var duration: String = ""
     @Persisted var ageLevel: String = ""
     
+    @Persisted var equipment: String = ""
+    @Persisted var spaceDimensions: String = ""
+    
     @Persisted var principles: String = ""
     @Persisted var keyQualities: String = ""
     @Persisted var coachingPoints: String = ""

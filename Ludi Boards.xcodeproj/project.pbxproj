@@ -86,6 +86,7 @@
 		FB58E8842B03169700FD9E2E /* TimeProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58E8832B03169700FD9E2E /* TimeProvider.swift */; };
 		FB65D2C92B7D5E2E00564C37 /* SessionProviders.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB65D2C82B7D5E2E00564C37 /* SessionProviders.swift */; };
 		FB65D2CB2B7DC16300564C37 /* SolPickers.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB65D2CA2B7DC16300564C37 /* SolPickers.swift */; };
+		FB65D2CD2B7DD9AF00564C37 /* SolSwitches.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB65D2CC2B7DD9AF00564C37 /* SolSwitches.swift */; };
 		FB6C0C4F2B525B2500163A6D /* SolTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB6C0C4E2B525B2500163A6D /* SolTextField.swift */; };
 		FB6C0C512B525E8500163A6D /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB6C0C502B525E8500163A6D /* LoginView.swift */; };
 		FB6C0C532B52706B00163A6D /* ModernTextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB6C0C522B52706B00163A6D /* ModernTextEditor.swift */; };
@@ -181,6 +182,7 @@
 		FB9F1E3C2B15393A00FD9078 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = FB9F1E3B2B15393A00FD9078 /* FirebaseStorage */; };
 		FB9F1E3E2B15393A00FD9078 /* FirebaseStorageCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = FB9F1E3D2B15393A00FD9078 /* FirebaseStorageCombine-Community */; };
 		FB9F1E402B159F6A00FD9078 /* OrientationInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9F1E3F2B159F6A00FD9078 /* OrientationInfo.swift */; };
+		FBA0BEED2B8331B400054026 /* EditableFields.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBA0BEEC2B8331B400054026 /* EditableFields.swift */; };
 		FBA20A2F2B166FCE00045D1C /* MVSettingsView_DEPRECATED.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBA20A2E2B166FCE00045D1C /* MVSettingsView_DEPRECATED.swift */; };
 		FBA4FB572B15AA2700BF409E /* GlobalPositioning.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBA4FB562B15AA2700BF409E /* GlobalPositioning.swift */; };
 		FBABDAC52B20376F00321A00 /* ConfirmationPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBABDAC42B20376F00321A00 /* ConfirmationPopup.swift */; };
@@ -340,6 +342,7 @@
 		FB58E8832B03169700FD9E2E /* TimeProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeProvider.swift; sourceTree = "<group>"; };
 		FB65D2C82B7D5E2E00564C37 /* SessionProviders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionProviders.swift; sourceTree = "<group>"; };
 		FB65D2CA2B7DC16300564C37 /* SolPickers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolPickers.swift; sourceTree = "<group>"; };
+		FB65D2CC2B7DD9AF00564C37 /* SolSwitches.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolSwitches.swift; sourceTree = "<group>"; };
 		FB6C0C4E2B525B2500163A6D /* SolTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolTextField.swift; sourceTree = "<group>"; };
 		FB6C0C502B525E8500163A6D /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		FB6C0C522B52706B00163A6D /* ModernTextEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModernTextEditor.swift; sourceTree = "<group>"; };
@@ -386,6 +389,7 @@
 		FB9F1DD52B1532AB00FD9078 /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		FB9F1DD82B1533C400FD9078 /* FirebaseLogin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseLogin.swift; sourceTree = "<group>"; };
 		FB9F1E3F2B159F6A00FD9078 /* OrientationInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrientationInfo.swift; sourceTree = "<group>"; };
+		FBA0BEEC2B8331B400054026 /* EditableFields.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditableFields.swift; sourceTree = "<group>"; };
 		FBA20A2E2B166FCE00045D1C /* MVSettingsView_DEPRECATED.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MVSettingsView_DEPRECATED.swift; sourceTree = "<group>"; };
 		FBA4FB562B15AA2700BF409E /* GlobalPositioning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalPositioning.swift; sourceTree = "<group>"; };
 		FBABDAC42B20376F00321A00 /* ConfirmationPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmationPopup.swift; sourceTree = "<group>"; };
@@ -588,6 +592,8 @@
 				FB18F16C2B68B10C00D89F8D /* SearchBar.swift */,
 				FB2AA1062B74352A00BD631C /* SolToggle.swift */,
 				FB65D2CA2B7DC16300564C37 /* SolPickers.swift */,
+				FB65D2CC2B7DD9AF00564C37 /* SolSwitches.swift */,
+				FBA0BEEC2B8331B400054026 /* EditableFields.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -1369,6 +1375,7 @@
 				FB6C0C512B525E8500163A6D /* LoginView.swift in Sources */,
 				FB18F1752B697E2800D89F8D /* DSideBarWindow.swift in Sources */,
 				FB3E02C12B0C9A6D00D8558C /* BuddyProfileView.swift in Sources */,
+				FBA0BEED2B8331B400054026 /* EditableFields.swift in Sources */,
 				FBD9AFB82AFF0253005F8620 /* GridLines.swift in Sources */,
 				FB18F15E2B6838B900D89F8D /* PlayerRefView.swift in Sources */,
 				FBE2C6262B1BD7BA004C0116 /* TipBoxView.swift in Sources */,
@@ -1445,6 +1452,7 @@
 				FBDE4F592B4D0C12007FE880 /* SessionPlanService.swift in Sources */,
 				FBF1A5FC2B5F7BB70088150C /* Triangle.swift in Sources */,
 				FB18F1872B6B10CE00D89F8D /* RecordingView.swift in Sources */,
+				FB65D2CD2B7DD9AF00564C37 /* SolSwitches.swift in Sources */,
 				FB426A9F2B5346070058CD9D /* Connection.swift in Sources */,
 				FB18F16D2B68B10C00D89F8D /* SearchBar.swift in Sources */,
 				FBE2C62E2B1C3FDE004C0116 /* LoadingForm.swift in Sources */,
