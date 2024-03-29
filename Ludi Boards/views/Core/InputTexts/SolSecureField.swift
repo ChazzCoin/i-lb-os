@@ -21,10 +21,9 @@ struct SolSecureField: View {
         ZStack(alignment: .leading) {
             
             SecureField("", text: $text)
-                .padding(15)
-                .background(Color.secondaryBackground)
+                .padding()
+                .background(Color.gray.opacity(0.2))
                 .cornerRadius(10)
-                .shadow(color: .gray.opacity(0.4), radius: 5, x: 0, y: 2)
                 .overlay(
                     HStack {
                         Spacer()

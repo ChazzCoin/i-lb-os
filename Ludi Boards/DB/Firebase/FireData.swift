@@ -131,6 +131,12 @@ extension DatabaseReference {
         self.child(collection).child(id).setValue(obj.toDict())
     }
     
+    func saveUser(obj: User) {
+        self.child(DatabasePaths.users.rawValue)
+            .child(obj.id)
+            .setValue(obj.toDict())
+    }
+    
 }
 
 func firebaseDatabase(block: @escaping (DatabaseReference) -> Void) {
@@ -177,17 +183,6 @@ func fireGetLiveDemoAsync(realm: Realm?=nil) {
         ref.child("SOL-LIVE-DEMO").observeSingleEvent(of: .value) { snapshot, _ in
             var _ = snapshot.toLudiObject(SessionPlan.self, realm: realm)
         }
-    }
-}
-
-// GET Share Session
-func fireGetSessionSharesAsync(userId: String, realm: Realm?=nil) {
-    if !userIsVerifiedToProceed() { return }
-    firebaseDatabase(collection: DatabasePaths.userToActivity.rawValue) { ref in
-        ref.queryOrdered(byChild: "guestId").queryEqual(toValue: userId)
-            .observeSingleEvent(of: .value) { snapshot, _ in
-                var _ = snapshot.toLudiObjects(Share.self, realm: realm)
-            }
     }
 }
 

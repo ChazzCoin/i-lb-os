@@ -53,6 +53,17 @@ class BoardEngineObject : ObservableObject {
         }
     }
     
+    @AppStorage("isLoggedIn") var isLoggedIn: Bool = false
+    @AppStorage("currentUserId") var currentUserId: String = ""
+    @AppStorage("currentUserName") var currentUserName: String = ""
+    @AppStorage("currentUserRole") var currentUserRole: String = ""
+    @AppStorage("currentUserAuth") var currentUserAuth: String = ""
+    @AppStorage("currentOrgId") var currentOrgId: String = "none"
+    @AppStorage("currentTeamId") var currentTeamId: String = "none"
+    @AppStorage("currentSessionId") var currentSessionId: String = ""
+    @AppStorage("currentActivityId") var currentActivityId: String = ""
+    @AppStorage("currentChatId") var currentChatId: String = ""
+    
     let realmInstance = realm()
     let boards = Sports()
     @Published var guideModeIsEnabled = true
@@ -64,7 +75,7 @@ class BoardEngineObject : ObservableObject {
     @Published var isShowingPopUp: Bool = false
     
     // Current User
-    @Published var isLoggedIn: Bool = true
+//    @Published var isLoggedIn: Bool = true
     @Published var userId: String? = nil
     @Published var userName: String? = nil
     
@@ -139,8 +150,8 @@ class BoardEngineObject : ObservableObject {
     @Published var lineTools: [ManagedView] = []
     
     @Published var isLiveSession: Bool = false
-    @Published var currentSessionId: String = ""
-    @Published var currentActivityId: String = ""
+//    @Published var currentSessionId: String = ""
+//    @Published var currentActivityId: String = ""
     func changeSession(sessionId:String) { self.currentSessionId = sessionId }
     func changeActivity(activityId:String) {
         if activityId.isEmpty { return }
@@ -153,11 +164,11 @@ class BoardEngineObject : ObservableObject {
     }
     
     func loadUser() {
-        self.isLoggedIn = userIsVerifiedToProceed()
-        self.realmInstance.getCurrentSolUser { su in
-            self.userId = su.userId
-            self.userName = su.userName
-        }
+//        self.isLoggedIn = userIsVerifiedToProceed()
+//        self.realmInstance.getCurrentSolUser { su in
+//            self.userId = su.userId
+//            self.userName = su.userName
+//        }
     }
     
     func screenIsActiveAndLocked() -> Bool {

@@ -316,7 +316,7 @@ struct SessionPlanView: View {
     
     func getShareIds() {
         safeFirebaseUserId() { userId in
-            if let umvs = self.allActivities.realm?.objects(UserToSession.self).filter("guestId == %@", userId) {
+            if let umvs = self.allActivities.realm?.objects(UserToSession.self) {
                 for i in umvs {
                     self.shareIds.append(i.sessionId)
                 }

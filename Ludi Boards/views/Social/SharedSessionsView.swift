@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 struct ShareThumbnailView: View {
-    var share: Share
+//    var share: Share
 
     var body: some View {
         Group {
@@ -20,9 +20,9 @@ struct ShareThumbnailView: View {
                 .padding(.trailing, 10)
 
             VStack(alignment: .leading, spacing: 4) {
-                Text("From: \(share.hostUserName)")
+                Text("From:")
                     .font(.headline)
-                Text("Status: \(share.status)")
+                Text("Status:")
                     .font(.footnote)
                     .foregroundColor(.gray)
             }

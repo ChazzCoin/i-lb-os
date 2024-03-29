@@ -18,7 +18,7 @@ struct SessionPlanOverview: View {
   
     @ObservedResults(PlayerRef.self) var players
     
-    @ObservedResults(UserToSession.self, where: { $0.guestId == getFirebaseUserId() ?? "" && $0.status != "removed" }) var guestSessions
+    @ObservedResults(UserToSession.self, where: { $0.status != "removed" }) var guestSessions
     var sharedSessionIds: [String] {
         var temp = Array(guestSessions.map { $0.sessionId })
         if !temp.contains("SOL-LIVE-DEMO") {
@@ -41,6 +41,7 @@ struct SessionPlanOverview: View {
     
     @State private var currentTeamId = ""
     @State private var showCurrentTeamSheet = false
+    @State private var showNewOrgSheet = false
     @State private var showNewTeamSheet = false
     @State private var showNewPlayerRefSheet = false
     
@@ -88,6 +89,16 @@ struct SessionPlanOverview: View {
                     
                     SOLCON(
                         icon: SolIcon.add,
+                        title: "Organization",
+                        isConfirmEnabled: false,
+                        onTap: {
+                            print("Create Organization Button")
+                            showNewOrgSheet = true
+                        }
+                    ).padding()
+                    
+                    SOLCON(
+                        icon: SolIcon.add,
                         title: "Team",
                         isConfirmEnabled: false,
                         onTap: {
@@ -107,6 +118,8 @@ struct SessionPlanOverview: View {
                     ).padding()
                     
                 }.clearSectionBackground()
+                
+                OrganizationDashboardView(organization: Organization())
                 
                 Section(header: Text("Sessions")) {
                     SearchableSessionListView()
@@ -154,14 +167,15 @@ struct SessionPlanOverview: View {
         .sheet(isPresented: $showCurrentTeamSheet) {
             TeamView(teamId: $currentTeamId, isShowing: $showCurrentTeamSheet)
         }
+        .sheet(isPresented: $showNewOrgSheet) {
+//            TeamView(teamId: .constant("new"), isShowing: $showNewTeamSheet)
+        }
         .sheet(isPresented: $showNewTeamSheet) {
             TeamView(teamId: .constant("new"), isShowing: $showNewTeamSheet)
         }
-        
         .sheet(isPresented: $showNewPlayerRefSheet) {
             PlayerRefView(playerId: .constant("new"), isShowing: $showNewPlayerRefSheet)
         }
-        
         .refreshable {
             fetchAllSessionsFromFirebase()
         }

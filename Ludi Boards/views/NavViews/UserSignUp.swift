@@ -78,7 +78,7 @@ struct SignUpView: View {
                                 SolTextField("Email", text: $email)
                                     .onChange(of: email) { newValue in
                                         if newValue.count < 4 {return}
-                                        checkEmailExists(newValue) { result in
+                                        UserTools.checkEmailExists(newValue) { result in
                                             if !result {
                                                 isEmailAvailable = true
                                             } else {
@@ -100,7 +100,7 @@ struct SignUpView: View {
                                 SolTextField("Username", text: $username)
                                     .onChange(of: username) { newValue in
                                         if newValue.count < 4 {return}
-                                        checkUsernameExists(newValue) { result in
+                                        UserTools.checkUsernameExists(newValue) { result in
                                             if !result {
                                                 isUsernameAvailable = true
                                             } else {
@@ -147,14 +147,26 @@ struct SignUpView: View {
                         title: "Sign Up",
                         action: {
                             runLoading()
-                            signUpNewUserInFirebase()
-                            self.BEO.loadUser()
+                            UserTools.signUp(email: emailLogin, password: passLogin, 
+                                onError: { error in
+                                    print(error)
+                                },
+                                onComplete: { fireUser in
+                                    print(fireUser)
+                                })
                         }, isEnabled: isFormValid
                     ).padding()
                     
                 } else {
                 
-                    Text("Login").font(.largeTitle)
+                    // LOGIN !!
+                    
+                    Text("Welcome to SOL")
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
+                        .foregroundColor(Color.primary)
+                        .shadow(color: .gray, radius: 2, x: 2, y: 2)
+                        .multilineTextAlignment(.center)
                     
                     SolTextField("Email", text: $emailLogin)
                         .padding(.leading)
@@ -167,17 +179,14 @@ struct SignUpView: View {
                     SolButton(
                         title: "Login",
                         action: {
-                        runLoading()
-                        loginUser(withEmail: emailLogin, password: passLogin) { result in
-                                if result {
+                            runLoading()
+                            UserTools.login(email: emailLogin, password: passLogin,
+                                onResult: { result in
                                     print("User LogIn: \(result)")
-                                    self.BEO.isLoggedIn = true
-                                } else {
-                                    //
+                                },
+                                onError: { error in
                                     self.showSignInFailedAlert = true
-                                }
-                              
-                            }
+                                })
                         }, isEnabled: true
                     ).padding()
                     
@@ -196,25 +205,6 @@ struct SignUpView: View {
         
     }
     
-    func userIsLoggedIn() -> Bool {
-        return self.realmInstance.userIsLoggedIn()
-    }
-    
-    private func signUpNewUserInFirebase() {
-        signUpWithEmail(email: email, password: password, userName: username, realmInstance: self.BEO.realmInstance) { result in
-            switch result {
-                case .success(let authResult):
-                    print("User signed up successfully: \(authResult.user.email ?? "")")
-                    self.BEO.loadUser()
-                case .failure(let error):
-                    print("Error signing up: \(error.localizedDescription)")
-                    self.BEO.loadUser()
-            }
-        }
-
-    }
-       
-    
     private func uploadImageToFirebase(image: UIImage, completion: @escaping (URL?) -> Void) {
         let storageRef = Storage.storage().reference().child("userImages/\(UUID().uuidString).jpg")
         if let uploadData = image.jpegData(compressionQuality: 0.8) {
@@ -232,15 +222,8 @@ struct SignUpView: View {
     }
 
     var isFormValid: Bool {
-        
 //        if self.isUsernameAvailable
-        
         !username.isEmpty
     }
 }
 
-//struct SignUpView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        SignUpView()
-//    }
-//}

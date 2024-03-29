@@ -22,7 +22,7 @@ struct TeamListView: View {
                 
                 if !teams.isEmpty {
                     ForEach(teams, id: \.self) { team in
-                        TeamListItem(title: team.name, subTitle: team.age, isShared: false)
+                        TeamListItem(title: team.name, subTitle: team.foundedYear, isShared: false)
                             .onTapAnimation {
                                 
                                 callback(team)

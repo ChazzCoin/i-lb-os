@@ -34,12 +34,9 @@ struct SolTextField: View {
             
             TextField("", text: $text)
                 .font(.headline)
-                .disabled(!isEditable) // Use the isEditable state to enable or disable the text field.
-                .padding(15)
-//                .background(getForegroundGradient(colorScheme)) // Change background based on isEditable.
-//                .foregroundColor(getTextColor(colorScheme)) // Change text color based on isEditable.
-//                .cornerRadius(10)
-//                .shadow(color: .gray.opacity(isEditable ? 0.4 : 0.1), radius: 5, x: 0, y: 2)
+                .padding()
+                .background(Color.gray.opacity(0.2))
+                .cornerRadius(10)
                 .overlay(
                     HStack {
                         Spacer()

@@ -15,7 +15,7 @@ struct SearchableActivityListView: View {
     @EnvironmentObject var BEO: BoardEngineObject
     @EnvironmentObject var NavStack: NavStackWindowObservable
     
-    @ObservedResults(UserToSession.self, where: { $0.guestId == getFirebaseUserId() ?? "" && $0.status != "removed" }) var guestSessions
+    @ObservedResults(UserToSession.self, where: { $0.status != "removed" }) var guestSessions
     var sharedSessionIds: [String] {
         var temp = Array(guestSessions.map { $0.sessionId })
         if !temp.contains("SOL-LIVE-DEMO") {
@@ -33,6 +33,8 @@ struct SearchableActivityListView: View {
     var body: some View {
         VStack {
             SearchBar(text: $searchText, placeholder: "Search Activities")
+                .padding(.top)
+            SearchBarView(text: $searchText, textColor: Color.black, placeholder: "Search Activities")
                 .padding(.top)
             
             ScrollView {

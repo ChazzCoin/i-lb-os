@@ -23,4 +23,6 @@ class PlayerRef: Object, ObjectKeyIdentifiable {
     @Persisted var age: String = ""
     @Persisted var year: String = ""
     @Persisted var imgUrl: String = ""
+    @Persisted var height: Double = 0.0
+    @Persisted var weight: Double = 0.0
 }

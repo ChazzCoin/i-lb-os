@@ -15,7 +15,7 @@ struct SearchableSessionListView: View {
     @EnvironmentObject var BEO: BoardEngineObject
     @EnvironmentObject var NavStack: NavStackWindowObservable
     
-    @ObservedResults(UserToSession.self, where: { $0.guestId == getFirebaseUserId() ?? "" && $0.status != "removed" }) var guestSessions
+    @ObservedResults(UserToSession.self, where: { $0.status != "removed" }) var guestSessions
     var sharedSessionIds: [String] {
         var temp = Array(guestSessions.map { $0.sessionId })
         if !temp.contains("SOL-LIVE-DEMO") {

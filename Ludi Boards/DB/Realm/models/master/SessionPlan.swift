@@ -28,8 +28,13 @@ class SessionPlan: Object, ObjectKeyIdentifiable {
     @Persisted var principles: String = ""
     @Persisted var goal: String = ""
     @Persisted var stages: String = ""
+    @Persisted var category: String = ""
+    @Persisted var tags: List<String> = List<String>()
     
-    @Persisted var ownerId: String = "temp"
+    @Persisted var ownerId: String = ""
+    @Persisted var orgId: String = ""
+    @Persisted var teamId: String = ""
+    
     @Persisted var isHost: Bool = false
     @Persisted var isOpen: Bool = false
     @Persisted var isLive: Bool = false

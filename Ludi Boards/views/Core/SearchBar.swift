@@ -16,13 +16,13 @@ struct SearchBar : View {
     
     var body: some View {
         ZStack {
-            SearchBarView(text: $text, textColor: Color.white, placeholder: placeholder)
+            SearchBarView(text: $text, textColor: Color.black, placeholder: placeholder)
         }
-        .frame(height: 50)
-        .background(getBackgroundDarkGradient())
-        .foregroundColor(.white)
+        .frame(height: 30)
+//        .foregroundColor(.white)
+        .padding()
+        .background(Color.gray.opacity(0.2))
         .cornerRadius(10)
-        .shadow(color: .gray.opacity(0.4), radius: 5, x: 0, y: 2)
     }
 }
 

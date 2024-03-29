@@ -109,13 +109,7 @@ class LiveCurrentUser: ObservableObject {
     }
     
     func refreshFromFirebase() {
-        syncUserFromFirebaseDb(realmInstance: self.realmInstance, onResult: { r in
-            print("User Updated INCOMING")
-            self.object = r
-        })
-        { _ in
-            print("User Updated")
-        }
+        UserTools.syncUserDetails()
     }
 
 }

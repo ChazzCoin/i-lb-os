@@ -107,10 +107,10 @@ struct UserView: View {
     func shareSessionAction() {
         realmInstance.getCurrentSolUser(action: { cur in
             let request = UserToSession()
-            request.hostId = cur.userId
-            request.hostUserName = cur.userName
-            request.guestId = user.userId
-            request.guestUserName = user.userName
+//            request.hostId = cur.userId
+//            request.hostUserName = cur.userName
+//            request.guestId = user.userId
+//            request.guestUserName = user.userName
             request.sessionId = self.sessionId
             self.realmInstance.safeWrite { _ in
                 self.realmInstance.create(UserToSession.self, value: request, update: .all)

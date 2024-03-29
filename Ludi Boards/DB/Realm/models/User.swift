@@ -8,73 +8,27 @@
 import Foundation
 import RealmSwift
 
-
-
-class User: Object, Identifiable {
-    @objc dynamic var id: String = "" // Primary key
-    @objc dynamic var username: String = ""
-    @objc dynamic var auth: String = ""
-    @objc dynamic var email: String = ""
-    @objc dynamic var phone: String = ""
-    @objc dynamic var visibility: String = "closed"
-    @objc dynamic var photoUrl: String = ""
-    @objc dynamic var emailVerified: Bool = false
-    @objc dynamic var dateCreated: String = getTimeStamp()
-    @objc dynamic var dateUpdated: String = getTimeStamp()
-    @objc dynamic var name: String = ""
-    @objc dynamic var details: String = ""
-    @objc dynamic var membership: String = ""
-    @objc dynamic var status: String = "away"
-    @objc dynamic var imgUrl: String = ""
+class User: Object, ObjectKeyIdentifiable {
+    @Persisted var id: String = CURRENT_USER_ID
+    @Persisted var userId: String = UUID().uuidString
+    @Persisted var auth: String = ""
+    @Persisted var role: String = ""
+    @Persisted var name: String = ""
+    @Persisted var userName: String = ""
+    @Persisted var email: String = ""
+    @Persisted var imgUrl: String = ""
+    @Persisted var dateCreated: String = getTimeStamp()
+    @Persisted var dateUpdated: String = getTimeStamp()
+    @Persisted var sessionId: String = ""
+    @Persisted var activityId: String = ""
+    @Persisted var membership: Int = 0
+    @Persisted var isLoggedIn: Bool = false
+    @Persisted var hasInternet: Bool = true
+    @Persisted var isOpen: Bool = false
+    @Persisted var isLive: Bool = false
+    @Persisted var status: Bool = false
     
-    override static func primaryKey() -> String? {
-        return "id"
+    override static func primaryKey() -> String {
+        return "userId"
     }
 }
-
-
-//extension User {
-//    func toDictionary() -> [String: Any] {
-//        var dictionary: [String: Any] = [:]
-//
-//        dictionary["id"] = id
-//        dictionary["username"] = username
-//        dictionary["auth"] = auth
-//        dictionary["email"] = email
-//        dictionary["phone"] = phone
-//        dictionary["visibility"] = visibility
-//        dictionary["photoUrl"] = photoUrl
-//        dictionary["emailVerified"] = emailVerified
-//        dictionary["dateCreated"] = dateCreated
-//        dictionary["dateUpdated"] = dateUpdated
-//        dictionary["name"] = name
-//        dictionary["details"] = details
-//        dictionary["membership"] = membership
-//        dictionary["status"] = status
-//        dictionary["imgUrl"] = imgUrl
-//
-//        return dictionary
-//    }
-//    
-//    static func fromDictionary(_ dictionary: [String: Any]) -> User {
-//            let user = User()
-//
-//            user.id = dictionary["id"] as? String ?? ""
-//            user.username = dictionary["username"] as? String ?? "joedoiest"
-//            user.auth = dictionary["auth"] as? String ?? "SPARK_USER"
-//            user.email = dictionary["email"] as? String ?? "UNASSIGNED_USER"
-//            user.phone = dictionary["phone"] as? String ?? "UNASSIGNED_USER"
-//            user.visibility = dictionary["visibility"] as? String ?? "closed"
-//            user.photoUrl = dictionary["photoUrl"] as? String ?? "UNASSIGNED_USER"
-//            user.emailVerified = dictionary["emailVerified"] as? Bool ?? false
-//            user.dateCreated = dictionary["dateCreated"] as? String ?? "getDatabaseTimeStamp()"
-//            user.dateUpdated = dictionary["dateUpdated"] as? String ?? "getDatabaseTimeStamp()"
-//            user.name = dictionary["name"] as? String ?? "Joe Doe"
-//            user.details = dictionary["details"] as? String ?? "nil"
-//            user.membership = dictionary["membership"] as? Int ?? 0
-//            user.status = dictionary["status"] as? String ?? "Away"
-//            user.imgUrl = dictionary["imgUrl"] as? String ?? "nil"
-//
-//            return user
-//        }
-//}

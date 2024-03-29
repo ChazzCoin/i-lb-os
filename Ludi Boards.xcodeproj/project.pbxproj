@@ -147,13 +147,21 @@
 		FB881A382B47397600C16198 /* RealmObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB881A372B47397600C16198 /* RealmObserver.swift */; };
 		FB881A3C2B47CD4400C16198 /* UserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB881A3B2B47CD4400C16198 /* UserView.swift */; };
 		FB881A3E2B48732400C16198 /* RealmState.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB881A3D2B48732400C16198 /* RealmState.swift */; };
-		FB881A402B48775800C16198 /* FirebaseSocial.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB881A3F2B48775800C16198 /* FirebaseSocial.swift */; };
+		FB881A402B48775800C16198 /* SocialTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB881A3F2B48775800C16198 /* SocialTools.swift */; };
 		FB881A422B48C36400C16198 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB881A412B48C36400C16198 /* ProfileView.swift */; };
 		FB881A442B48C61400C16198 /* BuddyRequestListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB881A432B48C61400C16198 /* BuddyRequestListView.swift */; };
 		FB93BB172B033E2000864CB2 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FB93BB162B033E2000864CB2 /* GoogleService-Info.plist */; };
 		FB93BB1B2B03471C00864CB2 /* FireData.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB93BB1A2B03471C00864CB2 /* FireData.swift */; };
 		FB982F912B19D1B900C0DA03 /* FirebaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB982F902B19D1B900C0DA03 /* FirebaseService.swift */; };
 		FB986F0B2B5774C30042BED2 /* BoardSessionObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB986F0A2B5774C30042BED2 /* BoardSessionObserver.swift */; };
+		FB9EB6D42BB65F0900FDD5DE /* UserTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9EB6D32BB65F0900FDD5DE /* UserTools.swift */; };
+		FB9EB6D62BB65F3800FDD5DE /* DataPuller.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9EB6D52BB65F3800FDD5DE /* DataPuller.swift */; };
+		FB9EB6D82BB6610100FDD5DE /* UserProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9EB6D72BB6610100FDD5DE /* UserProvider.swift */; };
+		FB9EB6DA2BB66D4900FDD5DE /* Organization.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9EB6D92BB66D4900FDD5DE /* Organization.swift */; };
+		FB9EB6DC2BB682AF00FDD5DE /* OrganizationHome.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9EB6DB2BB682AF00FDD5DE /* OrganizationHome.swift */; };
+		FB9EB6DE2BB6920F00FDD5DE /* RealmSOL.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9EB6DD2BB6920F00FDD5DE /* RealmSOL.swift */; };
+		FB9EB6E12BB6959700FDD5DE /* SessionCategoryProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9EB6E02BB6959700FDD5DE /* SessionCategoryProvider.swift */; };
+		FB9EB6E32BB695FD00FDD5DE /* ActivityCategoryProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9EB6E22BB695FD00FDD5DE /* ActivityCategoryProvider.swift */; };
 		FB9F1DD02B1528FC00FD9078 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9F1DCF2B1528FC00FD9078 /* Extensions.swift */; };
 		FB9F1DD22B1529E400FD9078 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9F1DD12B1529E400FD9078 /* LoadingView.swift */; };
 		FB9F1DD42B15307E00FD9078 /* UserSignUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9F1DD32B15307E00FD9078 /* UserSignUp.swift */; };
@@ -215,7 +223,7 @@
 		FBD9AFC02B00817A005F8620 /* ManagedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFBF2B00817A005F8620 /* ManagedView.swift */; };
 		FBD9AFC22B0081C1005F8620 /* RealmInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFC12B0081C1005F8620 /* RealmInstance.swift */; };
 		FBD9AFCB2B00843F005F8620 /* BoardSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFCA2B00843F005F8620 /* BoardSession.swift */; };
-		FBD9AFCD2B008457005F8620 /* UserToActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFCC2B008457005F8620 /* UserToActivity.swift */; };
+		FBD9AFCD2B008457005F8620 /* UserTo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFCC2B008457005F8620 /* UserTo.swift */; };
 		FBD9AFD22B008CAB005F8620 /* MenuBarProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFD12B008CAB005F8620 /* MenuBarProvider.swift */; };
 		FBD9AFD52B008F6F005F8620 /* Channels.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFD42B008F6F005F8620 /* Channels.swift */; };
 		FBD9AFD92B01CB91005F8620 /* SoccerToolProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFD82B01CB91005F8620 /* SoccerToolProvider.swift */; };
@@ -376,13 +384,21 @@
 		FB881A372B47397600C16198 /* RealmObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmObserver.swift; sourceTree = "<group>"; };
 		FB881A3B2B47CD4400C16198 /* UserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserView.swift; sourceTree = "<group>"; };
 		FB881A3D2B48732400C16198 /* RealmState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmState.swift; sourceTree = "<group>"; };
-		FB881A3F2B48775800C16198 /* FirebaseSocial.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseSocial.swift; sourceTree = "<group>"; };
+		FB881A3F2B48775800C16198 /* SocialTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialTools.swift; sourceTree = "<group>"; };
 		FB881A412B48C36400C16198 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		FB881A432B48C61400C16198 /* BuddyRequestListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuddyRequestListView.swift; sourceTree = "<group>"; };
 		FB93BB162B033E2000864CB2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
 		FB93BB1A2B03471C00864CB2 /* FireData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireData.swift; sourceTree = "<group>"; };
 		FB982F902B19D1B900C0DA03 /* FirebaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseService.swift; sourceTree = "<group>"; };
 		FB986F0A2B5774C30042BED2 /* BoardSessionObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardSessionObserver.swift; sourceTree = "<group>"; };
+		FB9EB6D32BB65F0900FDD5DE /* UserTools.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserTools.swift; sourceTree = "<group>"; };
+		FB9EB6D52BB65F3800FDD5DE /* DataPuller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataPuller.swift; sourceTree = "<group>"; };
+		FB9EB6D72BB6610100FDD5DE /* UserProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProvider.swift; sourceTree = "<group>"; };
+		FB9EB6D92BB66D4900FDD5DE /* Organization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Organization.swift; sourceTree = "<group>"; };
+		FB9EB6DB2BB682AF00FDD5DE /* OrganizationHome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrganizationHome.swift; sourceTree = "<group>"; };
+		FB9EB6DD2BB6920F00FDD5DE /* RealmSOL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmSOL.swift; sourceTree = "<group>"; };
+		FB9EB6E02BB6959700FDD5DE /* SessionCategoryProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionCategoryProvider.swift; sourceTree = "<group>"; };
+		FB9EB6E22BB695FD00FDD5DE /* ActivityCategoryProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityCategoryProvider.swift; sourceTree = "<group>"; };
 		FB9F1DCF2B1528FC00FD9078 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		FB9F1DD12B1529E400FD9078 /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		FB9F1DD32B15307E00FD9078 /* UserSignUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSignUp.swift; sourceTree = "<group>"; };
@@ -423,7 +439,7 @@
 		FBD9AFBF2B00817A005F8620 /* ManagedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedView.swift; sourceTree = "<group>"; };
 		FBD9AFC12B0081C1005F8620 /* RealmInstance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmInstance.swift; sourceTree = "<group>"; };
 		FBD9AFCA2B00843F005F8620 /* BoardSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardSession.swift; sourceTree = "<group>"; };
-		FBD9AFCC2B008457005F8620 /* UserToActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserToActivity.swift; sourceTree = "<group>"; };
+		FBD9AFCC2B008457005F8620 /* UserTo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserTo.swift; sourceTree = "<group>"; };
 		FBD9AFD12B008CAB005F8620 /* MenuBarProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarProvider.swift; sourceTree = "<group>"; };
 		FBD9AFD42B008F6F005F8620 /* Channels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Channels.swift; sourceTree = "<group>"; };
 		FBD9AFD82B01CB91005F8620 /* SoccerToolProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoccerToolProvider.swift; sourceTree = "<group>"; };
@@ -645,6 +661,7 @@
 				FB18F15D2B6838B900D89F8D /* PlayerRefView.swift */,
 				FB18F1862B6B10CE00D89F8D /* RecordingView.swift */,
 				FBA20A2E2B166FCE00045D1C /* MVSettingsView_DEPRECATED.swift */,
+				FB9EB6DB2BB682AF00FDD5DE /* OrganizationHome.swift */,
 			);
 			path = NavViews;
 			sourceTree = "<group>";
@@ -735,19 +752,17 @@
 		FB58E8792B01F59700FD9E2E /* models */ = {
 			isa = PBXGroup;
 			children = (
+				FB9EB6DF2BB693E100FDD5DE /* master */,
 				FB4840972B1D66380003377A /* CurrentSession.swift */,
-				FBD9AFCC2B008457005F8620 /* UserToActivity.swift */,
+				FBD9AFCC2B008457005F8620 /* UserTo.swift */,
 				FBD9AFCA2B00843F005F8620 /* BoardSession.swift */,
 				FBD9AFBF2B00817A005F8620 /* ManagedView.swift */,
 				FB15DD352B074F5C00A21290 /* Chat.swift */,
-				FB3E02AE2B0C6B1200D8558C /* SessionPlan.swift */,
-				FB3E02B02B0C6B1D00D8558C /* ActivityPlan.swift */,
 				FB3E02BA2B0C90D700D8558C /* Buddy.swift */,
 				FB3E02C22B0D19A300D8558C /* User.swift */,
 				FB581BEA2B1EF39C00F5C90F /* Stopwatch.swift */,
 				FB426A9C2B5345D70058CD9D /* Room.swift */,
 				FB426A9E2B5346070058CD9D /* Connection.swift */,
-				FB18F1572B681A6800D89F8D /* Team.swift */,
 				FB18F1592B681A6F00D89F8D /* PlayerRef.swift */,
 				FB18F1802B6AD6CE00D89F8D /* Recording.swift */,
 			);
@@ -852,6 +867,17 @@
 			path = LiveTools;
 			sourceTree = "<group>";
 		};
+		FB9EB6DF2BB693E100FDD5DE /* master */ = {
+			isa = PBXGroup;
+			children = (
+				FB9EB6D92BB66D4900FDD5DE /* Organization.swift */,
+				FB18F1572B681A6800D89F8D /* Team.swift */,
+				FB3E02AE2B0C6B1200D8558C /* SessionPlan.swift */,
+				FB3E02B02B0C6B1D00D8558C /* ActivityPlan.swift */,
+			);
+			path = master;
+			sourceTree = "<group>";
+		};
 		FB9F1DD72B1533B300FD9078 /* SignUp */ = {
 			isa = PBXGroup;
 			children = (
@@ -941,6 +967,7 @@
 				FBD9AFC12B0081C1005F8620 /* RealmInstance.swift */,
 				FB58E8812B030F1D00FD9E2E /* RealmFind.swift */,
 				FBE2C6212B1B1490004C0116 /* RealmChangeListener.swift */,
+				FB9EB6DD2BB6920F00FDD5DE /* RealmSOL.swift */,
 			);
 			path = Realm;
 			sourceTree = "<group>";
@@ -954,7 +981,9 @@
 				FB93BB1A2B03471C00864CB2 /* FireData.swift */,
 				FBDF0DC62B224D2600FADE44 /* ActivityPlanService.swift */,
 				FBDE4F582B4D0C12007FE880 /* SessionPlanService.swift */,
-				FB881A3F2B48775800C16198 /* FirebaseSocial.swift */,
+				FB881A3F2B48775800C16198 /* SocialTools.swift */,
+				FB9EB6D32BB65F0900FDD5DE /* UserTools.swift */,
+				FB9EB6D52BB65F3800FDD5DE /* DataPuller.swift */,
 			);
 			path = Firebase;
 			sourceTree = "<group>";
@@ -989,7 +1018,10 @@
 				FB581BEC2B1F8A6800F5C90F /* KeyboardListener.swift */,
 				FBDE4F5A2B4D1038007FE880 /* InternetProvider.swift */,
 				FB2AA1042B74305E00BD631C /* IconProvider.swift */,
+				FB9EB6D72BB6610100FDD5DE /* UserProvider.swift */,
 				FB65D2C82B7D5E2E00564C37 /* SessionProviders.swift */,
+				FB9EB6E02BB6959700FDD5DE /* SessionCategoryProvider.swift */,
+				FB9EB6E22BB695FD00FDD5DE /* ActivityCategoryProvider.swift */,
 			);
 			path = Providers;
 			sourceTree = "<group>";
@@ -1297,8 +1329,10 @@
 			files = (
 				FB2AA1072B74352A00BD631C /* SolToggle.swift in Sources */,
 				FB15DD342B074E6E00A21290 /* ChatUI.swift in Sources */,
+				FB9EB6DC2BB682AF00FDD5DE /* OrganizationHome.swift in Sources */,
 				FB10AE052B0DC8E600295F4B /* Tips.swift in Sources */,
 				FBBDD01D2B6CA8A20009844B /* MvSettingsToolBar.swift in Sources */,
+				FB9EB6DA2BB66D4900FDD5DE /* Organization.swift in Sources */,
 				FB426A9B2B5343D90058CD9D /* SolSecureField.swift in Sources */,
 				FBD9AFAA2AFF00BF005F8620 /* ContentView.swift in Sources */,
 				FB9F1DD62B1532AB00FD9078 /* ImagePicker.swift in Sources */,
@@ -1316,6 +1350,7 @@
 				FBDF0DC92B224EB500FADE44 /* AllManagedViewsService.swift in Sources */,
 				FBE2C6242B1B2E01004C0116 /* SessionPlanOverview.swift in Sources */,
 				FB18F1402B63946100D89F8D /* XShape.swift in Sources */,
+				FB9EB6E32BB695FD00FDD5DE /* ActivityCategoryProvider.swift in Sources */,
 				FBE385502B4B32950090901C /* FriendsListView.swift in Sources */,
 				FB9F1DD92B1533C400FD9078 /* FirebaseLogin.swift in Sources */,
 				FBC2FC702B5BC04300D1AB77 /* Text.swift in Sources */,
@@ -1325,7 +1360,7 @@
 				FB18F1692B68718000D89F8D /* SearchableSessionListView.swift in Sources */,
 				FBDF0DC52B21811000FADE44 /* SharedSessionsView.swift in Sources */,
 				FBD9AFC02B00817A005F8620 /* ManagedView.swift in Sources */,
-				FBD9AFCD2B008457005F8620 /* UserToActivity.swift in Sources */,
+				FBD9AFCD2B008457005F8620 /* UserTo.swift in Sources */,
 				FBAE62AD2B295A8100E008D5 /* ManagedPopUpView.swift in Sources */,
 				FB18F13E2B6391B500D89F8D /* Square.swift in Sources */,
 				FBBDD0262B7022570009844B /* Backgrounds.swift in Sources */,
@@ -1343,6 +1378,7 @@
 				FBE2C62A2B1C2B67004C0116 /* SharedPrefs.swift in Sources */,
 				FBEBEF942B49504D00B8BA32 /* LiveConnections.swift in Sources */,
 				FB15DD302B0745DF00A21290 /* MenuBarIcon.swift in Sources */,
+				FB9EB6D42BB65F0900FDD5DE /* UserTools.swift in Sources */,
 				FB426A9D2B5345D70058CD9D /* Room.swift in Sources */,
 				FBE2C6202B1AFD20004C0116 /* SessionPlanThumbView.swift in Sources */,
 				FB18F1422B63946B00D89F8D /* OShape.swift in Sources */,
@@ -1370,11 +1406,13 @@
 				FBABDAC52B20376F00321A00 /* ConfirmationPopup.swift in Sources */,
 				FB15DD362B074F5C00A21290 /* Chat.swift in Sources */,
 				FB3E02C32B0D19A300D8558C /* User.swift in Sources */,
+				FB9EB6D82BB6610100FDD5DE /* UserProvider.swift in Sources */,
 				FB65D2C92B7D5E2E00564C37 /* SessionProviders.swift in Sources */,
 				FB5094282B0584CA000AEA96 /* NavStackWindowView.swift in Sources */,
 				FB6C0C512B525E8500163A6D /* LoginView.swift in Sources */,
 				FB18F1752B697E2800D89F8D /* DSideBarWindow.swift in Sources */,
 				FB3E02C12B0C9A6D00D8558C /* BuddyProfileView.swift in Sources */,
+				FB9EB6DE2BB6920F00FDD5DE /* RealmSOL.swift in Sources */,
 				FBA0BEED2B8331B400054026 /* EditableFields.swift in Sources */,
 				FBD9AFB82AFF0253005F8620 /* GridLines.swift in Sources */,
 				FB18F15E2B6838B900D89F8D /* PlayerRefView.swift in Sources */,
@@ -1383,6 +1421,7 @@
 				FB10AE0B2B0F162F00295F4B /* ActivityPlanThumbView.swift in Sources */,
 				FB18F15A2B681A6F00D89F8D /* PlayerRef.swift in Sources */,
 				FBBDD0202B6E12BC0009844B /* ManagedViewFactory.swift in Sources */,
+				FB9EB6D62BB65F3800FDD5DE /* DataPuller.swift in Sources */,
 				FB18F1812B6AD6CE00D89F8D /* Recording.swift in Sources */,
 				FBE2C6172B1AF595004C0116 /* GrassFieldView.swift in Sources */,
 				FB50942A2B05856D000AEA96 /* LineToolView.swift in Sources */,
@@ -1416,7 +1455,7 @@
 				FB10AE072B0DCDB500295F4B /* FloatingEmoji.swift in Sources */,
 				FBDE4F5B2B4D1038007FE880 /* InternetProvider.swift in Sources */,
 				FB18F1852B6AEC2100D89F8D /* SearchableRecordingActionsListView.swift in Sources */,
-				FB881A402B48775800C16198 /* FirebaseSocial.swift in Sources */,
+				FB881A402B48775800C16198 /* SocialTools.swift in Sources */,
 				FB3E02C52B0D2A8500D8558C /* ThumbnailListView.swift in Sources */,
 				FBE2C62C2B1C3DBD004C0116 /* LoadingPopup.swift in Sources */,
 				FBE2C61A2B1AF7D5004C0116 /* FootballFieldView.swift in Sources */,
@@ -1445,6 +1484,7 @@
 				FB18F1672B686EA900D89F8D /* TeamList.swift in Sources */,
 				FBD3DD4B2B7072E600D9242C /* HistoryListView.swift in Sources */,
 				FBBAD3BE2B1FBF58004A4332 /* NavPad.swift in Sources */,
+				FB9EB6E12BB6959700FDD5DE /* SessionCategoryProvider.swift in Sources */,
 				FB881A442B48C61400C16198 /* BuddyRequestListView.swift in Sources */,
 				FBA4FB572B15AA2700BF409E /* GlobalPositioning.swift in Sources */,
 				FB18F1652B68687900D89F8D /* PlayerRefList.swift in Sources */,

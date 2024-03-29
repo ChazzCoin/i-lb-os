@@ -22,6 +22,8 @@ class ActivityPlan: Object, ObjectKeyIdentifiable {
     @Persisted var timePeriod: String = ""
     @Persisted var duration: String = ""
     @Persisted var ageLevel: String = ""
+    @Persisted var category: String = ""
+    @Persisted var tags: List<String> = List<String>()
     
     @Persisted var equipment: String = ""
     @Persisted var spaceDimensions: String = ""

@@ -199,9 +199,9 @@ struct TeamView: View {
     private func loadTeam() {
         if let obj = self.realmInstance.findByField(Team.self, value: self.teamId) {
             teamName = obj.name
-            teamYear = obj.age
+            teamYear = obj.foundedYear
             teamCoach = obj.coachName
-            sport = obj.sport
+            sport = obj.sportType
         }
     }
     
@@ -217,10 +217,10 @@ struct TeamView: View {
     private func addTeam() {
         let newTeam = Team()
         
-        newTeam.name = teamName
-        newTeam.age = teamYear
-        newTeam.sport = sport
-        newTeam.coachName = teamCoach
+//        newTeam.name = teamName
+//        newTeam.age = teamYear
+//        newTeam.sport = sport
+//        newTeam.coachName = teamCoach
         
         realmInstance.safeWrite { r in
             r.create(Team.self, value: newTeam, update: .all)
@@ -233,9 +233,9 @@ struct TeamView: View {
         if let obj = self.realmInstance.findByField(Team.self, value: self.teamId) {
             self.realmInstance.safeWrite { r in
                 obj.name = teamName
-                obj.year = teamYear
+                obj.foundedYear = teamYear
                 obj.coachName = teamCoach
-                obj.sport = sport
+                obj.sportType = sport
             }
         }
         

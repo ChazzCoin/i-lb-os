@@ -47,23 +47,6 @@ extension Array where Element: Equatable {
 }
 
 
-extension Array where Element: UserToSession {
-    mutating func safeAdd(_ item: UserToSession) {
-        if self.firstIndex(where: { $0.id == item.id }) != nil {
-            // Item found, remove it
-            return
-        }
-        // Item not found, add it
-        self.append(item as! Element)
-    }
-    
-    mutating func safeRemove(_ item: Share) {
-        if let index = self.firstIndex(where: { $0.id == item.id }) {
-            // Item found, remove it
-            self.remove(at: index)
-        }
-    }
-}
 //
 extension Array where Element: ManagedView {
     func hasView(_ item: ManagedView) -> Bool {

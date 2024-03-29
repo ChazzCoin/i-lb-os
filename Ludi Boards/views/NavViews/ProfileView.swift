@@ -79,10 +79,8 @@ struct ProfileView: View {
                     message: "Are you sure you want to logout?",
                     action: {
                         runLoading()
+                        UserTools.logout()
                         
-                        logoutUser() { result in
-                            print("User Logged Out. \(result)")
-                        }
                         if let user = self.BEO.realmInstance.findByField(CurrentSolUser.self, value: CURRENT_USER_ID) {
                             self.BEO.realmInstance.safeWrite { r in
                                 user.userId = ""
