@@ -386,7 +386,7 @@ struct CanvasEngine: View {
         let caller = MenuBarProvider.boardCreate.tool.title
         managedWindowsObject.addNewViewToPool(viewId: caller, viewBuilder: {
             AnyView(NavStackWindow(id: caller, viewBuilder: {
-                SessionPlanOverview().environmentObject(self.BEO)
+                HomeDashboardView().environmentObject(self.BEO)
             }))
         })
     }

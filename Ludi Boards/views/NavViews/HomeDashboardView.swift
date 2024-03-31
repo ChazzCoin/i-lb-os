@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import RealmSwift
 
-struct SessionPlanOverview: View {
+struct HomeDashboardView: View {
     @State var userId: String = getFirebaseUserId() ?? "SOL"
     
     @Environment(\.colorScheme) var colorScheme
@@ -51,19 +51,20 @@ struct SessionPlanOverview: View {
     var sidebarView: some View {
         
         DSidebarWindow {
-            Spacer()
-                .frame(height: 25)
-                .clearSectionBackground()
-            HeaderText("Team Management", color: getTextColorOnBackground(colorScheme))
-            SearchableTeamListView()
-                .clearSectionBackground()
-                .environmentObject(self.BEO)
-                .environmentObject(self.NavStack)
-            SearchablePlayerRefListView()
-                .clearSectionBackground()
-                .environmentObject(self.BEO)
-                .environmentObject(self.NavStack)
-            Spacer()
+            MenuListView(isShowing: $isSidebarVisible)
+//            Spacer()
+//                .frame(height: 25)
+//                .clearSectionBackground()
+//            HeaderText("Team Management", color: getTextColorOnBackground(colorScheme))
+//            SearchableTeamListView()
+//                .clearSectionBackground()
+//                .environmentObject(self.BEO)
+//                .environmentObject(self.NavStack)
+//            SearchablePlayerRefListView()
+//                .clearSectionBackground()
+//                .environmentObject(self.BEO)
+//                .environmentObject(self.NavStack)
+//            Spacer()
         }
         .clearSectionBackground()
         
@@ -137,9 +138,9 @@ struct SessionPlanOverview: View {
             }
 
             if isSidebarVisible {
-                sidebarView
-                    .frame(width: 300)
-                    .transition(.move(edge: .leading))
+                MenuListView(isShowing: $isSidebarVisible)
+//                    .frame(width: 300)
+//                    .transition(.move(edge: .leading))
             }
             
         }

@@ -162,6 +162,7 @@
 		FB9EB6DE2BB6920F00FDD5DE /* RealmSOL.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9EB6DD2BB6920F00FDD5DE /* RealmSOL.swift */; };
 		FB9EB6E12BB6959700FDD5DE /* SessionCategoryProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9EB6E02BB6959700FDD5DE /* SessionCategoryProvider.swift */; };
 		FB9EB6E32BB695FD00FDD5DE /* ActivityCategoryProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9EB6E22BB695FD00FDD5DE /* ActivityCategoryProvider.swift */; };
+		FB9EB6E52BB9201000FDD5DE /* MenuListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9EB6E42BB9201000FDD5DE /* MenuListView.swift */; };
 		FB9F1DD02B1528FC00FD9078 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9F1DCF2B1528FC00FD9078 /* Extensions.swift */; };
 		FB9F1DD22B1529E400FD9078 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9F1DD12B1529E400FD9078 /* LoadingView.swift */; };
 		FB9F1DD42B15307E00FD9078 /* UserSignUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9F1DD32B15307E00FD9078 /* UserSignUp.swift */; };
@@ -250,7 +251,7 @@
 		FBE2C61C2B1AF961004C0116 /* BoardBackgrounder.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C61B2B1AF961004C0116 /* BoardBackgrounder.swift */; };
 		FBE2C6202B1AFD20004C0116 /* SessionPlanThumbView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C61F2B1AFD20004C0116 /* SessionPlanThumbView.swift */; };
 		FBE2C6222B1B1490004C0116 /* RealmChangeListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C6212B1B1490004C0116 /* RealmChangeListener.swift */; };
-		FBE2C6242B1B2E01004C0116 /* SessionPlanOverview.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C6232B1B2E01004C0116 /* SessionPlanOverview.swift */; };
+		FBE2C6242B1B2E01004C0116 /* HomeDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C6232B1B2E01004C0116 /* HomeDashboardView.swift */; };
 		FBE2C6262B1BD7BA004C0116 /* TipBoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C6252B1BD7BA004C0116 /* TipBoxView.swift */; };
 		FBE2C6282B1C26BF004C0116 /* SolButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C6272B1C26BF004C0116 /* SolButtons.swift */; };
 		FBE2C62A2B1C2B67004C0116 /* SharedPrefs.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C6292B1C2B67004C0116 /* SharedPrefs.swift */; };
@@ -399,6 +400,7 @@
 		FB9EB6DD2BB6920F00FDD5DE /* RealmSOL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmSOL.swift; sourceTree = "<group>"; };
 		FB9EB6E02BB6959700FDD5DE /* SessionCategoryProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionCategoryProvider.swift; sourceTree = "<group>"; };
 		FB9EB6E22BB695FD00FDD5DE /* ActivityCategoryProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityCategoryProvider.swift; sourceTree = "<group>"; };
+		FB9EB6E42BB9201000FDD5DE /* MenuListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuListView.swift; sourceTree = "<group>"; };
 		FB9F1DCF2B1528FC00FD9078 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		FB9F1DD12B1529E400FD9078 /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		FB9F1DD32B15307E00FD9078 /* UserSignUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSignUp.swift; sourceTree = "<group>"; };
@@ -465,7 +467,7 @@
 		FBE2C61B2B1AF961004C0116 /* BoardBackgrounder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardBackgrounder.swift; sourceTree = "<group>"; };
 		FBE2C61F2B1AFD20004C0116 /* SessionPlanThumbView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionPlanThumbView.swift; sourceTree = "<group>"; };
 		FBE2C6212B1B1490004C0116 /* RealmChangeListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmChangeListener.swift; sourceTree = "<group>"; };
-		FBE2C6232B1B2E01004C0116 /* SessionPlanOverview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionPlanOverview.swift; sourceTree = "<group>"; };
+		FBE2C6232B1B2E01004C0116 /* HomeDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeDashboardView.swift; sourceTree = "<group>"; };
 		FBE2C6252B1BD7BA004C0116 /* TipBoxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TipBoxView.swift; sourceTree = "<group>"; };
 		FBE2C6272B1C26BF004C0116 /* SolButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolButtons.swift; sourceTree = "<group>"; };
 		FBE2C6292B1C2B67004C0116 /* SharedPrefs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedPrefs.swift; sourceTree = "<group>"; };
@@ -645,7 +647,7 @@
 		FB3E02CC2B0D45F000D8558C /* NavViews */ = {
 			isa = PBXGroup;
 			children = (
-				FBE2C6232B1B2E01004C0116 /* SessionPlanOverview.swift */,
+				FBE2C6232B1B2E01004C0116 /* HomeDashboardView.swift */,
 				FB3E02B22B0C6B5100D8558C /* SessionPlanView.swift */,
 				FB3E02B42B0C6B6000D8558C /* ActivityPlanBindingView.swift */,
 				FB18F1762B6988E100D89F8D /* ActivityPlanSingleView.swift */,
@@ -662,6 +664,7 @@
 				FB18F1862B6B10CE00D89F8D /* RecordingView.swift */,
 				FBA20A2E2B166FCE00045D1C /* MVSettingsView_DEPRECATED.swift */,
 				FB9EB6DB2BB682AF00FDD5DE /* OrganizationHome.swift */,
+				FB9EB6E42BB9201000FDD5DE /* MenuListView.swift */,
 			);
 			path = NavViews;
 			sourceTree = "<group>";
@@ -1348,7 +1351,7 @@
 				FB65D2CB2B7DC16300564C37 /* SolPickers.swift in Sources */,
 				FB881A3E2B48732400C16198 /* RealmState.swift in Sources */,
 				FBDF0DC92B224EB500FADE44 /* AllManagedViewsService.swift in Sources */,
-				FBE2C6242B1B2E01004C0116 /* SessionPlanOverview.swift in Sources */,
+				FBE2C6242B1B2E01004C0116 /* HomeDashboardView.swift in Sources */,
 				FB18F1402B63946100D89F8D /* XShape.swift in Sources */,
 				FB9EB6E32BB695FD00FDD5DE /* ActivityCategoryProvider.swift in Sources */,
 				FBE385502B4B32950090901C /* FriendsListView.swift in Sources */,
@@ -1468,6 +1471,7 @@
 				FBBDD0222B6E186E0009844B /* BoardSettingsToolBar.swift in Sources */,
 				FB18F1612B68390600D89F8D /* SolPicker.swift in Sources */,
 				FB3E02BF2B0C948A00D8558C /* AddBuddyView.swift in Sources */,
+				FB9EB6E52BB9201000FDD5DE /* MenuListView.swift in Sources */,
 				FB48409A2B1EBC940003377A /* Sports.swift in Sources */,
 				FBE385542B4BB7540090901C /* LiveActivities.swift in Sources */,
 				FB10AE0D2B0F16B100295F4B /* ActivityPlanThumbList.swift in Sources */,
