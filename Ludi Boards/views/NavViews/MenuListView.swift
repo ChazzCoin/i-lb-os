@@ -80,11 +80,13 @@ struct MenuListView: View {
                     case .settings:
                         EmptyView()
                     case .addOrg:
-                        EmptyView()
+                        OrganizationDetailsView()
                     case .addTeam:
-                        TeamView(teamId: .constant("new"), isShowing: .constant(true))
+                        TeamDetailsView()
+//                        TeamView(teamId: .constant("new"), isShowing: .constant(true))
                     case .addPlayer:
-                        PlayerRefView(playerId: .constant("new"), isShowing: .constant(true))
+                        PlayerDetailsView()
+//                        PlayerRefView(playerId: .constant("new"), isShowing: .constant(true))
                     case .addSession:
                         SessionPlanView(sessionId: "new", isShowing: .constant(true), isMasterWindow: false)
                     case .addActivity:

@@ -57,4 +57,28 @@ enum IntensityLevel: String, CaseIterable, Identifiable {
     var id: String { self.rawValue }
 }
 
+enum DominateFoot: String, CaseIterable, Identifiable {
+    case Right = "Right"
+    case Left = "Left"
+    case Both = "Both"
+    case None = "None"
 
+    var id: String { self.rawValue }
+}
+
+enum DominateHand: String, CaseIterable, Identifiable {
+    case Right = "Right"
+    case Left = "Left"
+    case Both = "Both"
+    case None = "None"
+
+    var id: String { self.rawValue }
+}
+
+
+
+// Jersey Number
+
+// Height
+
+// Weight

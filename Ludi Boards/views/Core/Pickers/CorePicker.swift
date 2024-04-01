@@ -8,23 +8,46 @@
 import Foundation
 import SwiftUI
 
-struct SolPicker: View {
+struct CorePicker: View {
     @Binding var selection: String
-    var data: [String]
-    var title: String
-    @Binding var isEnabled: Bool
+    @Binding var isEdit: Bool
+    @State var data: [String]
+    @State var title: String
+    
+    
+    init(selection: Binding<String>, data: [String], title: String, isEdit: Binding<Bool>) {
+        self._selection = selection
+        self._isEdit = isEdit
+        self.data = data
+        self.title = title
+    }
     
     var body: some View {
-        Picker(selection: $selection, label: HeaderText(title)) {
-            ForEach(data, id: \.self) { item in
-                Text(item)
-                    .tag(item)
+        
+        if !isEdit {
+            TextLabel(title, text: selection)
+        } else {
+            Picker(title, selection: $selection) {
+                ForEach(data, id: \.self) { item in
+                    Text(item)
+                        .tag(item)
+                }
+            }
+            .foregroundColor(.blue)
+            .onAppear() {
+                if selection.isEmpty {
+                    if let first = data.first {
+                        selection = first
+                    }
+                }
             }
         }
-        .padding(15)
-        .background(Color.secondaryBackground) // Change background based on isEditable.
-        .accentColor(.white) // Change text color based on isEditable.
-        .cornerRadius(10)
-        .shadow(color: .gray.opacity(0.4), radius: 5, x: 0, y: 2)
+    }
+}
+
+
+struct CorePickerView_Previews: PreviewProvider {
+    static var previews: some View {
+        CorePicker(selection: .constant(""), data: [""], title: "Title", isEdit: .constant(true))
     }
 }

@@ -19,8 +19,7 @@ struct TeamView: View {
         return self.players.filter("teamId == %@", self.teamId)
     }
     
-    @State private var isEditMode: Bool = false
-    private let sports = ["Soccer", "Basketball", "Baseball", "Football", "Hockey", "Tennis", "Volleyball", "Rugby", "Cricket", "Golf"]
+    @State private var isEditMode: Bool = true
 
     @State var realmInstance = newRealm()
     
@@ -41,122 +40,104 @@ struct TeamView: View {
     @State var columns: [GridItem] = Array(repeating: .init(.flexible()), count: 2)
     
     var body: some View {
-        ScrollView {
-            VStack {
-                HStack {
-                    
-                    SOLCON(
-                        icon: SolIcon.save,
-                        onTap: {
-                            if teamId == "new" {
-                                addTeam()
-                            } else {
-                                saveTeam()
-                            }
-                        }
-                    ).solEnabled(isEnabled: self.isEditMode)
-                    
-                    SOLCON(
-                        icon: SolIcon.delete,
-                        onTap: {
-                            deleteTeam()
-                        }
-                    ).solEnabled(isEnabled: isEditMode && teamId != "new")
-                    
-                    Text(teamName)
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-                    
-                    Spacer()
-                    
-                    Button(action: {
-                        isEditMode.toggle()
-                        if !isEditMode { isShowing = false }
-                    }) {
-                        Text(isEditMode ? "Done" : "Edit")
-                            .foregroundColor(.blue)
-                    }
-                }
+        Form {
+            HStack {
                 
-                Divider()
-                
-                Group {
-                    
-                    DStack {
-                        VStack {
-                            // Player's image
-                            if let imageUrl = URL(string: teamImgUrl), !teamImgUrl.isEmpty {
-                                AsyncImage(url: imageUrl) { image in
-                                    image.resizable()
-                                } placeholder: {
-                                    Color.gray
-                                }
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: 100, height: 100)
-                                .clipShape(Circle())
-                                .shadow(radius: 10)
-                                .padding(.top, 20)
-                            } else {
-                                Circle()
-                                    .fill(Color.gray)
-                                    .frame(width: 100, height: 100)
-                                    .shadow(radius: 10)
-                                    .padding(.top, 20)
-                            }
-                            Spacer()
-                            HStack {
-                                BodyText("Sport: ", color: colorScheme == .dark ? .white : .black)
-                                    .fontWeight(.bold)
-                                SolPicker(selection: $sport, data: sports, title: "Select a Sport", isEnabled: $isEditMode)
-                            }.padding()
-                           
-                            
-                        }.frame(width: 250)
-                        
-                        VStack {
-                            SolTextField("Team Name", text: $teamName, isEditable: $isEditMode)
-                            DStack {
-                                SolTextField("Coach Name", text: $teamCoach, isEditable: $isEditMode)
-                                SolTextField("Year", text: $teamYear, isEditable: $isEditMode)
-                            }
-                            
+                SOLCON(
+                    icon: SolIcon.save,
+                    onTap: {
+                        if teamId == "new" {
+                            addTeam()
+                        } else {
+                            saveTeam()
                         }
                     }
-                    
-                }
-                .padding(.vertical, 4)
+                ).solEnabled(isEnabled: self.isEditMode)
                 
-                Divider()
-                
-                if isEditMode {
-                    HStack {
-                        Spacer()
-                        SolPlayerRefFreePicker(selection: $addPlayerName, isEnabled: $isEditMode)
-                        Spacer()
+                SOLCON(
+                    icon: SolIcon.delete,
+                    onTap: {
+                        deleteTeam()
                     }
-                }
+                ).solEnabled(isEnabled: isEditMode && teamId != "new")
                 
-                Group {
-                    HeaderText("Roster")
-                        .font(.headline)
-                        .padding(.top)
-                    LazyVGrid(columns: columns, spacing: 20) {
-                        ForEach(roster) { player in
-                            PlayerRefItemView(playerId: .constant(player.id))
-                                .onTapAnimation {
-                                    currentPlayerId = player.id
-                                    showCurrentPlayerSheet = true
-                                }
-                        }
-                        .onDelete(perform: deletePlayer)
+                Text(teamName)
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+                
+                Spacer()
+                
+                Button(action: {
+                    isEditMode.toggle()
+                    if !isEditMode { isShowing = false }
+                }) {
+                    Text(isEditMode ? "Done" : "Edit")
+                        .foregroundColor(.blue)
+                }
+            }.clearSectionBackground()
+            
+            Section {
+                
+                // Player's image
+                if let imageUrl = URL(string: teamImgUrl), !teamImgUrl.isEmpty {
+                    AsyncImage(url: imageUrl) { image in
+                        image.resizable()
+                    } placeholder: {
+                        Color.gray
                     }
-                    
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: 100, height: 100)
+                    .clipShape(Circle())
+                    .shadow(radius: 10)
+                    .padding(.top, 20)
+                } else {
+                    Circle()
+                        .fill(Color.gray)
+                        .frame(width: 100, height: 100)
+                        .shadow(radius: 10)
+                        .padding(.top, 20)
                 }
+//                Spacer()
                 
-                Divider()
+                
+//                HStack {
+////                    BodyText("Sport: ", color: colorScheme == .dark ? .white : .black)
+////                        .fontWeight(.bold)
+//                    Spacer()
+//                    SolPicker(selection: $sport, data: sports, title: "Select a Sport", isEdit: $isEditMode)
+//                }.padding()
+               
             }
-            .padding()
+            
+            Section {
+                PickerSport(selection: $sport, isEdit: $isEditMode)
+                InputText(label: "Team Name", text: $teamName, isEdit: $isEditMode)
+                InputText(label: "Coach Name", text: $teamCoach, isEdit: $isEditMode)
+                InputText(label: "Year", text: $teamYear, isEdit: $isEditMode)
+            }
+            
+            Section {
+                
+                SolPlayerRefFreePicker(selection: $addPlayerName, isEnabled: $isEditMode)
+                
+                HeaderText("Roster", color: .black)
+                    .font(.headline)
+                    .padding(.top)
+                LazyVGrid(columns: columns, spacing: 20) {
+                    ForEach(roster) { player in
+                        PlayerRefItemView(playerId: .constant(player.id))
+                            .onTapAnimation {
+                                currentPlayerId = player.id
+                                showCurrentPlayerSheet = true
+                            }
+                    }
+                    .onDelete(perform: deletePlayer)
+                }
+                
+            }
+            
         }
+        .padding()
         .onChange(of: self.teamId, perform: { value in
             loadTeam()
         })

@@ -24,6 +24,7 @@ struct PlayerRefView: View {
     @State var originalTeamId: String = ""
     
     @State var playerName: String = ""
+    @State var playerSport: String = ""
     @State var playerPosition: String = ""
     @State var playerNumber: String = ""
     @State var playerFoot: String = ""
@@ -35,7 +36,7 @@ struct PlayerRefView: View {
     @State var realmInstance = newRealm()
 
     var body: some View {
-        ScrollView {
+        Form {
             
             HStack {
                 
@@ -72,72 +73,56 @@ struct PlayerRefView: View {
                 }
             }.padding()
             
-            Divider()
             
-            DStack {
-                VStack {
-                    // Player's image
-                    if let imageUrl = URL(string: playerImgUrl), !playerImgUrl.isEmpty {
-                        AsyncImage(url: imageUrl) { image in
-                            image.resizable()
-                        } placeholder: {
-                            Color.gray
-                        }
-                        .aspectRatio(contentMode: .fill)
+            VStack {
+                // Player's image
+                if let imageUrl = URL(string: playerImgUrl), !playerImgUrl.isEmpty {
+                    AsyncImage(url: imageUrl) { image in
+                        image.resizable()
+                    } placeholder: {
+                        Color.gray
+                    }
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: 100, height: 100)
+                    .clipShape(Circle())
+                    .shadow(radius: 10)
+                    .padding(.top, 20)
+                } else {
+                    Circle()
+                        .fill(Color.gray)
                         .frame(width: 100, height: 100)
-                        .clipShape(Circle())
                         .shadow(radius: 10)
                         .padding(.top, 20)
-                    } else {
-                        Circle()
-                            .fill(Color.gray)
-                            .frame(width: 100, height: 100)
-                            .shadow(radius: 10)
-                            .padding(.top, 20)
-                    }
-
-                    // Player's name
-                    Text(playerName)
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-                        .padding(.top, 20)
-                    
-                }.frame(width: 200)
-            
-            
-                // Player Details
-                VStack {
-                    SolTextField("Player Name", text: $playerName, isEditable: $isEditMode)
-                    
-                    DStack {
-                        SolTextField("Position", text: $playerPosition, isEditable: $isEditMode)
-                        SolTextField("Number", text: $playerNumber, isEditable: $isEditMode)
-                    }
-                    DStack {
-                        SolTextField("Foot", text: $playerFoot, isEditable: $isEditMode)
-                        SolTextField("Hand", text: $playerHand, isEditable: $isEditMode)
-                    }
-                    DStack {
-                        SolTextField("Age", text: $playerAge, isEditable: $isEditMode)
-                        SolTextField("Year", text: $playerYear, isEditable: $isEditMode)
-                    }
                 }
-                .padding(.top, 20)
+
+                // Player's name
+                Text(playerName)
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+                    .padding(.top, 20)
+                
+            }.frame(width: 200)
+        
+        
+            // Player Details
+            Section {
+                SolTextField("Player Name", text: $playerName, isEditable: $isEditMode)
+                PickerSport(selection: $playerSport, isEdit: $isEditMode)
+                SolTextField("Position", text: $playerPosition, isEditable: $isEditMode)
+                SolTextField("Number", text: $playerNumber, isEditable: $isEditMode)
+                SolTextField("Foot", text: $playerFoot, isEditable: $isEditMode)
+                SolTextField("Hand", text: $playerHand, isEditable: $isEditMode)
+                SolTextField("Age", text: $playerAge, isEditable: $isEditMode)
+                SolTextField("Year", text: $playerYear, isEditable: $isEditMode)
                 
             }
-            .padding()
             
             DStack {
                 Toggle(isOn: $attachATeamIsOn, label: {
                     SubHeaderText(playerTeamId.isEmpty ? "Attach a Team." : "Reassign Team")
                 })
                 SolTeamPicker(selection: $playerTeamName, isEnabled: .constant(attachATeamIsOn))
-            }
-            
-            Divider()
-                .padding(.vertical)
-
-            
+            }           
             
         }
         .padding()

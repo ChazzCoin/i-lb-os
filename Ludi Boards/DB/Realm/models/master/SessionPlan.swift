@@ -16,9 +16,9 @@ class SessionPlan: Object, ObjectKeyIdentifiable {
     @Persisted var dateOf: String = getTimeStamp()
     
     @Persisted var title: String = "Session: \(TimeProvider.getMonthDayYearTime())"
-    @Persisted var subTitle: String = "A Basic Session"
-    @Persisted var objectiveDetails: String = "To show off SOL!"
-    @Persisted var sessionDetails: String = "Add some details here!"
+    @Persisted var subTitle: String = ""
+    @Persisted var objectiveDetails: String = ""
+    @Persisted var sessionDetails: String = ""
     @Persisted var timePeriod: String = ""
     @Persisted var duration: String = ""
     @Persisted var ageLevel: String = ""

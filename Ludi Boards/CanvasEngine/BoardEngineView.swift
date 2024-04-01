@@ -53,6 +53,7 @@ class BoardEngineObject : ObservableObject {
         }
     }
     
+    @AppStorage("defaultSport") var defaultSport: String = "Soccer"
     @AppStorage("isLoggedIn") var isLoggedIn: Bool = false
     @AppStorage("currentUserId") var currentUserId: String = ""
     @AppStorage("currentUserName") var currentUserName: String = ""

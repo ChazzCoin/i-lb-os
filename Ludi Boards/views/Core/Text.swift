@@ -20,19 +20,14 @@ struct TextLabel: View {
     var body: some View {
         HStack(alignment: .center, spacing: 8) {
             Text(title)
-                .font(.headline) // Bold and slightly larger font for the title
-                .foregroundColor(.blue) // Adaptable to light/dark mode
+                .font(.headline) 
+                .foregroundColor(.blue)
                 .padding(.trailing)
             Spacer()
             Text(subtitle)
-                .font(.headline) // Slightly smaller font for the subtitle
-                .foregroundColor(.black) // A subtler color to distinguish from the title
-            
+                .font(.headline)
+                .foregroundColor(.black)
         }
-        .padding(.all, 10) // Padding around the HStack for better touch targets
-//        .background(RoundedRectangle(cornerRadius: 10) // Rounded background for a modern look
-//                        .fill(Color(.systemBackground)) // Adaptable background color
-//                        .shadow(color: .gray.opacity(0.4), radius: 5, x: 0, y: 2)) // Soft shadow for depth
     }
 }
 

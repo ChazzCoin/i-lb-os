@@ -11,8 +11,11 @@ import RealmSwift
 class PlayerRef: Object, ObjectKeyIdentifiable {
     @Persisted(primaryKey: true) var id = UUID().uuidString
     @Persisted var ownerId: String = ""
+    @Persisted var orgId: String = ""
     @Persisted var teamId: String = ""
     @Persisted var userId: String = ""
+    @Persisted var sessionId: String = ""
+    @Persisted var activityId: String = ""
     @Persisted var toolId: String = ""
     @Persisted var name: String = ""
     @Persisted var position: String = ""
@@ -23,6 +26,6 @@ class PlayerRef: Object, ObjectKeyIdentifiable {
     @Persisted var age: String = ""
     @Persisted var year: String = ""
     @Persisted var imgUrl: String = ""
-    @Persisted var height: Double = 0.0
-    @Persisted var weight: Double = 0.0
+    @Persisted var height: String = ""
+    @Persisted var weight: String = ""
 }

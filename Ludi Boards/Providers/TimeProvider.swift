@@ -8,6 +8,59 @@
 import Foundation
 
 
+struct DateTimeTools {
+    
+    static func currentMonth() -> String {
+        Calendar.current.monthSymbols[Calendar.current.component(.month, from: Date()) - 1]
+    }
+    static func currentYear() -> String {
+        String(Calendar.current.component(.year, from: Date()))
+    }
+    static func currentYear() -> Int {
+        Calendar.current.component(.year, from: Date())
+    }
+
+    static func currentTimestamp() -> String {
+        let formatter = ISO8601DateFormatter()
+        formatter.timeZone = TimeZone.current
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds] // Adjust format options as needed
+        return formatter.string(from: Date())
+    }
+    
+    // IN-TO Database
+    static func parseToString(date: Date) -> String {
+        let formatter = ISO8601DateFormatter()
+        formatter.timeZone = TimeZone.current
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds] // Adjust format options as needed
+        return formatter.string(from: date)
+    }
+    
+    // OUT-OF Database
+    static func toDisplayText(fromTimestamp timestamp: Date) -> String {
+        let temp = parseToString(date: timestamp)
+        return toDisplayText(fromTimestamp: temp)
+    }
+    static func toDisplayText(fromTimestamp timestamp: String) -> String {
+        let isoFormatter = ISO8601DateFormatter()
+        isoFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds] // Match the format used to generate the timestamp
+        
+        if let date = isoFormatter.date(from: timestamp) {
+            let readableFormatter = DateFormatter()
+            readableFormatter.dateStyle = .long
+//            readableFormatter.timeStyle = .short
+            readableFormatter.locale = Locale.current // Adjust for the desired locale
+            return readableFormatter.string(from: date)
+        } else {
+            return timestamp
+        }
+    }
+    static func toMonthYearString(from date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMMM yyyy"
+        return formatter.string(from: date)
+    }
+    
+}
 
 
 class TimeProvider {

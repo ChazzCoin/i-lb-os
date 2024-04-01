@@ -52,6 +52,7 @@ struct PickerSessionCategory: View {
                     Text(item.rawValue).tag(item.rawValue)
                 }
             }
+            .foregroundColor(.blue)
             .pickerStyle(MenuPickerStyle())
         }
     }

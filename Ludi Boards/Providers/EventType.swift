@@ -33,6 +33,7 @@ struct PickerEventType: View {
                     Text(eventType.rawValue).tag(eventType.rawValue)
                 }
             }
+            .foregroundColor(.blue)
             .pickerStyle(MenuPickerStyle())
         }
     }

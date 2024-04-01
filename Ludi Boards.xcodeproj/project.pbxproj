@@ -82,7 +82,6 @@
 		FB65D2CB2B7DC16300564C37 /* SolPickers.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB65D2CA2B7DC16300564C37 /* SolPickers.swift */; };
 		FB65D2CD2B7DD9AF00564C37 /* SolSwitches.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB65D2CC2B7DD9AF00564C37 /* SolSwitches.swift */; };
 		FB6C0C4F2B525B2500163A6D /* InputText.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB6C0C4E2B525B2500163A6D /* InputText.swift */; };
-		FB6C0C512B525E8500163A6D /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB6C0C502B525E8500163A6D /* LoginView.swift */; };
 		FB6C0C532B52706B00163A6D /* InputTextMultiLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB6C0C522B52706B00163A6D /* InputTextMultiLine.swift */; };
 		FB829F0A2B36A83300FAC6E0 /* WrldsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB829F092B36A83300FAC6E0 /* WrldsApp.swift */; };
 		FB829F0C2B36A83300FAC6E0 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB829F0B2B36A83300FAC6E0 /* ContentView.swift */; };
@@ -263,6 +262,11 @@
 		FBF1A5FC2B5F7BB70088150C /* Triangle.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF1A5FB2B5F7BB70088150C /* Triangle.swift */; };
 		FBF3902E2B2D78CF00C0508A /* TipProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF3902D2B2D78CF00C0508A /* TipProvider.swift */; };
 		FBF404432B19304700FA0545 /* BorderedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF404422B19304700FA0545 /* BorderedView.swift */; };
+		FBF515A72BBB29840066EAA9 /* SportsPositions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF515A62BBB29840066EAA9 /* SportsPositions.swift */; };
+		FBF515AA2BBB5D8F0066EAA9 /* BaseDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF515A92BBB5D8F0066EAA9 /* BaseDetailsView.swift */; };
+		FBF515AC2BBB5F420066EAA9 /* OrganizationDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF515AB2BBB5F420066EAA9 /* OrganizationDetailsView.swift */; };
+		FBF515AE2BBB64D10066EAA9 /* TeamDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF515AD2BBB64D10066EAA9 /* TeamDetailsView.swift */; };
+		FBF515B02BBB64F90066EAA9 /* PlayerDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF515AF2BBB64F90066EAA9 /* PlayerDetailsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -342,7 +346,6 @@
 		FB65D2CA2B7DC16300564C37 /* SolPickers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolPickers.swift; sourceTree = "<group>"; };
 		FB65D2CC2B7DD9AF00564C37 /* SolSwitches.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolSwitches.swift; sourceTree = "<group>"; };
 		FB6C0C4E2B525B2500163A6D /* InputText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputText.swift; sourceTree = "<group>"; };
-		FB6C0C502B525E8500163A6D /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		FB6C0C522B52706B00163A6D /* InputTextMultiLine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputTextMultiLine.swift; sourceTree = "<group>"; };
 		FB829F072B36A83300FAC6E0 /* Wrlds.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Wrlds.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FB829F092B36A83300FAC6E0 /* WrldsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WrldsApp.swift; sourceTree = "<group>"; };
@@ -474,6 +477,11 @@
 		FBF1A5FB2B5F7BB70088150C /* Triangle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Triangle.swift; sourceTree = "<group>"; };
 		FBF3902D2B2D78CF00C0508A /* TipProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TipProvider.swift; sourceTree = "<group>"; };
 		FBF404422B19304700FA0545 /* BorderedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BorderedView.swift; sourceTree = "<group>"; };
+		FBF515A62BBB29840066EAA9 /* SportsPositions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SportsPositions.swift; sourceTree = "<group>"; };
+		FBF515A92BBB5D8F0066EAA9 /* BaseDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseDetailsView.swift; sourceTree = "<group>"; };
+		FBF515AB2BBB5F420066EAA9 /* OrganizationDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrganizationDetailsView.swift; sourceTree = "<group>"; };
+		FBF515AD2BBB64D10066EAA9 /* TeamDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamDetailsView.swift; sourceTree = "<group>"; };
+		FBF515AF2BBB64F90066EAA9 /* PlayerDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerDetailsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -588,14 +596,13 @@
 		FB18F1622B6842C600D89F8D /* Core */ = {
 			isa = PBXGroup;
 			children = (
-				FBBDD0192B6CA7F60009844B /* Icons */,
+				FBBDD01A2B6CA8000009844B /* LineIcons.swift */,
 				FB18F1742B697E2800D89F8D /* DSideBarWindow.swift */,
+				FBE2C62D2B1C3FDE004C0116 /* LoadingForm.swift */,
 				FBC2FC6F2B5BC04300D1AB77 /* Text.swift */,
 				FB426A952B533CA90058CD9D /* Buttons */,
 				FB18F15F2B6838FA00D89F8D /* Pickers */,
 				FB426A962B533D0E0058CD9D /* InputTexts */,
-				FB426A992B5343C30058CD9D /* Forms */,
-				FB18F16C2B68B10C00D89F8D /* SearchBar.swift */,
 				FB2AA1062B74352A00BD631C /* SolToggle.swift */,
 				FB65D2CC2B7DD9AF00564C37 /* SolSwitches.swift */,
 			);
@@ -633,6 +640,7 @@
 		FB3E02CC2B0D45F000D8558C /* NavViews */ = {
 			isa = PBXGroup;
 			children = (
+				FBF515A82BBB5CF20066EAA9 /* Console */,
 				FBE2C6232B1B2E01004C0116 /* HomeDashboardView.swift */,
 				FB3E02B22B0C6B5100D8558C /* SessionPlanView.swift */,
 				FB3E02B42B0C6B6000D8558C /* ActivityPlanBindingView.swift */,
@@ -643,13 +651,10 @@
 				FB58A1B32B17D1420024B9A2 /* MvToolBar.swift */,
 				FBBAD3BD2B1FBF58004A4332 /* NavPad.swift */,
 				FBABDAC62B20456700321A00 /* ToolBarSettings.swift */,
-				FB881A412B48C36400C16198 /* ProfileView.swift */,
 				FB9F1DD32B15307E00FD9078 /* UserSignUp.swift */,
-				FB18F15B2B68369400D89F8D /* TeamView.swift */,
-				FB18F15D2B6838B900D89F8D /* PlayerRefView.swift */,
+				FB9EB6DB2BB682AF00FDD5DE /* OrganizationHome.swift */,
 				FB18F1862B6B10CE00D89F8D /* RecordingView.swift */,
 				FBA20A2E2B166FCE00045D1C /* MVSettingsView_DEPRECATED.swift */,
-				FB9EB6DB2BB682AF00FDD5DE /* OrganizationHome.swift */,
 				FB9EB6E42BB9201000FDD5DE /* MenuListView.swift */,
 			);
 			path = NavViews;
@@ -683,6 +688,7 @@
 		FB426A962B533D0E0058CD9D /* InputTexts */ = {
 			isa = PBXGroup;
 			children = (
+				FB18F16C2B68B10C00D89F8D /* SearchBar.swift */,
 				FB426A9A2B5343D90058CD9D /* SolSecureField.swift */,
 				FB6C0C4E2B525B2500163A6D /* InputText.swift */,
 				FB6C0C522B52706B00163A6D /* InputTextMultiLine.swift */,
@@ -699,14 +705,6 @@
 			path = Lists;
 			sourceTree = "<group>";
 		};
-		FB426A992B5343C30058CD9D /* Forms */ = {
-			isa = PBXGroup;
-			children = (
-				FBE2C62D2B1C3FDE004C0116 /* LoadingForm.swift */,
-			);
-			path = Forms;
-			sourceTree = "<group>";
-		};
 		FB5094242B05820B000AEA96 /* views */ = {
 			isa = PBXGroup;
 			children = (
@@ -718,7 +716,6 @@
 				FBE2C61D2B1AFC8F004C0116 /* Experimental */,
 				FBF3902C2B2D78B000C0508A /* Tips */,
 				FBE2C6152B1AF584004C0116 /* Backgrounds */,
-				FB9F1DD72B1533B300FD9078 /* SignUp */,
 				FBF1A5FA2B5F7BA90088150C /* Shapes */,
 				FB3E02CD2B0D45FF00D8558C /* Components */,
 				FB58A1B52B1804C80024B9A2 /* FlashingLight.swift */,
@@ -857,14 +854,6 @@
 			path = master;
 			sourceTree = "<group>";
 		};
-		FB9F1DD72B1533B300FD9078 /* SignUp */ = {
-			isa = PBXGroup;
-			children = (
-				FB6C0C502B525E8500163A6D /* LoginView.swift */,
-			);
-			path = SignUp;
-			sourceTree = "<group>";
-		};
 		FBBDD0162B6C486B0009844B /* Modifiers */ = {
 			isa = PBXGroup;
 			children = (
@@ -874,14 +863,6 @@
 				FBBDD0252B7022570009844B /* Backgrounds.swift */,
 			);
 			path = Modifiers;
-			sourceTree = "<group>";
-		};
-		FBBDD0192B6CA7F60009844B /* Icons */ = {
-			isa = PBXGroup;
-			children = (
-				FBBDD01A2B6CA8000009844B /* LineIcons.swift */,
-			);
-			path = Icons;
 			sourceTree = "<group>";
 		};
 		FBBDD01E2B6E11950009844B /* experimental */ = {
@@ -1002,6 +983,7 @@
 				FB9EB6E02BB6959700FDD5DE /* SessionCategoryProvider.swift */,
 				FB9EB6E22BB695FD00FDD5DE /* ActivityCategoryProvider.swift */,
 				FB9EB6E62BBA86DF00FDD5DE /* EventType.swift */,
+				FBF515A62BBB29840066EAA9 /* SportsPositions.swift */,
 			);
 			path = Providers;
 			sourceTree = "<group>";
@@ -1108,6 +1090,20 @@
 				FB426AA02B55B6A30058CD9D /* NotificationView.swift */,
 			);
 			path = Tips;
+			sourceTree = "<group>";
+		};
+		FBF515A82BBB5CF20066EAA9 /* Console */ = {
+			isa = PBXGroup;
+			children = (
+				FB18F15B2B68369400D89F8D /* TeamView.swift */,
+				FB18F15D2B6838B900D89F8D /* PlayerRefView.swift */,
+				FB881A412B48C36400C16198 /* ProfileView.swift */,
+				FBF515A92BBB5D8F0066EAA9 /* BaseDetailsView.swift */,
+				FBF515AB2BBB5F420066EAA9 /* OrganizationDetailsView.swift */,
+				FBF515AF2BBB64F90066EAA9 /* PlayerDetailsView.swift */,
+				FBF515AD2BBB64D10066EAA9 /* TeamDetailsView.swift */,
+			);
+			path = Console;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1315,6 +1311,7 @@
 				FB9EB6DA2BB66D4900FDD5DE /* Organization.swift in Sources */,
 				FB426A9B2B5343D90058CD9D /* SolSecureField.swift in Sources */,
 				FBD9AFAA2AFF00BF005F8620 /* ContentView.swift in Sources */,
+				FBF515B02BBB64F90066EAA9 /* PlayerDetailsView.swift in Sources */,
 				FB9F1DD62B1532AB00FD9078 /* ImagePicker.swift in Sources */,
 				FB58E8842B03169700FD9E2E /* TimeProvider.swift in Sources */,
 				FB9EB6E92BBA872300FDD5DE /* Event.swift in Sources */,
@@ -1360,6 +1357,7 @@
 				FBE2C62A2B1C2B67004C0116 /* SharedPrefs.swift in Sources */,
 				FBEBEF942B49504D00B8BA32 /* LiveConnections.swift in Sources */,
 				FB15DD302B0745DF00A21290 /* MenuBarIcon.swift in Sources */,
+				FBF515A72BBB29840066EAA9 /* SportsPositions.swift in Sources */,
 				FB9EB6D42BB65F0900FDD5DE /* UserTools.swift in Sources */,
 				FB426A9D2B5345D70058CD9D /* Room.swift in Sources */,
 				FBE2C6202B1AFD20004C0116 /* SessionPlanThumbView.swift in Sources */,
@@ -1371,8 +1369,10 @@
 				FBD9AFCB2B00843F005F8620 /* BoardSession.swift in Sources */,
 				FBE2C61C2B1AF961004C0116 /* BoardBackgrounder.swift in Sources */,
 				FB9F1DD42B15307E00FD9078 /* UserSignUp.swift in Sources */,
+				FBF515AA2BBB5D8F0066EAA9 /* BaseDetailsView.swift in Sources */,
 				FB881A422B48C36400C16198 /* ProfileView.swift in Sources */,
 				FBE2C6282B1C26BF004C0116 /* SolButtons.swift in Sources */,
+				FBF515AE2BBB64D10066EAA9 /* TeamDetailsView.swift in Sources */,
 				FBDF0DC72B224D2600FADE44 /* ActivityPlanService.swift in Sources */,
 				FBBAD3BC2B1F8ECC004A4332 /* Timer.swift in Sources */,
 				FBD9AFC22B0081C1005F8620 /* RealmInstance.swift in Sources */,
@@ -1383,6 +1383,7 @@
 				FB3E02B92B0C724A00D8558C /* BoardBgProvider.swift in Sources */,
 				FB15DD322B07461500A21290 /* MenuBarWindow.swift in Sources */,
 				FBC2FC6C2B59C4A400D1AB77 /* DStack.swift in Sources */,
+				FBF515AC2BBB5F420066EAA9 /* OrganizationDetailsView.swift in Sources */,
 				FB18F1772B6988E200D89F8D /* ActivityPlanSingleView.swift in Sources */,
 				FBABDAC52B20376F00321A00 /* ConfirmationPopup.swift in Sources */,
 				FB15DD362B074F5C00A21290 /* Chat.swift in Sources */,
@@ -1390,7 +1391,6 @@
 				FB9EB6D82BB6610100FDD5DE /* UserProvider.swift in Sources */,
 				FB65D2C92B7D5E2E00564C37 /* SessionProviders.swift in Sources */,
 				FB5094282B0584CA000AEA96 /* NavStackWindowView.swift in Sources */,
-				FB6C0C512B525E8500163A6D /* LoginView.swift in Sources */,
 				FB18F1752B697E2800D89F8D /* DSideBarWindow.swift in Sources */,
 				FB3E02C12B0C9A6D00D8558C /* BuddyProfileView.swift in Sources */,
 				FB9EB6DE2BB6920F00FDD5DE /* RealmSOL.swift in Sources */,

@@ -6,8 +6,9 @@
 //
 
 import Foundation
+import SwiftUI
 
-enum UserRole {
+enum UserRole: CaseIterable {
     case player
     case parent
     case coach
@@ -30,7 +31,43 @@ enum UserRole {
     
 }
 
-enum UserAuth {
+struct PickerUserRole: View {
+    @Binding var selection: String
+    @Binding var isEdit: Bool
+    let title = "User Role"
+    
+    
+    var body: some View {
+        HStack {
+            Text(title)
+                .foregroundColor(.blue)
+                .padding()
+            
+            Spacer()
+            
+            Picker(title, selection: $selection) {
+                ForEach(UserRole.allCases, id: \.self) { item in
+                    Text(item.name).tag(item.name)
+                }
+            }
+            .foregroundColor(.blue)
+            .pickerStyle(MenuPickerStyle())
+            
+        }
+        .compositingGroup()
+        .shadow(radius: 5)
+        .padding()
+        
+    }
+}
+
+
+struct UserPickerView_Previews: PreviewProvider {
+    static var previews: some View {
+        PickerShareStatus(selection: .constant(""), isEdit: .constant(true))
+    }
+}
+enum UserAuth: CaseIterable {
     case visitor
     case viewer
     case editor
@@ -48,9 +85,38 @@ enum UserAuth {
     }
     
 }
+struct PickerUserAuth: View {
+    @Binding var selection: String
+    @Binding var isEdit: Bool
+    let title = "User Auth"
+    
+    
+    var body: some View {
+        HStack {
+            Text(title)
+                .foregroundColor(.blue)
+                .padding()
+            
+            Spacer()
+            
+            Picker(title, selection: $selection) {
+                ForEach(UserAuth.allCases, id: \.self) { item in
+                    Text(item.name).tag(item.name)
+                }
+            }
+            .foregroundColor(.blue)
+            .pickerStyle(MenuPickerStyle())
+            
+        }
+        .compositingGroup()
+        .shadow(radius: 5)
+        .padding()
+        
+    }
+}
 
 
-enum ShareStatus {
+enum ShareStatus: CaseIterable {
     case pending
     case active
     case inactive
@@ -63,4 +129,33 @@ enum ShareStatus {
         }
     }
     
+}
+struct PickerShareStatus: View {
+    @Binding var selection: String
+    @Binding var isEdit: Bool
+    let title = "Share Status"
+    
+    
+    var body: some View {
+        HStack {
+            Text(title)
+                .foregroundColor(.blue)
+                .padding()
+            
+            Spacer()
+            
+            Picker(title, selection: $selection) {
+                ForEach(ShareStatus.allCases, id: \.self) { item in
+                    Text(item.name).tag(item.name)
+                }
+            }
+            .foregroundColor(.blue)
+            .pickerStyle(MenuPickerStyle())
+            
+        }
+        .compositingGroup()
+        .shadow(radius: 5)
+        .padding()
+        
+    }
 }

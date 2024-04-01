@@ -24,6 +24,7 @@ struct SessionPlanView: View {
     @State private var scheduledDate: Date = Date()
     @State private var duration = ""
     
+    @State private var sessionCategory = ""
     @State private var ageLevel = ""
     @State private var intensity = ""
     @State private var numOfPlayers = 0
@@ -153,51 +154,26 @@ struct SessionPlanView: View {
                 }
                 
             }.clearSectionBackground()
-            
-//            Section(header: AlignLeft { HeaderText("View", color: getTextColorOnBackground(colorScheme)) }) {
-//                
-//                TextLabel("Session Name:", text: title)
-//                SwitchOnOff(title: "Is Live and Sharable", status: $isLive, isEnabled: false)
-//                    .padding(.leading)
-//                    .padding(.trailing)
-//                AdaptiveStack {
-//                    TextLabel("Duration:", text: duration)
-//                    TextLabel("Date:", text: "\(scheduledDate)")
-//                }
-//                
-//                AdaptiveStack {
-//                    TextLabel("Intensity:", text: intensity)
-//                    TextLabel("Age Level:", text: ageLevel)
-//                }
-//                
-//                AdaptiveStack {
-//                    TextLabel("Number of Players:", text: "\(numOfPlayers)")
-//                }
-//                
-//                TextLabel("Description:", text: description)
-//                TextLabel("Objective:", text: objective)
-//                
-//            }
-            
-            Section(header: AlignLeft { HeaderText("Edit", color: getTextColorOnBackground(colorScheme)) }) {
-                
-                
+        
+            Section(header: AlignLeft { HeaderText("Details", color: getTextColorOnBackground(colorScheme)) }) {
+
                 SwitchOnOff(title: "Is Edit Mode", status: $isEditMode)
                     .padding()
                 InputText(label: "Title", text: $title, isEdit: $isEditMode)
                     
                 PickerDate(selection: $scheduledDate, isEdit: $isEditMode)
                 PickerTimeDuration(selection: $duration, isEdit: $isEditMode)
-                
+                PickerIntensity(selection: $intensity, isEdit: $isEditMode)
                 PickerAgeLevel(selection: $ageLevel, isEdit: $isEditMode)
                 PickerNumberOfPlayers(selection: $numOfPlayers, isEdit: $isEditMode)
+                PickerSessionCategory(selection: $sessionCategory, isEdit: $isEditMode)
                 
                 DisclosureGroup("More Attributes and Settings", isExpanded: $isExpanded) {
-                    PickerIntensity(selection: $intensity, isEdit: $isEditMode)
                     InputTextMultiLine("Coaching Points", text: $coachingPoints, color: .black, isEdit: $isEditMode)
                     InputTextMultiLine("Key Qualities", text: $keyQualities, color: .black, isEdit: $isEditMode)
                     InputTextMultiLine("Principles", text: $coachingPoints, color: .black, isEdit: $isEditMode)
                 }
+                .font(.system(size: 18, weight: .heavy))
                 
                 AdaptiveStack {
                     InputTextMultiLine("Description", text: $description, color: .black, isEdit: $isEditMode)
@@ -340,6 +316,7 @@ struct SessionPlanView: View {
     func saveNewSessionPlan() {
         // New Plan
         let newSP = SessionPlan()
+        // TODO: FIX THIS!!!
         newSP.id = UUID().uuidString
         newSP.title = title
         newSP.sessionDetails = description
@@ -367,6 +344,7 @@ struct SessionPlanView: View {
     func updateSessionPlan() {
         if let sp = self.BEO.realmInstance.findByField(SessionPlan.self, value: self.sessionId) {
             self.BEO.realmInstance.safeWrite { r in
+                // TODO: FIX THIS
                 sp.ownerId = getFirebaseUserIdOrCurrentLocalId()
                 sp.title = title
                 sp.sessionDetails = description

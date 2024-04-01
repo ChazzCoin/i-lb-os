@@ -36,7 +36,7 @@ class ActivityPlan: Object, ObjectKeyIdentifiable {
     @Persisted var numOfGroups: Int = 0
     @Persisted var numPerGroup: Int = 0
     
-    @Persisted var sessionId: String = "SOL"
+    @Persisted var sessionId: String = ""
     @Persisted var orgId: String = ""
     @Persisted var teamId: String = ""
     @Persisted var ownerId: String = ""
