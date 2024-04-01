@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 
+// NOT USED
 struct SolToggle: View {
     var labelText: String
     @Binding var isOn: Bool

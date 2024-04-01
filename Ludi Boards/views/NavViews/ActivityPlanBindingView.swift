@@ -124,9 +124,9 @@ struct ActivityPlanBindingView: View {
                 }
                 
                 DStack {
-                    SolTextEditor("Description", text: $objectiveDetails, color: .black)
+                    InputTextMultiLine("Description", text: $objectiveDetails, color: .black)
                         .frame(minHeight: 125)
-                    SolTextEditor("Objective", text: $activityDetails, color: .black)
+                    InputTextMultiLine("Objective", text: $activityDetails, color: .black)
                         .frame(minHeight: 125)
                 }.padding(.bottom)
             }
@@ -419,9 +419,9 @@ struct ExpandableFormView: View {
                     }
 
                     AdaptiveStack {
-                        SolTextEditor("Description", text: $objectiveDetails, color: .black)
+                        InputTextMultiLine("Description", text: $objectiveDetails, color: .black)
                             .frame(minHeight: 125)
-                        SolTextEditor("Objective", text: $activityDetails, color: .black)
+                        InputTextMultiLine("Objective", text: $activityDetails, color: .black)
                             .frame(minHeight: 125)
                     }
                     .padding(.bottom)

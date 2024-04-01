@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 enum ActivityCategory: String, CaseIterable {
     case oneVOneAttacking = "1v1 Attacking"
@@ -34,4 +35,23 @@ enum ActivityCategory: String, CaseIterable {
     case coordinationDrills = "Coordination Drills"
     case nutritionalPlanning = "Nutritional Planning"
     case injuryRehabilitation = "Injury Rehabilitation"
+}
+
+struct PickerActivityCategory: View {
+    @Binding var selection: String
+    @Binding var isEdit: Bool
+    let title = "Activity Category"
+
+    var body: some View {
+        if !isEdit {
+            TextLabel(title, text: selection)
+        } else {
+            Picker(title, selection: $selection) {
+                ForEach(ActivityCategory.allCases, id: \.self) { item in
+                    Text(item.rawValue).tag(item.rawValue)
+                }
+            }
+            .pickerStyle(MenuPickerStyle())
+        }
+    }
 }

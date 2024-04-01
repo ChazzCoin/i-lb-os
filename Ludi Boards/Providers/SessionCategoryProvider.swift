@@ -6,7 +6,7 @@
 //
 
 import Foundation
-
+import SwiftUI
 
 enum SessionCategory: String, CaseIterable {
     case warmUp = "Warm-Up"
@@ -36,4 +36,23 @@ enum SessionCategory: String, CaseIterable {
     case communityEngagement = "Community Engagement"
     case youthDevelopment = "Youth Development"
     case equipmentPreparation = "Equipment Preparation"
+}
+
+struct PickerSessionCategory: View {
+    @Binding var selection: String
+    @Binding var isEdit: Bool
+    let title = "Session Category"
+
+    var body: some View {
+        if !isEdit {
+            TextLabel(title, text: selection)
+        } else {
+            Picker(title, selection: $selection) {
+                ForEach(SessionCategory.allCases, id: \.self) { item in
+                    Text(item.rawValue).tag(item.rawValue)
+                }
+            }
+            .pickerStyle(MenuPickerStyle())
+        }
+    }
 }

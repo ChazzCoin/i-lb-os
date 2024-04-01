@@ -10,7 +10,6 @@ import RealmSwift
 
 class ActivityPlan: Object, ObjectKeyIdentifiable {
     @Persisted(primaryKey: true) var id: String = UUID().uuidString
-    @Persisted var sessionId: String = "SOL"
     @Persisted var dateCreated: String = getTimeStamp()
     @Persisted var dateUpdated: String = getTimeStamp()
     @Persisted var dateOf: String = getTimeStamp()
@@ -37,6 +36,9 @@ class ActivityPlan: Object, ObjectKeyIdentifiable {
     @Persisted var numOfGroups: Int = 0
     @Persisted var numPerGroup: Int = 0
     
+    @Persisted var sessionId: String = "SOL"
+    @Persisted var orgId: String = ""
+    @Persisted var teamId: String = ""
     @Persisted var ownerId: String = ""
     @Persisted var isHost: Bool = false
     @Persisted var isOpen: Bool = false

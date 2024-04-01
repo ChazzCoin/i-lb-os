@@ -184,30 +184,25 @@ struct SessionPlanView: View {
                 
                 SwitchOnOff(title: "Is Edit Mode", status: $isEditMode)
                     .padding()
-                EditableTextField(label: "Title", text: $title, isEdit: $isEditMode)
+                InputText(label: "Title", text: $title, isEdit: $isEditMode)
                     
-                AdaptiveStack {
-                    PickerDate(selection: $scheduledDate, isEdit: $isEditMode)
-                    PickerTimeDuration(selection: $duration, isEdit: $isEditMode)
-                }
+                PickerDate(selection: $scheduledDate, isEdit: $isEditMode)
+                PickerTimeDuration(selection: $duration, isEdit: $isEditMode)
                 
-                AdaptiveStack {
-                    PickerAgeLevel(selection: $ageLevel, isEdit: $isEditMode)
-                    PickerNumberOfPlayers(selection: $numOfPlayers, isEdit: $isEditMode)
-                }
+                PickerAgeLevel(selection: $ageLevel, isEdit: $isEditMode)
+                PickerNumberOfPlayers(selection: $numOfPlayers, isEdit: $isEditMode)
                 
                 DisclosureGroup("More Attributes and Settings", isExpanded: $isExpanded) {
-                    
                     PickerIntensity(selection: $intensity, isEdit: $isEditMode)
-                    SolTextEditor("Coaching Points", text: $coachingPoints, color: .black, isEdit: $isEditMode)
-                    SolTextEditor("Key Qualities", text: $keyQualities, color: .black, isEdit: $isEditMode)
-                    SolTextEditor("Principles", text: $coachingPoints, color: .black, isEdit: $isEditMode)
+                    InputTextMultiLine("Coaching Points", text: $coachingPoints, color: .black, isEdit: $isEditMode)
+                    InputTextMultiLine("Key Qualities", text: $keyQualities, color: .black, isEdit: $isEditMode)
+                    InputTextMultiLine("Principles", text: $coachingPoints, color: .black, isEdit: $isEditMode)
                 }
                 
                 AdaptiveStack {
-                    SolTextEditor("Description", text: $description, color: .black, isEdit: $isEditMode)
+                    InputTextMultiLine("Description", text: $description, color: .black, isEdit: $isEditMode)
                         .padding()
-                    SolTextEditor("Objective", text: $objective, color: .black, isEdit: $isEditMode)
+                    InputTextMultiLine("Objective", text: $objective, color: .black, isEdit: $isEditMode)
                         .padding()
                 }
                 .frame(minHeight: isEditMode ? 150 : 35)
@@ -448,49 +443,4 @@ extension View {
     }
 }
 
-
-struct InputFieldA: View {
-    var label: String
-    @Binding var value: String
-    var onValueChange: (String) -> Void
-
-    var body: some View {
-        VStack(alignment: .leading) {
-            Text(label)
-                .font(.headline)
-            TextField("", text: $value, onEditingChanged: { _ in onValueChange(value) })
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-        }
-    }
-}
-
-struct InputTextEditorA: View {
-    var label: String
-    @Binding var value: String
-    var onValueChange: (String) -> Void
-
-    var body: some View {
-        VStack(alignment: .leading) {
-            Text(label)
-                .font(.headline)
-            TextEditor(text: $value)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 5)
-                        .stroke(Color.gray, lineWidth: 1)
-                )
-                .onAppear {
-                    onValueChange(value)
-                }
-        }
-    }
-}
-
-
-
-
-//struct BoardSessionDetailsForm_Previews: PreviewProvider {
-//    static var previews: some View {
-//        SessionPlanView(sessionId: "SOL", isShowing: .constant(true), isMasterWindow: true)
-//    }
-//}
 

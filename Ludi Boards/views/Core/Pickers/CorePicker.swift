@@ -21,7 +21,6 @@ struct SolPicker: View {
                     .tag(item)
             }
         }
-//        .solEnabled(isEnabled: isEnabled)
         .padding(15)
         .background(Color.secondaryBackground) // Change background based on isEditable.
         .accentColor(.white) // Change text color based on isEditable.

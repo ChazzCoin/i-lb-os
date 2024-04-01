@@ -8,6 +8,21 @@
 import Foundation
 import SwiftUI
 
+struct InputText : View {
+    @State var label: String
+    @Binding var text: String
+    @Binding var isEdit: Bool
+    
+    var body: some View {
+        if !isEdit {
+            TextLabel(label, text: text)
+        } else {
+            SolTextField(label, text: $text)
+        }
+    }
+}
+
+
 struct SolTextField: View {
     @Binding var text: String
     var onChange: (String) -> Void

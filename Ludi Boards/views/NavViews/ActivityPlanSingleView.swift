@@ -114,11 +114,11 @@ struct ActivityPlanSingleView: View {
                 }
                 
                 DStack {
-                    SolTextEditor("Objective", text: $objectiveDetails)
+                    InputTextMultiLine("Objective", text: $objectiveDetails)
                         .padding()
                         .frame(minHeight: 100)
                     
-                    SolTextEditor("Description", text: $activityDetails)
+                    InputTextMultiLine("Description", text: $activityDetails)
                         .padding()
                         .frame(minHeight: 100)
                 }

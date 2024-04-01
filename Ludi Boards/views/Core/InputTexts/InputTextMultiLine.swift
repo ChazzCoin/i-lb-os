@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import DispatchIntrospection
 
-struct SolTextEditor: View {
+struct InputTextMultiLine: View {
     @Binding var text: String
     var placeholder: String
     var title: String

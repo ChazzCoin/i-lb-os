@@ -52,19 +52,6 @@ struct HomeDashboardView: View {
         
         DSidebarWindow {
             MenuListView(isShowing: $isSidebarVisible)
-//            Spacer()
-//                .frame(height: 25)
-//                .clearSectionBackground()
-//            HeaderText("Team Management", color: getTextColorOnBackground(colorScheme))
-//            SearchableTeamListView()
-//                .clearSectionBackground()
-//                .environmentObject(self.BEO)
-//                .environmentObject(self.NavStack)
-//            SearchablePlayerRefListView()
-//                .clearSectionBackground()
-//                .environmentObject(self.BEO)
-//                .environmentObject(self.NavStack)
-//            Spacer()
         }
         .clearSectionBackground()
         
@@ -74,66 +61,24 @@ struct HomeDashboardView: View {
         // Main Content and Sidebar
         ZStack(alignment: .leading) {
             
-            Form {
+            List {
                 
-                HStack {
-                    
-                    SOLCON(
-                        icon: SolIcon.add,
-                        title: "Session",
-                        isConfirmEnabled: false,
-                        onTap: {
-                            print("New Session Button")
-                            showNewPlanSheet = true
-                        }
-                    ).padding()
-                    
-                    SOLCON(
-                        icon: SolIcon.add,
-                        title: "Organization",
-                        isConfirmEnabled: false,
-                        onTap: {
-                            print("Create Organization Button")
-                            showNewOrgSheet = true
-                        }
-                    ).padding()
-                    
-                    SOLCON(
-                        icon: SolIcon.add,
-                        title: "Team",
-                        isConfirmEnabled: false,
-                        onTap: {
-                            print("Create Team Button")
-                            showNewTeamSheet = true
-                        }
-                    ).padding()
-                    
-                    SOLCON(
-                        icon: SolIcon.add,
-                        title: "Player",
-                        isConfirmEnabled: false,
-                        onTap: {
-                            print("Create Player Button")
-                            showNewPlayerRefSheet = true
-                        }
-                    ).padding()
-                    
-                }.clearSectionBackground()
+                OrganizationDashboardView(orgId: "new")
                 
-                OrganizationDashboardView(organization: Organization())
+                // Teams
+                Text("No Teams")
                 
+                // Players
+                Text("No Players")
+                
+                // Sessions
                 Section(header: Text("Sessions")) {
                     SearchableSessionListView()
                         .environmentObject(self.BEO)
                         .environmentObject(self.NavStack)
                 }.clearSectionBackground()
                 
-                
-                Section(header: Text("Activities")) {
-                    SearchableActivityListView()
-                        .environmentObject(self.BEO)
-                        .environmentObject(self.NavStack)
-                }.clearSectionBackground()
+                // Activities
                 
             }
 
@@ -144,14 +89,6 @@ struct HomeDashboardView: View {
             }
             
         }
-        .onAppear() {
-            self.NavStack.addToStack()
-            fetchAllSessionsFromFirebase()
-        }
-        .onDisappear() {
-            self.NavStack.removeFromStack()
-        }
-        .loading(isShowing: $isLoading)
         .navigationBarTitle("Session Plans", displayMode: .inline)
         .navigationBarItems(leading: Button(action: {
             withAnimation {
@@ -160,6 +97,14 @@ struct HomeDashboardView: View {
         }) {
             Image(systemName: "line.horizontal.3")
         })
+        .onAppear() {
+            self.NavStack.addToStack()
+            fetchAllSessionsFromFirebase()
+        }
+        .onDisappear() {
+            self.NavStack.removeFromStack()
+        }
+        .loading(isShowing: $isLoading)
         .sheet(isPresented: $showNewPlanSheet) {
             SessionPlanView(sessionId: "new", isShowing: $showNewPlanSheet, isMasterWindow: false)
                 .environmentObject(self.BEO)
