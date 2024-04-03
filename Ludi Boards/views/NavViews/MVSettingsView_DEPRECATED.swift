@@ -93,8 +93,8 @@ struct SettingsView: View {
                     if hasPlayerRef {
                         PlayerRefItemView(playerId: $currentPlayerId)
                     } else {
-                        SolPlayerRefFreePicker(selection: $addPlayerName, isEnabled: $attachedPlayerIsOn)
-                            .padding()
+//                        SolPlayerRefFreePicker(selection: $addPlayerName, isEnabled: $attachedPlayerIsOn)
+//                            .padding()
                     }
                    
                 }

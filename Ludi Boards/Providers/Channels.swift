@@ -91,12 +91,9 @@ class ViewMenu {
     }
 }
 
-class SessionChange {
-    var sessionId: String? = nil
+class ActivityChange {
     var activityId: String? = nil
-    
-    init(sessionId: String?=nil, activityId: String?=nil) {
-        self.sessionId = sessionId
+    init(activityId: String) {
         self.activityId = activityId
     }
 }

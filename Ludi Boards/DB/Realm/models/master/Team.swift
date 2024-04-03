@@ -25,5 +25,5 @@ class Team: Object, ObjectKeyIdentifiable {
     @Persisted var achievements: List<String> = List<String>()
     @Persisted var officialWebsite: String?
     @Persisted var socialMediaLinks: List<String> = List<String>()
-    
+    @Persisted var isDeleted: Bool = false
 }

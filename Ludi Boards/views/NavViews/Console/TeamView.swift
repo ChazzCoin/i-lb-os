@@ -97,15 +97,7 @@ struct TeamView: View {
                         .shadow(radius: 10)
                         .padding(.top, 20)
                 }
-//                Spacer()
-                
-                
-//                HStack {
-////                    BodyText("Sport: ", color: colorScheme == .dark ? .white : .black)
-////                        .fontWeight(.bold)
-//                    Spacer()
-//                    SolPicker(selection: $sport, data: sports, title: "Select a Sport", isEdit: $isEditMode)
-//                }.padding()
+
                
             }
             
@@ -118,7 +110,7 @@ struct TeamView: View {
             
             Section {
                 
-                SolPlayerRefFreePicker(selection: $addPlayerName, isEnabled: $isEditMode)
+//                SolPlayerRefFreePicker(selection: $addPlayerName, isEnabled: $isEditMode)
                 
                 HeaderText("Roster", color: .black)
                     .font(.headline)

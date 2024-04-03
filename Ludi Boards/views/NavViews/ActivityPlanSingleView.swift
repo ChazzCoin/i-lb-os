@@ -74,7 +74,7 @@ struct ActivityPlanSingleView: View {
                 SOLCON(
                     icon: SolIcon.load,
                     onTap: {
-                        CodiChannel.SESSION_ON_ID_CHANGE.send(value: SessionChange(sessionId: self.sessionId, activityId: self.activityId))
+                        CodiChannel.SESSION_ON_ID_CHANGE.send(value: ActivityChange(activityId: self.activityId))
                         self.isCurrentPlan = true
                     }
                 ).solEnabled(isEnabled: !self.isCurrentPlan)

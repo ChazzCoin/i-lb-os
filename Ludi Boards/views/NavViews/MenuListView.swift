@@ -49,6 +49,8 @@ struct MenuListView: View {
                 .padding(.top, 16)
                 .padding(.leading, 20)
             
+            PickerOrganization()
+            
             ForEach(MenuOption.allCases, id: \.self) { option in
                 Button(action: {
                     switch option {
@@ -80,12 +82,12 @@ struct MenuListView: View {
                     case .settings:
                         EmptyView()
                     case .addOrg:
-                        OrganizationDetailsView()
+                        OrganizationDetailsView(orgId: "new")
                     case .addTeam:
-                        TeamDetailsView()
+                        TeamDetailsView(teamId: "new")
 //                        TeamView(teamId: .constant("new"), isShowing: .constant(true))
                     case .addPlayer:
-                        PlayerDetailsView()
+                        PlayerDetailsView(playerId: "new")
 //                        PlayerRefView(playerId: .constant("new"), isShowing: .constant(true))
                     case .addSession:
                         SessionPlanView(sessionId: "new", isShowing: .constant(true), isMasterWindow: false)
@@ -110,6 +112,14 @@ struct MenuListView: View {
         .background(getBackgroundGradient(colorScheme))
         .edgesIgnoringSafeArea(.all)
         .transition(.move(edge: .leading))
+//        .onAppear() {
+//            let newOrg = Organization()
+//            newOrg.name = "SOL Academy"
+//            newOrg.descriptionText = "Private Training Academy for Soccer"
+//            newRealm().safeWrite { r in
+//                r.create(Organization.self, value: newOrg)
+//            }
+//        }
         
     }
     

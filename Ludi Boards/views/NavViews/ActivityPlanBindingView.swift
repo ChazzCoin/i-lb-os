@@ -319,7 +319,7 @@ struct ActivityItemView: View {
                     SOLCON(
                         icon: SolIcon.load,
                         onTap: {
-                            CodiChannel.SESSION_ON_ID_CHANGE.send(value: SessionChange(sessionId: item.sessionId, activityId: item.id))
+                            CodiChannel.SESSION_ON_ID_CHANGE.send(value: ActivityChange(activityId: item.id))
 //                            self.isCurrentPlan = true
                         }
                     ).solEnabled(isEnabled: true)
@@ -340,7 +340,7 @@ struct ActivityItemView: View {
                     SOLCON(
                         icon: SolIcon.load,
                         onTap: {
-                            CodiChannel.SESSION_ON_ID_CHANGE.send(value: SessionChange(sessionId: item.sessionId, activityId: item.id))
+                            CodiChannel.SESSION_ON_ID_CHANGE.send(value: ActivityChange(activityId: item.id))
 //                            self.isCurrentPlan = true
                         }
                     ).solEnabled(isEnabled: true)

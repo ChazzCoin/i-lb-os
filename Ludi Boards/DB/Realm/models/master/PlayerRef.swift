@@ -25,7 +25,9 @@ class PlayerRef: Object, ObjectKeyIdentifiable {
     @Persisted var hand: String = ""
     @Persisted var age: String = ""
     @Persisted var year: String = ""
+    @Persisted var gender: String = ""
     @Persisted var imgUrl: String = ""
     @Persisted var height: String = ""
     @Persisted var weight: String = ""
+    @Persisted var isDeleted: Bool = false
 }

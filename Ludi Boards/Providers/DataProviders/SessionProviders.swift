@@ -76,9 +76,10 @@ enum DominateHand: String, CaseIterable, Identifiable {
 }
 
 
+enum Gender: String, CaseIterable, Identifiable {
+    case Male = "Male"
+    case Female = "Female"
+    case None = "None"
 
-// Jersey Number
-
-// Height
-
-// Weight
+    var id: String { self.rawValue }
+}

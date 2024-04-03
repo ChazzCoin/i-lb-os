@@ -267,6 +267,10 @@
 		FBF515AC2BBB5F420066EAA9 /* OrganizationDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF515AB2BBB5F420066EAA9 /* OrganizationDetailsView.swift */; };
 		FBF515AE2BBB64D10066EAA9 /* TeamDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF515AD2BBB64D10066EAA9 /* TeamDetailsView.swift */; };
 		FBF515B02BBB64F90066EAA9 /* PlayerDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF515AF2BBB64F90066EAA9 /* PlayerDetailsView.swift */; };
+		FBF515B22BBB8DE90066EAA9 /* Assigners.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF515B12BBB8DE90066EAA9 /* Assigners.swift */; };
+		FBF515B42BBCE2320066EAA9 /* TrainingEquipment.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF515B32BBCE2320066EAA9 /* TrainingEquipment.swift */; };
+		FBF515B72BBCE4560066EAA9 /* ActivityDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF515B62BBCE4560066EAA9 /* ActivityDetailsView.swift */; };
+		FBF515B92BBD03FF0066EAA9 /* BoardEngineObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF515B82BBD03FF0066EAA9 /* BoardEngineObject.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -482,6 +486,10 @@
 		FBF515AB2BBB5F420066EAA9 /* OrganizationDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrganizationDetailsView.swift; sourceTree = "<group>"; };
 		FBF515AD2BBB64D10066EAA9 /* TeamDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamDetailsView.swift; sourceTree = "<group>"; };
 		FBF515AF2BBB64F90066EAA9 /* PlayerDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerDetailsView.swift; sourceTree = "<group>"; };
+		FBF515B12BBB8DE90066EAA9 /* Assigners.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Assigners.swift; sourceTree = "<group>"; };
+		FBF515B32BBCE2320066EAA9 /* TrainingEquipment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingEquipment.swift; sourceTree = "<group>"; };
+		FBF515B62BBCE4560066EAA9 /* ActivityDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityDetailsView.swift; sourceTree = "<group>"; };
+		FBF515B82BBD03FF0066EAA9 /* BoardEngineObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardEngineObject.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -560,6 +568,7 @@
 				FB15DD292B07443600A21290 /* BoardEngineView.swift */,
 				FB9F1E3F2B159F6A00FD9078 /* OrientationInfo.swift */,
 				FBBDD0232B6F6D8B0009844B /* CanvasExtensions.swift */,
+				FBF515B82BBD03FF0066EAA9 /* BoardEngineObject.swift */,
 			);
 			path = CanvasEngine;
 			sourceTree = "<group>";
@@ -589,6 +598,7 @@
 			children = (
 				FB18F1602B68390600D89F8D /* CorePicker.swift */,
 				FB65D2CA2B7DC16300564C37 /* SolPickers.swift */,
+				FBF515B12BBB8DE90066EAA9 /* Assigners.swift */,
 			);
 			path = Pickers;
 			sourceTree = "<group>";
@@ -965,6 +975,7 @@
 		FBD9AFD32B008F5C005F8620 /* Providers */ = {
 			isa = PBXGroup;
 			children = (
+				FBF515B52BBCE2DE0066EAA9 /* DataProviders */,
 				FB4840992B1EBC940003377A /* Sports.swift */,
 				FB18F17C2B6ABD8400D89F8D /* Experimental */,
 				FBD9AFD42B008F6F005F8620 /* Channels.swift */,
@@ -978,12 +989,6 @@
 				FB581BEC2B1F8A6800F5C90F /* KeyboardListener.swift */,
 				FBDE4F5A2B4D1038007FE880 /* InternetProvider.swift */,
 				FB2AA1042B74305E00BD631C /* IconProvider.swift */,
-				FB9EB6D72BB6610100FDD5DE /* UserProvider.swift */,
-				FB65D2C82B7D5E2E00564C37 /* SessionProviders.swift */,
-				FB9EB6E02BB6959700FDD5DE /* SessionCategoryProvider.swift */,
-				FB9EB6E22BB695FD00FDD5DE /* ActivityCategoryProvider.swift */,
-				FB9EB6E62BBA86DF00FDD5DE /* EventType.swift */,
-				FBF515A62BBB29840066EAA9 /* SportsPositions.swift */,
 			);
 			path = Providers;
 			sourceTree = "<group>";
@@ -1101,9 +1106,24 @@
 				FBF515A92BBB5D8F0066EAA9 /* BaseDetailsView.swift */,
 				FBF515AB2BBB5F420066EAA9 /* OrganizationDetailsView.swift */,
 				FBF515AF2BBB64F90066EAA9 /* PlayerDetailsView.swift */,
+				FBF515B62BBCE4560066EAA9 /* ActivityDetailsView.swift */,
 				FBF515AD2BBB64D10066EAA9 /* TeamDetailsView.swift */,
 			);
 			path = Console;
+			sourceTree = "<group>";
+		};
+		FBF515B52BBCE2DE0066EAA9 /* DataProviders */ = {
+			isa = PBXGroup;
+			children = (
+				FB9EB6D72BB6610100FDD5DE /* UserProvider.swift */,
+				FB65D2C82B7D5E2E00564C37 /* SessionProviders.swift */,
+				FB9EB6E02BB6959700FDD5DE /* SessionCategoryProvider.swift */,
+				FB9EB6E22BB695FD00FDD5DE /* ActivityCategoryProvider.swift */,
+				FB9EB6E62BBA86DF00FDD5DE /* EventType.swift */,
+				FBF515A62BBB29840066EAA9 /* SportsPositions.swift */,
+				FBF515B32BBCE2320066EAA9 /* TrainingEquipment.swift */,
+			);
+			path = DataProviders;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1320,6 +1340,7 @@
 				FBBDD0182B6C48840009844B /* Alerts.swift in Sources */,
 				FB18F17B2B69A26400D89F8D /* SearchablePlayerRefListView.swift in Sources */,
 				FB9EB6E72BBA86DF00FDD5DE /* EventType.swift in Sources */,
+				FBF515B72BBCE4560066EAA9 /* ActivityDetailsView.swift in Sources */,
 				FBE385562B4BC6E70090901C /* LiveSolUser.swift in Sources */,
 				FB18F1792B69A0DC00D89F8D /* SearchableTeamListView.swift in Sources */,
 				FB58E8822B030F1D00FD9E2E /* RealmFind.swift in Sources */,
@@ -1366,8 +1387,10 @@
 				FB93BB1B2B03471C00864CB2 /* FireData.swift in Sources */,
 				FB58A1B42B17D1420024B9A2 /* MvToolBar.swift in Sources */,
 				FBB450002B04B7580096F8EB /* ColorProvider.swift in Sources */,
+				FBF515B22BBB8DE90066EAA9 /* Assigners.swift in Sources */,
 				FBD9AFCB2B00843F005F8620 /* BoardSession.swift in Sources */,
 				FBE2C61C2B1AF961004C0116 /* BoardBackgrounder.swift in Sources */,
+				FBF515B92BBD03FF0066EAA9 /* BoardEngineObject.swift in Sources */,
 				FB9F1DD42B15307E00FD9078 /* UserSignUp.swift in Sources */,
 				FBF515AA2BBB5D8F0066EAA9 /* BaseDetailsView.swift in Sources */,
 				FB881A422B48C36400C16198 /* ProfileView.swift in Sources */,
@@ -1404,6 +1427,7 @@
 				FB9EB6D62BB65F3800FDD5DE /* DataPuller.swift in Sources */,
 				FB18F1812B6AD6CE00D89F8D /* Recording.swift in Sources */,
 				FBE2C6172B1AF595004C0116 /* GrassFieldView.swift in Sources */,
+				FBF515B42BBCE2320066EAA9 /* TrainingEquipment.swift in Sources */,
 				FB50942A2B05856D000AEA96 /* LineToolView.swift in Sources */,
 				FB881A382B47397600C16198 /* RealmObserver.swift in Sources */,
 				FB3E02AF2B0C6B1200D8558C /* SessionPlan.swift in Sources */,

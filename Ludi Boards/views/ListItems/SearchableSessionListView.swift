@@ -36,7 +36,7 @@ struct SearchableSessionListView: View {
                 .padding(.top)
             
             ScrollView {
-                LazyVGrid(columns: columns, spacing: 20) {
+                LazyVGrid(columns: columns, spacing: 8) {
                     ForEach(filteredItems) { item in
                         if !item.isDeleted {
                             NavigationLink(

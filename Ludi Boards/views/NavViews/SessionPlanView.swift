@@ -122,7 +122,7 @@ struct SessionPlanView: View {
                         icon: SolIcon.load,
                         onTap: {
                             runLoading()
-                            CodiChannel.SESSION_ON_ID_CHANGE.send(value: SessionChange(sessionId: sessionId, activityId: self.activities.first?.id ?? "nil"))
+                            CodiChannel.SESSION_ON_ID_CHANGE.send(value: ActivityChange(activityId: self.activities.first?.id ?? "nil"))
                             isCurrentPlan = true
                         }
                     ).solEnabled(isEnabled: !self.isCurrentPlan && self.sessionId != "new")

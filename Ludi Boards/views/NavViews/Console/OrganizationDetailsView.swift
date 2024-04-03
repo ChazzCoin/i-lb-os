@@ -9,12 +9,14 @@ import SwiftUI
 
 struct OrganizationDetailsView: View {
     
+    var orgId: String
+    
     @State var sport: String = ""
     
     @State private var orgName: String = ""
     @State private var type: String = ""
     @State private var logoUrl: String? = nil
-    @State private var founded: Int = 0
+    @State private var founded: String = ""
     @State private var location: String = ""
     @State private var contactInfo: String = ""
     @State private var descriptionText: String = ""
@@ -26,11 +28,36 @@ struct OrganizationDetailsView: View {
     @State var realmInstance = newRealm()
     @State var isEditMode: Bool = true
     
+    func save() {
+        if orgId == "new" { saveNewOrg()
+        } else { updateOrg() }
+    }
+    
     func saveNewOrg() {
-        
+        let newOrg = Organization()
+        newOrg.name = orgName
+        newOrg.founded = founded
+        newOrg.type = type
+        newOrg.location = location
+        newOrg.contactInfo = contactInfo
+        newOrg.members = members
+        newOrg.descriptionText = descriptionText
+        realmInstance.safeWrite { r in
+            r.create(Organization.self, value: newOrg)
+        }
     }
     func updateOrg() {
-        
+        if let org = realmInstance.findByField(Organization.self, value: orgId) {
+            realmInstance.safeWrite { r in
+                org.name = orgName
+                org.founded = founded
+                org.type = type
+                org.location = location
+                org.contactInfo = contactInfo
+                org.members = members
+                org.descriptionText = descriptionText
+            }
+        }
     }
     
     var body: some View {
@@ -42,7 +69,7 @@ struct OrganizationDetailsView: View {
                     SOLCON(
                         icon: SolIcon.save,
                         onTap: {
-                            
+                            save()
                         }
                     )
                     
@@ -67,6 +94,9 @@ struct OrganizationDetailsView: View {
                 Section("Organization Details") {
                     PickerSport(selection: $sport, isEdit: $isEditMode)
                     InputText(label: "Organization Name", text: $orgName, isEdit: $isEditMode)
+                    InputText(label: "Location", text: $location, isEdit: $isEditMode)
+                    PickerYear(selection: $founded, isEdit: $isEditMode)
+                    InputTextMultiLine("Details", text: $descriptionText, isEdit: $isEditMode)
                 }
                 
             },
@@ -78,5 +108,5 @@ struct OrganizationDetailsView: View {
 }
 
 #Preview {
-    OrganizationDetailsView()
+    OrganizationDetailsView(orgId: "new")
 }

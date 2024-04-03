@@ -33,13 +33,10 @@ struct BaseDetailsView<Header: View, Body: View, Footer: View>: View {
                 HeaderText(navTitle, color: .blue).clearSectionBackground()
                 Spacer().clearSectionBackground()
             }
-//            .clearSectionBackground()
             
             // Header
             headerBuilder()
                 .clearSectionBackground()
-            
-            
             
             // Body
             bodyBuilder()

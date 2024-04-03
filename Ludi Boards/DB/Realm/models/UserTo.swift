@@ -8,6 +8,17 @@
 import Foundation
 import RealmSwift
 
+class PlayerToRoster: Object, ObjectKeyIdentifiable {
+    @Persisted(primaryKey: true) var id: String = UUID().uuidString
+    @Persisted var playerId: String = ""
+    @Persisted var teamId: String = ""
+    @Persisted var year: String = ""
+    @Persisted var role: String = UserRole.player.name
+    @Persisted var auth: String = UserAuth.viewer.name
+    @Persisted var status: String = RosterStatus.active.name
+    @Persisted var isArchive: Bool = false
+}
+
 class UserToSession: Object, ObjectKeyIdentifiable {
     @Persisted(primaryKey: true) var id: String = UUID().uuidString
     @Persisted var sessionId: String = ""

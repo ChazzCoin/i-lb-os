@@ -34,39 +34,21 @@ enum UserRole: CaseIterable {
 struct PickerUserRole: View {
     @Binding var selection: String
     @Binding var isEdit: Bool
-    let title = "User Role"
-    
-    
+
     var body: some View {
-        HStack {
-            Text(title)
-                .foregroundColor(.blue)
-                .padding()
-            
-            Spacer()
-            
-            Picker(title, selection: $selection) {
-                ForEach(UserRole.allCases, id: \.self) { item in
-                    Text(item.name).tag(item.name)
+        if !isEdit {
+            TextLabel("User Role", text: selection)
+        } else {
+            Picker("User Role", selection: $selection) {
+                ForEach(UserRole.allCases, id: \.self) { status in
+                    Text(status.name).tag(status.name)
                 }
             }
             .foregroundColor(.blue)
-            .pickerStyle(MenuPickerStyle())
-            
         }
-        .compositingGroup()
-        .shadow(radius: 5)
-        .padding()
-        
     }
 }
 
-
-struct UserPickerView_Previews: PreviewProvider {
-    static var previews: some View {
-        PickerShareStatus(selection: .constant(""), isEdit: .constant(true))
-    }
-}
 enum UserAuth: CaseIterable {
     case visitor
     case viewer
@@ -88,30 +70,18 @@ enum UserAuth: CaseIterable {
 struct PickerUserAuth: View {
     @Binding var selection: String
     @Binding var isEdit: Bool
-    let title = "User Auth"
-    
-    
+
     var body: some View {
-        HStack {
-            Text(title)
-                .foregroundColor(.blue)
-                .padding()
-            
-            Spacer()
-            
-            Picker(title, selection: $selection) {
-                ForEach(UserAuth.allCases, id: \.self) { item in
-                    Text(item.name).tag(item.name)
+        if !isEdit {
+            TextLabel("User Auth", text: selection)
+        } else {
+            Picker("User Auth", selection: $selection) {
+                ForEach(UserAuth.allCases, id: \.self) { status in
+                    Text(status.name).tag(status.name)
                 }
             }
             .foregroundColor(.blue)
-            .pickerStyle(MenuPickerStyle())
-            
         }
-        .compositingGroup()
-        .shadow(radius: 5)
-        .padding()
-        
     }
 }
 
@@ -133,29 +103,54 @@ enum ShareStatus: CaseIterable {
 struct PickerShareStatus: View {
     @Binding var selection: String
     @Binding var isEdit: Bool
-    let title = "Share Status"
-    
-    
+
     var body: some View {
-        HStack {
-            Text(title)
-                .foregroundColor(.blue)
-                .padding()
-            
-            Spacer()
-            
-            Picker(title, selection: $selection) {
-                ForEach(ShareStatus.allCases, id: \.self) { item in
-                    Text(item.name).tag(item.name)
+        if !isEdit {
+            TextLabel("Share Status", text: selection)
+        } else {
+            Picker("Share Status", selection: $selection) {
+                ForEach(ShareStatus.allCases, id: \.self) { status in
+                    Text(status.name).tag(status.name)
                 }
             }
             .foregroundColor(.blue)
-            .pickerStyle(MenuPickerStyle())
-            
         }
-        .compositingGroup()
-        .shadow(radius: 5)
-        .padding()
-        
+    }
+}
+
+
+enum RosterStatus: CaseIterable {
+    case pending
+    case pending_documents
+    case active
+    case inactive
+    case suspended
+    
+    var name: String {
+        switch self {
+            case .pending: return "pending"
+            case .pending_documents: return "pending documents"
+            case .active: return "active"
+            case .inactive: return "inactive"
+            case .suspended: return "suspended"
+        }
+    }
+    
+}
+struct PickerRosterStatus: View {
+    @Binding var selection: String
+    @Binding var isEdit: Bool
+
+    var body: some View {
+        if !isEdit {
+            TextLabel("Roster Status", text: selection)
+        } else {
+            Picker("Roster Status", selection: $selection) {
+                ForEach(RosterStatus.allCases, id: \.self) { status in
+                    Text(status.name).tag(status.name)
+                }
+            }
+            .foregroundColor(.blue)
+        }
     }
 }

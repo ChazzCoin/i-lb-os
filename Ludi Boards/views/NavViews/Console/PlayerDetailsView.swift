@@ -10,6 +10,8 @@ import SwiftUI
 
 struct PlayerDetailsView: View {
     
+    var playerId: String
+    
     @State var sport: String = ""
     
     @State var playerName: String = ""
@@ -33,6 +35,30 @@ struct PlayerDetailsView: View {
     @State var realmInstance = newRealm()
     @State var isEditMode: Bool = true
     
+    func save() {
+        if playerId == "new" {
+            new()
+        } else {
+            update()
+        }
+    }
+    func update() {
+        if let player = realmInstance.findByField(PlayerRef.self, value: playerId) {
+            realmInstance.safeWrite { r in
+                player.name = playerName
+                
+            }
+        }
+    }
+    func new() {
+        let newPlayer = PlayerRef()
+        newPlayer.name = playerName
+       
+        realmInstance.safeWrite { r in
+            r.create(PlayerRef.self, value: newPlayer)
+        }
+    }
+    
     var body: some View {
         
         BaseDetailsView(
@@ -42,7 +68,7 @@ struct PlayerDetailsView: View {
                     SOLCON(
                         icon: SolIcon.save,
                         onTap: {
-                            
+                            save()
                         }
                     )
                     
@@ -84,6 +110,6 @@ struct PlayerDetailsView: View {
     }
 }
 
-#Preview {
-    PlayerDetailsView()
-}
+//#Preview {
+////    PlayerDetailsView()
+//}

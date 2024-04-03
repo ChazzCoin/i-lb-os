@@ -51,8 +51,10 @@ struct SolTeamPicker: View {
 }
 
 struct SolPlayerRefFreePicker: View {
-    @Binding var selection: String
+    var teamId: String
     @Binding var isEnabled: Bool
+    @State var selection: String = ""
+    @State var showAddPlayerPicker = false
     @State var realmInstance = newRealm()
     @ObservedResults(PlayerRef.self, where: { $0.teamId == "" }) var allPlayers
 
@@ -70,6 +72,24 @@ struct SolPlayerRefFreePicker: View {
                 }
                 .foregroundColor(.blue)
                 .pickerStyle(MenuPickerStyle())
+                .onChange(of: selection, perform: { value in
+                    showAddPlayerPicker = true
+                })
+                .alert("Attach Player", isPresented: $showAddPlayerPicker) {
+                    Button("Cancel", role: .cancel) {
+                        showAddPlayerPicker = false
+                    }
+                    Button("OK", role: .none) {
+                        showAddPlayerPicker = false
+                        if let obj = self.realmInstance.findPlayerByName(name: self.selection) {
+                            self.realmInstance.safeWrite { _ in
+                                obj.teamId = self.teamId
+                            }
+                        }
+                    }
+                } message: {
+                    Text("Are you sure you want to attach player to team?")
+                }
             }
         }
     }
@@ -309,6 +329,48 @@ struct PickerDominateHand: View {
         } else {
             Picker("Dominate Hand", selection: $selection) {
                 ForEach(DominateHand.allCases, id: \.self) { item in
+                    Text(item.rawValue).tag(item.rawValue)
+                }
+            }
+            .foregroundColor(.blue)
+        }
+    }
+}
+
+struct PickerYear: View {
+    // Define the range of years
+    @Binding var selection: String
+    @Binding var isEdit: Bool
+    
+    private let years: [String] = (2000...DateTimeTools.currentYear()).map { "\($0)" }
+    private let currentYear: String = DateTimeTools.currentYear()
+    
+    var body: some View {
+        if !isEdit {
+            TextLabel("Founding Year", text: selection)
+        } else {
+            Picker("Founding Year", selection: $selection) {
+                ForEach(years, id: \.self) { year in
+                    Text(year).tag(year)
+                }
+            }
+            .foregroundColor(.blue)
+            .pickerStyle(DefaultPickerStyle())
+        }
+        
+    }
+}
+
+struct PickerGender: View {
+    @Binding var selection: String
+    @Binding var isEdit: Bool
+
+    var body: some View {
+        if !isEdit {
+            TextLabel("Gender", text: selection)
+        } else {
+            Picker("Gender", selection: $selection) {
+                ForEach(Gender.allCases, id: \.self) { item in
                     Text(item.rawValue).tag(item.rawValue)
                 }
             }

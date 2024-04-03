@@ -17,6 +17,7 @@ struct HomeDashboardView: View {
     @EnvironmentObject var NavStack: NavStackWindowObservable
   
     @ObservedResults(PlayerRef.self) var players
+    @ObservedResults(Team.self) var teams
     
     @ObservedResults(UserToSession.self, where: { $0.status != "removed" }) var guestSessions
     var sharedSessionIds: [String] {
@@ -63,13 +64,26 @@ struct HomeDashboardView: View {
             
             List {
                 
-                OrganizationDashboardView(orgId: "new")
+                OrganizationDashboardView(orgId: self.BEO.currentOrgId)
                 
                 // Teams
-                Text("No Teams")
+                if teams.isEmpty {
+                    Text("No Teams")
+                }
+                ForEach(teams, id: \.id) { item in
+                    
+                    NavigationLink(item.name, destination: TeamDetailsView(teamId: item.id))
+//                    Text(item.name)
+                        
+                }
                 
                 // Players
-                Text("No Players")
+                if players.isEmpty {
+                    Text("No Players")
+                }
+                ForEach(players, id: \.id) { item in
+                    Text(item.name)
+                }
                 
                 // Sessions
                 Section(header: Text("Sessions")) {
@@ -81,11 +95,16 @@ struct HomeDashboardView: View {
                 // Activities
                 
             }
+            .onTap {
+                if isSidebarVisible {
+                    withAnimation {
+                        isSidebarVisible = false
+                    }
+                }
+            }
 
             if isSidebarVisible {
                 MenuListView(isShowing: $isSidebarVisible)
-//                    .frame(width: 300)
-//                    .transition(.move(edge: .leading))
             }
             
         }
@@ -105,23 +124,23 @@ struct HomeDashboardView: View {
             self.NavStack.removeFromStack()
         }
         .loading(isShowing: $isLoading)
-        .sheet(isPresented: $showNewPlanSheet) {
-            SessionPlanView(sessionId: "new", isShowing: $showNewPlanSheet, isMasterWindow: false)
-                .environmentObject(self.BEO)
-                .environmentObject(self.NavStack)
-        }
-        .sheet(isPresented: $showCurrentTeamSheet) {
-            TeamView(teamId: $currentTeamId, isShowing: $showCurrentTeamSheet)
-        }
-        .sheet(isPresented: $showNewOrgSheet) {
+//        .sheet(isPresented: $showNewPlanSheet) {
+//            SessionPlanView(sessionId: "new", isShowing: $showNewPlanSheet, isMasterWindow: false)
+//                .environmentObject(self.BEO)
+//                .environmentObject(self.NavStack)
+//        }
+//        .sheet(isPresented: $showCurrentTeamSheet) {
+//            TeamView(teamId: $currentTeamId, isShowing: $showCurrentTeamSheet)
+//        }
+//        .sheet(isPresented: $showNewOrgSheet) {
+////            TeamView(teamId: .constant("new"), isShowing: $showNewTeamSheet)
+//        }
+//        .sheet(isPresented: $showNewTeamSheet) {
 //            TeamView(teamId: .constant("new"), isShowing: $showNewTeamSheet)
-        }
-        .sheet(isPresented: $showNewTeamSheet) {
-            TeamView(teamId: .constant("new"), isShowing: $showNewTeamSheet)
-        }
-        .sheet(isPresented: $showNewPlayerRefSheet) {
-            PlayerRefView(playerId: .constant("new"), isShowing: $showNewPlayerRefSheet)
-        }
+//        }
+//        .sheet(isPresented: $showNewPlayerRefSheet) {
+//            PlayerRefView(playerId: .constant("new"), isShowing: $showNewPlayerRefSheet)
+//        }
         .refreshable {
             fetchAllSessionsFromFirebase()
         }

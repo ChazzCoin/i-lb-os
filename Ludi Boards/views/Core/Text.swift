@@ -9,8 +9,8 @@ import Foundation
 import SwiftUI
 
 struct TextLabel: View {
-    var title: String
-    var subtitle: String
+    @State var title: String
+    @State var subtitle: String
     
     init(_ title: String, text: String) {
         self.title = title
@@ -27,6 +27,11 @@ struct TextLabel: View {
             Text(subtitle)
                 .font(.headline)
                 .foregroundColor(.black)
+        }
+        .onAppear() {
+            if subtitle.isEmpty {
+                self.subtitle = "Empty"
+            }
         }
     }
 }

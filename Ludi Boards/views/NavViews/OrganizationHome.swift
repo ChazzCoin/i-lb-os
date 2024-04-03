@@ -11,68 +11,76 @@ import RealmSwift
 
 struct OrganizationDashboardView: View {
     var orgId: String
-    var organization: Organization? = nil
+    @State var organization: Organization? = nil
+    @State var isEmpty: Bool = false
+
     
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading) {
-                
-                if let organization = organization {
-                    if let logoUrl = organization.logoUrl, let url = URL(string: logoUrl) {
-                        AsyncImage(url: url)
-                            .aspectRatio(contentMode: .fit)
-                            .cornerRadius(8)
-                    }
-                    
-                    Text(organization.name)
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-                        .padding(.top, 5)
-                    
-                    Text("Founded: \(organization.founded)")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                    
-                    Text(organization.location)
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                        .padding(.vertical, 1)
-                    
-                    if let website = organization.officialWebsite, let url = URL(string: website) {
-                        Link("Visit Official Website", destination: url)
-                            .font(.headline)
-                            .foregroundColor(.blue)
-                    }
-                    
-                    Text(organization.descriptionText)
-                        .padding(.vertical, 5)
-                    
-                    if !organization.socialMediaLinks.isEmpty {
-                        Text("Follow Us")
-                            .font(.headline)
-                            .padding(.vertical, 2)
-                        
-                        HStack {
-                            ForEach(organization.socialMediaLinks, id: \.self) { link in
-                                if let url = URL(string: link) {
-                                    Link(destination: url) {
-                                        Image(systemName: "globe")
-                                            .foregroundColor(.blue)
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    
-                    Spacer()
-                } else {
+        // Card for Organization Details
+        HStack {
+            
+            if isEmpty {
+                VStack(alignment: .leading) {
+                    // Organization Name
                     Text("No Organization")
+                        .font(.title)
+                        .fontWeight(.bold)
+                        .padding(.vertical, 2)
+                    
+                    // Organization Description
+                    Text("Create or Join an Organization.")
+                        .padding(.bottom, 5)
+                }
+            } else {
+                // Organization Logo or Placeholder
+                if let organization = organization, let url = URL(string: organization.logoUrl) {
+                    AsyncImage(url: url) { image in
+                        image.resizable()
+                    } placeholder: {
+                        Image("sol_icon")
+                            .resizable()
+                    }
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: 150, height: 150)
+                    .clipped()
+                    .cornerRadius(10)
+                    .padding(.bottom, 5)
+                } else {
+                    Image("sol_icon")
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 150, height: 150)
+                        .clipped()
+                        .cornerRadius(10)
+                        .padding(.bottom, 5)
                 }
                 
+                VStack(alignment: .leading) {
+                    // Organization Name
+                    Text(organization?.name ?? "Organization Name")
+                        .font(.title)
+                        .fontWeight(.bold)
+                        .padding(.vertical, 2)
+                    
+                    // Organization Description
+                    Text(organization?.descriptionText ?? "No description available.")
+                        .padding(.bottom, 5)
+                }
             }
-            .padding()
+            
+            Spacer()
         }
+        .background(Color.white) // Consider using a custom color or .ultraThinMaterial for a frosted glass look
+        .cornerRadius(15)
+        .shadow(radius: 5)
         .navigationBarTitleDisplayMode(.inline)
+        .onAppear() {
+            if let temp = newRealm().findByField(Organization.self, value: orgId) {
+                organization = temp
+                return
+            }
+            isEmpty = true
+        }
     }
 }
 

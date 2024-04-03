@@ -179,7 +179,7 @@ struct enableManagedViewTool : ViewModifier {
     @MainActor
     func receiveOnSessionChange() {
         CodiChannel.SESSION_ON_ID_CHANGE.receive(on: RunLoop.main) { sc in
-            let temp = sc as! SessionChange
+            let temp = sc as! ActivityChange
             if self.activityId == temp.activityId {
                 self.isDisabled = false
             } else {

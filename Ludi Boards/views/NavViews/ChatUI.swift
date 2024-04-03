@@ -188,7 +188,7 @@ struct ChatView: View {
             observeChat()
             
             CodiChannel.SESSION_ON_ID_CHANGE.receive(on: RunLoop.main) { onChange in
-                if let temp = onChange as? SessionChange {
+                if let temp = onChange as? ActivityChange {
                     if let roomId = temp.activityId {
                         if self.chatId != roomId {
                             print("Changing Chat ID: \(roomId)")

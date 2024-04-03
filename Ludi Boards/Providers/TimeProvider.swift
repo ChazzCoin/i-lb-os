@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 struct DateTimeTools {
     
     static func currentMonth() -> String {
