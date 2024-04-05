@@ -30,6 +30,17 @@ class UserToSession: Object, ObjectKeyIdentifiable {
     @Persisted var status: String = ShareStatus.active.name
 }
 
+class UserToActivity: Object, ObjectKeyIdentifiable {
+    @Persisted(primaryKey: true) var id: String = UUID().uuidString
+    @Persisted var activityId: String = ""
+    @Persisted var activityName: String = ""
+    @Persisted var userId: String = ""
+    @Persisted var userName: String = ""
+    @Persisted var role: String = UserRole.temp.name
+    @Persisted var auth: String = UserAuth.visitor.name
+    @Persisted var status: String = ShareStatus.active.name
+}
+
 class UserToOrganization: Object, ObjectKeyIdentifiable {
     @Persisted(primaryKey: true) var id: String = UUID().uuidString
     @Persisted var organizationId: String = "null"

@@ -156,6 +156,9 @@ struct BoardEngine: View {
             onToolCreated()
             onToolDeleted()
             
+            // todo: TESTING ONLY
+            createSolaOrg()
+            createSolaTeam()
         }
     }
     
@@ -272,6 +275,7 @@ struct BoardEngine: View {
         }
         
         createNewActivityPlan()
+
         threeLoadActivityPlan()
 //        showCreateActivitySheet = true
 
@@ -447,18 +451,52 @@ struct BoardEngine: View {
 //        }
 //    }
     
-    func createNewActivityPlan() {
-        
-        let results = self.BEO.realmInstance.objects(ActivityPlan.self).filter("sessionId == %@", self.BEO.currentSessionId)
-        if !results.isEmpty {
-            if let temp = results.first {
-                self.BEO.changeActivity(activityId: temp.id)
-                return
-            }
+    func createSolaOrg() {
+        if let _ = self.BEO.realmInstance.findByField(Organization.self, field: "name", value: "SOL Academy") {
+            return
         }
+        let newOrg = Organization()
+        newOrg.name = "SOL Academy"
+        newOrg.descriptionText = "Private Training Academy for the Selected."
+        newOrg.founded = "2024"
+        newOrg.location = "Birmingham, AL"
+        newOrg.members = 2
+        self.BEO.realmInstance.safeWrite { r in
+            r.create(Organization.self, value: newOrg, update: .all)
+        }
+        
+        OrganizationManager(realm: self.BEO.realmInstance).addUserToOrganization(userId: self.BEO.currentUserId, organizationId: newOrg.id) {
+            print("Failed to Create Connection to Organization.")
+        }
+    }
+    
+    func createSolaTeam() {
+        if let _ = self.BEO.realmInstance.findByField(Team.self, field: "name", value: "SOLA") {
+            return
+        }
+        let newTeam = Team()
+        newTeam.name = "SOLA"
+        newTeam.coachName = "Selim T."
+        newTeam.sportType = "Soccer"
+        newTeam.foundedYear = "2024"
+        newTeam.homeCity = "Birmingham, AL"
+        newTeam.league = "Private Training"
+        newTeam.manager = "Charles Romeo"
+        self.BEO.realmInstance.safeWrite { r in
+            r.create(Team.self, value: newTeam, update: .all)
+        }
+        TeamManager().addUserToTeam(userId: self.BEO.currentUserId, teamId: newTeam.id) { e in
+            print("Failed to Create Connection to Team.")
+        }
+    }
+    
+    func createNewActivityPlan() {
         
         let newActivity = ActivityPlan()
         self.BEO.changeActivity(activityId: newActivity.id)
+        
+        newActivity.title = "Auto Generated Activity"
+        newActivity.subTitle = "Initial Setup for Testing"
         
         newActivity.ownerId = getFirebaseUserId() ?? CURRENT_USER_ID
         newActivity.sessionId = self.BEO.currentSessionId

@@ -88,3 +88,51 @@ class DataPuller {
     // Activities
     
 }
+
+class FirebaseUserSearch {
+    let usersRef = Database.database().reference().child("users")
+
+    // Search for users where name or userName matches the search term
+    func searchUsersByNameOrUserName(searchTerm: String, completion: @escaping ([User]) -> Void) {
+        // First query: Search by name
+        let nameQuery = usersRef.queryOrdered(byChild: "name").queryEqual(toValue: searchTerm)
+        
+        // Second query: Search by userName
+        let userNameQuery = usersRef.queryOrdered(byChild: "userName").queryEqual(toValue: searchTerm)
+        
+        let dispatchGroup = DispatchGroup()
+        var searchResults = [User]()
+
+        dispatchGroup.enter()
+        nameQuery.observeSingleEvent(of: .value, with: { snapshot in
+            for child in snapshot.children.allObjects as! [DataSnapshot] {
+                if let user = User.fromSnap(snapshot: child) {
+                    searchResults.safeAppend(user)
+                }
+            }
+            dispatchGroup.leave()
+        })
+        
+        dispatchGroup.enter()
+        userNameQuery.observeSingleEvent(of: .value, with: { snapshot in
+            for child in snapshot.children.allObjects as! [DataSnapshot] {
+                if let user = User.fromSnap(snapshot: child), !searchResults.contains(where: { $0.id == user.id }) {
+                    searchResults.safeAppend(user)
+                }
+            }
+            dispatchGroup.leave()
+        })
+        
+        dispatchGroup.notify(queue: .main) {
+            completion(searchResults)
+        }
+    }
+}
+extension Array where Element == User {
+    mutating func safeAppend(_ newUser: User) {
+        // Check if the array already contains an element with the same id as newUser
+        if !self.contains(where: { $0.id == newUser.id }) {
+            self.append(newUser)
+        }
+    }
+}

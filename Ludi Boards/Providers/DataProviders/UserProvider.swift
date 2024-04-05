@@ -15,6 +15,7 @@ enum UserRole: CaseIterable {
     case admin
     case assistant
     case volunteer
+    case member
     case temp
     
     var name: String {
@@ -25,6 +26,7 @@ enum UserRole: CaseIterable {
             case .admin: return "admin"
             case .assistant: return "assistant"
             case .volunteer: return "volunteer"
+            case .member: return "member"
             case .temp: return "temp"
         }
     }

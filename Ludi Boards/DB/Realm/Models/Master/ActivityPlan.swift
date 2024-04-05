@@ -40,6 +40,7 @@ class ActivityPlan: Object, ObjectKeyIdentifiable {
     @Persisted var orgId: String = ""
     @Persisted var teamId: String = ""
     @Persisted var ownerId: String = ""
+    @Persisted var createdBy: String = ""
     @Persisted var isHost: Bool = false
     @Persisted var isOpen: Bool = false
     @Persisted var isLocal: Bool = true

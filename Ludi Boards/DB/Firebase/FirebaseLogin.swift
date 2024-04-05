@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import RealmSwift
 import FirebaseAuth
-import FirebaseFirestore
+//import FirebaseFirestore
 import FirebaseDatabase
 //import FirebaseAnalytics
 

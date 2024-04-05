@@ -14,25 +14,39 @@ class RealmInstance {
     }()
 }
 
-func realm() -> Realm {
+public func realm() -> Realm {
     return RealmInstance.instance
 }
 
-func newRealm() -> Realm {
+public func newRealm() -> Realm {
     return RealmInstance.instance
 }
 
-func isRealmObjectValid(_ object: Object) -> Bool {
+public func isRealmObjectValid(_ object: Object) -> Bool {
     return !object.isInvalidated
 }
 
 
-func safeAccess<T>(to object: T, action: (T) -> Void) where T: Object {
+public func safeAccess<T>(to object: T, action: (T) -> Void) where T: Object {
     guard !object.isInvalidated else {
         print("Object is invalidated.")
         return
     }
     action(object)
+}
+
+public func updateField<T: Object>(for objectType: T.Type, objectId: String, fieldName: String, newValue: Any, completion: @escaping (Error?) -> Void) where T: ObjectKeyIdentifiable {
+    let realm = newRealm()
+    guard let object = realm.object(ofType: objectType, forPrimaryKey: objectId) else {
+        completion(NSError(domain: "Assigners", code: 404, userInfo: [NSLocalizedDescriptionKey: "\(objectType) not found"]))
+        return
+    }
+    
+    realm.safeWrite { r in
+        object.setValue(newValue, forKey: fieldName)
+        completion(nil)
+    }
+//        realm.invalidate()
 }
 
 extension Realm {

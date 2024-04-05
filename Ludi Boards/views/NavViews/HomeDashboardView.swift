@@ -18,6 +18,7 @@ struct HomeDashboardView: View {
   
     @ObservedResults(PlayerRef.self) var players
     @ObservedResults(Team.self) var teams
+    @ObservedResults(Event.self) var events
     
     @ObservedResults(UserToSession.self, where: { $0.status != "removed" }) var guestSessions
     var sharedSessionIds: [String] {
@@ -78,21 +79,29 @@ struct HomeDashboardView: View {
                 }
                 
                 // Players
-                if players.isEmpty {
-                    Text("No Players")
-                }
-                ForEach(players, id: \.id) { item in
+//                if players.isEmpty {
+//                    Text("No Members of SOL Academy")
+//                }
+                ForEach(OrganizationManager().getAllUsersInOrganization(organizationId: BEO.currentOrgId), id: \.self) { item in
                     Text(item.name)
                 }
                 
-                // Sessions
-                Section(header: Text("Sessions")) {
-                    SearchableSessionListView()
+                // Events
+                if events.isEmpty {
+                    Text("No Events")
+                }
+                ForEach(events, id: \.id) { item in
+                    Text(item.name)
+                }
+                
+                // Activities
+                Section(header: Text("Activities")) {
+                    SearchableActivityListView()
                         .environmentObject(self.BEO)
                         .environmentObject(self.NavStack)
                 }.clearSectionBackground()
                 
-                // Activities
+                
                 
             }
             .onTap {

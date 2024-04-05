@@ -9,6 +9,28 @@ import Foundation
 import RealmSwift
 
 
+extension Realm {
+    
+    // Get Players/Roster on Team
+    func getRosterForTeamId(teamId: String) -> Results<PlayerRef> {
+        self.objects(PlayerRef.self).filter("teamId == %@", teamId)
+    }
+    // Get Teams part of Organization
+    func getTeamsForOrgId(orgId: String) -> Results<Team> {
+        self.objects(Team.self).filter("orgId == %@", orgId)
+    }
+    
+    // Get Activities part of Organization
+    // Get Sessions part of Organization
+    // Get Activities part of Team
+    // Get Sessions part of Team
+    // Get Events part of Organization
+    // Get Events part of Team
+    // Users part of Organization
+    // Users part of Team
+    
+}
+
 enum SolFilter {
     case ID_EQUALS
     case ORG_ID_EQUALS

@@ -7,12 +7,13 @@
 
 import Foundation
 import RealmSwift
+import FirebaseDatabase
 
 class User: Object, ObjectKeyIdentifiable {
     @Persisted var id: String = CURRENT_USER_ID
     @Persisted var userId: String = UUID().uuidString
-    @Persisted var auth: String = ""
-    @Persisted var role: String = ""
+    @Persisted var auth: String = UserAuth.owner.name
+    @Persisted var role: String = UserRole.temp.name
     @Persisted var name: String = ""
     @Persisted var userName: String = ""
     @Persisted var email: String = ""
@@ -30,5 +31,20 @@ class User: Object, ObjectKeyIdentifiable {
     
     override static func primaryKey() -> String {
         return "userId"
+    }
+    
+    // Initialize from a DataSnapshot
+    static func fromSnap(snapshot: DataSnapshot) -> User? {
+        let newUser = User()
+        guard let value = snapshot.value as? [String: Any],
+              let id = snapshot.key as? String,
+              let name = value["name"] as? String,
+              let userName = value["userName"] as? String else {
+            return nil
+        }
+        newUser.id = id
+        newUser.name = name
+        newUser.userName = userName
+        return newUser
     }
 }

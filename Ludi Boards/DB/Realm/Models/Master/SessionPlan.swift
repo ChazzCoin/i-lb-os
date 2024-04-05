@@ -34,6 +34,7 @@ class SessionPlan: Object, ObjectKeyIdentifiable {
     @Persisted var ownerId: String = ""
     @Persisted var orgId: String = ""
     @Persisted var teamId: String = ""
+    @Persisted var createdBy: String = ""
     
     @Persisted var isHost: Bool = false
     @Persisted var isOpen: Bool = false
