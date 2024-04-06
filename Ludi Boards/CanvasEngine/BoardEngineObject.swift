@@ -67,6 +67,11 @@ class BoardEngineObject : ObservableObject {
     @AppStorage("currentActivityId") var currentActivityId: String = ""
     @AppStorage("currentChatId") var currentChatId: String = ""
     
+    @AppStorage("isPlayingAnimation") public var isPlayingAnimation: Bool = false
+    @AppStorage("toolBarCurrentViewId") public var toolBarCurrentViewId: String = ""
+    @AppStorage("toolSettingsIsShowing") public var toolSettingsIsShowing: Bool = false
+    @AppStorage("ignoreUpdates") public var ignoreUpdates: Bool = false
+    
     let realmInstance = realm()
     let boards = Sports()
     @Published var guideModeIsEnabled = true
@@ -106,9 +111,9 @@ class BoardEngineObject : ObservableObject {
     
     @Published var boardSettingsIsShowing = false
     @Published var menuSettingsIsShowing = false
-    @Published var toolSettingsIsShowing = false
+//    @Published var toolSettingsIsShowing = false
     @Published var toolBarIsShowing = false
-    @Published var toolBarCurrentViewId = ""
+//    @Published var toolBarCurrentViewId = ""
     
     init() {
         dropDelegate = CustomDropDelegate(
@@ -309,7 +314,7 @@ class BoardEngineObject : ObservableObject {
             .sorted(byKeyPath: "orderIndex", ascending: true)
     }
     @Published var playbackRecordingId: String = ""
-    @Published var isPlayingAnimation: Bool = false
+//    @Published var isPlayingAnimation: Bool = false
     @Published var currentRecordingId: String = ""
     @Published var currentRecordingIndex: Int = 0
     @Published var isRecording: Bool = false
@@ -317,7 +322,7 @@ class BoardEngineObject : ObservableObject {
     @Published var endTime: DispatchTime?
     @Published var recordingDuration: Double = 0.0
     @Published var recordingNotificationToken: NotificationToken? = nil
-    @Published var ignoreUpdates: Bool = false
+//    @Published var ignoreUpdates: Bool = false
     
     func playAnimationRecording() {
         isPlayingAnimation = true

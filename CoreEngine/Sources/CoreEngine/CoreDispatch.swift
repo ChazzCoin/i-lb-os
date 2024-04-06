@@ -10,7 +10,6 @@ import Foundation
 
 public extension DispatchQueue {
     
-    
     static func executeAfter(seconds: TimeInterval, on queue: DispatchQueue = .main, action: @escaping () -> Void) {
         queue.asyncAfter(deadline: .now() + seconds, execute: action)
     }
@@ -31,6 +30,21 @@ public extension DispatchQueue {
     }
 }
 
+public class DQ {
+    // Run on Main Thread Helper
+    public static func main(mainBlock: @escaping () -> Void) { DispatchQueue.main.async { mainBlock() } }
+    // Run on Background Thread Helper
+    public static func io(backgroundBlock: @escaping () -> Void) {
+        DispatchQueue.global(qos: .background).async { backgroundBlock() }
+    }
+}
+
+// Run on Main Thread Helper
+public func main(mainBlock: @escaping () -> Void) { DispatchQueue.main.async { mainBlock() } }
+// Run on Background Thread Helper
+public func io(backgroundBlock: @escaping () -> Void) {
+    DispatchQueue.global(qos: .background).async { backgroundBlock() }
+}
 
 public func delayThenMain(_ delay: TimeInterval, backgroundBlock: @escaping () -> Void, mainBlock: @escaping () -> Void) {
     DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + delay) {

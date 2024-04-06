@@ -65,6 +65,8 @@ class SingleManagedViewService: ObservableObject {
     private var nofityToken: NotificationToken? = nil
     @Published var managedViewNotificationToken: NotificationToken? = nil
     
+    func isDeletedChecker() -> Bool { return isDeleted }
+    
     func initialize(realm: Realm, activityId:String, viewId:String) {
         if activityId == "SOL" { return }
         self.realmInstance = realm

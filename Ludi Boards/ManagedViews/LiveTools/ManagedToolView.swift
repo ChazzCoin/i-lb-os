@@ -12,6 +12,8 @@ import RealmSwift
 import Combine
 import CoreEngine
 
+
+// Tool Bar Picker Icon View
 struct ManagedViewBoardToolIcon: View {
     let toolType: String
     
@@ -25,6 +27,7 @@ struct ManagedViewBoardToolIcon: View {
 }
 
 
+// Main Board Tool View
 struct ManagedViewBoardTool: View {
     let viewId: String
     let activityId: String
@@ -55,121 +58,74 @@ struct enableManagedViewTool : ViewModifier {
     
     @State var viewId: String
     @State var activityId: String
-    @EnvironmentObject var BEO: BoardEngineObject
+    
+//    @EnvironmentObject var BEO: BoardEngineObject
     @State var MVS: SingleManagedViewService = SingleManagedViewService()
-    @GestureState var dragOffset = CGSize.zero
-    let menuWindowId = "mv_settings"
-    
-    @State var coordinateStack: [CGPoint] = []
-    @State var popUpIsVisible = false
-    @State var currentUserId: String = getFirebaseUserIdOrCurrentLocalId()
-    
-    @State var isDisabled = false
-    @State var lifeIsLocked = false
-    @State var lifeLastUserId = ""
-    @State var lifeUpdatedAt: Int = 0 // Using Double for time representation
-    @State var lifeBorderColor = Color.AIMYellow
-    @State var lifeColor = ColorProvider.black // SwiftUI color representation
-    @State var lifeWidth = 75.0 // CGFloat in SwiftUI
-    @State var lifeHeight = 75.0 // CGFloat in SwiftUI
-    @State var lifeScale = 1.0 // CGFloat for scale
-    @State var lifeRotation = 0.0 // Angle in degrees, represented by Double in SwiftUI
-    @State var lifeToolType = SoccerToolProvider.playerDummy.tool.image // Assuming 'toolType' is an enum or similar
-    @State var toolType = "Basic"
-    @State var lifeColorRed = 0.0
-    @State var lifeColorGreen = 0.0
-    @State var lifeColorBlue = 0.0
-    @State var lifeColorAlpha = 1.0
-    
-    @State var position = CGPoint(x: 100, y: 100)
-    @State var isDragging = false
-    //
-    @State var cancellables = Set<AnyCancellable>()
-    @State var managedViewNotificationToken: NotificationToken? = nil
+    @StateObject var MVO: ManagedViewObject = ManagedViewObject()
     
     func body(content: Content) -> some View {
         GeometryReader { geo in
             content
         }
-        .zIndex(self.isDisabled || self.lifeIsLocked ? 3.0 : 5.0)
-        .frame(width: self.lifeWidth * 2, height: self.lifeHeight * 2)
-        .rotationEffect(.degrees(self.lifeRotation))
-        .border(self.popUpIsVisible ? self.lifeBorderColor : Color.clear, width: 10) // Border modifier
-        .position(x: self.position.x + (self.isDragging ? self.dragOffset.width : 0) + (self.lifeWidth),
-                  y: self.position.y + (self.isDragging ? self.dragOffset.height : 0) + (self.lifeHeight))
+        .zIndex(MVO.isDisabled || MVO.lifeIsLocked ? 3.0 : 5.0)
+        .frame(width: MVO.lifeWidth * 2, height: MVO.lifeHeight * 2)
+        .rotationEffect(MVO.lifeRotation)
+        .border(MVO.popUpIsVisible ? MVO.lifeBorderColor : Color.clear, width: 10) // Border modifier
+        .position(x: MVO.position.x + (MVO.isDragging ? MVO.dragOffset.width : 0) + (MVO.lifeWidth),
+                  y: MVO.position.y + (MVO.isDragging ? MVO.dragOffset.height : 0) + (MVO.lifeHeight))
         .simultaneousGesture(gestureDragBasicTool())
-        .opacity(!self.isDisabledChecker() && !self.isDeletedChecker() ? 1 : 0.0)
-        .onChange(of: self.BEO.toolBarCurrentViewId, perform: { _ in
-            if self.BEO.toolBarCurrentViewId != self.viewId { self.popUpIsVisible = false }
+        .opacity(!MVO.isDisabledChecker() && !MVS.isDeletedChecker() ? 1 : 0.0)
+        .onChange(of: self.MVO.toolBarCurrentViewId, perform: { _ in
+            if self.MVO.toolBarCurrentViewId != self.viewId { MVO.popUpIsVisible = false }
         })
-        .onChange(of: self.BEO.toolSettingsIsShowing, perform: { _ in
-            if !self.BEO.toolSettingsIsShowing { self.popUpIsVisible = false }
+        .onChange(of: self.MVO.toolSettingsIsShowing, perform: { _ in
+            if !self.MVO.toolSettingsIsShowing { MVO.popUpIsVisible = false }
         })
         .onAppear {
-            DispatchQueue.main.async {
-                self.initChannels()
-                safeFirebaseUserId() { userId in
-                    self.currentUserId = userId
-                }
-                self.MVS.initialize(realm: self.BEO.realmInstance, activityId: self.activityId, viewId: self.viewId)
-                self.observeFromRealm()
-                self.MVS.startFirebaseObserver()
-            }
-            // Load View State
-            loadFromRealm()
+            self.MVO.initializeWithViewId(viewId: viewId)
         }
     }
     
     func gestureDragBasicTool() -> some Gesture {
         DragGesture()
-            .updating($dragOffset, body: { (value, state, transaction) in
-                DispatchQueue.main.async { self.BEO.ignoreUpdates = true }
-                if self.lifeIsLocked { return }
+            .updating(MVO.$dragOffset, body: { (value, state, transaction) in
+                DispatchQueue.main.async { self.MVO.ignoreUpdates = true }
+                if MVO.lifeIsLocked { return }
                 state = value.translation
             })
             .onChanged { drag in
-                DispatchQueue.main.async { self.BEO.ignoreUpdates = true }
-                if self.lifeIsLocked { return }
-                self.isDragging = true
+                DispatchQueue.main.async { self.MVO.ignoreUpdates = true }
+                if MVO.lifeIsLocked { return }
+                MVO.isDragging = true
                 let translation = drag.translation
-                self.updateRealmPos(x: self.position.x + translation.width,
-                                              y: self.position.y + translation.height)
-                self.sendXY(width: translation.width, height: translation.height)
+                self.updateRealmPos(x: MVO.position.x + translation.width,
+                                              y: MVO.position.y + translation.height)
+//                self.sendXY(width: translation.width, height: translation.height)
             }
             .onEnded { drag in
-                DispatchQueue.main.async { self.BEO.ignoreUpdates = false }
-                if self.lifeIsLocked { return }
-                self.isDragging = false
+                DispatchQueue.main.async { self.MVO.ignoreUpdates = false }
+                if MVO.lifeIsLocked { return }
+                MVO.isDragging = false
                 let translation = drag.translation
-                self.position = CGPoint(
-                    x: self.position.x + translation.width,
-                    y: self.position.y + translation.height
+                MVO.position = CGPoint(
+                    x: MVO.position.x + translation.width,
+                    y: MVO.position.y + translation.height
                 )
                 self.updateRealm()
             }.simultaneously(with: TapGesture(count: 2)
                 .onEnded { _ in
                     print("Tapped")
-                    self.popUpIsVisible = !self.popUpIsVisible
-                    self.toggleMenuWindow()
-                    if self.popUpIsVisible {
-                        self.sendToolAttributes()
+                    MVO.popUpIsVisible = !MVO.popUpIsVisible
+                    self.MVO.toggleMenuWindow()
+                    if MVO.popUpIsVisible {
+//                        self.sendToolAttributes()
                     }
                 }
             )
         
     }
 
-    func isDisabledChecker() -> Bool { return isDisabled }
     func isDeletedChecker() -> Bool { return self.MVS.isDeleted }
-    
-    func minSizeCheck() {
-        if self.lifeWidth < 50 {
-            self.lifeWidth = 100
-        }
-        if self.lifeHeight < 50 {
-            self.lifeHeight = 100
-        }
-    }
     
     @MainActor
     func initChannels() {
@@ -181,110 +137,69 @@ struct enableManagedViewTool : ViewModifier {
         CodiChannel.SESSION_ON_ID_CHANGE.receive(on: RunLoop.main) { sc in
             let temp = sc as! ActivityChange
             if self.activityId == temp.activityId {
-                self.isDisabled = false
+                MVO.isDisabled = false
             } else {
-                self.isDisabled = true
+                MVO.isDisabled = true
             }
-        }.store(in: &cancellables)
+        }.store(in: &MVO.cancellables)
     }
-    func toggleMenuWindow() {
-        
-        if self.popUpIsVisible {
-            self.BEO.toolBarCurrentViewId = self.viewId
-            self.BEO.toolSettingsIsShowing = true
-        } else {
-            self.BEO.toolSettingsIsShowing = false
-        }
+//    func toggleMenuWindow() {
+//        
+//        if MVO.popUpIsVisible {
+//            self.BEO.toolBarCurrentViewId = self.viewId
+//            self.BEO.toolSettingsIsShowing = true
+//        } else {
+//            self.BEO.toolSettingsIsShowing = false
+//        }
+//
+//    }
+    
+//    @MainActor
+//    func sendToolAttributes() {
+//        CodiChannel.TOOL_ATTRIBUTES.send(value: ViewAtts(
+//            viewId: self.viewId,
+//            size: MVO.lifeWidth,
+//            rotation: MVO.lifeRotation.degrees,
+//            position: MVO.position,
+//            toolType: MVO.lifeToolType,
+//            isLocked: MVO.lifeIsLocked
+//        ))
+//    }
+    
+//    func sendXY(width:CGFloat, height:CGFloat) {
+//        CodiChannel.TOOL_ON_FOLLOW.send(value: ViewFollowing(
+//            viewId: self.viewId,
+//            x: MVO.position.x + width,
+//            y: MVO.position.y + height
+//        ))
+//    }
+    
+//    // Realm / Firebase
+//    func loadFromRealm(managedView: ManagedView?=nil) {
+//        if isDisabledChecker() || isDeletedChecker() {return}
+//        var mv = managedView
+//        if mv == nil {mv = realm().object(ofType: ManagedView.self, forPrimaryKey: self.viewId)}
+//        guard let umv = mv else { return }
+//        // set attributes
+//        activityId = umv.boardId
+//        MVO.position = CGPoint(x: umv.x, y: umv.y)
+//        MVO.lifeWidth = Double(umv.width)
+//        MVO.lifeHeight = Double(umv.height)
+//        MVO.lifeRotation = Angle(degrees: umv.rotation)
+//        MVO.lifeToolType = umv.toolType
+//        MVO.lifeColorRed = umv.colorRed
+//        MVO.lifeColorGreen = umv.colorGreen
+//        MVO.lifeColorBlue = umv.colorBlue
+//        MVO.lifeColorAlpha = umv.colorAlpha
+//        MVO.lifeIsLocked = umv.isLocked
+//        MVO.lifeLastUserId = umv.lastUserId
+//        minSizeCheck()
+//    }
+    
 
-    }
-    
-    @MainActor
-    func sendToolAttributes() {
-        CodiChannel.TOOL_ATTRIBUTES.send(value: ViewAtts(
-            viewId: self.viewId,
-            size: self.lifeWidth,
-            rotation: self.lifeRotation,
-            position: self.position,
-            toolType: self.toolType,
-            isLocked: self.lifeIsLocked
-        ))
-    }
-    
-    func sendXY(width:CGFloat, height:CGFloat) {
-        CodiChannel.TOOL_ON_FOLLOW.send(value: ViewFollowing(
-            viewId: self.viewId,
-            x: self.position.x + width,
-            y: self.position.y + height
-        ))
-    }
-    
-    // Realm / Firebase
-    func loadFromRealm(managedView: ManagedView?=nil) {
-        if isDisabledChecker() || isDeletedChecker() {return}
-        var mv = managedView
-        if mv == nil {mv = realm().object(ofType: ManagedView.self, forPrimaryKey: self.viewId)}
-        guard let umv = mv else { return }
-        // set attributes
-        activityId = umv.boardId
-        self.position = CGPoint(x: umv.x, y: umv.y)
-        lifeWidth = Double(umv.width)
-        lifeHeight = Double(umv.height)
-        lifeRotation = umv.rotation
-        lifeToolType = umv.toolType
-        lifeColorRed = umv.colorRed
-        lifeColorGreen = umv.colorGreen
-        lifeColorBlue = umv.colorBlue
-        lifeColorAlpha = umv.colorAlpha
-        lifeIsLocked = umv.isLocked
-        lifeLastUserId = umv.lastUserId
-        minSizeCheck()
-    }
-    
-    // Observe From Realm
-    func observeFromRealm() {
-        if isDisabledChecker() || isDeletedChecker() {return}
-        MVS.observeRealmManagedView() { temp in
-            self.isDisabled = false
-            if self.isDragging {return}
-            
-            DispatchQueue.main.async {
-                if self.isDragging {return}
-                
-                if self.BEO.isPlayingAnimation {
-                    withAnimation {
-                        position = CGPoint(x: temp.x, y: temp.y)
-                    }
-                } else {
-                    if temp.lastUserId != self.currentUserId {
-                        let newPosition = CGPoint(x: temp.x, y: temp.y)
-                        self.coordinateStack.append(newPosition)
-                        self.animateToNextCoordinate()
-                    }
-                }
-                
-                if self.activityId != temp.boardId {self.activityId = temp.boardId}
-                
-                // Adding withAnimation here just doesn't flow right. Didn't like it.
-                if self.lifeWidth != Double(temp.width) {self.lifeWidth = Double(temp.width)}
-                if self.lifeHeight != Double(temp.height) { self.lifeHeight = Double(temp.height)}
-                if self.lifeRotation != temp.rotation { self.lifeRotation = temp.rotation}
-                if self.lifeToolType != temp.toolType { self.lifeToolType = temp.toolType}
-                if self.lifeColorRed != temp.colorRed {self.lifeColorRed = temp.colorRed}
-                if self.lifeColorGreen != temp.colorGreen { self.lifeColorGreen = temp.colorGreen}
-                if self.lifeColorBlue != temp.colorBlue {self.lifeColorBlue = temp.colorBlue}
-                if self.lifeColorAlpha != temp.colorAlpha { self.lifeColorAlpha = temp.colorAlpha}
-                
-                if self.lifeIsLocked != temp.isLocked { self.lifeIsLocked = temp.isLocked}
-                self.lifeLastUserId = temp.lastUserId
-                self.MVS.isDeleted = temp.isDeleted
-                self.minSizeCheck()
-            }
-        }
-        
-    }
     
     func updateRealm(x:Double?=nil, y:Double?=nil) {
-        if isDisabledChecker() || isDeletedChecker() {return}
+        if MVO.isDisabledChecker() || isDeletedChecker() {return}
         DispatchQueue.global(qos: .background).async {
             // Create a new Realm instance for the background thread
             autoreleasepool {
@@ -293,18 +208,18 @@ struct enableManagedViewTool : ViewModifier {
                     if let mv = realm.findByField(ManagedView.self, value: self.viewId) {
                         try realm.write {
                             // Modify the object
-                            mv.x = x ?? self.position.x
-                            mv.y = y ?? self.position.y
-                            mv.rotation = self.lifeRotation
-                            mv.toolType = self.lifeToolType
-                            mv.width = Int(self.lifeWidth)
-                            mv.height = Int(self.lifeHeight)
-                            mv.colorRed = self.lifeColorRed
-                            mv.colorGreen = self.lifeColorGreen
-                            mv.colorBlue = self.lifeColorBlue
-                            mv.colorAlpha = self.lifeColorAlpha
-                            mv.isLocked = self.lifeIsLocked
-                            mv.lastUserId = self.currentUserId
+                            mv.x = x ?? MVO.position.x
+                            mv.y = y ?? MVO.position.y
+                            mv.rotation = MVO.lifeRotation.degrees
+                            mv.toolType = MVO.lifeToolType
+                            mv.width = Int(MVO.lifeWidth)
+                            mv.height = Int(MVO.lifeHeight)
+                            mv.colorRed = MVO.lifeColorRed
+                            mv.colorGreen = MVO.lifeColorGreen
+                            mv.colorBlue = MVO.lifeColorBlue
+                            mv.colorAlpha = MVO.lifeColorAlpha
+                            mv.isLocked = MVO.lifeIsLocked
+                            mv.lastUserId = MVO.currentUserId
                             self.MVS.updateFirebase(mv: mv)
                             // save historical copy
                             self.saveSnapshotToHistoryInRealm()
@@ -324,18 +239,18 @@ struct enableManagedViewTool : ViewModifier {
                     let history = ManagedViewAction()
                     history.viewId = self.viewId
                     history.boardId = self.activityId
-                    history.x = self.position.x
-                    history.y = self.position.y
-                    history.rotation = self.lifeRotation
-                    history.toolType = self.lifeToolType
-                    history.width = Int(self.lifeWidth)
-                    history.height = Int(self.lifeHeight)
-                    history.colorRed = self.lifeColorRed
-                    history.colorGreen = self.lifeColorGreen
-                    history.colorBlue = self.lifeColorBlue
-                    history.colorAlpha = self.lifeColorAlpha
-                    history.isLocked = self.lifeIsLocked
-                    history.lastUserId = self.currentUserId
+                    history.x = MVO.position.x
+                    history.y = MVO.position.y
+                    history.rotation = MVO.lifeRotation.degrees
+                    history.toolType = MVO.lifeToolType
+                    history.width = Int(MVO.lifeWidth)
+                    history.height = Int(MVO.lifeHeight)
+                    history.colorRed = MVO.lifeColorRed
+                    history.colorGreen = MVO.lifeColorGreen
+                    history.colorBlue = MVO.lifeColorBlue
+                    history.colorAlpha = MVO.lifeColorAlpha
+                    history.isLocked = MVO.lifeIsLocked
+                    history.lastUserId = MVO.currentUserId
                     let realm = try Realm()
                     realm.safeWrite { r in
                         r.create(ManagedViewAction.self, value: history, update: .all)
@@ -356,9 +271,9 @@ struct enableManagedViewTool : ViewModifier {
                     let realm = try Realm()
                     if let mv = realm.findByField(ManagedView.self, value: self.viewId) {
                         try realm.write {
-                            mv.x = x ?? self.position.x
-                            mv.y = y ?? self.position.y
-                            mv.lastUserId = self.currentUserId
+                            mv.x = x ?? MVO.position.x
+                            mv.y = y ?? MVO.position.y
+                            mv.lastUserId = MVO.currentUserId
                         }
                         self.MVS.updateFirebase(mv: mv)
                     }
@@ -369,21 +284,21 @@ struct enableManagedViewTool : ViewModifier {
         }
     }
     
-    // Animations
-    func animateToNextCoordinate() {
-        guard !coordinateStack.isEmpty else { return }
-        if self.isDragging {
-            coordinateStack.removeAll()
-            return
-        }
-        let nextCoordinate = coordinateStack.removeFirst()
-        withAnimation { self.position = nextCoordinate }
-        // Schedule the next animation after a delay
-        DispatchQueue.main.asyncAfter(deadline: .now()) {
-            if !self.coordinateStack.isEmpty {
-                self.animateToNextCoordinate()
-            }
-        }
-    }
+//    // Animations
+//    func animateToNextCoordinate() {
+//        guard !MVO.coordinateStackBasic.isEmpty else { return }
+//        if MVO.isDragging {
+//            MVO.coordinateStackBasic.removeAll()
+//            return
+//        }
+//        let nextCoordinate = MVO.coordinateStackBasic.removeFirst()
+//        withAnimation { MVO.position = nextCoordinate }
+//        // Schedule the next animation after a delay
+//        DispatchQueue.main.asyncAfter(deadline: .now()) {
+//            if !MVO.coordinateStackBasic.isEmpty {
+//                self.animateToNextCoordinate()
+//            }
+//        }
+//    }
 
 }
