@@ -17,7 +17,7 @@ struct LineDrawingManaged: View {
     @State var activityId: String
     
 //    @EnvironmentObject var BEO: BoardEngineObject
-    @State private var MVS: SingleManagedViewService = SingleManagedViewService()
+//    @State private var MVS: SingleManagedViewService = SingleManagedViewService()
     @StateObject var MVO: ManagedViewObject = ManagedViewObject()
     
     var body: some View {
@@ -26,7 +26,7 @@ struct LineDrawingManaged: View {
             path.addLine(to: CGPoint(x: MVO.lifeEndX, y: MVO.lifeEndY))
         }
         .stroke(MVO.lifeColor, style: StrokeStyle(lineWidth: MVO.lifeWidth, dash: [MVO.lifeLineDash]))
-        .opacity(!MVO.isDisabledChecker() && !MVS.isDeletedChecker() ? 1 : 0.0)
+        .opacity(!MVO.isDisabledChecker() && !MVO.isDeletedChecker() ? 1 : 0.0)
         .overlay(
             Triangle()
                 .fill(MVO.anchorsAreVisible ? Color.AIMYellow : MVO.lifeColor)
@@ -86,19 +86,6 @@ struct LineDrawingManaged: View {
             MVO.initializeWithViewId(viewId: self.viewId)
         }
     }
-    
-//    private func toggleMenuSettings() {
-//        MVO.anchorsAreVisible = !MVO.anchorsAreVisible
-//        MVO.popUpIsVisible = !MVO.popUpIsVisible
-//        
-//        if self.MVO.popUpIsVisible {
-//            self.BEO.toolBarCurrentViewId = self.viewId
-//            self.BEO.toolSettingsIsShowing = true
-//        } else {
-//            self.BEO.toolSettingsIsShowing = false
-//        }
-//        
-//    }
     
     // Gestures
     private func fullLineDragGesture() -> some Gesture {
@@ -192,6 +179,7 @@ struct LineDrawingManaged: View {
     private func doubleTapGesture() -> some Gesture {
         TapGesture(count: 2).onEnded({ _ in
             print("Tapped double")
+            MVO.popUpIsVisible = !MVO.popUpIsVisible
             MVO.toggleMenuWindow()
          })
     }
@@ -202,70 +190,6 @@ struct LineDrawingManaged: View {
        }
     }
     
-    
-    // Observers
-    
-//    func observeView() {
-//        observeFromRealm()
-//        MVS.startFirebaseObserver()
-//    }
-    
-//    func observeFromRealm() {
-//        if MVO.isDisabledChecker() || MVS.isDeletedChecker() {return}
-//        
-//        MVS.observeRealmManagedView() { temp in
-//            print("!!ManagedToolView!!")
-//            
-//            if self.MVO.isDragging {return}
-//                
-//            DispatchQueue.main.async {
-//                if self.MVO.isDragging {return}
-//                if activityId != temp.boardId { activityId = temp.boardId }
-//                self.MVS.isDeleted = temp.isDeleted
-//                print("Observing LineTool.")
-//                if temp.lastUserId != MVO.currentUserId {
-//                    
-//                    if temp.startX == 0.0 && temp.startY == 0.0 { return }
-//                    if temp.endX == 0.0 && temp.endY == 0.0 { return }
-//                    
-//                    let startPosition = CGPoint(x: temp.startX, y: temp.startY)
-//                    let endPosition = CGPoint(x: temp.endX, y: temp.endY)
-//                    let centerPosition = getCenterOfLine(start: startPosition, end: endPosition)
-//                    
-//                    let coords = [
-//                        "start":startPosition,
-//                        "end":endPosition,
-//                        "center":centerPosition
-//                    ]
-//                    print("Updating Line: \(coords)")
-//                    self.MVO.coordinateStack.append(coords)
-//                    animateToNextCoordinate()
-//                }
-//                
-//                withAnimation {
-//                    var colorHasChanged = false
-//                    if MVO.lifeColorRed != temp.colorRed { colorHasChanged = true; MVO.lifeColorRed = temp.colorRed}
-//                    if MVO.lifeColorGreen != temp.colorGreen { colorHasChanged = true; MVO.lifeColorGreen = temp.colorGreen}
-//                    if MVO.lifeColorBlue != temp.colorBlue { colorHasChanged = true; MVO.lifeColorBlue = temp.colorBlue }
-//                    if MVO.lifeColorAlpha != temp.colorAlpha { colorHasChanged = true; MVO.lifeColorAlpha = temp.colorAlpha }
-//                    if colorHasChanged {
-//                        MVO.lifeColor = colorFromRGBA(red: MVO.lifeColorRed, green: MVO.lifeColorGreen, blue: MVO.lifeColorBlue, alpha: MVO.lifeColorAlpha)
-//                    }
-//                }
-//                
-//                //
-//                if MVO.lifeWidth != Double(temp.width) {MVO.lifeWidth = Double(temp.width)}
-//                if MVO.lifeLineDash != Double(temp.lineDash) {MVO.lifeLineDash = Double(temp.lineDash)}
-////                loadWidthAndHeight()
-////                loadRotationOfLine()
-//                
-//                MVO.lifeHeadIsEnabled = temp.headIsEnabled
-//                if MVO.lifeIsLocked != temp.isLocked { MVO.lifeIsLocked = temp.isLocked}
-//            }
-//            
-//        }
-//
-//    }
     
     // Function to update a Realm object in the background
     func updateRealmPos(start: CGPoint? = nil, end: CGPoint? = nil) {
@@ -282,7 +206,7 @@ struct LineDrawingManaged: View {
                             mv.lastUserId = getFirebaseUserId() ?? CURRENT_USER_ID
                         }
                         
-                        MVS.updateFirebase(mv: mv)
+                        MVO.updateFirebase(mv: mv)
                     }
                 } catch {
                     print("Realm error: \(error)")
@@ -291,35 +215,9 @@ struct LineDrawingManaged: View {
         }
     }
     
-//    func animateToNextCoordinate() {
-//        print("!!!COORDINATES COUNT: \(MVO.coordinateStack.count)")
-//        
-//        guard !MVO.coordinateStack.isEmpty || self.MVO.isDragging || !self.BEO.isSharedBoard else {
-//            return
-//        }
-//        
-//        let nextCoordinate = MVO.coordinateStack.removeFirst()
-//        withAnimation {
-//            MVO.lifeStartX = nextCoordinate["start"]?.x ?? MVO.lifeStartX
-//            MVO.lifeStartY = nextCoordinate["start"]?.y ?? MVO.lifeStartY
-//            MVO.lifeEndX = nextCoordinate["end"]?.x ?? MVO.lifeEndX
-//            MVO.lifeEndY = nextCoordinate["end"]?.y ?? MVO.lifeEndY
-//            MVO.lifeCenterPoint = nextCoordinate["center"] ?? MVO.lifeCenterPoint
-//            MVO.loadWidthAndHeight()
-//            MVO.loadRotationOfLine()
-//        }
-//
-//        // Schedule the next animation after a delay
-//        DispatchQueue.main.asyncAfter(deadline: .now()) {
-//            if !self.MVO.coordinateStack.isEmpty {
-//                self.animateToNextCoordinate()
-//            }
-//        }
-//    }
-    
     func updateRealm(start: CGPoint? = nil, end: CGPoint? = nil) {
         if MVO.isDisabledChecker() {return}
-        if MVS.isDeletedChecker() {return}
+        if MVO.isDeletedChecker() {return}
         let mv = self.MVO.realmInstance.findByField(ManagedView.self, value: viewId)
         if mv == nil { return }
         self.MVO.realmInstance.safeWrite { r in
@@ -340,7 +238,7 @@ struct LineDrawingManaged: View {
             mv?.lineDash = Int(MVO.lifeLineDash)
             mv?.lastUserId = getFirebaseUserIdOrCurrentLocalId()
             mv?.headIsEnabled = MVO.lifeHeadIsEnabled
-            MVS.updateFirebase(mv: mv)
+            MVO.updateFirebase(mv: mv)
             self.saveSnapshotToHistoryInRealm()
         }
     }

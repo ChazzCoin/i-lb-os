@@ -10,16 +10,16 @@ import SwiftUI
 import Combine
 import RealmSwift
 import CoreEngine
+import FirebaseDatabase
 
 class ManagedViewObject: ObservableObject {
-    
-    @StateObject var MVS: SingleManagedViewService = SingleManagedViewService()
     
     @Published public var lifeViewId: String = ""
     @Published public var lifeActivityId: String = ""
     @Published public var lifeToolType = "LINE"
     @Published public var lifeSubToolType = "Curved"
     
+    @AppStorage("isLoggedIn") public var isLoggedIn: Bool = false
     @AppStorage("currentUserId") public var currentUserId: String = ""
     @AppStorage("isPlayingAnimation") public var isPlayingAnimation: Bool = false
     @AppStorage("toolBarCurrentViewId") public var toolBarCurrentViewId: String = ""
@@ -27,7 +27,7 @@ class ManagedViewObject: ObservableObject {
     @AppStorage("ignoreUpdates") public var ignoreUpdates: Bool = false
     
     @Published public var isDisabled = false
-//    @Published public var isDeleted = false -> Managed by MVS (managed view service)
+    @Published public var isDeleted = false
     @Published public var lifeIsLocked = false
     @Published public var lifeDateUpdated = Int(Date().timeIntervalSince1970)
     @Published public var lifeLastUserId = ""
@@ -64,6 +64,7 @@ class ManagedViewObject: ObservableObject {
     @GestureState public var dragOffset = CGSize.zero
     @Published public var isDragging = false
     @Published public var useOriginal = true
+    @Published public var originalPosition = CGPoint(x: 0, y: 0)
     @Published public var originalLifeStart = CGPoint.zero
     @Published public var originalLifeEnd = CGPoint.zero
     
@@ -75,15 +76,26 @@ class ManagedViewObject: ObservableObject {
     @Published public var coordinateStackBasic: [CGPoint] = []
     @Published public var coordinateStack: [[String:CGPoint]] = []
     
+    // Firebase
+    @Published var reference: DatabaseReference = Database
+        .database()
+        .reference()
+        .child(DatabasePaths.managedViews.rawValue)
+    @Published var observerHandle: DatabaseHandle?
+    @Published var isObserving = false
+    @Published var isWriting: Bool = false
+    @Published var nofityToken: NotificationToken? = nil
+    @Published var firebaseNotificationToken: NotificationToken? = nil
+    
     @MainActor
     func initializeWithViewId(viewId: String) {
         main {
             self.lifeViewId = viewId
-            self.loadFromRealm(viewId: viewId)
-            self.MVS.initialize(realm: self.realmInstance, activityId: self.lifeActivityId, viewId: viewId)
+            self.loadFromRealm()
             self.observeFromRealm()
-            self.MVS.startFirebaseObserver()
             self.receiveOnSessionChange()
+            // Firebase
+            self.startFirebaseObserver()
         }
     }
     
@@ -110,6 +122,7 @@ class ManagedViewObject: ObservableObject {
     
     // Functions
     func isDisabledChecker() -> Bool { return isDisabled }
+    func isDeletedChecker() -> Bool { return isDeleted }
     
     private var lineLength: CGFloat {
         sqrt(pow(lifeEndX - lifeStartX, 2) + pow(lifeEndY - lifeStartY, 2))-100
@@ -204,10 +217,9 @@ class ManagedViewObject: ObservableObject {
     }
     //
     
-    func loadFromRealm(viewId: String) {
+    func loadFromRealm() {
         if isDisabledChecker() {return}
-//        self.viewId = viewId
-        if let umv = self.realmInstance.object(ofType: ManagedView.self, forPrimaryKey: viewId) {
+        if let umv = self.realmInstance.object(ofType: ManagedView.self, forPrimaryKey: self.lifeViewId) {
             // set attributes
             print("Loading in ManagedView Tool.")
             lifeActivityId = umv.boardId
@@ -251,7 +263,7 @@ class ManagedViewObject: ObservableObject {
     func observeFromRealm() {
         if isDisabledChecker() {return}
         
-        self.MVS.observeRealmManagedView() { temp in
+        self.observeRealmManagedView() { temp in
             self.isDisabled = false
             if self.isDragging {return}
             
@@ -283,7 +295,6 @@ class ManagedViewObject: ObservableObject {
                         
                         self.coordinateStack.append(coords)
                         self.animateToNextCoordinate()
-                        
                     }
                 }
                 
@@ -311,7 +322,7 @@ class ManagedViewObject: ObservableObject {
                 self.lifeHeadIsEnabled = temp.headIsEnabled
                 if self.lifeIsLocked != temp.isLocked { self.lifeIsLocked = temp.isLocked }
                 self.lifeLastUserId = temp.lastUserId
-                self.MVS.isDeleted = temp.isDeleted
+                self.isDeleted = temp.isDeleted
                 self.minSizeCheck()
             }
         }
@@ -319,9 +330,77 @@ class ManagedViewObject: ObservableObject {
     }
     
     
+    // Firebase
     
+    func shouldDenyFirebaseWriteRequest() -> Bool {
+        if self.isWriting {
+            print("Denying MVS Request: Writing")
+            return true
+        }
+        if !self.isLoggedIn {
+            print("Denying MVS Request: Login")
+            return true
+        }
+        print("Allowing MVS Request")
+        return false
+    }
     
+    func startFirebaseObserver() {
+        
+        if isObserving || self.lifeActivityId.isEmpty || self.lifeViewId.isEmpty {return}
+        if !self.realmInstance.isLiveSessionPlan(activityId: self.lifeActivityId) { return }
+        
+        observerHandle = reference.child(self.lifeActivityId).child(self.lifeViewId).observe(.value, with: { snapshot in
+            let _ = snapshot.toLudiObject(ManagedView.self, realm: self.realmInstance)
+        })
+        reference.child(self.lifeActivityId).child(self.lifeViewId).observe(.childRemoved, with: { snapshot in
+           if let mv = self.realmInstance.findByField(ManagedView.self, value: self.lifeViewId) {
+               if self.isDeleted {return}
+               self.isDeleted = true
+               self.realmInstance.safeWrite { r in
+                   mv.isDeleted = true
+               }
+           }
+       })
+        isObserving = true
+    }
     
+    func observeRealmManagedView(onDeleted: @escaping () -> Void={}, onChange: @escaping (ManagedView) -> Void) {
+        if let mv = self.realmInstance.object(ofType: ManagedView.self, forPrimaryKey: self.lifeViewId) {
+            self.realmInstance.executeWithRetry {
+                self.managedViewNotificationToken = mv.observe { change in
+                    switch change {
+                        case .change(let obj, _):
+                            if let temp = obj as? ManagedView {
+                                if temp.id == self.lifeViewId { onChange(temp) }
+                            }
+                        case .error(let error):
+                            print("Error: \(error)")
+                            self.managedViewNotificationToken?.invalidate()
+                            self.managedViewNotificationToken = nil
+                        case .deleted:
+                            print("Object has been deleted.")
+                            self.managedViewNotificationToken?.invalidate()
+                            self.managedViewNotificationToken = nil
+                            onDeleted()
+                    }
+                }
+            }
+            
+        }
+
+    }
     
+    func updateFirebase(mv: ManagedView?) {
+        guard let mv = mv else { return }
+        if mv.boardId == "SOL" { return }
+        // Check if the user is logged in
+        if shouldDenyFirebaseWriteRequest() { return }
+        self.isWriting = true
+        reference.child(mv.boardId).child(mv.id).setValue(mv.toDict()) { (error: Error?, ref: DatabaseReference) in
+            self.isWriting = false
+            if let error = error { print("Error updating Firebase: \(error)") }
+        }
+    }
     
 }

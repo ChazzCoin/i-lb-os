@@ -60,7 +60,7 @@ struct enableManagedViewTool : ViewModifier {
     @State var activityId: String
     
 //    @EnvironmentObject var BEO: BoardEngineObject
-    @State var MVS: SingleManagedViewService = SingleManagedViewService()
+//    @State var MVS: SingleManagedViewService = SingleManagedViewService()
     @StateObject var MVO: ManagedViewObject = ManagedViewObject()
     
     func body(content: Content) -> some View {
@@ -74,7 +74,7 @@ struct enableManagedViewTool : ViewModifier {
         .position(x: MVO.position.x + (MVO.isDragging ? MVO.dragOffset.width : 0) + (MVO.lifeWidth),
                   y: MVO.position.y + (MVO.isDragging ? MVO.dragOffset.height : 0) + (MVO.lifeHeight))
         .simultaneousGesture(gestureDragBasicTool())
-        .opacity(!MVO.isDisabledChecker() && !MVS.isDeletedChecker() ? 1 : 0.0)
+        .opacity(!MVO.isDisabledChecker() && !MVO.isDeletedChecker() ? 1 : 0.0)
         .onChange(of: self.MVO.toolBarCurrentViewId, perform: { _ in
             if self.MVO.toolBarCurrentViewId != self.viewId { MVO.popUpIsVisible = false }
         })
@@ -97,9 +97,15 @@ struct enableManagedViewTool : ViewModifier {
                 DispatchQueue.main.async { self.MVO.ignoreUpdates = true }
                 if MVO.lifeIsLocked { return }
                 MVO.isDragging = true
+                if MVO.useOriginal {
+                    self.MVO.originalPosition = MVO.position
+                    self.MVO.useOriginal = false
+                }
                 let translation = drag.translation
-                self.updateRealmPos(x: MVO.position.x + translation.width,
-                                              y: MVO.position.y + translation.height)
+                MVO.position = CGPoint(x: MVO.originalPosition.x + translation.width,
+                                       y: MVO.originalPosition.y + translation.height)
+                self.updateRealmPos(x: MVO.originalPosition.x + translation.width,
+                                              y: MVO.originalPosition.y + translation.height)
 //                self.sendXY(width: translation.width, height: translation.height)
             }
             .onEnded { drag in
@@ -108,10 +114,11 @@ struct enableManagedViewTool : ViewModifier {
                 MVO.isDragging = false
                 let translation = drag.translation
                 MVO.position = CGPoint(
-                    x: MVO.position.x + translation.width,
-                    y: MVO.position.y + translation.height
+                    x: MVO.originalPosition.x + translation.width,
+                    y: MVO.originalPosition.y + translation.height
                 )
                 self.updateRealm()
+                self.MVO.useOriginal = true
             }.simultaneously(with: TapGesture(count: 2)
                 .onEnded { _ in
                     print("Tapped")
@@ -124,82 +131,9 @@ struct enableManagedViewTool : ViewModifier {
             )
         
     }
-
-    func isDeletedChecker() -> Bool { return self.MVS.isDeleted }
-    
-    @MainActor
-    func initChannels() {
-        receiveOnSessionChange()
-    }
-    
-    @MainActor
-    func receiveOnSessionChange() {
-        CodiChannel.SESSION_ON_ID_CHANGE.receive(on: RunLoop.main) { sc in
-            let temp = sc as! ActivityChange
-            if self.activityId == temp.activityId {
-                MVO.isDisabled = false
-            } else {
-                MVO.isDisabled = true
-            }
-        }.store(in: &MVO.cancellables)
-    }
-//    func toggleMenuWindow() {
-//        
-//        if MVO.popUpIsVisible {
-//            self.BEO.toolBarCurrentViewId = self.viewId
-//            self.BEO.toolSettingsIsShowing = true
-//        } else {
-//            self.BEO.toolSettingsIsShowing = false
-//        }
-//
-//    }
-    
-//    @MainActor
-//    func sendToolAttributes() {
-//        CodiChannel.TOOL_ATTRIBUTES.send(value: ViewAtts(
-//            viewId: self.viewId,
-//            size: MVO.lifeWidth,
-//            rotation: MVO.lifeRotation.degrees,
-//            position: MVO.position,
-//            toolType: MVO.lifeToolType,
-//            isLocked: MVO.lifeIsLocked
-//        ))
-//    }
-    
-//    func sendXY(width:CGFloat, height:CGFloat) {
-//        CodiChannel.TOOL_ON_FOLLOW.send(value: ViewFollowing(
-//            viewId: self.viewId,
-//            x: MVO.position.x + width,
-//            y: MVO.position.y + height
-//        ))
-//    }
-    
-//    // Realm / Firebase
-//    func loadFromRealm(managedView: ManagedView?=nil) {
-//        if isDisabledChecker() || isDeletedChecker() {return}
-//        var mv = managedView
-//        if mv == nil {mv = realm().object(ofType: ManagedView.self, forPrimaryKey: self.viewId)}
-//        guard let umv = mv else { return }
-//        // set attributes
-//        activityId = umv.boardId
-//        MVO.position = CGPoint(x: umv.x, y: umv.y)
-//        MVO.lifeWidth = Double(umv.width)
-//        MVO.lifeHeight = Double(umv.height)
-//        MVO.lifeRotation = Angle(degrees: umv.rotation)
-//        MVO.lifeToolType = umv.toolType
-//        MVO.lifeColorRed = umv.colorRed
-//        MVO.lifeColorGreen = umv.colorGreen
-//        MVO.lifeColorBlue = umv.colorBlue
-//        MVO.lifeColorAlpha = umv.colorAlpha
-//        MVO.lifeIsLocked = umv.isLocked
-//        MVO.lifeLastUserId = umv.lastUserId
-//        minSizeCheck()
-//    }
-    
-
     
     func updateRealm(x:Double?=nil, y:Double?=nil) {
-        if MVO.isDisabledChecker() || isDeletedChecker() {return}
+        if MVO.isDisabledChecker() || MVO.isDeletedChecker() {return}
         DispatchQueue.global(qos: .background).async {
             // Create a new Realm instance for the background thread
             autoreleasepool {
@@ -220,7 +154,7 @@ struct enableManagedViewTool : ViewModifier {
                             mv.colorAlpha = MVO.lifeColorAlpha
                             mv.isLocked = MVO.lifeIsLocked
                             mv.lastUserId = MVO.currentUserId
-                            self.MVS.updateFirebase(mv: mv)
+                            self.MVO.updateFirebase(mv: mv)
                             // save historical copy
                             self.saveSnapshotToHistoryInRealm()
                         }
@@ -275,7 +209,7 @@ struct enableManagedViewTool : ViewModifier {
                             mv.y = y ?? MVO.position.y
                             mv.lastUserId = MVO.currentUserId
                         }
-                        self.MVS.updateFirebase(mv: mv)
+                        self.MVO.updateFirebase(mv: mv)
                     }
                 } catch {
                     print("Realm error: \(error)")
@@ -284,21 +218,4 @@ struct enableManagedViewTool : ViewModifier {
         }
     }
     
-//    // Animations
-//    func animateToNextCoordinate() {
-//        guard !MVO.coordinateStackBasic.isEmpty else { return }
-//        if MVO.isDragging {
-//            MVO.coordinateStackBasic.removeAll()
-//            return
-//        }
-//        let nextCoordinate = MVO.coordinateStackBasic.removeFirst()
-//        withAnimation { MVO.position = nextCoordinate }
-//        // Schedule the next animation after a delay
-//        DispatchQueue.main.asyncAfter(deadline: .now()) {
-//            if !MVO.coordinateStackBasic.isEmpty {
-//                self.animateToNextCoordinate()
-//            }
-//        }
-//    }
-
 }

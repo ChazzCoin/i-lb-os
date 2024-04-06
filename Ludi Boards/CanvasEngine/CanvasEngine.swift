@@ -179,7 +179,7 @@ struct CanvasEngine: View {
                         .environmentObject(self.BEO)
                 }
                 
-                if self.BEO.toolSettingsIsShowing && !self.BEO.screenIsActiveAndLocked() {
+                if self.BEO.toolSettingsIsShowing {
                     MvSettingsBar {}
                         .zIndex(2.0)
                         .position(using: gps, at: .bottomCenter, offsetY: 100)
