@@ -8,35 +8,35 @@
 import Foundation
 import FirebaseAuth
 import FirebaseDatabase
-import CoreEngine
 
-class UserTools {
+
+public class UserTools {
     
-    static let isLoggedIn: Bool = UserDefaults.standard.bool(forKey: "isLoggedIn")
-    static func setisLoggedIn(_ id: Bool) { UserDefaults.standard.set(id, forKey: "isLoggedIn") }
+    public static let isLoggedIn: Bool = UserDefaults.standard.bool(forKey: "isLoggedIn")
+    public static func setisLoggedIn(_ id: Bool) { UserDefaults.standard.set(id, forKey: "isLoggedIn") }
     
-    static let currentUserId: String? = UserDefaults.standard.string(forKey: "currentUserId")
-    static func setCurrentUserId(_ id: String?) { UserDefaults.standard.set(id, forKey: "currentUserId") }
-    static let currentUserName: String? = UserDefaults.standard.string(forKey: "currentUserName")
-    static func setCurrentUserName(_ name: String?) { UserDefaults.standard.set(name, forKey: "currentUserName") }
-    static let currentUserRole: String? = UserDefaults.standard.string(forKey: "currentUserRole")
-    static func setCurrentUserRole(_ role: String?) { UserDefaults.standard.set(role, forKey: "currentUserRole") }
-    static let currentUserAuth: String? = UserDefaults.standard.string(forKey: "currentUserAuth")
-    static func setCurrentUserAuth(_ auth: String?) { UserDefaults.standard.set(auth, forKey: "currentUserAuth") }
+    public static let currentUserId: String? = UserDefaults.standard.string(forKey: "currentUserId")
+    public static func setCurrentUserId(_ id: String?) { UserDefaults.standard.set(id, forKey: "currentUserId") }
+    public static let currentUserName: String? = UserDefaults.standard.string(forKey: "currentUserName")
+    public static func setCurrentUserName(_ name: String?) { UserDefaults.standard.set(name, forKey: "currentUserName") }
+    public static let currentUserRole: String? = UserDefaults.standard.string(forKey: "currentUserRole")
+    public static func setCurrentUserRole(_ role: String?) { UserDefaults.standard.set(role, forKey: "currentUserRole") }
+    public static let currentUserAuth: String? = UserDefaults.standard.string(forKey: "currentUserAuth")
+    public static func setCurrentUserAuth(_ auth: String?) { UserDefaults.standard.set(auth, forKey: "currentUserAuth") }
     
-    static let currentOrgId: String? = UserDefaults.standard.string(forKey: "currentOrgId")
-    static func setCurrentOrgId(_ id: String?) { UserDefaults.standard.set(id, forKey: "currentOrgId") }
-    static let currentTeamId: String? = UserDefaults.standard.string(forKey: "currentTeamId")
-    static func setCurrentTeamId(_ id: String?) { UserDefaults.standard.set(id, forKey: "currentTeamId") }
-    static let currentSessionId: String? = UserDefaults.standard.string(forKey: "currentSessionId")
-    static func setCurrentSessionId(_ id: String?) { UserDefaults.standard.set(id, forKey: "currentSessionId") }
-    static let currentActivityId: String? = UserDefaults.standard.string(forKey: "currentActivityId")
-    static func setCurrentActivityId(_ id: String?) { UserDefaults.standard.set(id, forKey: "currentActivityId") }
+    public static let currentOrgId: String? = UserDefaults.standard.string(forKey: "currentOrgId")
+    public static func setCurrentOrgId(_ id: String?) { UserDefaults.standard.set(id, forKey: "currentOrgId") }
+    public static let currentTeamId: String? = UserDefaults.standard.string(forKey: "currentTeamId")
+    public static func setCurrentTeamId(_ id: String?) { UserDefaults.standard.set(id, forKey: "currentTeamId") }
+    public static let currentSessionId: String? = UserDefaults.standard.string(forKey: "currentSessionId")
+    public static func setCurrentSessionId(_ id: String?) { UserDefaults.standard.set(id, forKey: "currentSessionId") }
+    public static let currentActivityId: String? = UserDefaults.standard.string(forKey: "currentActivityId")
+    public static func setCurrentActivityId(_ id: String?) { UserDefaults.standard.set(id, forKey: "currentActivityId") }
     
-    static let firebaseUser: FirebaseAuth.User? = Auth.auth().currentUser
-    static let firebaseUserId: String? = Auth.auth().currentUser?.uid
+    public static let firebaseUser: FirebaseAuth.User? = Auth.auth().currentUser
+    public static let firebaseUserId: String? = Auth.auth().currentUser?.uid
     
-    static func userIsVerifiedToProceed(overrideFlag:Bool=false) -> Bool {
+    public static func userIsVerifiedToProceed(overrideFlag:Bool=false) -> Bool {
         
         if overrideFlag {
             print("Overriding Verification Request")
@@ -52,11 +52,11 @@ class UserTools {
         
     }
     
-    static func sendAuthChangeNotification() {
+    public static func sendAuthChangeNotification() {
         NotificationCenter.default.post(name: NSNotification.Name("AuthChange"), object: nil)
     }
     
-    static func login(email: String, password: String, onResult: @escaping (AuthDataResult) -> Void, onError: @escaping (any Error) -> Void) {
+    public static func login(email: String, password: String, onResult: @escaping (AuthDataResult) -> Void, onError: @escaping (any Error) -> Void) {
         Auth.auth().signIn(withEmail: email, password: password) { result, error in
             if let error = error {
                 UserTools.setisLoggedIn(false)
@@ -73,7 +73,7 @@ class UserTools {
         }
     }
     
-    static func logout(completion: ((Bool, Error?) -> Void)? = nil) {
+    public static func logout(completion: ((Bool, Error?) -> Void)? = nil) {
         do {
             try Auth.auth().signOut()
             UserTools.setisLoggedIn(false)
@@ -85,7 +85,7 @@ class UserTools {
         }
     }
     
-    static func signUp(email: String, password: String, onError: @escaping (any Error) -> Void, onComplete: @escaping (FirebaseAuth.User) -> Void) {
+    public static func signUp(email: String, password: String, onError: @escaping (any Error) -> Void, onComplete: @escaping (FirebaseAuth.User) -> Void) {
         
         Auth.auth().createUser(withEmail: email, password: password) { result, error in
             
@@ -114,7 +114,7 @@ class UserTools {
         }
     }
     
-    static func syncUserDetails() {
+    public static func syncUserDetails() {
         if let cui = currentUserId {
             firebaseDatabase { ref in
                 ref.child(DatabasePaths.users.rawValue)
@@ -131,7 +131,7 @@ class UserTools {
         }
     }
     
-    static func saveUserToRealm(fireUser: FirebaseAuth.User) {
+    public static func saveUserToRealm(fireUser: FirebaseAuth.User) {
         let newUser = CoreUser()
         newUser.id = fireUser.uid
         setCurrentUserId(fireUser.uid)
@@ -143,13 +143,13 @@ class UserTools {
         UserTools.saveUserToFirebase(user: newUser)
     }
     
-    static func saveUserToFirebase(user:CoreUser) {
+    public static func saveUserToFirebase(user:CoreUser) {
         firebaseDatabase { db in
             db.saveUser(obj: user)
         }
     }
     
-    static func forgotPassword(email: String, onSuccess: @escaping () -> Void, onError: @escaping (any Error) -> Void) {
+    public static func forgotPassword(email: String, onSuccess: @escaping () -> Void, onError: @escaping (any Error) -> Void) {
         Auth.auth().sendPasswordReset(withEmail: email) { error in
             if let error = error {
                 onError(error)
@@ -159,7 +159,7 @@ class UserTools {
         }
     }
     
-    static func ifUserDoesNotExistThenCreateOne(fireUser: FirebaseAuth.User) {
+    public static func ifUserDoesNotExistThenCreateOne(fireUser: FirebaseAuth.User) {
         checkUserExistsById(fireUser.uid, completion: { result in
             if !result {
                 print("User Does Not Exist, Saving New User Record to Firebase.")
@@ -178,7 +178,7 @@ class UserTools {
         })
     }
     
-    static func saveUser(user: CoreUser, onComplete: @escaping (Bool) -> Void) {
+    public static func saveUser(user: CoreUser, onComplete: @escaping (Bool) -> Void) {
         print("Save New User")
         if user.id.isEmpty {return}
         firebaseDatabase { ref in
@@ -198,7 +198,7 @@ class UserTools {
         }
     }
     
-    static func checkUserExistsById(_ id: String, completion: @escaping (Bool) -> Void) {
+    public static func checkUserExistsById(_ id: String, completion: @escaping (Bool) -> Void) {
         print("checkUserExistsById")
         if id.isEmpty {return}
         let dbRef = Database.database().reference()
@@ -216,7 +216,7 @@ class UserTools {
             }
     }
     
-    static func checkUsernameExists(_ username: String, completion: @escaping (Bool) -> Void) {
+    public static func checkUsernameExists(_ username: String, completion: @escaping (Bool) -> Void) {
         let dbRef = Database.database().reference()
         let usersRef = dbRef.child("users")
 
@@ -232,7 +232,7 @@ class UserTools {
             }
     }
 
-    static func checkEmailExists(_ email: String, completion: @escaping (Bool) -> Void) {
+    public static func checkEmailExists(_ email: String, completion: @escaping (Bool) -> Void) {
         let dbRef = Database.database().reference()
         let usersRef = dbRef.child("users")
 
@@ -249,7 +249,7 @@ class UserTools {
     }
     
     // UserDefault Functions
-    static func clearUserDefaults() {
+    public static func clearUserDefaults() {
         let defaults = UserDefaults.standard
         defaults.removeObject(forKey: "currentUserId")
         defaults.removeObject(forKey: "currentUserName")

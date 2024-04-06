@@ -1,20 +1,23 @@
 //
-//  RealmChangeListener.swift
-//  Ludi Boards
+//  File.swift
+//  
 //
-//  Created by Charles Romeo on 12/2/23.
+//  Created by Charles Romeo on 4/5/24.
 //
 
 import Foundation
 import RealmSwift
-import Combine
-import CoreEngine
 
-class RealmChangeListener<T:Object>: ObservableObject {
-    private let realmInstance: Realm = realm()
-    @Published var notificationToken: NotificationToken?
 
-    func observe(objects: Results<T>, onInitial: @escaping (Array<T>) -> Void={_ in}, onChange: @escaping (Array<T>) -> Void={_ in}) {
+public class RealmChangeListener<T:Object>: ObservableObject {
+    public let realmInstance: Realm = realm()
+    @Published public var notificationToken: NotificationToken?
+    
+    public init(notificationToken: NotificationToken? = nil) {
+        self.notificationToken = notificationToken
+    }
+
+    public func observe(objects: Results<T>, onInitial: @escaping (Array<T>) -> Void={_ in}, onChange: @escaping (Array<T>) -> Void={_ in}) {
         var retryCount = 0
 
         func attemptObservation() {
@@ -54,7 +57,7 @@ class RealmChangeListener<T:Object>: ObservableObject {
     }
 
     
-    func observe(object: T, onChange: @escaping (T) -> Void={_ in}, onDelete: @escaping () -> Void={}) {
+    public func observe(object: T, onChange: @escaping (T) -> Void={_ in}, onDelete: @escaping () -> Void={}) {
         var retryCount = 0
         
         func attemptObservation() {
@@ -98,55 +101,12 @@ class RealmChangeListener<T:Object>: ObservableObject {
         attemptObservation()
     }
     
-    func stop() {
+    public func stop() {
         self.notificationToken?.invalidate()
         self.notificationToken = nil
     }
 
     deinit {
-        notificationToken?.invalidate()
-    }
-}
-
-
-class ManagedViewListViewModel: ObservableObject {
-    private var realm: Realm = newRealm()
-    private var results: Results<ManagedView>
-    private var notificationToken: NotificationToken?
-    @Published var managedViews = [ManagedView]()
-
-    init() {
-        results = realm.objects(ManagedView.self)
-        setupChangeListener()
-    }
-
-    private func setupChangeListener() {
-        
-        self.realm.executeWithRetry {
-            self.notificationToken = self.results.observe { [weak self] (changes: RealmCollectionChange) in
-                guard let self = self else { return }
-
-                switch changes {
-                case .initial(let results):
-                    // Results are now populated and can be accessed without blocking the UI
-                    self.managedViews = Array(results)
-
-                case .update(let results, _, _, _):
-                    // Query results have changed
-                    self.managedViews = Array(results)
-
-                case .error(let error):
-                    print("\(error)")
-                    self.notificationToken?.invalidate()
-                    self.notificationToken = nil
-                }
-            }
-        }
-        
-    }
-
-    deinit {
-        // Invalidate the notification token when the view model is deinitialized
         notificationToken?.invalidate()
     }
 }

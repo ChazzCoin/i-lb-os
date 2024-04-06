@@ -102,48 +102,48 @@ func safeRef(block: (DatabaseReference) -> Void) {
     block(Database.database().reference())
 }
 
-extension DatabaseReference {
-        
-    func get(onSnapshot: @escaping (DataSnapshot) -> Void) {
-        if !userIsVerifiedToProceed() { return }
-        self.observeSingleEvent(of: .value) { snapshot, _ in
-            onSnapshot(snapshot)
-        }
-    }
-    
-    func delete(id: String) {
-        if !userIsVerifiedToProceed() { return }
-        self.child(id).removeValue()
-    }
-    
-    func save(obj: Object) {
-        if !userIsVerifiedToProceed() { return }
-        self.setValue(obj.toDict())
-    }
-    
-    func save(id: String, obj: Object) {
-        if !userIsVerifiedToProceed() { return }
-        self.child(id).setValue(obj.toDict())
-    }
-    
-    func save(collection: String, id: String, obj: Object) {
-        if !userIsVerifiedToProceed() { return }
-        self.child(collection).child(id).setValue(obj.toDict())
-    }
-    
-    func saveUser(obj: CoreUser) {
-        self.child(DatabasePaths.users.rawValue)
-            .child(obj.id)
-            .setValue(obj.toDict())
-    }
-    
-}
+//extension DatabaseReference {
+//        
+//    func get(onSnapshot: @escaping (DataSnapshot) -> Void) {
+//        if !userIsVerifiedToProceed() { return }
+//        self.observeSingleEvent(of: .value) { snapshot, _ in
+//            onSnapshot(snapshot)
+//        }
+//    }
+//    
+//    func delete(id: String) {
+//        if !userIsVerifiedToProceed() { return }
+//        self.child(id).removeValue()
+//    }
+//    
+//    func save(obj: Object) {
+//        if !userIsVerifiedToProceed() { return }
+//        self.setValue(obj.toDict())
+//    }
+//    
+//    func save(id: String, obj: Object) {
+//        if !userIsVerifiedToProceed() { return }
+//        self.child(id).setValue(obj.toDict())
+//    }
+//    
+//    func save(collection: String, id: String, obj: Object) {
+//        if !userIsVerifiedToProceed() { return }
+//        self.child(collection).child(id).setValue(obj.toDict())
+//    }
+//    
+//    func saveUser(obj: CoreUser) {
+//        self.child(DatabasePaths.users.rawValue)
+//            .child(obj.id)
+//            .setValue(obj.toDict())
+//    }
+//    
+//}
 
-func firebaseDatabase(block: @escaping (DatabaseReference) -> Void) {
-    if !userIsVerifiedToProceed() { return }
-    let reference = Database.database().reference()
-    block(reference)
-}
+//func firebaseDatabase(block: @escaping (DatabaseReference) -> Void) {
+//    if !userIsVerifiedToProceed() { return }
+//    let reference = Database.database().reference()
+//    block(reference)
+//}
 
 func firebaseDatabaseSET(obj: RealmSwift.Object, block: @escaping (DatabaseReference) -> DatabaseReference) {
     if !userIsVerifiedToProceed() { return }
@@ -177,7 +177,7 @@ func fireManagedViewsAsync(activityId: String, realm: Realm) {
 }
 
 // GET Live Demo
-func fireGetLiveDemoAsync(realm: Realm?=nil) {
+func fireGetLiveDemoAsync(realm: Realm) {
     if !userIsVerifiedToProceed() { return }
     firebaseDatabase(collection: DatabasePaths.sessionPlan.rawValue) { ref in
         ref.child("SOL-LIVE-DEMO").observeSingleEvent(of: .value) { snapshot, _ in
@@ -187,7 +187,7 @@ func fireGetLiveDemoAsync(realm: Realm?=nil) {
 }
 
 // GET Share Session
-func fireGetSolUserAsync(userId: String, realm: Realm?=nil, onCompletion: @escaping ([CoreUser]) -> Void={ _ in }) {
+func fireGetSolUserAsync(userId: String, realm: Realm, onCompletion: @escaping ([CoreUser]) -> Void={ _ in }) {
     if !userIsVerifiedToProceed() { return }
     firebaseDatabase(collection: DatabasePaths.users.rawValue) { ref in
         ref
@@ -203,7 +203,7 @@ func fireGetSolUserAsync(userId: String, realm: Realm?=nil, onCompletion: @escap
 
 
 // GET Sessions
-func fireGetSessionPlanAsync(sessionId: String, realm: Realm?=newRealm()) {
+func fireGetSessionPlanAsync(sessionId: String, realm: Realm=newRealm()) {
     if !userIsVerifiedToProceed() { return }
     firebaseDatabase(collection: DatabasePaths.sessionPlan.rawValue) { ref in
         ref.child(sessionId).observeSingleEvent(of: .value) { snapshot, _ in
@@ -231,7 +231,7 @@ func fireActivityPlanAsync(activityId: String, realm: Realm) {
         }
     }
 }
-func fireGetActivitiesBySessionId(sessionId: String, realm: Realm?=newRealm()) {
+func fireGetActivitiesBySessionId(sessionId: String, realm: Realm=newRealm()) {
     if !userIsVerifiedToProceed() { return }
     firebaseDatabase(collection: DatabasePaths.activityPlan.rawValue) { ref in
         ref.queryOrdered(byChild: "sessionId").queryEqual(toValue: sessionId)

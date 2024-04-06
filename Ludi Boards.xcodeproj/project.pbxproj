@@ -59,7 +59,6 @@
 		FB581BED2B1F8A6800F5C90F /* KeyboardListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB581BEC2B1F8A6800F5C90F /* KeyboardListener.swift */; };
 		FB58A1B42B17D1420024B9A2 /* MvToolBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58A1B32B17D1420024B9A2 /* MvToolBar.swift */; };
 		FB58A1B62B1804C80024B9A2 /* FlashingLight.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58A1B52B1804C80024B9A2 /* FlashingLight.swift */; };
-		FB58E8762B01F3D200FD9E2E /* FireParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58E8752B01F3D200FD9E2E /* FireParser.swift */; };
 		FB58E8802B02B26C00FD9E2E /* DragAndDrop.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58E87F2B02B26C00FD9E2E /* DragAndDrop.swift */; };
 		FB58E8822B030F1D00FD9E2E /* RealmFind.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58E8812B030F1D00FD9E2E /* RealmFind.swift */; };
 		FB65D2C92B7D5E2E00564C37 /* SessionProviders.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB65D2C82B7D5E2E00564C37 /* SessionProviders.swift */; };
@@ -98,7 +97,6 @@
 		FB93BB172B033E2000864CB2 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FB93BB162B033E2000864CB2 /* GoogleService-Info.plist */; };
 		FB93BB1B2B03471C00864CB2 /* FireData.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB93BB1A2B03471C00864CB2 /* FireData.swift */; };
 		FB982F912B19D1B900C0DA03 /* FirebaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB982F902B19D1B900C0DA03 /* FirebaseService.swift */; };
-		FB9EB6D42BB65F0900FDD5DE /* UserTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9EB6D32BB65F0900FDD5DE /* UserTools.swift */; };
 		FB9EB6D62BB65F3800FDD5DE /* DataPuller.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9EB6D52BB65F3800FDD5DE /* DataPuller.swift */; };
 		FB9EB6DC2BB682AF00FDD5DE /* OrganizationHome.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9EB6DB2BB682AF00FDD5DE /* OrganizationHome.swift */; };
 		FB9EB6DE2BB6920F00FDD5DE /* RealmSOL.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9EB6DD2BB6920F00FDD5DE /* RealmSOL.swift */; };
@@ -162,7 +160,7 @@
 		FBE2C61A2B1AF7D5004C0116 /* FootballFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C6192B1AF7D5004C0116 /* FootballFieldView.swift */; };
 		FBE2C61C2B1AF961004C0116 /* BoardBackgrounder.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C61B2B1AF961004C0116 /* BoardBackgrounder.swift */; };
 		FBE2C6202B1AFD20004C0116 /* SessionPlanThumbView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C61F2B1AFD20004C0116 /* SessionPlanThumbView.swift */; };
-		FBE2C6222B1B1490004C0116 /* RealmChangeListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C6212B1B1490004C0116 /* RealmChangeListener.swift */; };
+		FBE2C6222B1B1490004C0116 /* ManagedViewListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C6212B1B1490004C0116 /* ManagedViewListViewModel.swift */; };
 		FBE2C6242B1B2E01004C0116 /* HomeDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C6232B1B2E01004C0116 /* HomeDashboardView.swift */; };
 		FBE2C6262B1BD7BA004C0116 /* TipBoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C6252B1BD7BA004C0116 /* TipBoxView.swift */; };
 		FBE2C6282B1C26BF004C0116 /* SolButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C6272B1C26BF004C0116 /* SolButtons.swift */; };
@@ -245,7 +243,6 @@
 		FB581BEC2B1F8A6800F5C90F /* KeyboardListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardListener.swift; sourceTree = "<group>"; };
 		FB58A1B32B17D1420024B9A2 /* MvToolBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MvToolBar.swift; sourceTree = "<group>"; };
 		FB58A1B52B1804C80024B9A2 /* FlashingLight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlashingLight.swift; sourceTree = "<group>"; };
-		FB58E8752B01F3D200FD9E2E /* FireParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireParser.swift; sourceTree = "<group>"; };
 		FB58E8772B01F40300FD9E2E /* FireCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireCore.swift; sourceTree = "<group>"; };
 		FB58E87F2B02B26C00FD9E2E /* DragAndDrop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragAndDrop.swift; sourceTree = "<group>"; };
 		FB58E8812B030F1D00FD9E2E /* RealmFind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmFind.swift; sourceTree = "<group>"; };
@@ -286,7 +283,6 @@
 		FB93BB162B033E2000864CB2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
 		FB93BB1A2B03471C00864CB2 /* FireData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireData.swift; sourceTree = "<group>"; };
 		FB982F902B19D1B900C0DA03 /* FirebaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseService.swift; sourceTree = "<group>"; };
-		FB9EB6D32BB65F0900FDD5DE /* UserTools.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserTools.swift; sourceTree = "<group>"; };
 		FB9EB6D52BB65F3800FDD5DE /* DataPuller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataPuller.swift; sourceTree = "<group>"; };
 		FB9EB6DB2BB682AF00FDD5DE /* OrganizationHome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrganizationHome.swift; sourceTree = "<group>"; };
 		FB9EB6DD2BB6920F00FDD5DE /* RealmSOL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmSOL.swift; sourceTree = "<group>"; };
@@ -350,7 +346,7 @@
 		FBE2C6192B1AF7D5004C0116 /* FootballFieldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FootballFieldView.swift; sourceTree = "<group>"; };
 		FBE2C61B2B1AF961004C0116 /* BoardBackgrounder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardBackgrounder.swift; sourceTree = "<group>"; };
 		FBE2C61F2B1AFD20004C0116 /* SessionPlanThumbView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionPlanThumbView.swift; sourceTree = "<group>"; };
-		FBE2C6212B1B1490004C0116 /* RealmChangeListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmChangeListener.swift; sourceTree = "<group>"; };
+		FBE2C6212B1B1490004C0116 /* ManagedViewListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedViewListViewModel.swift; sourceTree = "<group>"; };
 		FBE2C6232B1B2E01004C0116 /* HomeDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeDashboardView.swift; sourceTree = "<group>"; };
 		FBE2C6252B1BD7BA004C0116 /* TipBoxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TipBoxView.swift; sourceTree = "<group>"; };
 		FBE2C6272B1C26BF004C0116 /* SolButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolButtons.swift; sourceTree = "<group>"; };
@@ -714,7 +710,7 @@
 			children = (
 				FBF515BA2BBDF5EF0066EAA9 /* Managers */,
 				FB58E8812B030F1D00FD9E2E /* RealmFind.swift */,
-				FBE2C6212B1B1490004C0116 /* RealmChangeListener.swift */,
+				FBE2C6212B1B1490004C0116 /* ManagedViewListViewModel.swift */,
 				FB9EB6DD2BB6920F00FDD5DE /* RealmSOL.swift */,
 			);
 			path = Realm;
@@ -725,12 +721,10 @@
 			children = (
 				FBDE4F692B4F7739007FE880 /* FireCore.swift */,
 				FB9F1DD82B1533C400FD9078 /* FirebaseLogin.swift */,
-				FB58E8752B01F3D200FD9E2E /* FireParser.swift */,
 				FB93BB1A2B03471C00864CB2 /* FireData.swift */,
 				FBDF0DC62B224D2600FADE44 /* ActivityPlanService.swift */,
 				FBDE4F582B4D0C12007FE880 /* SessionPlanService.swift */,
 				FB881A3F2B48775800C16198 /* SocialTools.swift */,
-				FB9EB6D32BB65F0900FDD5DE /* UserTools.swift */,
 				FB9EB6D52BB65F3800FDD5DE /* DataPuller.swift */,
 			);
 			path = Firebase;
@@ -1089,7 +1083,6 @@
 				FBE2C62A2B1C2B67004C0116 /* SharedPrefs.swift in Sources */,
 				FB15DD302B0745DF00A21290 /* MenuBarIcon.swift in Sources */,
 				FBF515A72BBB29840066EAA9 /* SportsPositions.swift in Sources */,
-				FB9EB6D42BB65F0900FDD5DE /* UserTools.swift in Sources */,
 				FBE2C6202B1AFD20004C0116 /* SessionPlanThumbView.swift in Sources */,
 				FB18F1422B63946B00D89F8D /* OShape.swift in Sources */,
 				FB93BB1B2B03471C00864CB2 /* FireData.swift in Sources */,
@@ -1107,7 +1100,7 @@
 				FB48409C2B1EBE8B0003377A /* StopWatch.swift in Sources */,
 				FB3E02B52B0C6B6000D8558C /* ActivityPlanBindingView.swift in Sources */,
 				FBDE4F572B4CF883007FE880 /* LogoutObserver.swift in Sources */,
-				FBE2C6222B1B1490004C0116 /* RealmChangeListener.swift in Sources */,
+				FBE2C6222B1B1490004C0116 /* ManagedViewListViewModel.swift in Sources */,
 				FB3E02B92B0C724A00D8558C /* BoardBgProvider.swift in Sources */,
 				FB15DD322B07461500A21290 /* MenuBarWindow.swift in Sources */,
 				FBC2FC6C2B59C4A400D1AB77 /* DStack.swift in Sources */,
@@ -1142,7 +1135,6 @@
 				FB2AA1052B74305E00BD631C /* IconProvider.swift in Sources */,
 				FBAE62AF2B2A3FD200E008D5 /* CurvedLineToolView.swift in Sources */,
 				FBD9AFBA2AFF03D7005F8620 /* CanvasEngine.swift in Sources */,
-				FB58E8762B01F3D200FD9E2E /* FireParser.swift in Sources */,
 				FB829F172B3D4DF500FAC6E0 /* DispatchQueue.swift in Sources */,
 				FB5094262B058215000AEA96 /* LazyRow.swift in Sources */,
 				FB87BE092B734425003B880D /* Michael.swift in Sources */,

@@ -12,7 +12,7 @@ import CoreEngine
 
 class DataPuller {
     
-    static func getUser(userId:String, realm: Realm?=newRealm(), onSafeResult: @escaping (CoreUser) -> Void) {
+    static func getUser(userId:String, realm: Realm=newRealm(), onSafeResult: @escaping (CoreUser) -> Void) {
         firebaseDatabase { ref in
             ref.child(DatabasePaths.users.rawValue)
                 .child(userId)
@@ -27,7 +27,7 @@ class DataPuller {
         }
     }
     
-    static func getAllUsers(realm: Realm?=newRealm()) {
+    static func getAllUsers(realm: Realm=newRealm()) {
         firebaseDatabase { ref in
             ref.child(DatabasePaths.users.rawValue)
                 .observeSingleEvent(of: .value) { snapshot, _ in
@@ -39,7 +39,7 @@ class DataPuller {
     
     // Organizations
     
-    static func getOrganization(orgId:String, realm: Realm?=newRealm(), onSafeResult: @escaping (Organization) -> Void) {
+    static func getOrganization(orgId:String, realm: Realm=newRealm(), onSafeResult: @escaping (Organization) -> Void) {
         firebaseDatabase { ref in
             ref.child(DatabasePaths.organizations.rawValue)
                 .child(orgId)
@@ -54,7 +54,7 @@ class DataPuller {
         }
     }
     
-    static func getAllOrganizations(realm: Realm?=newRealm()) {
+    static func getAllOrganizations(realm: Realm=newRealm()) {
         firebaseDatabase { ref in
             ref.child(DatabasePaths.organizations.rawValue)
                 .observeSingleEvent(of: .value) { snapshot, _ in
@@ -69,7 +69,7 @@ class DataPuller {
         //  by OrgId
         //  by Share
     
-    static func getTeam(teamId:String, realm: Realm?=newRealm(), onSafeResult: @escaping (Team) -> Void) {
+    static func getTeam(teamId:String, realm: Realm=newRealm(), onSafeResult: @escaping (Team) -> Void) {
         firebaseDatabase { ref in
             ref.child(DatabasePaths.teams.rawValue)
                 .child(teamId)
@@ -90,50 +90,50 @@ class DataPuller {
     
 }
 
-class FirebaseUserSearch {
-    let usersRef = Database.database().reference().child("users")
-
-    // Search for users where name or userName matches the search term
-    func searchUsersByNameOrUserName(searchTerm: String, completion: @escaping ([CoreUser]) -> Void) {
-        // First query: Search by name
-        let nameQuery = usersRef.queryOrdered(byChild: "name").queryEqual(toValue: searchTerm)
-        
-        // Second query: Search by userName
-        let userNameQuery = usersRef.queryOrdered(byChild: "userName").queryEqual(toValue: searchTerm)
-        
-        let dispatchGroup = DispatchGroup()
-        var searchResults = [CoreUser]()
-
-        dispatchGroup.enter()
-        nameQuery.observeSingleEvent(of: .value, with: { snapshot in
-            for child in snapshot.children.allObjects as! [DataSnapshot] {
-                if let user = CoreUser.fromSnap(snapshot: child) {
-                    searchResults.safeAppend(user)
-                }
-            }
-            dispatchGroup.leave()
-        })
-        
-        dispatchGroup.enter()
-        userNameQuery.observeSingleEvent(of: .value, with: { snapshot in
-            for child in snapshot.children.allObjects as! [DataSnapshot] {
-                if let user = CoreUser.fromSnap(snapshot: child), !searchResults.contains(where: { $0.id == user.id }) {
-                    searchResults.safeAppend(user)
-                }
-            }
-            dispatchGroup.leave()
-        })
-        
-        dispatchGroup.notify(queue: .main) {
-            completion(searchResults)
-        }
-    }
-}
-extension Array where Element == CoreUser {
-    mutating func safeAppend(_ newUser: CoreUser) {
-        // Check if the array already contains an element with the same id as newUser
-        if !self.contains(where: { $0.id == newUser.id }) {
-            self.append(newUser)
-        }
-    }
-}
+//class FirebaseUserSearch {
+//    let usersRef = Database.database().reference().child("users")
+//
+//    // Search for users where name or userName matches the search term
+//    func searchUsersByNameOrUserName(searchTerm: String, completion: @escaping ([CoreUser]) -> Void) {
+//        // First query: Search by name
+//        let nameQuery = usersRef.queryOrdered(byChild: "name").queryEqual(toValue: searchTerm)
+//        
+//        // Second query: Search by userName
+//        let userNameQuery = usersRef.queryOrdered(byChild: "userName").queryEqual(toValue: searchTerm)
+//        
+//        let dispatchGroup = DispatchGroup()
+//        var searchResults = [CoreUser]()
+//
+//        dispatchGroup.enter()
+//        nameQuery.observeSingleEvent(of: .value, with: { snapshot in
+//            for child in snapshot.children.allObjects as! [DataSnapshot] {
+//                if let user = CoreUser.fromSnap(snapshot: child) {
+//                    searchResults.safeAppend(user)
+//                }
+//            }
+//            dispatchGroup.leave()
+//        })
+//        
+//        dispatchGroup.enter()
+//        userNameQuery.observeSingleEvent(of: .value, with: { snapshot in
+//            for child in snapshot.children.allObjects as! [DataSnapshot] {
+//                if let user = CoreUser.fromSnap(snapshot: child), !searchResults.contains(where: { $0.id == user.id }) {
+//                    searchResults.safeAppend(user)
+//                }
+//            }
+//            dispatchGroup.leave()
+//        })
+//        
+//        dispatchGroup.notify(queue: .main) {
+//            completion(searchResults)
+//        }
+//    }
+//}
+//extension Array where Element == CoreUser {
+//    mutating func safeAppend(_ newUser: CoreUser) {
+//        // Check if the array already contains an element with the same id as newUser
+//        if !self.contains(where: { $0.id == newUser.id }) {
+//            self.append(newUser)
+//        }
+//    }
+//}

@@ -379,8 +379,8 @@ struct SessionPlanView: View {
             self.isCurrentPlan = true
         }
         
-        fireGetSessionPlanAsync(sessionId: self.sessionId, realm: self.allActivities.realm?.thaw())
-        fireGetActivitiesBySessionId(sessionId: self.sessionId, realm: self.allActivities.realm?.thaw())
+        fireGetSessionPlanAsync(sessionId: self.sessionId, realm: self.allActivities.realm?.thaw() ?? newRealm())
+        fireGetActivitiesBySessionId(sessionId: self.sessionId, realm: self.allActivities.realm?.thaw() ?? newRealm())
         
         if let sp = self.allActivities.realm?.thaw().findByField(SessionPlan.self, value: self.sessionId) {
             self.sessionRealmObserver.observe(object: sp, onChange: { obj in

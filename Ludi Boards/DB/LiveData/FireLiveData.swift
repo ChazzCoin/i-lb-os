@@ -7,6 +7,7 @@
 
 import Foundation
 import FirebaseDatabase
+import CoreEngine
 
 
 func fireGetReference(dbPath: DatabasePaths) -> DatabaseReference {

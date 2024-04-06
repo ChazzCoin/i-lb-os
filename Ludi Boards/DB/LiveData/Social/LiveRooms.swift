@@ -166,7 +166,7 @@ class FirebaseRoomService: ObservableObject {
             let realmy = newRealm().freeze()
             let snapPresence = realmy.objects(Room.self).filter("roomId == %@", roomId)
             
-            if let allUserPresences = snapshot.toLudiObjects(Room.self, realm: self.allRooms.realm?.thaw()) {
+            if let allUserPresences = snapshot.toLudiObjects(Room.self, realm: self.allRooms.realm?.thaw() ?? newRealm()) {
                 // Assuming UserPresence has properties `roomId` and `status`
                 let inRoom = allUserPresences.filter { $0.roomId == roomId }
                 
@@ -179,7 +179,7 @@ class FirebaseRoomService: ObservableObject {
                         inTemp.safeAdd(user)
                     } else {
                         if r.userId.isEmpty {continue}
-                        fireGetSolUserAsync(userId: r.id, realm: self.allRooms.realm?.thaw())
+                        fireGetSolUserAsync(userId: r.id, realm: self.allRooms.realm?.thaw() ?? newRealm())
                     }
                 }
                 self.objsInCurrentRoom = roomTemp

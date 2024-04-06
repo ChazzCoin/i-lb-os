@@ -84,7 +84,7 @@ struct LiveChat: DynamicProperty {
         firebaseObserver.stopObserving()
     }
     
-    func fireGetChatAsync(chatId:String, realm: Realm?=nil) {
+    func fireGetChatAsync(chatId:String, realm: Realm=newRealm()) {
         firebaseDatabase(collection: DatabasePaths.chat.rawValue) { ref in
             ref.child(chatId)
                 .observeSingleEvent(of: .value) { snapshot, _ in

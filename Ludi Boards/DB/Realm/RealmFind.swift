@@ -89,8 +89,8 @@ func isLiveSessionPlan(activityId: String) -> Bool {
     return liveResult
 }
 
-extension Results {
-    func toArray() -> [Element] {
-        return Array(self)
-    }
-}
+//extension Results {
+//    func toArray() -> [Element] {
+//        return Array(self)
+//    }
+//}
