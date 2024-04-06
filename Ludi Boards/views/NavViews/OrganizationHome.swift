@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import RealmSwift
+import CoreEngine
 
 struct OrganizationDashboardView: View {
     var orgId: String

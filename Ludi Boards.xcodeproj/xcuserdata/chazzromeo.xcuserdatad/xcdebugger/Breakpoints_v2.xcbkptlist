@@ -701,8 +701,8 @@
             filePath = "Ludi Boards/views/ListItems/SearchableRecordingsListView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "100"
-            endingLineNumber = "100"
+            startingLineNumber = "101"
+            endingLineNumber = "101"
             landmarkName = "deleteItems(at:)"
             landmarkType = "7">
             <Locations>
@@ -749,8 +749,8 @@
             filePath = "Ludi Boards/views/ListItems/SearchableRecordingsListView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "64"
-            endingLineNumber = "64"
+            startingLineNumber = "65"
+            endingLineNumber = "65"
             landmarkName = "body"
             landmarkType = "24">
             <Locations>
@@ -797,8 +797,8 @@
             filePath = "Ludi Boards/views/ListItems/SearchableRecordingsListView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "63"
-            endingLineNumber = "63"
+            startingLineNumber = "64"
+            endingLineNumber = "64"
             landmarkName = "body"
             landmarkType = "24">
             <Locations>
@@ -831,54 +831,6 @@
                   startingLineNumber = "65"
                   endingLineNumber = "65"
                   offsetFromSymbolStart = "200">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "90F3819B-8D71-4916-ACF9-455E14BD6A5D"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Ludi Boards/ManagedViews/LiveTools/ToolObservers/ManagedViewManager.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "68"
-            endingLineNumber = "68"
-            landmarkName = "enable(activityId:)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "90F3819B-8D71-4916-ACF9-455E14BD6A5D - 298f962627e0e202"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (RealmSwift.RealmCollectionChange&lt;RealmSwift.Results&lt;Ludi_Boards.ManagedView&gt;&gt;) -&gt; () in closure #1 () -&gt; () in Ludi_Boards.ManagedViewListener.enable(activityId: Swift.String) -&gt; ()"
-                  moduleName = "Ludi Boards"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/ManagedViews/LiveTools/ToolObservers/ManagedViewManager.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "68"
-                  endingLineNumber = "68"
-                  offsetFromSymbolStart = "1556">
-               </Location>
-               <Location
-                  uuid = "90F3819B-8D71-4916-ACF9-455E14BD6A5D - 298f962627e0e202"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (RealmSwift.RealmCollectionChange&lt;RealmSwift.Results&lt;Ludi_Boards.ManagedView&gt;&gt;) -&gt; () in closure #1 () -&gt; () in Ludi_Boards.ManagedViewListener.enable(activityId: Swift.String) -&gt; ()"
-                  moduleName = "Ludi Boards"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/ManagedViews/LiveTools/ToolObservers/ManagedViewManager.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "68"
-                  endingLineNumber = "68"
-                  offsetFromSymbolStart = "1516">
                </Location>
             </Locations>
          </BreakpointContent>

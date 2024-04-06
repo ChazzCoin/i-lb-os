@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import CoreEngine
 
 enum ActivityCategory: String, CaseIterable {
     case oneVOneAttacking = "1v1 Attacking"

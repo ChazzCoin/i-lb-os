@@ -8,21 +8,22 @@
 import Foundation
 import SwiftUI
 import RealmSwift
+import CoreEngine
 
 struct ProfileView: View {
     @EnvironmentObject var BEO: BoardEngineObject
     @State private var realmInstance = realm()
     
-    @StateObject var currentUser = LiveCurrentUser()
-    @ObservedResults(SolUser.self) var solUsers
-    @ObservedResults(Connection.self) var connections
+//    @StateObject var currentUser = LiveCurrentUser()
+    @ObservedResults(CoreUser.self) var solUsers
+//    @ObservedResults(Connection.self) var connections
     
-    var friends: Results<Connection> {
-        return self.connections.filter("status == %@", "Accepted")
-    }
-    var friendRequests: Results<Connection> {
-        return self.connections.filter("status == %@", "pending")
-    }
+//    var friends: Results<Connection> {
+//        return self.connections.filter("status == %@", "Accepted")
+//    }
+//    var friendRequests: Results<Connection> {
+//        return self.connections.filter("status == %@", "pending")
+//    }
     
     @State private var showNewPlanSheet = false
     @State private var showChatButton = true
@@ -39,21 +40,21 @@ struct ProfileView: View {
                     .padding(.top, 30)
                 
                 HStack {
-                    Text(currentUser.object?.userName ?? "")
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
+//                    Text(currentUser.object?.userName ?? "")
+//                        .font(.largeTitle)
+//                        .fontWeight(.bold)
                     
                     Text("Online")
                         .font(.subheadline)
                         .foregroundColor(.green)
                 }
                 
-                Text(currentUser.object?.userId ?? "")
-                    .font(.subheadline)
-                    .fontWeight(.bold)
-                Text(currentUser.object?.email ?? "")
-                    .font(.subheadline)
-                    .fontWeight(.bold)
+//                Text(currentUser.object?.userId ?? "")
+//                    .font(.subheadline)
+//                    .fontWeight(.bold)
+//                Text(currentUser.object?.email ?? "")
+//                    .font(.subheadline)
+//                    .fontWeight(.bold)
                 
                 if self.BEO.isLoggedIn {
                     Section(header: Text("Connection Status")) {
@@ -61,13 +62,13 @@ struct ProfileView: View {
                     }
                 }
                 
-                Section(header: Text("Friend Requests")) {
-                    BuddyRequestListView()
-                }
-                
-                Section(header: Text("Friends")) {
-                    FriendsListView()
-                }
+//                Section(header: Text("Friend Requests")) {
+//                    BuddyRequestListView()
+//                }
+//                
+//                Section(header: Text("Friends")) {
+//                    FriendsListView()
+//                }
                 
                 SolButton(title: "Search Buddy", action: {
                     // Add buddy action
@@ -81,15 +82,15 @@ struct ProfileView: View {
                         runLoading()
                         UserTools.logout()
                         
-                        if let user = self.BEO.realmInstance.findByField(CurrentSolUser.self, value: CURRENT_USER_ID) {
-                            self.BEO.realmInstance.safeWrite { r in
-                                user.userId = ""
-                                user.userName = ""
-                                user.email = ""
-                                user.imgUrl = ""
-                                user.isLoggedIn = false
-                            }
-                        }
+//                        if let user = self.BEO.realmInstance.findByField(CurrentSolUser.self, value: CURRENT_USER_ID) {
+//                            self.BEO.realmInstance.safeWrite { r in
+//                                user.userId = ""
+//                                user.userName = ""
+//                                user.email = ""
+//                                user.imgUrl = ""
+//                                user.isLoggedIn = false
+//                            }
+//                        }
                         self.BEO.userId = nil
                         self.BEO.userName = nil
                         self.BEO.isLoggedIn = false
@@ -106,7 +107,7 @@ struct ProfileView: View {
             loadUser()
         }
         .onDisappear() {
-            currentUser.destroy()
+//            currentUser.destroy()
         }
         .navigationBarTitle("Profile", displayMode: .inline)
         .sheet(isPresented: $showNewPlanSheet) {
@@ -122,10 +123,10 @@ struct ProfileView: View {
     }
     
     func loadUser() {
-        currentUser.start()
-        FirebaseConnectionsService.refreshOnce()
-       
-        print("Current User: \(String(describing: currentUser))")
+//        currentUser.start()
+//        FirebaseConnectionsService.refreshOnce()
+//       
+//        print("Current User: \(String(describing: currentUser))")
     }
     
     private func profileInfoRow(title: String, value: String) -> some View {

@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import CoreEngine
 
 // SwiftUI View for the Emoji Picker
 struct ToolBarPicker<Content: View>: View {

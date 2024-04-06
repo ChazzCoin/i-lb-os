@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import FirebaseStorage
+import CoreEngine
 
 struct SignUpView: View {
     @EnvironmentObject var BEO: BoardEngineObject

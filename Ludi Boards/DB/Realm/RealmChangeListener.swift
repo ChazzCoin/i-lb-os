@@ -8,6 +8,7 @@
 import Foundation
 import RealmSwift
 import Combine
+import CoreEngine
 
 class RealmChangeListener<T:Object>: ObservableObject {
     private let realmInstance: Realm = realm()

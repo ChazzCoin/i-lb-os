@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import CoreEngine
 
 struct SolIconButton: View {
     var systemName: String

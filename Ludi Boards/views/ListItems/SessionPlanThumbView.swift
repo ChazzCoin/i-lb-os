@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import CoreEngine
 
 struct SessionPlanThumbView: View {
     @State var sessionPlan: SessionPlan

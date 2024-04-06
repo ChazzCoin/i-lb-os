@@ -8,6 +8,7 @@
 import Foundation
 import CoreGraphics
 import UIKit
+import CoreEngine
 
 func hideKeyboard() {
     UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
@@ -80,8 +81,8 @@ extension Array where Element: ManagedView {
     }
 }
 //
-extension Array where Element: SolUser {
-    mutating func safeAdd(_ item: SolUser) {
+extension Array where Element: CoreUser {
+    mutating func safeAdd(_ item: CoreUser) {
         if self.firstIndex(where: { $0.id == item.id }) != nil {
             // Item found, remove it
             return
@@ -90,7 +91,7 @@ extension Array where Element: SolUser {
         self.append(item as! Element)
     }
     
-    mutating func safeRemove(_ item: SolUser) {
+    mutating func safeRemove(_ item: CoreUser) {
         if let index = self.firstIndex(where: { $0.id == item.id }) {
             // Item found, remove it
             self.remove(at: index)

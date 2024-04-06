@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import CoreEngine
 
 // Define your generic sidebar content
 struct DSidebarWindow<Content: View>: View {

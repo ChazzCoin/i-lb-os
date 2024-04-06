@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import CoreEngine
 
 enum SessionCategory: String, CaseIterable {
     case warmUp = "Warm-Up"

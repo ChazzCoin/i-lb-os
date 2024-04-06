@@ -8,7 +8,7 @@
 import Foundation
 import RealmSwift
 import FirebaseDatabase
-
+import CoreEngine
 
 class SocialTools {
     
@@ -17,7 +17,7 @@ class SocialTools {
     static let USER_TO_SESSION = "UserToSession"
     
     // Add User to Org
-    static func addUserToOrg(user: User, org: Organization) {
+    static func addUserToOrg(user: CoreUser, org: Organization) {
         
         let share = UserToOrganization()
         share.organizationId = org.id
@@ -33,7 +33,7 @@ class SocialTools {
     }
     
     // Add User to Team
-    static func addUserToTeam(user: User, team: Team) {
+    static func addUserToTeam(user: CoreUser, team: Team) {
         
         let share = UserToTeam()
         share.teamId = team.id
@@ -49,7 +49,7 @@ class SocialTools {
     }
     
     // Add User to Session
-    static func addUserToSession(user: User, session: SessionPlan) {
+    static func addUserToSession(user: CoreUser, session: SessionPlan) {
         
         let share = UserToSession()
         share.sessionId = session.id
@@ -93,22 +93,22 @@ class SocialTools {
 }
 
 
-func getFriendRequests(path: String, realmInstance: Realm=realm(), completion: @escaping (List<Friendship>?) -> Void={_ in}) {
-    let dbRef = Database.database().reference()
-    let usersRef = dbRef.child("friendRequests")
-    
-    if let uId = UserTools.currentUserId {
-        usersRef.queryOrdered(byChild: "userId").queryEqual(toValue: uId)
-            .observeSingleEvent(of: .value) { snapshot in
-                
-                if snapshot.exists() {
-                    let objs = snapshot.toLudiObjects(Friendship.self, realm: realmInstance)
-                    completion(objs)
-                } else {
-                    print("No Friend Requests Found")
-                    completion(nil)
-                }
-            }
-    }
-    
-}
+//func getFriendRequests(path: String, realmInstance: Realm=realm(), completion: @escaping (List<Friendship>?) -> Void={_ in}) {
+//    let dbRef = Database.database().reference()
+//    let usersRef = dbRef.child("friendRequests")
+//    
+//    if let uId = UserTools.currentUserId {
+//        usersRef.queryOrdered(byChild: "userId").queryEqual(toValue: uId)
+//            .observeSingleEvent(of: .value) { snapshot in
+//                
+//                if snapshot.exists() {
+////                    let objs = snapshot.toLudiObjects(Friendship.self, realm: realmInstance)
+//                    completion(objs)
+//                } else {
+//                    print("No Friend Requests Found")
+//                    completion(nil)
+//                }
+//            }
+//    }
+//    
+//}

@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import RealmSwift
+import CoreEngine
 
 // Sport Picker 'SolSportPicker'
 let sports = ["Soccer", "Basketball", "Baseball", "Football", "Hockey", "Tennis", "Volleyball", "Rugby", "Cricket", "Golf"]

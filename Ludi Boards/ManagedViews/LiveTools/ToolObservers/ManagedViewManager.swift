@@ -8,6 +8,7 @@
 import Foundation
 import RealmSwift
 import Combine
+import CoreEngine
 
 class ManagedViewListener : ObservableObject {
     
@@ -41,9 +42,9 @@ class ManagedViewListener : ObservableObject {
         self.basicTools.removeAll()
         
         // TODO: Firebase Users ONLY
-        if self.realmInstance.userIsLoggedIn() {
-            fireManagedViewsAsync(activityId: self.activityID, realm: self.realmInstance)
-        }
+//        if self.realmInstance.userIsLoggedIn() {
+//            fireManagedViewsAsync(activityId: self.activityID, realm: self.realmInstance)
+//        }
         
         // FREE
         let umvs = realmInstance.findAllByField(ManagedView.self, field: "boardId", value: self.activityID)

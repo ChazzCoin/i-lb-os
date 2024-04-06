@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import CoreEngine
 
 struct ShareThumbnailView: View {
 //    var share: Share

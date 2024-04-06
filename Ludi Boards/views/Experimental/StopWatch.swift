@@ -10,6 +10,7 @@ import SwiftUI
 import Combine
 import RealmSwift
 import FirebaseDatabase
+import CoreEngine
 
 struct StopwatchView: View {
     @StateObject var viewModel = StopwatchViewModel()
@@ -66,7 +67,7 @@ class StopwatchViewModel: ObservableObject {
     private var elapsed: TimeInterval = 0
     @Published var isRunning: Bool = false
     
-    @State var watch = Stopwatch()
+    @State var watch = "Stopwatch()"
     @State var hostId = UUID().uuidString
     @State var hostName = ""
     
@@ -79,7 +80,7 @@ class StopwatchViewModel: ObservableObject {
         .child("default-1")
     
     init() {
-        watch.hostId = hostId
+//        watch.hostId = hostId
         observeWatch()
     }
 
@@ -114,21 +115,21 @@ class StopwatchViewModel: ObservableObject {
         let milliseconds = Int((elapsed.truncatingRemainder(dividingBy: 1)) * 100)
 
         timeElapsed = String(format: "%02d:%02d:%02d.%02d", hours, minutes, seconds, milliseconds)
-        self.watch.timeElapsed = timeElapsed
+//        self.watch.timeElapsed = timeElapsed
         saveWatch()
     }
     
     func saveWatch() {
-        reference.setValue(self.watch.toDict())
+//        reference.setValue(self.watch.toDict())
     }
     
     func observeWatch() {
-        reference.fireObserver { snapshot in
-            let temp = Stopwatch(dictionary: snapshot.toHashMap())
-            if temp.hostId == self.hostId {
-                return
-            }
-            self.timeElapsed = temp.timeElapsed
-        }
+//        reference.fireObserver { snapshot in
+//            let temp = Stopwatch(dictionary: snapshot.toHashMap())
+//            if temp.hostId == self.hostId {
+//                return
+//            }
+//            self.timeElapsed = temp.timeElapsed
+//        }
     }
 }

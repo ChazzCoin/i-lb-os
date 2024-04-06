@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import RealmSwift
+import CoreEngine
 
 struct SearchableSessionListView: View {
     // Sample data structure

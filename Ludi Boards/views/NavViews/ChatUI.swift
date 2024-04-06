@@ -10,6 +10,7 @@ import SwiftUI
 import FirebaseDatabase
 import Combine
 import RealmSwift
+import CoreEngine
 
 //struct Message: Identifiable {
 //    let id: Int
@@ -46,7 +47,7 @@ struct ChatView: View {
     @State var chatRef = fireGetReference(dbPath: DatabasePaths.chat)
     
     @State var firebaseSubscription: DatabaseHandle? = nil
-    @State var currentUser = newRealm().getCurrentSolUser()
+//    @State var currentUser = newRealm().getCurrentSolUser()
     
     
     
@@ -206,24 +207,26 @@ struct ChatView: View {
 
     func sendMessage() {
         
-        realmInstance.getCurrentSolUser() { user in
-            let newMessage = Chat()
-            newMessage.chatId = chatId
-            newMessage.messageText = messageText
-            newMessage.senderId = user.userId
-            newMessage.senderName = user.userName
-            newMessage.senderImage = user.imgUrl
-            newMessage.timestamp = getCurrentTimestamp()
-            
-            firebaseDatabase { db in
-                db.child(DatabasePaths.chat.rawValue)
-                    .child(chatId)
-                    .child(newMessage.id)
-                    .setValue(newMessage.toDict())
-            }
-            
-            messageText = ""
-        }
+//        UserTools.currentUserId
+        
+//        realmInstance.getCurrentSolUser() { user in
+//            let newMessage = Chat()
+//            newMessage.chatId = chatId
+//            newMessage.messageText = messageText
+//            newMessage.senderId = user.userId
+//            newMessage.senderName = user.userName
+//            newMessage.senderImage = user.imgUrl
+//            newMessage.timestamp = getCurrentTimestamp()
+//            
+//            firebaseDatabase { db in
+//                db.child(DatabasePaths.chat.rawValue)
+//                    .child(chatId)
+//                    .child(newMessage.id)
+//                    .setValue(newMessage.toDict())
+//            }
+//            
+//            messageText = ""
+//        }
         
         
     }

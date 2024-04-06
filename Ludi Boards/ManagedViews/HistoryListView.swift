@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import RealmSwift
+import CoreEngine
 
 // SwiftUI View for the Emoji Picker
 struct ToolHistoryList: View {

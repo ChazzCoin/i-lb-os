@@ -8,6 +8,7 @@
 import Foundation
 import FirebaseDatabase
 import RealmSwift
+import CoreEngine
 
 class SessionPlanService: ObservableObject {
     let realmInstance: Realm

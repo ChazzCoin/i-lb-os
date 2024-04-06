@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import RealmSwift
 import Combine
+import CoreEngine
 
 struct SessionPlanView: View {
     @State var sessionId: String
@@ -159,7 +160,7 @@ struct SessionPlanView: View {
 
                 SwitchOnOff(title: "Is Edit Mode", status: $isEditMode)
                     .padding()
-                InputText(label: "Title", text: $title, isEdit: $isEditMode)
+//                InputText(label: "Title", text: $title, isEdit: $isEditMode)
                     
                 PickerDate(selection: $scheduledDate, isEdit: $isEditMode)
                 PickerTimeDuration(selection: $duration, isEdit: $isEditMode)

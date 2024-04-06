@@ -7,28 +7,29 @@
 
 import Foundation
 import RealmSwift
+import CoreEngine
 
 extension Realm {
-    func findByField<T: Object>(_ type: T.Type, field: String = "id", value: String?) -> T? {
-        guard let value = value else { return nil }
-        return objects(type).filter("\(field) == %@", value).first
-    }
-    
-    func safeFindByField<T: Object>(_ type: T.Type, field: String = "id", value: String?, onSafe: (T) -> Void) {
-        guard let value = value else { return }
-        if let obj = objects(type).filter("\(field) == %@", value).first {
-            onSafe(obj)
-        }
-    }
-    
-    func findAllByField<T: Object>(_ type: T.Type, field: String, value: Any) -> Results<T>? {
-        return self.objects(type).filter("%K == %@", field, value)
-    }
-    
-    func findAllNotByField<T: Object>(_ type: T.Type, field: String, value: Any) -> Results<T>? {
-        return self.objects(type).filter("%K != %@", field, value)
-    }
-    
+//    func findByField<T: Object>(_ type: T.Type, field: String = "id", value: String?) -> T? {
+//        guard let value = value else { return nil }
+//        return objects(type).filter("\(field) == %@", value).first
+//    }
+//    
+//    func safeFindByField<T: Object>(_ type: T.Type, field: String = "id", value: String?, onSafe: (T) -> Void) {
+//        guard let value = value else { return }
+//        if let obj = objects(type).filter("\(field) == %@", value).first {
+//            onSafe(obj)
+//        }
+//    }
+//    
+//    func findAllByField<T: Object>(_ type: T.Type, field: String, value: Any) -> Results<T>? {
+//        return self.objects(type).filter("%K == %@", field, value)
+//    }
+//    
+//    func findAllNotByField<T: Object>(_ type: T.Type, field: String, value: Any) -> Results<T>? {
+//        return self.objects(type).filter("%K != %@", field, value)
+//    }
+//    
     //
     func findPlayerByName(name: String) -> PlayerRef? {
         return self.findByField(PlayerRef.self, field: "name", value: name)

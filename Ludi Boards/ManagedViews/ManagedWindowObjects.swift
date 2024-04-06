@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import Combine
 
+
 class ManagedViewWindow: Identifiable {
     
     @Published var id: String

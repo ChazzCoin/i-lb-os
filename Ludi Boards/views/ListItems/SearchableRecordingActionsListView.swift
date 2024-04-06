@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import RealmSwift
+import CoreEngine
 
 struct SearchableRecordingActionsListView: View {
     @EnvironmentObject var BEO: BoardEngineObject

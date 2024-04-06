@@ -9,9 +9,10 @@ import Foundation
 import SwiftUI
 import RealmSwift
 import Combine
+import CoreEngine
 
 struct UserView: View {
-    @State var user: SolUser
+    @State var user: CoreUser
     @Binding var sessionId: String
     @EnvironmentObject var BEO: BoardEngineObject
     @State var realmInstance = realm()
@@ -62,33 +63,33 @@ struct UserView: View {
     }
     
     func getFriend() {
-        if let results: Results<Connection> = self.realmInstance.findAllByField(Connection.self, field: "userOneId", value: self.user.userId) {
-            for item in results {
-                if item.status == "Accepted" {
-                    friendIconImage = "checkmark.circle.fill"
-                }
-                else if item.status == "pending" {
-                    friendIconImage = "hourglass"
-                } else {
-                    friendIconImage = "person.badge.plus"
-                }
-            }
-            return
-        }
+//        if let results: Results<Connection> = self.realmInstance.findAllByField(Connection.self, field: "userOneId", value: self.user.userId) {
+//            for item in results {
+//                if item.status == "Accepted" {
+//                    friendIconImage = "checkmark.circle.fill"
+//                }
+//                else if item.status == "pending" {
+//                    friendIconImage = "hourglass"
+//                } else {
+//                    friendIconImage = "person.badge.plus"
+//                }
+//            }
+//            return
+//        }
         
-        if let results: Results<Connection> = self.realmInstance.findAllByField(Connection.self, field: "userTwoId", value: self.user.userId) {
-            for item in results {
-                if item.status == "Accepted" {
-                    friendIconImage = "checkmark.circle.fill"
-                }
-                else if item.status == "pending" {
-                    friendIconImage = "hourglass"
-                } else {
-                    friendIconImage = "person.badge.plus"
-                }
-            }
-            return
-        }
+//        if let results: Results<Connection> = self.realmInstance.findAllByField(Connection.self, field: "userTwoId", value: self.user.userId) {
+//            for item in results {
+//                if item.status == "Accepted" {
+//                    friendIconImage = "checkmark.circle.fill"
+//                }
+//                else if item.status == "pending" {
+//                    friendIconImage = "hourglass"
+//                } else {
+//                    friendIconImage = "person.badge.plus"
+//                }
+//            }
+//            return
+//        }
         
     }
     
@@ -105,44 +106,44 @@ struct UserView: View {
     }
     
     func shareSessionAction() {
-        realmInstance.getCurrentSolUser(action: { cur in
-            let request = UserToSession()
-//            request.hostId = cur.userId
-//            request.hostUserName = cur.userName
-//            request.guestId = user.userId
-//            request.guestUserName = user.userName
-            request.sessionId = self.sessionId
-            self.realmInstance.safeWrite { _ in
-                self.realmInstance.create(UserToSession.self, value: request, update: .all)
-            }
-            
-            request.fireSave(id: request.id)
-            firebaseDatabase { db in
-                db.child(DatabasePaths.userToActivity.rawValue).child(request.id).setValue(request.toDict())
-            }
-            sharedIconImage = "checkmark.circle.fill"
-        })
+//        realmInstance.getCurrentSolUser(action: { cur in
+//            let request = UserToSession()
+////            request.hostId = cur.userId
+////            request.hostUserName = cur.userName
+////            request.guestId = user.userId
+////            request.guestUserName = user.userName
+//            request.sessionId = self.sessionId
+//            self.realmInstance.safeWrite { _ in
+//                self.realmInstance.create(UserToSession.self, value: request, update: .all)
+//            }
+//            
+//            request.fireSave(id: request.id)
+//            firebaseDatabase { db in
+//                db.child(DatabasePaths.userToActivity.rawValue).child(request.id).setValue(request.toDict())
+//            }
+//            sharedIconImage = "checkmark.circle.fill"
+//        })
     }
 
     func friendRequestAction() {
-        realmInstance.getCurrentSolUser(action: { cur in
-            let request = Connection()
-            request.userOneId = cur.userId
-            request.userOneName = cur.userName
-            request.userTwoId = user.userId
-            request.userTwoName = user.userName
-            request.connectionId = cur.userId + ":"
-            self.realmInstance.safeWrite { _ in
-                self.realmInstance.create(UserToSession.self, value: request, update: .all)
-            }
-            
-            request.fireSave(id: request.id)
-            
-//            firebaseDatabase { db in
-//                db.child(DatabasePaths.connections.rawValue).child(request.id).setValue(request.toDict())
+//        realmInstance.getCurrentSolUser(action: { cur in
+//            let request = Connection()
+//            request.userOneId = cur.userId
+//            request.userOneName = cur.userName
+//            request.userTwoId = user.userId
+//            request.userTwoName = user.userName
+//            request.connectionId = cur.userId + ":"
+//            self.realmInstance.safeWrite { _ in
+//                self.realmInstance.create(UserToSession.self, value: request, update: .all)
 //            }
-            friendIconImage = "hourglass"
-        })
+//            
+//            request.fireSave(id: request.id)
+//            
+////            firebaseDatabase { db in
+////                db.child(DatabasePaths.connections.rawValue).child(request.id).setValue(request.toDict())
+////            }
+//            friendIconImage = "hourglass"
+//        })
     }
 }
 

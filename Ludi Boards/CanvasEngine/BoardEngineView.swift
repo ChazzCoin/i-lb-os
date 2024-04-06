@@ -10,6 +10,7 @@ import SwiftUI
 import Combine
 import RealmSwift
 import FirebaseDatabase
+import CoreEngine
 
 struct BoardEngine: View {
     @Environment(\.scenePhase) var deviceState
@@ -26,7 +27,7 @@ struct BoardEngine: View {
     @State private var sessionObserver = RealmChangeListener<SessionPlan>()
     @State private var activityObserver = RealmChangeListener<ActivityPlan>()
     @State private var managedViewsObserver = RealmChangeListener<ManagedView>()
-    @State private var boardSessionObserver = BoardSessionObserver()
+//    @State private var boardSessionObserver = BoardSessionObserver()
     
     // TODO: -> Move to Central Board Object
     @State private var reference: DatabaseReference = Database.database().reference()

@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import CoreEngine
 
 struct AddBuddyView: View {
     @Binding var isPresented: Bool
@@ -14,7 +15,7 @@ struct AddBuddyView: View {
     @EnvironmentObject var BEO: BoardEngineObject
     @State private var buddyName: String = ""
     @State private var buddyStatus: String = ""
-    @State private var searchResults: [SolUser] = []
+    @State private var searchResults: [CoreUser] = []
     @State private var realmInstance = realm()
 
     var body: some View {
@@ -60,10 +61,10 @@ struct AddBuddyView: View {
             .queryOrdered(byChild: "userName")
             .queryEqual(toValue: userName)
             .observeSingleEvent(of: .value) { snapshot, _ in
-                let _ = snapshot.toLudiObjects(SolUser.self)
+                let _ = snapshot.toLudiObjects(CoreUser.self)
                 let map = snapshot.toHashMap()
                 for (_,v) in map {
-                    searchResults.append(SolUser(dictionary: v as! [String:Any]))
+                    searchResults.append(CoreUser(dictionary: v as! [String:Any]))
                 }
             }
         }

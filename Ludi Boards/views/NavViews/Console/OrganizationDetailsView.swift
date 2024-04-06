@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import CoreEngine
 
 struct OrganizationDetailsView: View {
     

@@ -7,7 +7,7 @@
 
 import Foundation
 import SwiftUI
-
+import CoreEngine
 
 extension View {
     func solBackground() -> some View {

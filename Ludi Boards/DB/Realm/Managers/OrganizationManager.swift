@@ -7,6 +7,7 @@
 
 import Foundation
 import RealmSwift
+import CoreEngine
 
 class OrganizationManager {
     let realm: Realm
@@ -43,12 +44,12 @@ class OrganizationManager {
     }
     
     // Users
-    func getAllUsersInOrganization(organizationId: String) -> Results<User> {
+    func getAllUsersInOrganization(organizationId: String) -> Results<CoreUser> {
         let userIds = realm
             .objects(UserToOrganization.self)
             .filter("organizationId == %@", organizationId)
             .map { $0.userId }
-        return realm.objects(User.self).filter("id IN %@", Array(userIds))
+        return realm.objects(CoreUser.self).filter("id IN %@", Array(userIds))
     }
     // Teams
     func getTeamsForOrganization(orgId: String) -> Results<Team> {

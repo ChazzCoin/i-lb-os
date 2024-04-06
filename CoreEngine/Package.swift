@@ -5,10 +5,10 @@ import PackageDescription
 
 let package = Package(
     name: "CoreEngine",
-//    platforms: [
-//        .iOS(.v15), // Set minimum platform to iOS 13
-//        // include other platforms if needed
-//    ],
+    platforms: [
+        .iOS(.v15), // Set minimum platform to iOS 13
+        // include other platforms if needed
+    ],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(

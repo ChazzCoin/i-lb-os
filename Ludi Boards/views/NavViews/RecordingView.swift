@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import RealmSwift
+import CoreEngine
 
 struct RecordingListView: View {
     @Binding var isShowing: Bool

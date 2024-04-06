@@ -7,7 +7,7 @@
 
 import Foundation
 import SwiftUI
-
+import CoreEngine
 
 struct SolIconTextButton: View {
     var title: String

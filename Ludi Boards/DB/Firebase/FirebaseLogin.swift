@@ -12,7 +12,7 @@ import FirebaseAuth
 //import FirebaseFirestore
 import FirebaseDatabase
 //import FirebaseAnalytics
-
+import CoreEngine
 
 
 //func syncUserFromFirebaseDb(_ email: String, realmInstance: Realm=realm(), completion: @escaping (Bool) -> Void) {

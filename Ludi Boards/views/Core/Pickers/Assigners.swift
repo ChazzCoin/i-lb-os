@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import RealmSwift
+import CoreEngine
 
 struct PickerOrganization: View {
     @ObservedResults(Organization.self) var allOrgs

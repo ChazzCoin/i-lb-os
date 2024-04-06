@@ -10,7 +10,7 @@ import SwiftUI
 import FirebaseDatabase
 import RealmSwift
 import Combine
-
+import CoreEngine
 
 struct ManagedViewBoardToolIcon: View {
     let toolType: String

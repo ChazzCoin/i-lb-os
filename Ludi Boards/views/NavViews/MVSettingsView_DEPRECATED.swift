@@ -10,6 +10,7 @@ import SwiftUI
 import Combine
 import RealmSwift
 import FirebaseDatabase
+import CoreEngine
 
 enum ToolLevels: Int {
     case BASIC = 1

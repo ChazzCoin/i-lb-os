@@ -7,7 +7,7 @@
 
 import Foundation
 import SwiftUI
-
+import CoreEngine
 
 struct LineIconView: View {
     @State var isBgColor: Bool

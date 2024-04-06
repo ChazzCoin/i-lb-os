@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import CoreEngine
 
 struct CorePicker: View {
     @Binding var selection: String

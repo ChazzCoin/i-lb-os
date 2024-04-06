@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import RealmSwift
+import CoreEngine
 
 class RealmObserver<T:Object>: ObservableObject {
     @Published var realmInstance: Realm = realm()

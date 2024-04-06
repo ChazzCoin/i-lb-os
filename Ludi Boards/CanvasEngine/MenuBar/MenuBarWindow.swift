@@ -7,13 +7,14 @@
 
 import Foundation
 import SwiftUI
+import CoreEngine
 
 struct MenuBarStatic: View {
     @Binding var showIcons: Bool
     @State var gps: GlobalPositioningSystem
     var onClick: () -> Void
     @EnvironmentObject var BEO: BoardEngineObject
-    @StateObject private var rcl = RealmObserver<CurrentSolUser>()
+    @StateObject private var rcl = RealmObserver<CoreUser>()
 //    @State private var showIcons = false
     @State private var iconStates = Array(repeating: false, count: 11)
     @Environment(\.colorScheme) var colorScheme

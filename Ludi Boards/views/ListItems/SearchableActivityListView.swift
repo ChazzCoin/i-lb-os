@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import RealmSwift
+import CoreEngine
 
 struct SearchableActivityListView: View {
     // Sample data structure
@@ -34,9 +35,9 @@ struct SearchableActivityListView: View {
         VStack {
             SearchBar(text: $searchText, placeholder: "Search Activities")
                 .padding(.top)
-            SearchBarView(text: $searchText, textColor: Color.black, placeholder: "Search Activities")
-                .padding(.top)
-            
+//            SearchBarView(text: $searchText, textColor: Color.black, placeholder: "Search Activities")
+//                .padding(.top)
+//            
             ScrollView {
                 LazyVGrid(columns: columns, spacing: 20) {
                     ForEach(filteredItems) { item in

@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import Combine
+import CoreEngine
 
 struct MenuButtonIcon: View {
     var icon: IconProvider // Assuming IconProvider conforms to SwiftUI's View

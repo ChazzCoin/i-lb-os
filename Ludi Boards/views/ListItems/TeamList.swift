@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import RealmSwift
+import CoreEngine
 
 struct TeamListView: View {
     // Assuming you have an array of image names from your assets

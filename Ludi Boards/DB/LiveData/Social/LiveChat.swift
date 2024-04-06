@@ -10,6 +10,7 @@ import SwiftUI
 import RealmSwift
 import FirebaseDatabase
 import Combine
+import CoreEngine
 
 @propertyWrapper
 struct LiveChat: DynamicProperty {

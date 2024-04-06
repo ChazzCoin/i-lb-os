@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import Combine
+import CoreEngine
 
 struct NavPadView: View {
     @EnvironmentObject var BEO: BoardEngineObject

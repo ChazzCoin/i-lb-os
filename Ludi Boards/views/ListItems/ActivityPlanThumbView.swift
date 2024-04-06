@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import CoreEngine
 
 struct ActivityPlanThumbView: View {
     let activityPlan: ActivityPlan?

@@ -6,7 +6,9 @@
 //
 
 import Foundation
-import Firebase
+import FirebaseAuth
+import FirebaseDatabase
+import CoreEngine
 
 class UserTools {
     
@@ -119,7 +121,7 @@ class UserTools {
                     .child(cui)
                     .observeSingleEvent(of: .value) { snapshot, _ in
                         print("User SnapShot: \(snapshot)")
-                        if let user = snapshot.toLudiObject(User.self, realm: newRealm()) {
+                        if let user = snapshot.toLudiObject(CoreUser.self, realm: newRealm()) {
                             setCurrentUserName(user.userName)
                             setCurrentUserAuth(user.auth)
                             setCurrentUserRole(user.role)
@@ -130,18 +132,18 @@ class UserTools {
     }
     
     static func saveUserToRealm(fireUser: FirebaseAuth.User) {
-        let newUser = User()
+        let newUser = CoreUser()
         newUser.id = fireUser.uid
         setCurrentUserId(fireUser.uid)
         newUser.name = fireUser.displayName ?? ""
         newUser.email = fireUser.email ?? ""
         newRealm().safeWrite { r in
-            r.create(User.self, value: newUser, update: .all)
+            r.create(CoreUser.self, value: newUser, update: .all)
         }
         UserTools.saveUserToFirebase(user: newUser)
     }
     
-    static func saveUserToFirebase(user:User) {
+    static func saveUserToFirebase(user:CoreUser) {
         firebaseDatabase { db in
             db.saveUser(obj: user)
         }
@@ -161,7 +163,7 @@ class UserTools {
         checkUserExistsById(fireUser.uid, completion: { result in
             if !result {
                 print("User Does Not Exist, Saving New User Record to Firebase.")
-                let newUser = User()
+                let newUser = CoreUser()
                 newUser.id = fireUser.uid
                 newUser.email = fireUser.email ?? ""
                 newUser.name = fireUser.displayName ?? "new"
@@ -176,7 +178,7 @@ class UserTools {
         })
     }
     
-    static func saveUser(user: User, onComplete: @escaping (Bool) -> Void) {
+    static func saveUser(user: CoreUser, onComplete: @escaping (Bool) -> Void) {
         print("Save New User")
         if user.id.isEmpty {return}
         firebaseDatabase { ref in

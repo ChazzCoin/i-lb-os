@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import Combine
 import RealmSwift
+import CoreEngine
 
 struct MvSettingsBar<Content: View>: View {
     let content: Content

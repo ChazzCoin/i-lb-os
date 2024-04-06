@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import RealmSwift
+import CoreEngine
 
 struct HomeDashboardView: View {
     @State var userId: String = getFirebaseUserId() ?? "SOL"
@@ -156,7 +157,7 @@ struct HomeDashboardView: View {
     }
     
     func fetchAllSessionsFromFirebase() {
-        FirebaseSessionPlanService.runFullFetchProcess(realm: self.realmInstance)
+//        FirebaseSessionPlanService.runFullFetchProcess(realm: self.realmInstance)
     }
     
 }

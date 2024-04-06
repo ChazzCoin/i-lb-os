@@ -9,6 +9,7 @@ import SwiftUI
 import Combine
 import RealmSwift
 import Firebase
+import CoreEngine
 
 @main
 struct LudiBoardsApp: SwiftUI.App {
@@ -26,7 +27,7 @@ struct LudiBoardsApp: SwiftUI.App {
             CanvasEngine()
                 .onAppear() {
                     // Startup Setup
-                    realm().safeSetupCurrentSolUser()
+//                    realm().safeSetupCurrentSolUser()
                 }
         }
     }

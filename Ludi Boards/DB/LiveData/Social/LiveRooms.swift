@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import RealmSwift
 import FirebaseDatabase
+import CoreEngine
 
 @propertyWrapper
 struct LiveRooms: DynamicProperty {
@@ -132,13 +133,13 @@ enum RoomStatus {
 class FirebaseRoomService: ObservableObject {
     private let realmInstance = newRealm()
     private var firebaseSubscription: DatabaseHandle?
-    @ObservedResults(SolUser.self) var allUsers
+    @ObservedResults(CoreUser.self) var allUsers
     @ObservedResults(Room.self) var allRooms
     @Published var isObserving = false
     @Published var rooms: [Room] = []
     @Published var currentRoomId = ""
     @Published var objsInCurrentRoom: [Room] = []
-    @Published var usersInCurrentRoom: [SolUser] = []
+    @Published var usersInCurrentRoom: [CoreUser] = []
     private var ref: DatabaseReference? = nil
     
     @Published var reference: DatabaseReference = Database
@@ -169,12 +170,12 @@ class FirebaseRoomService: ObservableObject {
                 // Assuming UserPresence has properties `roomId` and `status`
                 let inRoom = allUserPresences.filter { $0.roomId == roomId }
                 
-                var inTemp: [SolUser] = []
+                var inTemp: [CoreUser] = []
                 var roomTemp: [Room] = []
                 for r in inRoom {
                     if r.userId == getFirebaseUserId() { continue }
                     roomTemp.safeAdd(r)
-                    if let user = self.allRooms.realm?.findByField(SolUser.self, field: "userId", value: r.id) {
+                    if let user = self.allRooms.realm?.findByField(CoreUser.self, field: "userId", value: r.id) {
                         inTemp.safeAdd(user)
                     } else {
                         if r.userId.isEmpty {continue}
@@ -184,7 +185,7 @@ class FirebaseRoomService: ObservableObject {
                 self.objsInCurrentRoom = roomTemp
                 
                 for i in roomTemp {
-                    if let user = self.allRooms.realm?.findByField(SolUser.self, field: "userId", value: i.id) {
+                    if let user = self.allRooms.realm?.findByField(CoreUser.self, field: "userId", value: i.id) {
                         inTemp.safeAdd(user)
                     }
                 }
@@ -243,39 +244,39 @@ class FirebaseRoomService: ObservableObject {
         
         if !realmInstance.isLiveSessionPlan(activityId: roomId) { return }
         print("room verifications passed, attempting to send presence.")
-        realmInstance.getCurrentSolUser() { currentUser in
-            let tempRealm = newRealm()
-            if let item = tempRealm.findByField(Room.self, field: "roomId", value: roomId) {
-                tempRealm.safeWrite { _ in
-                    item.status = status
-                }
-                print("User is about to be \(status) room \(roomId)")
-                firebaseDatabase { db in
-                    var temp = item.toDict()
-                    temp["status"] = status
-                    db.child("rooms").child(item.roomId).child(item.id).setValue(temp){ (error: Error?, ref: DatabaseReference) in
-                        if let error = error { print("Error sending room presence to Firebase: \(error)") }
-                    }
-                }
-                return
-            }
-            
-            let roomPresence = Room()
-            roomPresence.roomId = roomId
-            roomPresence.userId = currentUser.userId
-            roomPresence.userName = currentUser.userName
-            roomPresence.userImg = currentUser.imgUrl
-            roomPresence.status = status
-            tempRealm.safeWrite { r in
-                r.create(Room.self, value: roomPresence, update: .all)
-            }
-            print("User is about to be \(status) room \(roomId)")
-            firebaseDatabase { db in
-                db.child("rooms").child(roomId).child(roomPresence.id).setValue(roomPresence.toDict()){ (error: Error?, ref: DatabaseReference) in
-                    if let error = error { print("Error sending room presence to Firebase: \(error)") }
-                }
-            }
-        }
+//        realmInstance.getCurrentSolUser() { currentUser in
+//            let tempRealm = newRealm()
+//            if let item = tempRealm.findByField(Room.self, field: "roomId", value: roomId) {
+//                tempRealm.safeWrite { _ in
+//                    item.status = status
+//                }
+//                print("User is about to be \(status) room \(roomId)")
+//                firebaseDatabase { db in
+//                    var temp = item.toDict()
+//                    temp["status"] = status
+//                    db.child("rooms").child(item.roomId).child(item.id).setValue(temp){ (error: Error?, ref: DatabaseReference) in
+//                        if let error = error { print("Error sending room presence to Firebase: \(error)") }
+//                    }
+//                }
+//                return
+//            }
+//            
+//            let roomPresence = Room()
+//            roomPresence.roomId = roomId
+//            roomPresence.userId = currentUser.userId
+//            roomPresence.userName = currentUser.userName
+//            roomPresence.userImg = currentUser.imgUrl
+//            roomPresence.status = status
+//            tempRealm.safeWrite { r in
+//                r.create(Room.self, value: roomPresence, update: .all)
+//            }
+//            print("User is about to be \(status) room \(roomId)")
+//            firebaseDatabase { db in
+//                db.child("rooms").child(roomId).child(roomPresence.id).setValue(roomPresence.toDict()){ (error: Error?, ref: DatabaseReference) in
+//                    if let error = error { print("Error sending room presence to Firebase: \(error)") }
+//                }
+//            }
+//        }
         
     }
     

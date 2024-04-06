@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import RealmSwift
 import Combine
+import CoreEngine
 
 class ToolHistoryObserver : ObservableObject {
     @EnvironmentObject var BEO: BoardEngineObject

@@ -8,6 +8,7 @@
 import Foundation
 import RealmSwift
 import FirebaseDatabase
+import CoreEngine
 
 enum DatabasePaths: String {
     case sports = "sports"
@@ -54,10 +55,6 @@ enum DatabasePaths: String {
                 return .chat
             case is UserToSession.Type:
                 return .userToSession
-            case is SolUser.Type:
-                return .users
-            case is Connection.Type:
-                return .connections
             case is Room.Type:
                 return .rooms
             default:

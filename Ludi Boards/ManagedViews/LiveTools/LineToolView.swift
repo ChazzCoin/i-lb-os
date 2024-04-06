@@ -10,6 +10,7 @@ import SwiftUI
 import RealmSwift
 import Combine
 import FirebaseDatabase
+import CoreEngine
 
 struct LineDrawingManaged: View {
     @State var viewId: String

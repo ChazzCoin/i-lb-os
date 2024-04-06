@@ -8,16 +8,17 @@
 import Foundation
 import FirebaseDatabase
 import RealmSwift
+import CoreEngine
 
 class DataPuller {
     
-    static func getUser(userId:String, realm: Realm?=newRealm(), onSafeResult: @escaping (User) -> Void) {
+    static func getUser(userId:String, realm: Realm?=newRealm(), onSafeResult: @escaping (CoreUser) -> Void) {
         firebaseDatabase { ref in
             ref.child(DatabasePaths.users.rawValue)
                 .child(userId)
                 .observeSingleEvent(of: .value) { snapshot, _ in
                     print("User SnapShot: \(snapshot)")
-                    let user = snapshot.toLudiObject(User.self, realm: realm)
+                    let user = snapshot.toLudiObject(CoreUser.self, realm: realm)
                     if let user = user {
                         print("We have a user: \(user)")
                         onSafeResult(user)
@@ -31,7 +32,7 @@ class DataPuller {
             ref.child(DatabasePaths.users.rawValue)
                 .observeSingleEvent(of: .value) { snapshot, _ in
                     print("Users SnapShot: \(snapshot)")
-                    let _ = snapshot.toLudiObjects(User.self, realm: realm)
+                    let _ = snapshot.toLudiObjects(CoreUser.self, realm: realm)
                 }
         }
     }
@@ -93,7 +94,7 @@ class FirebaseUserSearch {
     let usersRef = Database.database().reference().child("users")
 
     // Search for users where name or userName matches the search term
-    func searchUsersByNameOrUserName(searchTerm: String, completion: @escaping ([User]) -> Void) {
+    func searchUsersByNameOrUserName(searchTerm: String, completion: @escaping ([CoreUser]) -> Void) {
         // First query: Search by name
         let nameQuery = usersRef.queryOrdered(byChild: "name").queryEqual(toValue: searchTerm)
         
@@ -101,12 +102,12 @@ class FirebaseUserSearch {
         let userNameQuery = usersRef.queryOrdered(byChild: "userName").queryEqual(toValue: searchTerm)
         
         let dispatchGroup = DispatchGroup()
-        var searchResults = [User]()
+        var searchResults = [CoreUser]()
 
         dispatchGroup.enter()
         nameQuery.observeSingleEvent(of: .value, with: { snapshot in
             for child in snapshot.children.allObjects as! [DataSnapshot] {
-                if let user = User.fromSnap(snapshot: child) {
+                if let user = CoreUser.fromSnap(snapshot: child) {
                     searchResults.safeAppend(user)
                 }
             }
@@ -116,7 +117,7 @@ class FirebaseUserSearch {
         dispatchGroup.enter()
         userNameQuery.observeSingleEvent(of: .value, with: { snapshot in
             for child in snapshot.children.allObjects as! [DataSnapshot] {
-                if let user = User.fromSnap(snapshot: child), !searchResults.contains(where: { $0.id == user.id }) {
+                if let user = CoreUser.fromSnap(snapshot: child), !searchResults.contains(where: { $0.id == user.id }) {
                     searchResults.safeAppend(user)
                 }
             }
@@ -128,8 +129,8 @@ class FirebaseUserSearch {
         }
     }
 }
-extension Array where Element == User {
-    mutating func safeAppend(_ newUser: User) {
+extension Array where Element == CoreUser {
+    mutating func safeAppend(_ newUser: CoreUser) {
         // Check if the array already contains an element with the same id as newUser
         if !self.contains(where: { $0.id == newUser.id }) {
             self.append(newUser)

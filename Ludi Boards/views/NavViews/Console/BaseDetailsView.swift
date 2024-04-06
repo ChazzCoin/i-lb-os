@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import CoreEngine
 
 struct VB: Identifiable {
     let id: UUID

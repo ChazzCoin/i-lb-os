@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import Combine
 import RealmSwift
+import CoreEngine
 
 struct BoardSettingsBar: View {
     @Environment(\.colorScheme) var colorScheme

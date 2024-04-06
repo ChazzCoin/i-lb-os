@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import CoreEngine
 
 struct ThumbnailListView: View {
     // Assuming you have an array of image names from your assets

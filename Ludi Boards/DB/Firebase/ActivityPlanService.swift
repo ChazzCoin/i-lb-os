@@ -9,6 +9,7 @@ import Foundation
 import FirebaseDatabase
 import RealmSwift
 import SwiftUI
+import CoreEngine
 
 class ActivityPlanService: ObservableObject {
     @Published var activityId: String = ""

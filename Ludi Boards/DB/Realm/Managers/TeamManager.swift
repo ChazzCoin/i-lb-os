@@ -7,13 +7,14 @@
 
 import Foundation
 import RealmSwift
+import CoreEngine
 
 class TeamManager {
     private var realm: Realm = newRealm()
 
     // Adds a User to a Team by IDs
     func addUserToTeam(userId: String, teamId: String, completion: @escaping (Error?) -> Void) {
-        let user = realm.object(ofType: User.self, forPrimaryKey: userId)
+        let user = realm.object(ofType: CoreUser.self, forPrimaryKey: userId)
         let team = realm.object(ofType: Team.self, forPrimaryKey: teamId)
         
         guard let user = user, let team = team else {
@@ -49,12 +50,12 @@ class TeamManager {
     }
     
     // Users
-    func getAllUsersInTeam(teamId: String) -> Results<User> {
+    func getAllUsersInTeam(teamId: String) -> Results<CoreUser> {
         let userIds = realm
             .objects(UserToTeam.self)
             .filter("teamId == %@", teamId)
             .map { $0.userId }
-        return realm.objects(User.self).filter("id IN %@", userIds)
+        return realm.objects(CoreUser.self).filter("id IN %@", userIds)
     }
     // Sessions
     func getSessionPlansForTeam(teamId: String) -> Results<SessionPlan> {

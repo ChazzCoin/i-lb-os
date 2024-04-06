@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 
+
 func ManagedViewToolFactory(toolType: String, viewId: String, activityId: String) -> AnyView {
     switch toolType {
     case "LINE", "DOTTED-LINE":

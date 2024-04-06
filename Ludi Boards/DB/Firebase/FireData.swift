@@ -8,7 +8,7 @@
 import Foundation
 import FirebaseDatabase
 import RealmSwift
-
+import CoreEngine
 // Firebase Extensions
 extension Object {
     
@@ -131,7 +131,7 @@ extension DatabaseReference {
         self.child(collection).child(id).setValue(obj.toDict())
     }
     
-    func saveUser(obj: User) {
+    func saveUser(obj: CoreUser) {
         self.child(DatabasePaths.users.rawValue)
             .child(obj.id)
             .setValue(obj.toDict())
@@ -187,14 +187,14 @@ func fireGetLiveDemoAsync(realm: Realm?=nil) {
 }
 
 // GET Share Session
-func fireGetSolUserAsync(userId: String, realm: Realm?=nil, onCompletion: @escaping ([SolUser]) -> Void={ _ in }) {
+func fireGetSolUserAsync(userId: String, realm: Realm?=nil, onCompletion: @escaping ([CoreUser]) -> Void={ _ in }) {
     if !userIsVerifiedToProceed() { return }
     firebaseDatabase(collection: DatabasePaths.users.rawValue) { ref in
         ref
             .queryOrdered(byChild: "userId")
             .queryEqual(toValue: userId)
             .observeSingleEvent(of: .value) { snapshot, _ in
-                if let results = snapshot.toLudiObjects(SolUser.self, realm: realm) {
+                if let results = snapshot.toLudiObjects(CoreUser.self, realm: realm) {
                     onCompletion(Array(results))
                 }
             }

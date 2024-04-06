@@ -7,13 +7,14 @@
 
 import Foundation
 import RealmSwift
+import CoreEngine
 
 class ActivityUserManager {
     private var realm: Realm = newRealm()
 
     // Adds a User to an ActivityPlan by IDs
     func addUserToActivity(userId: String, activityId: String, completion: @escaping (Error?) -> Void) {
-        let user = realm.object(ofType: User.self, forPrimaryKey: userId)
+        let user = realm.object(ofType: CoreUser.self, forPrimaryKey: userId)
         let activityPlan = realm.object(ofType: ActivityPlan.self, forPrimaryKey: activityId)
         
         guard let user = user, let activityPlan = activityPlan else {
@@ -48,11 +49,11 @@ class ActivityUserManager {
     }
     
     // Finds all Users part of an ActivityPlan by ID
-    func getAllUsersInActivity(activityId: String) -> Results<User> {
+    func getAllUsersInActivity(activityId: String) -> Results<CoreUser> {
         let userIds = realm
             .objects(UserToActivity.self)
             .filter("activityId == %@", activityId)
             .map { $0.userId }
-        return realm.objects(User.self).filter("id IN %@", userIds)
+        return realm.objects(CoreUser.self).filter("id IN %@", userIds)
     }
 }

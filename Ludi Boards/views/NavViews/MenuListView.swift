@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import CoreEngine
 
 enum ActiveSheet: Identifiable {
     case profile, settings, addOrg, addTeam, addPlayer, addSession, addActivity

@@ -8,7 +8,7 @@
 import Foundation
 import FirebaseDatabase
 import RealmSwift
-
+import CoreEngine
 
 //
 class AllManagedViewsService: ObservableObject {
@@ -25,7 +25,7 @@ class AllManagedViewsService: ObservableObject {
     }
     
     func verifyLoginStatus() {
-        self.isLoggedIn = realmInstance.userIsLoggedIn()
+//        self.isLoggedIn = realmInstance.userIsLoggedIn()
     }
 
     func startObserving(activityId: String) {
@@ -147,13 +147,13 @@ class SingleManagedViewService: ObservableObject {
     }
     
     func observeRealmUser() {
-        if let user = realmInstance.object(ofType: CurrentSolUser.self, forPrimaryKey: CURRENT_USER_ID) {
+        if let user = realmInstance.object(ofType: CoreUser.self, forPrimaryKey: CURRENT_USER_ID) {
             self.realmInstance.executeWithRetry {
                 self.nofityToken = user.observe { change in
                     switch change {
                         case .change(let obj, _):
                             print("Obj: \(obj)")
-                            let temp = obj as! CurrentSolUser
+                            let temp = obj as! CoreUser
                             self.isLoggedIn = temp.isLoggedIn
                         case .error(let error):
                             print("Error: \(error)")

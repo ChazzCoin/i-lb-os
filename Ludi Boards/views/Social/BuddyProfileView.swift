@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import RealmSwift
+import CoreEngine
 
 struct BuddyProfileView: View {
     @State var solUserId: String
@@ -15,8 +16,8 @@ struct BuddyProfileView: View {
     @EnvironmentObject var BEO: BoardEngineObject
     @State private var realmInstance = realm()
     
-    @ObservedResults(SolUser.self) var users
-    var solUser: SolUser? {
+    @ObservedResults(CoreUser.self) var users
+    var solUser: CoreUser? {
         return self.users.filter("userId == %@", self.solUserId).first
     }
         
@@ -64,15 +65,15 @@ struct BuddyProfileView: View {
                     Button("Accept Buddy Request") {
                         // Add buddy action
                         runLoading()
-                        if let obj = self.realmInstance.findByField(Connection.self, field: "userOneId", value: self.solUserId) {
-                            self.realmInstance.safeWrite { _ in
-                                obj.status = "Accepted"
-                                obj.connectionId = obj.connectionId + self.solUserId
-                                firebaseDatabase { db in
-                                    db.child("connections").child(obj.id).setValue(obj.toDict())
-                                }
-                            }
-                        }
+//                        if let obj = self.realmInstance.findByField(Connection.self, field: "userOneId", value: self.solUserId) {
+//                            self.realmInstance.safeWrite { _ in
+//                                obj.status = "Accepted"
+//                                obj.connectionId = obj.connectionId + self.solUserId
+//                                firebaseDatabase { db in
+//                                    db.child("connections").child(obj.id).setValue(obj.toDict())
+//                                }
+//                            }
+//                        }
                         
                     }
                     .buttonStyle(ActionButtonStyle())

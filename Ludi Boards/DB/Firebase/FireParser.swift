@@ -8,7 +8,7 @@
 import Foundation
 import FirebaseDatabase
 import RealmSwift
-
+import CoreEngine
  //1. Master Parsing Function Part 1 - From Firebase Object to Realm Object
 extension DataSnapshot {
     func toLudiObject<T: Object>(_ type: T.Type, realm: Realm? = nil) -> T? {

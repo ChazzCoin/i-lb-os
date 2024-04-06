@@ -7,13 +7,14 @@
 
 import Foundation
 import RealmSwift
+import CoreEngine
 
 class SessionUserManager {
     private var realm: Realm = newRealm()
 
     // Adds a User to a SessionPlan by IDs
     func addUserToSession(userId: String, sessionId: String, completion: @escaping (Error?) -> Void) {
-        let user = realm.object(ofType: User.self, forPrimaryKey: userId)
+        let user = realm.object(ofType: CoreUser.self, forPrimaryKey: userId)
         let sessionPlan = realm.object(ofType: SessionPlan.self, forPrimaryKey: sessionId)
         
         guard let user = user, let sessionPlan = sessionPlan else {
@@ -48,12 +49,12 @@ class SessionUserManager {
     }
     
     // Users
-    func getAllUsersInSession(sessionId: String) -> Results<User> {
+    func getAllUsersInSession(sessionId: String) -> Results<CoreUser> {
         let userIds = realm
             .objects(UserToSession.self)
             .filter("sessionId == %@", sessionId)
             .map { $0.userId }
-        return realm.objects(User.self).filter("id IN %@", userIds)
+        return realm.objects(CoreUser.self).filter("id IN %@", userIds)
     }
     // Activities
     func getActivityPlansForSessionPlan(sessionId: String) -> Results<ActivityPlan> {

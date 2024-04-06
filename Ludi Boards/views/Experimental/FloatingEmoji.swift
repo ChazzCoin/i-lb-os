@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import Combine
+import CoreEngine
 
 struct FloatingEmojiView: View {
     @State private var emojiInstances = [UUID]()
