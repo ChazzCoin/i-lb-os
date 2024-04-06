@@ -16,8 +16,6 @@ struct LineDrawingManaged: View {
     @State var viewId: String
     @State var activityId: String
     
-//    @EnvironmentObject var BEO: BoardEngineObject
-//    @State private var MVS: SingleManagedViewService = SingleManagedViewService()
     @StateObject var MVO: ManagedViewObject = ManagedViewObject()
     
     var body: some View {
@@ -110,13 +108,12 @@ struct LineDrawingManaged: View {
                 MVO.lifeEndX = self.MVO.originalLifeEnd.x + translation.width
                 MVO.lifeEndY = self.MVO.originalLifeEnd.y + translation.height
                 if !MVO.useOriginal { MVO.loadCenterPoint() }
-//                loadCenterPoint()
 //                CodiChannel.TOOL_ON_FOLLOW.send(value: ViewFollowing(
 //                    viewId: self.viewId,
 //                    x: lifeStartX,
 //                    y: lifeStartY
 //                ))
-                updateRealmPos(start: CGPoint(x: MVO.lifeStartX, y: MVO.lifeStartY),
+                MVO.updateRealmPos(start: CGPoint(x: MVO.lifeStartX, y: MVO.lifeStartY),
                             end: CGPoint(x: MVO.lifeEndX, y: MVO.lifeEndY))
             }
             .onEnded { value in
@@ -127,13 +124,8 @@ struct LineDrawingManaged: View {
                 MVO.lifeStartY = self.MVO.originalLifeStart.y + translation.height
                 MVO.lifeEndX = self.MVO.originalLifeEnd.x + translation.width
                 MVO.lifeEndY = self.MVO.originalLifeEnd.y + translation.height
-//                loadCenterPoint()
                 self.MVO.isDragging = false
-                updateRealm()
-//                updateRealmPos(start: CGPoint(x: lifeStartX, y: lifeStartY),
-//                            end: CGPoint(x: lifeEndX, y: lifeEndY))
-//                self.originalLifeStart = .zero
-//                self.originalLifeEnd = .zero
+                self.MVO.updateRealm()
                 self.MVO.useOriginal = true
             }
     }
@@ -151,23 +143,18 @@ struct LineDrawingManaged: View {
                     self.MVO.lifeEndX = value.location.x
                     self.MVO.lifeEndY = value.location.y
                 }
-//                loadCenterPoint()
-//                loadWidthAndHeight()
-//                loadRotationOfLine()
-                updateRealmPos(start: CGPoint(x: MVO.lifeStartX, y: MVO.lifeStartY),
+                MVO.updateRealmPos(start: CGPoint(x: MVO.lifeStartX, y: MVO.lifeStartY),
                             end: CGPoint(x: MVO.lifeEndX, y: MVO.lifeEndY))
             }
             .onEnded { _ in
                 if self.MVO.lifeIsLocked || !MVO.anchorsAreVisible { return }
                 self.MVO.isDragging = false
                 self.MVO.ignoreUpdates = false
-                updateRealm()
+                self.MVO.updateRealm()
 //                self.useOriginal = true
             }
             
     }
-    
-    
     
     // Basic Gestures
     private func singleTapGesture() -> some Gesture {
@@ -180,6 +167,7 @@ struct LineDrawingManaged: View {
         TapGesture(count: 2).onEnded({ _ in
             print("Tapped double")
             MVO.popUpIsVisible = !MVO.popUpIsVisible
+            MVO.anchorsAreVisible = !MVO.anchorsAreVisible
             MVO.toggleMenuWindow()
          })
     }
@@ -189,99 +177,6 @@ struct LineDrawingManaged: View {
             MVO.anchorsAreVisible = !MVO.anchorsAreVisible
        }
     }
-    
-    
-    // Function to update a Realm object in the background
-    func updateRealmPos(start: CGPoint? = nil, end: CGPoint? = nil) {
-        DispatchQueue.global(qos: .background).async {
-            autoreleasepool {
-                do {
-                    let realm = try Realm()
-                    if let mv = realm.findByField(ManagedView.self, value: self.viewId) {
-                        try realm.write {
-                            mv.startX = Double(start?.x ?? CGFloat(MVO.lifeStartX))
-                            mv.startY = Double(start?.y ?? CGFloat(MVO.lifeStartY))
-                            mv.endX = Double(end?.x ?? CGFloat(MVO.lifeEndX))
-                            mv.endY = Double(end?.y ?? CGFloat(MVO.lifeEndY))
-                            mv.lastUserId = getFirebaseUserId() ?? CURRENT_USER_ID
-                        }
-                        
-                        MVO.updateFirebase(mv: mv)
-                    }
-                } catch {
-                    print("Realm error: \(error)")
-                }
-            }
-        }
-    }
-    
-    func updateRealm(start: CGPoint? = nil, end: CGPoint? = nil) {
-        if MVO.isDisabledChecker() {return}
-        if MVO.isDeletedChecker() {return}
-        let mv = self.MVO.realmInstance.findByField(ManagedView.self, value: viewId)
-        if mv == nil { return }
-        self.MVO.realmInstance.safeWrite { r in
-            mv?.startX = Double(start?.x ?? CGFloat(MVO.lifeStartX))
-            mv?.startY = Double(start?.y ?? CGFloat(MVO.lifeStartY))
-            mv?.endX = Double(end?.x ?? CGFloat(MVO.lifeEndX))
-            mv?.endY = Double(end?.y ?? CGFloat(MVO.lifeEndY))
-            
-            if let lc = MVO.lifeColor.toRGBA() {
-                mv?.colorRed = lc.red
-                mv?.colorGreen = lc.green
-                mv?.colorBlue = lc.blue
-                mv?.colorAlpha = lc.alpha
-            }
-            mv?.isLocked = self.MVO.isDragging ? true : MVO.lifeIsLocked
-            mv?.toolType = "LINE"
-            mv?.width = Int(MVO.lifeWidth)
-            mv?.lineDash = Int(MVO.lifeLineDash)
-            mv?.lastUserId = getFirebaseUserIdOrCurrentLocalId()
-            mv?.headIsEnabled = MVO.lifeHeadIsEnabled
-            MVO.updateFirebase(mv: mv)
-            self.saveSnapshotToHistoryInRealm()
-        }
-    }
-    
-    func saveSnapshotToHistoryInRealm() {
-        DispatchQueue.global(qos: .background).async {
-            autoreleasepool {
-                do {
-                    let history = ManagedViewAction()
-                    history.viewId = self.viewId
-                    history.boardId = self.activityId
-                    history.x = self.MVO.position.x
-                    history.y = self.MVO.position.y
-                    history.startX = Double(MVO.lifeStartX)
-                    history.startY = Double(MVO.lifeStartY)
-                    history.endX = Double(MVO.lifeEndX)
-                    history.endY = Double(MVO.lifeEndY)
-                    history.rotation = self.MVO.lifeRotation.degrees
-                    history.toolType = self.MVO.lifeToolType
-                    history.width = Int(self.MVO.lifeWidth)
-                    history.height = Int(self.MVO.lifeWidth)
-                    history.lineDash = Int(MVO.lifeLineDash)
-                    if let lc = MVO.lifeColor.toRGBA() {
-                        history.colorRed = lc.red
-                        history.colorGreen = lc.green
-                        history.colorBlue = lc.blue
-                        history.colorAlpha = lc.alpha
-                    }
-                    history.isLocked = self.MVO.lifeIsLocked
-                    history.lastUserId = "history"
-                    let realm = try Realm()
-                    realm.safeWrite { r in
-                        r.create(ManagedViewAction.self, value: history, update: .all)
-                    }
-                    
-                } catch {
-                    print("Realm error: \(error)")
-                }
-            }
-        }
-    }
-    
-    
     
 }
 

@@ -63,4 +63,13 @@ public class UserToTeam: Object, ObjectKeyIdentifiable {
     @Persisted public var status: String = ShareStatus.active.name
 }
 
-
+public class TeamToOrganization: Object, ObjectKeyIdentifiable {
+    @Persisted(primaryKey: true) public var id: String = UUID().uuidString
+    @Persisted public var organizationId: String = "null"
+    @Persisted public var organizationName: String = "null"
+    @Persisted public var teamId: String = "null"
+    @Persisted public var teamName: String = "null"
+    @Persisted public var role: String = UserRole.temp.name
+    @Persisted public var auth: String = UserAuth.visitor.name
+    @Persisted public var status: String = ShareStatus.active.name
+}

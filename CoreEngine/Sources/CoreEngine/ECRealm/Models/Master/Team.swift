@@ -26,4 +26,6 @@ public class Team: Object, ObjectKeyIdentifiable {
     @Persisted public var officialWebsite: String?
     @Persisted public var socialMediaLinks: List<String> = List<String>()
     @Persisted public var isDeleted: Bool = false
+    
+    public let members = LinkingObjects(fromType: UserToTeam.self, property: "teamId")
 }

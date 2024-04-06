@@ -461,7 +461,7 @@ struct BoardEngine: View {
         newOrg.descriptionText = "Private Training Academy for the Selected."
         newOrg.founded = "2024"
         newOrg.location = "Birmingham, AL"
-        newOrg.members = 2
+        newOrg.memberCount = 2
         self.BEO.realmInstance.safeWrite { r in
             r.create(Organization.self, value: newOrg, update: .all)
         }

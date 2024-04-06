@@ -61,6 +61,7 @@ public class ActivityPlan: Object, ObjectKeyIdentifiable {
     @Persisted public var backgroundLineAlpha: Double = 1.0
     @Persisted public var backgroundView: String = "Sol"
     
+    public let managedViews = LinkingObjects(fromType: ManagedView.self, property: "activityId")
 }
 
 

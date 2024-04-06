@@ -41,7 +41,7 @@ struct OrganizationDetailsView: View {
         newOrg.type = type
         newOrg.location = location
         newOrg.contactInfo = contactInfo
-        newOrg.members = members
+        newOrg.memberCount = members
         newOrg.descriptionText = descriptionText
         realmInstance.safeWrite { r in
             r.create(Organization.self, value: newOrg)
@@ -55,7 +55,7 @@ struct OrganizationDetailsView: View {
                 org.type = type
                 org.location = location
                 org.contactInfo = contactInfo
-                org.members = members
+                org.memberCount = members
                 org.descriptionText = descriptionText
             }
         }

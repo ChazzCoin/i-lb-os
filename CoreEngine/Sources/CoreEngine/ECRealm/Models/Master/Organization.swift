@@ -19,7 +19,11 @@ public class Organization: Object, ObjectKeyIdentifiable {
     @Persisted public var descriptionText: String = ""
     @Persisted public var sports: List<String> = List<String>()
     @Persisted public var officialWebsite: String?
-    @Persisted public var members: Int = 0
+    @Persisted public var memberCount: Int = 0
     @Persisted public var socialMediaLinks: List<String> = List<String>()
     @Persisted public var isDeleted: Bool = false
+    
+    public let members = LinkingObjects(fromType: UserToOrganization.self, property: "organizationId")
+    public let teams = LinkingObjects(fromType: Team.self, property: "orgId")
+    public let players = LinkingObjects(fromType: PlayerRef.self, property: "orgId")
 }

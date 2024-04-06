@@ -59,8 +59,6 @@ struct enableManagedViewTool : ViewModifier {
     @State var viewId: String
     @State var activityId: String
     
-//    @EnvironmentObject var BEO: BoardEngineObject
-//    @State var MVS: SingleManagedViewService = SingleManagedViewService()
     @StateObject var MVO: ManagedViewObject = ManagedViewObject()
     
     func body(content: Content) -> some View {
@@ -104,7 +102,7 @@ struct enableManagedViewTool : ViewModifier {
                 let translation = drag.translation
                 MVO.position = CGPoint(x: MVO.originalPosition.x + translation.width,
                                        y: MVO.originalPosition.y + translation.height)
-                self.updateRealmPos(x: MVO.originalPosition.x + translation.width,
+                MVO.updateRealmPos(x: MVO.originalPosition.x + translation.width,
                                               y: MVO.originalPosition.y + translation.height)
 //                self.sendXY(width: translation.width, height: translation.height)
             }
@@ -117,7 +115,7 @@ struct enableManagedViewTool : ViewModifier {
                     x: MVO.originalPosition.x + translation.width,
                     y: MVO.originalPosition.y + translation.height
                 )
-                self.updateRealm()
+                self.MVO.updateRealm()
                 self.MVO.useOriginal = true
             }.simultaneously(with: TapGesture(count: 2)
                 .onEnded { _ in
@@ -132,90 +130,7 @@ struct enableManagedViewTool : ViewModifier {
         
     }
     
-    func updateRealm(x:Double?=nil, y:Double?=nil) {
-        if MVO.isDisabledChecker() || MVO.isDeletedChecker() {return}
-        DispatchQueue.global(qos: .background).async {
-            // Create a new Realm instance for the background thread
-            autoreleasepool {
-                do {
-                    let realm = try Realm()
-                    if let mv = realm.findByField(ManagedView.self, value: self.viewId) {
-                        try realm.write {
-                            // Modify the object
-                            mv.x = x ?? MVO.position.x
-                            mv.y = y ?? MVO.position.y
-                            mv.rotation = MVO.lifeRotation.degrees
-                            mv.toolType = MVO.lifeToolType
-                            mv.width = Int(MVO.lifeWidth)
-                            mv.height = Int(MVO.lifeHeight)
-                            mv.colorRed = MVO.lifeColorRed
-                            mv.colorGreen = MVO.lifeColorGreen
-                            mv.colorBlue = MVO.lifeColorBlue
-                            mv.colorAlpha = MVO.lifeColorAlpha
-                            mv.isLocked = MVO.lifeIsLocked
-                            mv.lastUserId = MVO.currentUserId
-                            self.MVO.updateFirebase(mv: mv)
-                            // save historical copy
-                            self.saveSnapshotToHistoryInRealm()
-                        }
-                    }
-                } catch {
-                    print("Realm error: \(error)")
-                }
-            }
-        }
-    }
-    
-    func saveSnapshotToHistoryInRealm() {
-        DispatchQueue.global(qos: .background).async {
-            autoreleasepool {
-                do {
-                    let history = ManagedViewAction()
-                    history.viewId = self.viewId
-                    history.boardId = self.activityId
-                    history.x = MVO.position.x
-                    history.y = MVO.position.y
-                    history.rotation = MVO.lifeRotation.degrees
-                    history.toolType = MVO.lifeToolType
-                    history.width = Int(MVO.lifeWidth)
-                    history.height = Int(MVO.lifeHeight)
-                    history.colorRed = MVO.lifeColorRed
-                    history.colorGreen = MVO.lifeColorGreen
-                    history.colorBlue = MVO.lifeColorBlue
-                    history.colorAlpha = MVO.lifeColorAlpha
-                    history.isLocked = MVO.lifeIsLocked
-                    history.lastUserId = MVO.currentUserId
-                    let realm = try Realm()
-                    realm.safeWrite { r in
-                        r.create(ManagedViewAction.self, value: history, update: .all)
-                    }
-                    
-                } catch {
-                    print("Realm error: \(error)")
-                }
-            }
-        }
-    }
     
     
-    func updateRealmPos(x:Double?=nil, y:Double?=nil) {
-        DispatchQueue.global(qos: .background).async {
-            autoreleasepool {
-                do {
-                    let realm = try Realm()
-                    if let mv = realm.findByField(ManagedView.self, value: self.viewId) {
-                        try realm.write {
-                            mv.x = x ?? MVO.position.x
-                            mv.y = y ?? MVO.position.y
-                            mv.lastUserId = MVO.currentUserId
-                        }
-                        self.MVO.updateFirebase(mv: mv)
-                    }
-                } catch {
-                    print("Realm error: \(error)")
-                }
-            }
-        }
-    }
     
 }

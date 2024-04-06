@@ -215,8 +215,8 @@ class ManagedViewObject: ObservableObject {
             }
         }
     }
-    //
     
+    //
     func loadFromRealm() {
         if isDisabledChecker() {return}
         if let umv = self.realmInstance.object(ofType: ManagedView.self, forPrimaryKey: self.lifeViewId) {
@@ -329,9 +329,84 @@ class ManagedViewObject: ObservableObject {
         
     }
     
+    // Update
+    func updateRealm(start: CGPoint? = nil, end: CGPoint? = nil, x:Double=0.0, y:Double=0.0) {
+        if self.isDisabledChecker() {return}
+        if self.isDeletedChecker() {return}
+        if let mv = self.realmInstance.findByField(ManagedView.self, value: self.lifeViewId) {
+            self.realmInstance.safeWrite { r in
+                
+                // Modify the object
+                mv.x = x
+                mv.y = y
+                
+                mv.startX = Double(start?.x ?? CGFloat(self.lifeStartX))
+                mv.startY = Double(start?.y ?? CGFloat(self.lifeStartY))
+                mv.endX = Double(end?.x ?? CGFloat(self.lifeEndX))
+                mv.endY = Double(end?.y ?? CGFloat(self.lifeEndY))
+                
+                if let lc = self.lifeColor.toRGBA() {
+                    mv.colorRed = lc.red
+                    mv.colorGreen = lc.green
+                    mv.colorBlue = lc.blue
+                    mv.colorAlpha = lc.alpha
+                }
+                mv.isLocked = self.isDragging ? true : self.lifeIsLocked
+                mv.toolType = self.lifeToolType
+                mv.width = Int(self.lifeWidth)
+                mv.height = Int(self.lifeHeight)
+                mv.rotation = self.lifeRotation.degrees
+                mv.lineDash = Int(self.lifeLineDash)
+                mv.lastUserId = self.currentUserId
+                mv.headIsEnabled = self.lifeHeadIsEnabled
+                self.updateFirebase(mv: mv)
+                self.saveSnapshotToHistoryInRealm()
+            }
+        }
+        
+    }
     
+    func updateRealmPos(x:Double?=nil, y:Double?=nil) {
+        DispatchQueue.global(qos: .background).async {
+            autoreleasepool {
+                do {
+                    let realm = try Realm()
+                    if let mv = realm.findByField(ManagedView.self, value: self.lifeViewId) {
+                        try realm.write {
+                            mv.x = x ?? self.position.x
+                            mv.y = y ?? self.position.y
+                            mv.lastUserId = self.currentUserId
+                        }
+                        self.updateFirebase(mv: mv)
+                    }
+                } catch {
+                    print("Realm error: \(error)")
+                }
+            }
+        }
+    }
+    func updateRealmPos(start: CGPoint? = nil, end: CGPoint? = nil) {
+        DispatchQueue.global(qos: .background).async {
+            autoreleasepool {
+                do {
+                    let realm = try Realm()
+                    if let mv = realm.findByField(ManagedView.self, value: self.lifeViewId) {
+                        try realm.write {
+                            mv.startX = Double(start?.x ?? CGFloat(self.lifeStartX))
+                            mv.startY = Double(start?.y ?? CGFloat(self.lifeStartY))
+                            mv.endX = Double(end?.x ?? CGFloat(self.lifeEndX))
+                            mv.endY = Double(end?.y ?? CGFloat(self.lifeEndY))
+                            mv.lastUserId = self.currentUserId
+                        }
+                        self.updateFirebase(mv: mv)
+                    }
+                } catch {
+                    print("Realm error: \(error)")
+                }
+            }
+        }
+    }
     // Firebase
-    
     func shouldDenyFirebaseWriteRequest() -> Bool {
         if self.isWriting {
             print("Denying MVS Request: Writing")
@@ -394,12 +469,53 @@ class ManagedViewObject: ObservableObject {
     func updateFirebase(mv: ManagedView?) {
         guard let mv = mv else { return }
         if mv.boardId == "SOL" { return }
-        // Check if the user is logged in
         if shouldDenyFirebaseWriteRequest() { return }
         self.isWriting = true
         reference.child(mv.boardId).child(mv.id).setValue(mv.toDict()) { (error: Error?, ref: DatabaseReference) in
             self.isWriting = false
             if let error = error { print("Error updating Firebase: \(error)") }
+        }
+    }
+    
+    // History
+    func saveSnapshotToHistoryInRealm() {
+        DispatchQueue.global(qos: .background).async {
+            autoreleasepool {
+                do {
+                    let history = ManagedViewAction()
+                    history.viewId = self.lifeViewId
+                    history.boardId = self.lifeActivityId
+                    history.x = self.position.x
+                    history.y = self.position.y
+                    
+                    history.startX = Double(self.lifeStartX)
+                    history.startY = Double(self.lifeStartY)
+                    history.endX = Double(self.lifeEndX)
+                    history.endY = Double(self.lifeEndY)
+                    
+                    history.rotation = self.lifeRotation.degrees
+                    history.toolType = self.lifeToolType
+                    history.width = Int(self.lifeWidth)
+                    history.height = Int(self.lifeWidth)
+                    
+                    history.lineDash = Int(self.lifeLineDash)
+                    if let lc = self.lifeColor.toRGBA() {
+                        history.colorRed = lc.red
+                        history.colorGreen = lc.green
+                        history.colorBlue = lc.blue
+                        history.colorAlpha = lc.alpha
+                    }
+                    history.isLocked = self.lifeIsLocked
+                    history.lastUserId = self.currentUserId
+                    let realm = try Realm()
+                    realm.safeWrite { r in
+                        r.create(ManagedViewAction.self, value: history, update: .all)
+                    }
+                    
+                } catch {
+                    print("Realm error: \(error)")
+                }
+            }
         }
     }
     
