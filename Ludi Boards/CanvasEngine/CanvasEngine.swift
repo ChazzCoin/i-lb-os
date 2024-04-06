@@ -15,7 +15,6 @@ struct CanvasEngine: View {
     
     @ObservedObject var BEO = BoardEngineObject()
     @ObservedObject var DO = OrientationInfo()
-//    @Environment(\.interfaceOrientation) var io
     
     @State var cancellables = Set<AnyCancellable>()
     @State var showMenuBar: Bool = true

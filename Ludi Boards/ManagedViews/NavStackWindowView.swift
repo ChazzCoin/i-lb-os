@@ -10,39 +10,7 @@ import SwiftUI
 import Combine
 import CoreEngine
 
-struct BouncingValue {
-    var value: Double
-    let min: Double
-    let max: Double
-    private var incrementing = true
-    private let step: Double
 
-    init(initialValue: Double, min: Double, max: Double, step: Double = 0.1) {
-        self.value = initialValue
-        self.min = min
-        self.max = max
-        self.step = step
-    }
-
-    mutating func update() -> Double {
-        if incrementing {
-            if value < max {
-                value += step
-            } else {
-                incrementing = false
-                value -= step
-            }
-        } else {
-            if value > min {
-                value -= step
-            } else {
-                incrementing = true
-                value += step
-            }
-        }
-        return value
-    }
-}
 
 class NavStackWindowObservable : ObservableObject {
     

@@ -56,7 +56,6 @@
 		FB5094262B058215000AEA96 /* LazyRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5094252B058215000AEA96 /* LazyRow.swift */; };
 		FB5094282B0584CA000AEA96 /* NavStackWindowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5094272B0584CA000AEA96 /* NavStackWindowView.swift */; };
 		FB50942A2B05856D000AEA96 /* LineToolView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5094292B05856D000AEA96 /* LineToolView.swift */; };
-		FB581BED2B1F8A6800F5C90F /* KeyboardListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB581BEC2B1F8A6800F5C90F /* KeyboardListener.swift */; };
 		FB58A1B42B17D1420024B9A2 /* MvToolBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58A1B32B17D1420024B9A2 /* MvToolBar.swift */; };
 		FB58A1B62B1804C80024B9A2 /* FlashingLight.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58A1B52B1804C80024B9A2 /* FlashingLight.swift */; };
 		FB58E8802B02B26C00FD9E2E /* DragAndDrop.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58E87F2B02B26C00FD9E2E /* DragAndDrop.swift */; };
@@ -68,7 +67,6 @@
 		FB829F0C2B36A83300FAC6E0 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB829F0B2B36A83300FAC6E0 /* ContentView.swift */; };
 		FB829F0E2B36A83400FAC6E0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FB829F0D2B36A83400FAC6E0 /* Assets.xcassets */; };
 		FB829F112B36A83400FAC6E0 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FB829F102B36A83400FAC6E0 /* Preview Assets.xcassets */; };
-		FB829F172B3D4DF500FAC6E0 /* DispatchQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB829F162B3D4DF500FAC6E0 /* DispatchQueue.swift */; };
 		FB829F192B3D540100FAC6E0 /* ManagedWindowObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB829F182B3D540100FAC6E0 /* ManagedWindowObjects.swift */; };
 		FB87BE092B734425003B880D /* Michael.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB87BE082B734425003B880D /* Michael.swift */; };
 		FB8819D12B46436300C16198 /* CanvasEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB8819D02B46436300C16198 /* CanvasEngine.swift */; };
@@ -108,7 +106,6 @@
 		FB9F1DD42B15307E00FD9078 /* UserSignUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9F1DD32B15307E00FD9078 /* UserSignUp.swift */; };
 		FB9F1DD62B1532AB00FD9078 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9F1DD52B1532AB00FD9078 /* ImagePicker.swift */; };
 		FB9F1DD92B1533C400FD9078 /* FirebaseLogin.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9F1DD82B1533C400FD9078 /* FirebaseLogin.swift */; };
-		FB9F1E402B159F6A00FD9078 /* OrientationInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9F1E3F2B159F6A00FD9078 /* OrientationInfo.swift */; };
 		FBA20A2F2B166FCE00045D1C /* MVSettingsView_DEPRECATED.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBA20A2E2B166FCE00045D1C /* MVSettingsView_DEPRECATED.swift */; };
 		FBABDAC52B20376F00321A00 /* ConfirmationPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBABDAC42B20376F00321A00 /* ConfirmationPopup.swift */; };
 		FBABDAC72B20456700321A00 /* ToolBarSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBABDAC62B20456700321A00 /* ToolBarSettings.swift */; };
@@ -240,7 +237,6 @@
 		FB5094252B058215000AEA96 /* LazyRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LazyRow.swift; sourceTree = "<group>"; };
 		FB5094272B0584CA000AEA96 /* NavStackWindowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavStackWindowView.swift; sourceTree = "<group>"; };
 		FB5094292B05856D000AEA96 /* LineToolView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineToolView.swift; sourceTree = "<group>"; };
-		FB581BEC2B1F8A6800F5C90F /* KeyboardListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardListener.swift; sourceTree = "<group>"; };
 		FB58A1B32B17D1420024B9A2 /* MvToolBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MvToolBar.swift; sourceTree = "<group>"; };
 		FB58A1B52B1804C80024B9A2 /* FlashingLight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlashingLight.swift; sourceTree = "<group>"; };
 		FB58E8772B01F40300FD9E2E /* FireCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireCore.swift; sourceTree = "<group>"; };
@@ -254,7 +250,6 @@
 		FB829F0B2B36A83300FAC6E0 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		FB829F0D2B36A83400FAC6E0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FB829F102B36A83400FAC6E0 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		FB829F162B3D4DF500FAC6E0 /* DispatchQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatchQueue.swift; sourceTree = "<group>"; };
 		FB829F182B3D540100FAC6E0 /* ManagedWindowObjects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedWindowObjects.swift; sourceTree = "<group>"; };
 		FB87BE082B734425003B880D /* Michael.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Michael.swift; sourceTree = "<group>"; };
 		FB8819D02B46436300C16198 /* CanvasEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasEngine.swift; sourceTree = "<group>"; };
@@ -294,7 +289,6 @@
 		FB9F1DD32B15307E00FD9078 /* UserSignUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSignUp.swift; sourceTree = "<group>"; };
 		FB9F1DD52B1532AB00FD9078 /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		FB9F1DD82B1533C400FD9078 /* FirebaseLogin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseLogin.swift; sourceTree = "<group>"; };
-		FB9F1E3F2B159F6A00FD9078 /* OrientationInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrientationInfo.swift; sourceTree = "<group>"; };
 		FBA20A2E2B166FCE00045D1C /* MVSettingsView_DEPRECATED.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MVSettingsView_DEPRECATED.swift; sourceTree = "<group>"; };
 		FBABDAC42B20376F00321A00 /* ConfirmationPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmationPopup.swift; sourceTree = "<group>"; };
 		FBABDAC62B20456700321A00 /* ToolBarSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolBarSettings.swift; sourceTree = "<group>"; };
@@ -401,7 +395,6 @@
 				FB15DD2E2B0745C900A21290 /* MenuBar */,
 				FBD9AFB92AFF03D7005F8620 /* CanvasEngine.swift */,
 				FB15DD292B07443600A21290 /* BoardEngineView.swift */,
-				FB9F1E3F2B159F6A00FD9078 /* OrientationInfo.swift */,
 				FBBDD0232B6F6D8B0009844B /* CanvasExtensions.swift */,
 				FBF515B82BBD03FF0066EAA9 /* BoardEngineObject.swift */,
 			);
@@ -593,7 +586,6 @@
 			isa = PBXGroup;
 			children = (
 				FB9F1DCF2B1528FC00FD9078 /* Extensions.swift */,
-				FB829F162B3D4DF500FAC6E0 /* DispatchQueue.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -753,7 +745,6 @@
 				FB3E02B82B0C724A00D8558C /* BoardBgProvider.swift */,
 				FB10AE082B0DD76C00295F4B /* EmojiProvider.swift */,
 				FBE2C6292B1C2B67004C0116 /* SharedPrefs.swift */,
-				FB581BEC2B1F8A6800F5C90F /* KeyboardListener.swift */,
 				FBDE4F5A2B4D1038007FE880 /* InternetProvider.swift */,
 				FB2AA1042B74305E00BD631C /* IconProvider.swift */,
 			);
@@ -1065,7 +1056,6 @@
 				FB9EB6E32BB695FD00FDD5DE /* ActivityCategoryProvider.swift in Sources */,
 				FBE385502B4B32950090901C /* FriendsListView.swift in Sources */,
 				FB9F1DD92B1533C400FD9078 /* FirebaseLogin.swift in Sources */,
-				FB9F1E402B159F6A00FD9078 /* OrientationInfo.swift in Sources */,
 				FB18F1692B68718000D89F8D /* SearchableSessionListView.swift in Sources */,
 				FBDF0DC52B21811000FADE44 /* SharedSessionsView.swift in Sources */,
 				FBAE62AD2B295A8100E008D5 /* ManagedPopUpView.swift in Sources */,
@@ -1130,12 +1120,10 @@
 				FB3E02B32B0C6B5100D8558C /* SessionPlanView.swift in Sources */,
 				FBABDAC92B20469900321A00 /* ManagedViewManager.swift in Sources */,
 				FB15DD272B07440700A21290 /* ViewWrapper.swift in Sources */,
-				FB581BED2B1F8A6800F5C90F /* KeyboardListener.swift in Sources */,
 				FBF3902E2B2D78CF00C0508A /* TipProvider.swift in Sources */,
 				FB2AA1052B74305E00BD631C /* IconProvider.swift in Sources */,
 				FBAE62AF2B2A3FD200E008D5 /* CurvedLineToolView.swift in Sources */,
 				FBD9AFBA2AFF03D7005F8620 /* CanvasEngine.swift in Sources */,
-				FB829F172B3D4DF500FAC6E0 /* DispatchQueue.swift in Sources */,
 				FB5094262B058215000AEA96 /* LazyRow.swift in Sources */,
 				FB87BE092B734425003B880D /* Michael.swift in Sources */,
 				FBBDD0242B6F6D8B0009844B /* CanvasExtensions.swift in Sources */,

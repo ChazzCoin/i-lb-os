@@ -9,17 +9,18 @@ import Foundation
 import SwiftUI
 import Combine
 
-extension View {
+
+public extension View {
     func keyboardListener(onAppear: @escaping (CGFloat) -> Void, onDisappear: @escaping (CGFloat) -> Void) -> some View {
         self.modifier(KeyboardListenerModifier(onKeyboardAppear: onAppear, onKeyboardDisappear: onDisappear))
     }
 }
 
-class KeyboardResponder: ObservableObject {
-    @Published var isKeyboardVisible: Bool = false
-    private var cancellables: Set<AnyCancellable> = []
+public class KeyboardResponder: ObservableObject {
+    @Published public var isKeyboardVisible: Bool = false
+    public var cancellables: Set<AnyCancellable> = []
 
-    init() {
+    public init() {
         NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)
             .sink { _ in self.isKeyboardVisible = true }
             .store(in: &cancellables)
@@ -29,7 +30,7 @@ class KeyboardResponder: ObservableObject {
             .store(in: &cancellables)
     }
     
-    func safeHideKeyboard() {
+    public func safeHideKeyboard() {
         if self.isKeyboardVisible {
             hideKeyboard()
         }
@@ -38,7 +39,7 @@ class KeyboardResponder: ObservableObject {
 
 
 
-struct KeyboardListenerModifier: ViewModifier {
+public struct KeyboardListenerModifier: ViewModifier {
     @State private var keyboardHeight: CGFloat = 0
     @State var onKeyboardAppear: (CGFloat) -> Void
     @State var onKeyboardDisappear: (CGFloat) -> Void
@@ -46,7 +47,7 @@ struct KeyboardListenerModifier: ViewModifier {
     @State private var keyboardAppear: AnyCancellable?
     @State private var keyboardDisappear: AnyCancellable?
 
-    func body(content: Content) -> some View {
+    public func body(content: Content) -> some View {
         content
 //            .padding(.bottom, keyboardHeight)
 //            .offset(y: -keyboardHeight/2)
@@ -58,7 +59,7 @@ struct KeyboardListenerModifier: ViewModifier {
             }
     }
 
-    private func registerForKeyboardNotifications() {
+    public func registerForKeyboardNotifications() {
         self.keyboardAppear = NotificationCenter.default.publisher(for: UIResponder.keyboardDidShowNotification)
             .compactMap { notification in
                 notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect
@@ -79,7 +80,7 @@ struct KeyboardListenerModifier: ViewModifier {
             }
     }
 
-    private func unregisterFromKeyboardNotifications() {
+    public func unregisterFromKeyboardNotifications() {
         keyboardAppear?.cancel()
         keyboardDisappear?.cancel()
     }
