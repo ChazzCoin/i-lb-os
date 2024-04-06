@@ -7,7 +7,7 @@
 
 import Foundation
 import Combine
-
+import CoreEngine
 
 func postNotification(message: String, icon: String="bell") {
     print("Posting Notification: \(message)")

@@ -9,10 +9,39 @@ import Foundation
 import SwiftUI
 import Combine
 import RealmSwift
-import CoreEngine
 import FirebaseDatabase
 
-class ManagedViewObject: ObservableObject {
+public func rotationAngleOfLine(from startPoint: CGPoint, to endPoint: CGPoint) -> Angle {
+    let deltaY = endPoint.y - startPoint.y
+    let deltaX = endPoint.x - startPoint.x
+
+    let angleInRadians = atan2(deltaY, deltaX)
+    return Angle(radians: Double(angleInRadians))
+}
+
+public func getCenterOfLine(start: CGPoint, end: CGPoint) -> CGPoint {
+    let midX = (start.x + end.x) / 2
+    let midY = (start.y + end.y) / 2
+    return CGPoint(x: midX, y: midY)
+}
+
+public func getWidthAndHeightOfLine(start: CGPoint, end: CGPoint) -> (width: CGFloat, height: CGFloat) {
+    let width = abs(end.x - start.x)
+    let height = abs(end.y - start.y)
+    return (width, height)
+}
+
+public func boundingRect(start: CGPoint, end: CGPoint) -> CGRect {
+    let minX = min(start.x, end.x)
+    let minY = min(start.y, end.y)
+    let width = abs(end.x - start.x)
+    let height = abs(end.y - start.y)
+    return CGRect(x: minX, y: minY, width: width, height: height)
+}
+
+public class ManagedViewObject: ObservableObject {
+    
+    public init() {}
     
     @Published public var lifeViewId: String = ""
     @Published public var lifeActivityId: String = ""
@@ -54,7 +83,7 @@ class ManagedViewObject: ObservableObject {
     @Published public var lifeLineDash = 0.0
     @Published public var lifeRotation: Angle = Angle.zero
     
-    @Published public var lifeBorderColor = Color.AIMYellow
+    @Published public var lifeBorderColor = Color.blue
     
     @Published public var popUpIsVisible = false
     @Published public var anchorsAreVisible = false
@@ -77,18 +106,18 @@ class ManagedViewObject: ObservableObject {
     @Published public var coordinateStack: [[String:CGPoint]] = []
     
     // Firebase
-    @Published var reference: DatabaseReference = Database
+    @Published public var reference: DatabaseReference = Database
         .database()
         .reference()
         .child(DatabasePaths.managedViews.rawValue)
-    @Published var observerHandle: DatabaseHandle?
-    @Published var isObserving = false
-    @Published var isWriting: Bool = false
-    @Published var nofityToken: NotificationToken? = nil
-    @Published var firebaseNotificationToken: NotificationToken? = nil
+    @Published public var observerHandle: DatabaseHandle?
+    @Published public var isObserving = false
+    @Published public var isWriting: Bool = false
+    @Published public var nofityToken: NotificationToken? = nil
+    @Published public var firebaseNotificationToken: NotificationToken? = nil
     
     @MainActor
-    func initializeWithViewId(viewId: String) {
+    public func initializeWithViewId(viewId: String) {
         main {
             self.lifeViewId = viewId
             self.loadFromRealm()
@@ -100,7 +129,7 @@ class ManagedViewObject: ObservableObject {
     }
     
     @MainActor
-    func receiveOnSessionChange() {
+    public func receiveOnSessionChange() {
         CodiChannel.SESSION_ON_ID_CHANGE.receive(on: RunLoop.main) { sc in
             let temp = sc as! ActivityChange
             if self.lifeActivityId == temp.activityId {
@@ -111,7 +140,7 @@ class ManagedViewObject: ObservableObject {
         }.store(in: &cancellables)
     }
     
-    func toggleMenuWindow() {
+    public func toggleMenuWindow() {
         if popUpIsVisible {
             self.toolBarCurrentViewId = self.lifeViewId
             self.toolSettingsIsShowing = true
@@ -121,14 +150,14 @@ class ManagedViewObject: ObservableObject {
     }
     
     // Functions
-    func isDisabledChecker() -> Bool { return isDisabled }
-    func isDeletedChecker() -> Bool { return isDeleted }
+    public func isDisabledChecker() -> Bool { return isDisabled }
+    public func isDeletedChecker() -> Bool { return isDeleted }
     
-    private var lineLength: CGFloat {
+    public var lineLength: CGFloat {
         sqrt(pow(lifeEndX - lifeStartX, 2) + pow(lifeEndY - lifeStartY, 2))-100
     }
     
-    func loadRotationOfLine() {
+    public func loadRotationOfLine() {
         let lineStart = CGPoint(x: lifeStartX, y: lifeStartY)
         let lineEnd = CGPoint(x: lifeEndX, y: lifeEndY)
         let temp = rotationAngleOfLine(from: lineStart, to: lineEnd)
@@ -137,44 +166,44 @@ class ManagedViewObject: ObservableObject {
         print(lifeRotation)
     }
     
-    func loadCenterPoint() {
+    public func loadCenterPoint() {
         let lineStart = CGPoint(x: lifeStartX, y: lifeStartY)
         let lineEnd = CGPoint(x: lifeEndX, y: lifeEndY)
         lifeCenterPoint = getCenterOfLine(start: lineStart, end: lineEnd)
         
     }
-    func loadWidthAndHeight() {
+    public func loadWidthAndHeight() {
         let lineStart = CGPoint(x: lifeStartX, y: lifeStartY)
         let lineEnd = CGPoint(x: lifeEndX, y: lifeEndY)
         let (lineWidth, lineHeight) = getWidthAndHeightOfLine(start: lineStart, end: lineEnd)
         lifeWidthTouch = Double(lineWidth)
         lifeHeightTouch = Double(lineHeight)
     }
-    func lengthOfLine(start: CGPoint, end: CGPoint) -> CGFloat {
+    public func lengthOfLine(start: CGPoint, end: CGPoint) -> CGFloat {
         let deltaX = end.x - start.x
         let deltaY = end.y - start.y
         return sqrt(deltaX * deltaX + deltaY * deltaY)
     }
     
-    func boundedLength(start: CGPoint, end: CGPoint) -> CGFloat {
+    public func boundedLength(start: CGPoint, end: CGPoint) -> CGFloat {
         let length = lengthOfLine(start: start, end: end)
         return length.bounded(byMin: 1.0, andMax: length - 400.0)
     }
     
-    func calculateAngle(startX: CGFloat, startY: CGFloat, endX: CGFloat, endY: CGFloat) -> Double {
+    public func calculateAngle(startX: CGFloat, startY: CGFloat, endX: CGFloat, endY: CGFloat) -> Double {
         let deltaX = endX - startX
         let deltaY = endY - startY
         let angle = atan2(deltaY, deltaX) * 180 / .pi
         return Double(angle) + 90
     }
     
-    func minSizeCheck() {
+    public func minSizeCheck() {
         if lifeWidth < 50 { lifeWidth = 100 }
         if lifeHeight < 50 { lifeHeight = 100 }
     }
     
     //
-    func animateToNextCoordinateBasic() {
+    public func animateToNextCoordinateBasic() {
         guard !coordinateStackBasic.isEmpty else { return }
         if isDragging {
             coordinateStackBasic.removeAll()
@@ -189,7 +218,7 @@ class ManagedViewObject: ObservableObject {
             }
         }
     }
-    func animateToNextCoordinate() {
+    public func animateToNextCoordinate() {
         print("!!!COORDINATES COUNT: \(coordinateStack.count)")
         
         guard !coordinateStack.isEmpty || self.isDragging else {
@@ -217,7 +246,7 @@ class ManagedViewObject: ObservableObject {
     }
     
     //
-    func loadFromRealm() {
+    public func loadFromRealm() {
         if isDisabledChecker() {return}
         if let umv = self.realmInstance.object(ofType: ManagedView.self, forPrimaryKey: self.lifeViewId) {
             // set attributes
@@ -260,7 +289,7 @@ class ManagedViewObject: ObservableObject {
     }
     
     //
-    func observeFromRealm() {
+    public func observeFromRealm() {
         if isDisabledChecker() {return}
         
         self.observeRealmManagedView() { temp in
@@ -330,7 +359,7 @@ class ManagedViewObject: ObservableObject {
     }
     
     // Update
-    func updateRealm(start: CGPoint? = nil, end: CGPoint? = nil, x:Double=0.0, y:Double=0.0) {
+    public func updateRealm(start: CGPoint? = nil, end: CGPoint? = nil, x:Double=0.0, y:Double=0.0) {
         if self.isDisabledChecker() {return}
         if self.isDeletedChecker() {return}
         if let mv = self.realmInstance.findByField(ManagedView.self, value: self.lifeViewId) {
@@ -366,7 +395,7 @@ class ManagedViewObject: ObservableObject {
         
     }
     
-    func updateRealmPos(x:Double?=nil, y:Double?=nil) {
+    public func updateRealmPos(x:Double?=nil, y:Double?=nil) {
         DispatchQueue.global(qos: .background).async {
             autoreleasepool {
                 do {
@@ -385,7 +414,7 @@ class ManagedViewObject: ObservableObject {
             }
         }
     }
-    func updateRealmPos(start: CGPoint? = nil, end: CGPoint? = nil) {
+    public func updateRealmPos(start: CGPoint? = nil, end: CGPoint? = nil) {
         DispatchQueue.global(qos: .background).async {
             autoreleasepool {
                 do {
@@ -407,7 +436,7 @@ class ManagedViewObject: ObservableObject {
         }
     }
     // Firebase
-    func shouldDenyFirebaseWriteRequest() -> Bool {
+    public func shouldDenyFirebaseWriteRequest() -> Bool {
         if self.isWriting {
             print("Denying MVS Request: Writing")
             return true
@@ -420,10 +449,10 @@ class ManagedViewObject: ObservableObject {
         return false
     }
     
-    func startFirebaseObserver() {
+    public func startFirebaseObserver() {
         
         if isObserving || self.lifeActivityId.isEmpty || self.lifeViewId.isEmpty {return}
-        if !self.realmInstance.isLiveSessionPlan(activityId: self.lifeActivityId) { return }
+//        if !self.realmInstance.isLiveSessionPlan(activityId: self.lifeActivityId) { return }
         
         observerHandle = reference.child(self.lifeActivityId).child(self.lifeViewId).observe(.value, with: { snapshot in
             let _ = snapshot.toLudiObject(ManagedView.self, realm: self.realmInstance)
@@ -440,7 +469,7 @@ class ManagedViewObject: ObservableObject {
         isObserving = true
     }
     
-    func observeRealmManagedView(onDeleted: @escaping () -> Void={}, onChange: @escaping (ManagedView) -> Void) {
+    public func observeRealmManagedView(onDeleted: @escaping () -> Void={}, onChange: @escaping (ManagedView) -> Void) {
         if let mv = self.realmInstance.object(ofType: ManagedView.self, forPrimaryKey: self.lifeViewId) {
             self.realmInstance.executeWithRetry {
                 self.managedViewNotificationToken = mv.observe { change in
@@ -466,7 +495,7 @@ class ManagedViewObject: ObservableObject {
 
     }
     
-    func updateFirebase(mv: ManagedView?) {
+    public func updateFirebase(mv: ManagedView?) {
         guard let mv = mv else { return }
         if mv.boardId == "SOL" { return }
         if shouldDenyFirebaseWriteRequest() { return }
@@ -478,7 +507,7 @@ class ManagedViewObject: ObservableObject {
     }
     
     // History
-    func saveSnapshotToHistoryInRealm() {
+    public func saveSnapshotToHistoryInRealm() {
         DispatchQueue.global(qos: .background).async {
             autoreleasepool {
                 do {

@@ -9,24 +9,24 @@ import Foundation
 import Combine
 import SwiftUI
 
-class NotificationController {
-    var message: String = ""
-    var icon: String = "door_open"
+public class NotificationController {
+    public var message: String = ""
+    public var icon: String = "door_open"
 
-    init(message: String, icon: String) {
+    public init(message: String, icon: String) {
         self.message = message
         self.icon = icon
     }
 }
 
-class WindowController {
-    var windowId: String = ""
-    var stateAction: String = "open" //close
-    var viewId: String = ""
-    var x: CGFloat? = nil
-    var y: CGFloat? = nil
+public class WindowController {
+    public var windowId: String = ""
+    public var stateAction: String = "open" //close
+    public var viewId: String = ""
+    public var x: CGFloat? = nil
+    public var y: CGFloat? = nil
     
-    init(windowId: String, stateAction: String, viewId: String="", x: CGFloat?=nil, y: CGFloat?=nil) {
+    public init(windowId: String, stateAction: String, viewId: String="", x: CGFloat?=nil, y: CGFloat?=nil) {
         self.windowId = windowId
         self.stateAction = stateAction
         self.viewId = viewId
@@ -35,22 +35,22 @@ class WindowController {
     }
 }
 
-class ViewAtts {
-    var viewId: String = ""
-    var size: Double? = nil
-    var rotation: Double? = nil
-    var color: Color? = nil
-    var stroke: Double? = nil
-    var position: CGPoint? = nil
-    var headIsEnabled: Bool? = nil
-    var lineDash: CGFloat? = nil
-    var toolType: String? = nil
-    var level: Int = 0
-    var isLocked: Bool? = nil
-    var isDeleted: Bool = false
-    var stateAction: String = "open" //close
+public class ViewAtts {
+    public var viewId: String = ""
+    public var size: Double? = nil
+    public var rotation: Double? = nil
+    public var color: Color? = nil
+    public var stroke: Double? = nil
+    public var position: CGPoint? = nil
+    public var headIsEnabled: Bool? = nil
+    public var lineDash: CGFloat? = nil
+    public var toolType: String? = nil
+    public var level: Int = 0
+    public var isLocked: Bool? = nil
+    public var isDeleted: Bool = false
+    public var stateAction: String = "open" //close
     
-    init(
+    public init(
         viewId: String,
         size: Double? = nil,
         rotation: Double? = nil,
@@ -81,43 +81,43 @@ class ViewAtts {
     }
 }
 
-class ViewMenu {
-    var viewId: String = ""
-    var state: String = "close" // "open"
+public class ViewMenu {
+    public var viewId: String = ""
+    public var state: String = "close" // "open"
     
-    init(viewId: String, state: String) {
+    public init(viewId: String, state: String) {
         self.viewId = viewId
         self.state = state
     }
 }
 
-class ActivityChange {
-    var activityId: String? = nil
-    init(activityId: String) {
+public class ActivityChange {
+    public var activityId: String? = nil
+    public init(activityId: String) {
         self.activityId = activityId
     }
 }
 
-class ViewFollowing {
-    var viewId: String = ""
-    var x: Double = 0.0
-    var y: Double = 0.0
-    var hasDropped = false
+public class ViewFollowing {
+    public var viewId: String = ""
+    public var x: Double = 0.0
+    public var y: Double = 0.0
+    public var hasDropped = false
     
-    init(viewId: String, x:Double=0.0, y:Double=0.0, hasDropped:Bool=false) {
+    public init(viewId: String, x:Double=0.0, y:Double=0.0, hasDropped:Bool=false) {
         self.viewId = viewId
         self.x = x
         self.y = y
         self.hasDropped = true
     }
     
-    func getPoint() -> CGPoint {
+    public func getPoint() -> CGPoint {
         return CGPoint(x: self.x, y: self.y)
     }
 }
 
 //@State var cancellables = Set<AnyCancellable>()
-enum CodiChannel {
+public enum CodiChannel {
     case general
     case central
     case message
@@ -143,7 +143,7 @@ enum CodiChannel {
     
     // ... (other cases)
 
-    private var subject: PassthroughSubject<Any, Never> {
+    public var subject: PassthroughSubject<Any, Never> {
         switch self {
             case .general:
                 return GeneralChannel.shared.subject
@@ -192,100 +192,100 @@ enum CodiChannel {
         }
     }
 
-    func send(value: Any) { subject.send(value) }
+    public func send(value: Any) { subject.send(value) }
 
-    func receive<S: Scheduler>(on scheduler: S, callback: @escaping (Any) -> Void) -> AnyCancellable {
+    public func receive<S: Scheduler>(on scheduler: S, callback: @escaping (Any) -> Void) -> AnyCancellable {
         subject.receive(on: scheduler).sink(receiveValue: callback)
     }
 }
 
 // Example of a channel
-class GeneralChannel {
+public class GeneralChannel {
     static let shared = GeneralChannel()
     let subject = PassthroughSubject<Any, Never>()
 }
-class CentralChannel {
+public class CentralChannel {
     static let shared = CentralChannel()
     let subject = PassthroughSubject<Any, Never>()
 }
-class MessageChannel {
+public class MessageChannel {
     static let shared = MessageChannel()
     let subject = PassthroughSubject<Any, Never>()
 }
-class BroadcastChannel {
+public class BroadcastChannel {
     static let shared = BroadcastChannel()
     let subject = PassthroughSubject<Any, Never>()
 }
-class SessionOnIdChangeChannel {
+public class SessionOnIdChangeChannel {
     static let shared = SessionOnIdChangeChannel()
     let subject = PassthroughSubject<Any, Never>()
 }
-class BoardOnIdChangeChannel {
+public class BoardOnIdChangeChannel {
     static let shared = BoardOnIdChangeChannel()
     let subject = PassthroughSubject<Any, Never>()
 }
-class MenuTogglerChangeChannel {
+public class MenuTogglerChangeChannel {
     static let shared = MenuTogglerChangeChannel()
     let subject = PassthroughSubject<Any, Never>()
 }
-class MenuWindowControllerChangeChannel {
+public class MenuWindowControllerChangeChannel {
     static let shared = MenuWindowControllerChangeChannel()
     let subject = PassthroughSubject<Any, Never>()
 }
-class MenuWindowTogglerChangeChannel {
+public class MenuWindowTogglerChangeChannel {
     static let shared = MenuWindowTogglerChangeChannel()
     let subject = PassthroughSubject<Any, Never>()
 }
-class ToolOnCreateChannel {
+public class ToolOnCreateChannel {
     static let shared = ToolOnCreateChannel()
     let subject = PassthroughSubject<Any, Never>()
 }
-class ToolOnDeleteChannel {
+public class ToolOnDeleteChannel {
     static let shared = ToolOnDeleteChannel()
     let subject = PassthroughSubject<Any, Never>()
 }
-class ToolOnFollowChannel {
+public class ToolOnFollowChannel {
     static let shared = ToolOnFollowChannel()
     let subject = PassthroughSubject<Any, Never>()
 }
-class ToolSubscriptionChannel {
+public class ToolSubscriptionChannel {
     static let shared = ToolOnDeleteChannel()
     let subject = PassthroughSubject<Any, Never>()
 }
-class ToolOnMenuReturnChannel {
+public class ToolOnMenuReturnChannel {
     static let shared = ToolOnDeleteChannel()
     let subject = PassthroughSubject<Any, Never>()
 }
-class ToolAttributesChannel {
+public class ToolAttributesChannel {
     static let shared = ToolOnDeleteChannel()
     let subject = PassthroughSubject<Any, Never>()
 }
-class RealmOnChangeChannel {
+public class RealmOnChangeChannel {
     static let shared = RealmOnChangeChannel()
     let subject = PassthroughSubject<Any, Never>()
 }
-class RealmOnDeleteChannel {
+public class RealmOnDeleteChannel {
     static let shared = RealmOnDeleteChannel()
     let subject = PassthroughSubject<Any, Never>()
 }
-class EmojiOnCreateChannel {
+public class EmojiOnCreateChannel {
     static let shared = EmojiOnCreateChannel()
     let subject = PassthroughSubject<Any, Never>()
 }
-class OnLogInOutChannel {
+public class OnLogInOutChannel {
     static let shared = OnLogInOutChannel()
     let subject = PassthroughSubject<Any, Never>()
 }
-class OnNotificationChannel {
+public class OnNotificationChannel {
     static let shared = OnNotificationChannel()
     let subject = PassthroughSubject<Any, Never>()
 }
 
-class MenuSettingsToggleChannel {
+public class MenuSettingsToggleChannel {
     static let shared = MenuSettingsToggleChannel()
     let subject = PassthroughSubject<Any, Never>()
 }
-class ToolSettingsToggleChannel {
+public class ToolSettingsToggleChannel {
     static let shared = ToolSettingsToggleChannel()
     let subject = PassthroughSubject<Any, Never>()
 }

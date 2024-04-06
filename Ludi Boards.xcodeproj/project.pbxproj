@@ -60,7 +60,6 @@
 		FB58A1B62B1804C80024B9A2 /* FlashingLight.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58A1B52B1804C80024B9A2 /* FlashingLight.swift */; };
 		FB58E8802B02B26C00FD9E2E /* DragAndDrop.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58E87F2B02B26C00FD9E2E /* DragAndDrop.swift */; };
 		FB58E8822B030F1D00FD9E2E /* RealmFind.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58E8812B030F1D00FD9E2E /* RealmFind.swift */; };
-		FB5CCC892BC0F28100DEB076 /* ManagedViewObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5CCC882BC0F28100DEB076 /* ManagedViewObject.swift */; };
 		FB65D2C92B7D5E2E00564C37 /* SessionProviders.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB65D2C82B7D5E2E00564C37 /* SessionProviders.swift */; };
 		FB65D2CB2B7DC16300564C37 /* SolPickers.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB65D2CA2B7DC16300564C37 /* SolPickers.swift */; };
 		FB65D2CD2B7DD9AF00564C37 /* SolSwitches.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB65D2CC2B7DD9AF00564C37 /* SolSwitches.swift */; };
@@ -134,7 +133,6 @@
 		FBD9AFB82AFF0253005F8620 /* GridLines.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFB72AFF0253005F8620 /* GridLines.swift */; };
 		FBD9AFBA2AFF03D7005F8620 /* CanvasEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFB92AFF03D7005F8620 /* CanvasEngine.swift */; };
 		FBD9AFD22B008CAB005F8620 /* MenuBarProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFD12B008CAB005F8620 /* MenuBarProvider.swift */; };
-		FBD9AFD52B008F6F005F8620 /* Channels.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFD42B008F6F005F8620 /* Channels.swift */; };
 		FBD9AFD92B01CB91005F8620 /* SoccerToolProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFD82B01CB91005F8620 /* SoccerToolProvider.swift */; };
 		FBDE4F572B4CF883007FE880 /* LogoutObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDE4F562B4CF883007FE880 /* LogoutObserver.swift */; };
 		FBDE4F592B4D0C12007FE880 /* SessionPlanService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDE4F582B4D0C12007FE880 /* SessionPlanService.swift */; };
@@ -243,7 +241,6 @@
 		FB58E8772B01F40300FD9E2E /* FireCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireCore.swift; sourceTree = "<group>"; };
 		FB58E87F2B02B26C00FD9E2E /* DragAndDrop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragAndDrop.swift; sourceTree = "<group>"; };
 		FB58E8812B030F1D00FD9E2E /* RealmFind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmFind.swift; sourceTree = "<group>"; };
-		FB5CCC882BC0F28100DEB076 /* ManagedViewObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedViewObject.swift; sourceTree = "<group>"; };
 		FB65D2C82B7D5E2E00564C37 /* SessionProviders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionProviders.swift; sourceTree = "<group>"; };
 		FB65D2CA2B7DC16300564C37 /* SolPickers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolPickers.swift; sourceTree = "<group>"; };
 		FB65D2CC2B7DD9AF00564C37 /* SolSwitches.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolSwitches.swift; sourceTree = "<group>"; };
@@ -319,7 +316,6 @@
 		FBD9AFB72AFF0253005F8620 /* GridLines.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridLines.swift; sourceTree = "<group>"; };
 		FBD9AFB92AFF03D7005F8620 /* CanvasEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasEngine.swift; sourceTree = "<group>"; };
 		FBD9AFD12B008CAB005F8620 /* MenuBarProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarProvider.swift; sourceTree = "<group>"; };
-		FBD9AFD42B008F6F005F8620 /* Channels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Channels.swift; sourceTree = "<group>"; };
 		FBD9AFD82B01CB91005F8620 /* SoccerToolProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoccerToolProvider.swift; sourceTree = "<group>"; };
 		FBDE4F562B4CF883007FE880 /* LogoutObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogoutObserver.swift; sourceTree = "<group>"; };
 		FBDE4F582B4D0C12007FE880 /* SessionPlanService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionPlanService.swift; sourceTree = "<group>"; };
@@ -636,7 +632,6 @@
 				FB5094292B05856D000AEA96 /* LineToolView.swift */,
 				FBAE62AE2B2A3FD200E008D5 /* CurvedLineToolView.swift */,
 				FB18F1072B619B5700D89F8D /* ToolObservers */,
-				FB5CCC882BC0F28100DEB076 /* ManagedViewObject.swift */,
 			);
 			path = LiveTools;
 			sourceTree = "<group>";
@@ -743,7 +738,6 @@
 				FBF515B52BBCE2DE0066EAA9 /* DataProviders */,
 				FB4840992B1EBC940003377A /* Sports.swift */,
 				FB18F17C2B6ABD8400D89F8D /* Experimental */,
-				FBD9AFD42B008F6F005F8620 /* Channels.swift */,
 				FBD9AFD82B01CB91005F8620 /* SoccerToolProvider.swift */,
 				FB3E02B82B0C724A00D8558C /* BoardBgProvider.swift */,
 				FB10AE082B0DD76C00295F4B /* EmojiProvider.swift */,
@@ -1142,7 +1136,6 @@
 				FBE2C62C2B1C3DBD004C0116 /* LoadingPopup.swift in Sources */,
 				FBE2C61A2B1AF7D5004C0116 /* FootballFieldView.swift in Sources */,
 				FBEBEF962B49506800B8BA32 /* LiveChat.swift in Sources */,
-				FBD9AFD52B008F6F005F8620 /* Channels.swift in Sources */,
 				FBDE4F6A2B4F773A007FE880 /* FireCore.swift in Sources */,
 				FB982F912B19D1B900C0DA03 /* FirebaseService.swift in Sources */,
 				FB18F15C2B68369400D89F8D /* TeamView.swift in Sources */,
@@ -1157,7 +1150,6 @@
 				FBF1A5F92B5E342B0088150C /* SolIconButton.swift in Sources */,
 				FB18F1832B6AE54200D89F8D /* SearchableRecordingsListView.swift in Sources */,
 				FB07B6702B17A5B9009A0962 /* ManagedToolView.swift in Sources */,
-				FB5CCC892BC0F28100DEB076 /* ManagedViewObject.swift in Sources */,
 				FB15DD2A2B07443600A21290 /* BoardEngineView.swift in Sources */,
 				FB18F17E2B6ABDA200D89F8D /* PdfImaging.swift in Sources */,
 				FB9F1DD22B1529E400FD9078 /* LoadingView.swift in Sources */,

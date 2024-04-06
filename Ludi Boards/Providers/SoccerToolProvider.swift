@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import CoreEngine
 
 enum SoccerToolProvider: IconProvider {
     case playerDummy

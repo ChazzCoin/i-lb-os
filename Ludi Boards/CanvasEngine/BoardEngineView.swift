@@ -27,7 +27,6 @@ struct BoardEngine: View {
     @State private var sessionObserver = RealmChangeListener<SessionPlan>()
     @State private var activityObserver = RealmChangeListener<ActivityPlan>()
     @State private var managedViewsObserver = RealmChangeListener<ManagedView>()
-//    @State private var boardSessionObserver = BoardSessionObserver()
     
     // TODO: -> Move to Central Board Object
     @State private var reference: DatabaseReference = Database.database().reference()
@@ -197,47 +196,6 @@ struct BoardEngine: View {
         }.store(in: &cancellables)
     }
     
-//    func oneLoadAllSessionPlans() {
-//        
-//        if self.currentSessionWasLoaded {
-//            // TWO
-//            twoLoadSessionPlan()
-//            return
-//        }
-//        
-//        if self.BEO.allSessionPlans.isEmpty {
-//            createNewSessionPlan()
-//        } else {
-//            let temp = self.BEO.allSessionPlans.first
-//            if temp?.id != nil && !temp!.id.isEmpty {
-//                self.BEO.changeSession(sessionId: temp?.id ?? "SOL")
-//            }
-//            for i in self.BEO.allSessionPlans {
-//                self.BEO.sessions.append(i)
-//            }
-//        }
-//        // TWO
-//        twoLoadSessionPlan()
-//    }
-    
-//    func twoLoadSessionPlan() {
-//        
-//        //TODO: GET ALL SESSIONS && SHARED SESSIONS
-//        fireGetLiveDemoAsync(realm: self.BEO.realmInstance)
-//        FirebaseSessionPlanService.runFullFetchProcess(realm: self.BEO.realmInstance)
-//        
-//        if let obj = self.BEO.realmInstance.findByField(SessionPlan.self, field: "id", value: self.BEO.currentSessionId) {
-//            self.BEO.changeSession(sessionId: self.BEO.currentSessionId)
-//            self.BEO.isLiveSession = obj.isLive
-//            self.sessionObserver.stop()
-//            self.sessionObserver.observe(object: obj, onChange: { newObj in
-//                self.BEO.isLiveSession = newObj.isLive
-//            })
-//            // THREE
-//            threeLoadActivityPlan()
-//        }
-//    }
-    
     func threeLoadActivityPlan() {
         self.BEO.resetTools()
         
@@ -366,11 +324,6 @@ struct BoardEngine: View {
     // TODO: MOVE TO CENTRAL BOARD OBJECT
     func sixSavePlansToFirebase() {
         if !self.BEO.isLoggedIn { return }
-//        if self.BEO.currentSessionId == "SOL" || self.BEO.currentSessionId.isEmpty {return}
-//        if let sessionPlan = self.BEO.realmInstance.findByField(SessionPlan.self, field: "id", value: self.BEO.currentSessionId) {
-//            if sessionPlan.id == "SOL" {return}
-//            sessionPlan.fireSave(id: sessionPlan.id)
-//        }
         if self.BEO.currentActivityId == "SOL" || self.BEO.currentActivityId.isEmpty {return}
         if let activityPlan = self.BEO.realmInstance.findByField(ActivityPlan.self, field: "id", value: self.BEO.currentActivityId) {
             if activityPlan.id == "SOL" {return}
@@ -387,23 +340,6 @@ struct BoardEngine: View {
             }
         }
         
-//        if let image = snapshot(with: self.BEO) { // A4 size
-//            if let pdfData = createPDF(image: image, pageSize: CGSize(width: 595, height: 842)) {
-////                let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-////                let pdfPath = documentsPath.appendingPathComponent("yourView.pdf")
-//                let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-//                let pdfPath = documentsPath.appendingPathComponent("yourView.pdf")
-//                
-//                do {
-//                    try pdfData.write(to: pdfPath)
-//                    print("PDF file saved to: \(pdfPath)")
-//                } catch {
-//                    print("Could not save PDF: \(error)")
-//                }
-//            }
-//            
-//            
-//        }
     }
     
     // TODO: MOVE TO CENTRAL BOARD OBJECT
@@ -432,25 +368,6 @@ struct BoardEngine: View {
         
         self.threeLoadActivityPlan()
     }
-    
-//    func createNewSessionPlan() {
-//        
-//        let results = self.BEO.realmInstance.objects(SessionPlan.self)
-//        if !results.isEmpty {
-//            if let temp = results.first {
-//                self.BEO.changeSession(sessionId: temp.id)
-//                return
-//            }
-//        }
-//        
-//        self.BEO.realmInstance.safeWrite { r in
-//            let newSession = SessionPlan()
-//            newSession.title = "Session: \(TimeProvider.getMonthDayYearTime())"
-//            newSession.ownerId = getFirebaseUserId() ?? CURRENT_USER_ID
-//            self.BEO.changeSession(sessionId: newSession.id)
-//            r.add(newSession)
-//        }
-//    }
     
     func createSolaOrg() {
         if let _ = self.BEO.realmInstance.findByField(Organization.self, field: "name", value: "SOL Academy") {
@@ -508,13 +425,8 @@ struct BoardEngine: View {
         newActivity.backgroundGreen = rgbb?.green == nil ? newActivity.backgroundGreen : rgbb?.green ?? 0.0
         
         self.BEO.setColor(colorIn: Color.secondaryBackground)
-        
         self.BEO.setFieldLineColor(colorIn: Color(red: newActivity.backgroundRed, green: newActivity.backgroundGreen, blue: newActivity.backgroundBlue))
-        
         self.BEO.setBoardBgView(boardName: newActivity.backgroundView)
-        
-        self.BEO.activities.append(newActivity)
-        
         self.BEO.realmInstance.safeWrite { r in
             r.create(ActivityPlan.self, value: newActivity, update: .all)
         }

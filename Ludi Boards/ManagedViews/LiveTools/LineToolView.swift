@@ -88,10 +88,6 @@ struct LineDrawingManaged: View {
     // Gestures
     private func fullLineDragGesture() -> some Gesture {
         DragGesture()
-            .updating(MVO.$dragOffset, body: { (value, state, transaction) in
-                if self.MVO.lifeIsLocked {return}
-                state = value.translation
-            })
             .onChanged { value in
                 DispatchQueue.main.async { self.MVO.ignoreUpdates = true }
                 if self.MVO.lifeIsLocked {return}
@@ -221,33 +217,7 @@ struct LineOverlay: View {
     }
 }
 
-func rotationAngleOfLine(from startPoint: CGPoint, to endPoint: CGPoint) -> Angle {
-    let deltaY = endPoint.y - startPoint.y
-    let deltaX = endPoint.x - startPoint.x
 
-    let angleInRadians = atan2(deltaY, deltaX)
-    return Angle(radians: Double(angleInRadians))
-}
-
-func getCenterOfLine(start: CGPoint, end: CGPoint) -> CGPoint {
-    let midX = (start.x + end.x) / 2
-    let midY = (start.y + end.y) / 2
-    return CGPoint(x: midX, y: midY)
-}
-
-func getWidthAndHeightOfLine(start: CGPoint, end: CGPoint) -> (width: CGFloat, height: CGFloat) {
-    let width = abs(end.x - start.x)
-    let height = abs(end.y - start.y)
-    return (width, height)
-}
-
-func boundingRect(start: CGPoint, end: CGPoint) -> CGRect {
-    let minX = min(start.x, end.x)
-    let minY = min(start.y, end.y)
-    let width = abs(end.x - start.x)
-    let height = abs(end.y - start.y)
-    return CGRect(x: minX, y: minY, width: width, height: height)
-}
 
 struct Arrowhead: Shape {
     var size: CGFloat

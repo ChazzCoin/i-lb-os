@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import RealmSwift
 import Combine
+import CoreEngine
 
 class LogoutObserver : ObservableObject {
     @Published var cancellables = Set<AnyCancellable>()

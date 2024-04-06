@@ -14,7 +14,7 @@ import CoreEngine
 
 
 // Tool Bar Picker Icon View
-struct ManagedViewBoardToolIcon: View {
+struct ManagedViewBasicToolIcon: View {
     let toolType: String
     
     @State private var color: Color = .black
@@ -28,7 +28,7 @@ struct ManagedViewBoardToolIcon: View {
 
 
 // Main Board Tool View
-struct ManagedViewBoardTool: View {
+struct ManagedViewBasicTool: View {
     let viewId: String
     let activityId: String
     let toolType: String
@@ -44,12 +44,12 @@ struct ManagedViewBoardTool: View {
     var body: some View {
         Image(toolType)
             .resizable()
-            .enableMVT(viewId: viewId, activityId: activityId)
+            .enableManagedViewBasic(viewId: viewId, activityId: activityId)
     }
 }
 
 extension View {
-    func enableMVT(viewId: String, activityId: String) -> some View {
+    func enableManagedViewBasic(viewId: String, activityId: String) -> some View {
         self.modifier(enableManagedViewTool(viewId: viewId, activityId: activityId))
     }
 }
@@ -60,6 +60,7 @@ struct enableManagedViewTool : ViewModifier {
     @State var activityId: String
     
     @StateObject var MVO: ManagedViewObject = ManagedViewObject()
+    @GestureState public var dragOffset = CGSize.zero
     
     func body(content: Content) -> some View {
         GeometryReader { geo in
@@ -69,8 +70,8 @@ struct enableManagedViewTool : ViewModifier {
         .frame(width: MVO.lifeWidth * 2, height: MVO.lifeHeight * 2)
         .rotationEffect(MVO.lifeRotation)
         .border(MVO.popUpIsVisible ? MVO.lifeBorderColor : Color.clear, width: 10) // Border modifier
-        .position(x: MVO.position.x + (MVO.isDragging ? MVO.dragOffset.width : 0) + (MVO.lifeWidth),
-                  y: MVO.position.y + (MVO.isDragging ? MVO.dragOffset.height : 0) + (MVO.lifeHeight))
+        .position(x: MVO.position.x + (MVO.isDragging ? dragOffset.width : 0) + (MVO.lifeWidth),
+                  y: MVO.position.y + (MVO.isDragging ? dragOffset.height : 0) + (MVO.lifeHeight))
         .simultaneousGesture(gestureDragBasicTool())
         .opacity(!MVO.isDisabledChecker() && !MVO.isDeletedChecker() ? 1 : 0.0)
         .onChange(of: self.MVO.toolBarCurrentViewId, perform: { _ in
@@ -86,11 +87,6 @@ struct enableManagedViewTool : ViewModifier {
     
     func gestureDragBasicTool() -> some Gesture {
         DragGesture()
-            .updating(MVO.$dragOffset, body: { (value, state, transaction) in
-                DispatchQueue.main.async { self.MVO.ignoreUpdates = true }
-                if MVO.lifeIsLocked { return }
-                state = value.translation
-            })
             .onChanged { drag in
                 DispatchQueue.main.async { self.MVO.ignoreUpdates = true }
                 if MVO.lifeIsLocked { return }

@@ -17,7 +17,7 @@ func ManagedViewToolFactory(toolType: String, viewId: String, activityId: String
         return AnyView(CurvedLineDrawingManaged(viewId: viewId, activityId: activityId))
     default:
         if let temp = SoccerToolProvider.parseByTitle(title: toolType)?.tool.image {
-            return AnyView(ManagedViewBoardTool(viewId: viewId, activityId: activityId, toolType: temp))
+            return AnyView(ManagedViewBasicTool(viewId: viewId, activityId: activityId, toolType: temp))
         } else {
             // Return a default view or an error view
             return AnyView(Text("Unsupported tool type"))
@@ -33,7 +33,7 @@ func ToolIconFactory(toolType: String) -> AnyView {
         return AnyView(CurvedLineIconView())
     default:
         if let temp = SoccerToolProvider.parseByTitle(title: toolType)?.tool.image {
-            return AnyView(ManagedViewBoardToolIcon(toolType: temp))
+            return AnyView(ManagedViewBasicToolIcon(toolType: temp))
         } else {
             // Return a default view or an error view
             return AnyView(Text("Unsupported tool type"))
