@@ -9,6 +9,7 @@
 import Foundation
 import SwiftUI
 import Combine
+import CoreEngine
 
 struct CanvasEngine: View {
     
@@ -94,8 +95,9 @@ struct CanvasEngine: View {
     
     var body: some View {
         
+        
         GlobalPositioningZStack { geo, gps in
-                        
+            
 //            MusicPlayerView()
 //                .frame(width: 500, height: 500)
 //                .background(Color.white)

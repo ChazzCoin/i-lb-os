@@ -89,25 +89,26 @@ struct UploadAudioView: View {
         }
     }
     
-    func verifyFileUrl(fileUrl: URL) -> Bool {
-        let fileManager = FileManager.default
-        return fileManager.fileExists(atPath: fileUrl.path) && fileManager.isReadableFile(atPath: fileUrl.path)
-    }
+//    func verifyFileUrl(fileUrl: URL) -> Bool {
+//        let fileManager = FileManager.default
+//        return fileManager.fileExists(atPath: fileUrl.path) && fileManager.isReadableFile(atPath: fileUrl.path)
+//    }
     
     func uploadFileToFirebaseStorage(title: String, fileURL: URL) {
-        // Start accessing the security-scoped resource
+        // Security Scoping
         guard fileURL.startAccessingSecurityScopedResource() else {
             // Handle the failure here.
             print("Unable to access the file.")
             return
         }
         
+        // MetaData
         let meta = StorageMetadata()
         meta.contentType = "audio/m4a"
-        let fileCoordinator = NSFileCoordinator()
-        var error: NSError?
-
-        // Create a bookmark to persist access
+        let storageRef = Storage.storage().reference().child("songs/\(title)")
+        
+        
+        // Security Scoping
         do {
             let bookmarkData = try fileURL.bookmarkData()
             // You can now store this bookmarkData to access the file later
@@ -116,14 +117,21 @@ struct UploadAudioView: View {
             print("Unable to create a bookmark: \(error)")
         }
         
-        let storageRef = Storage.storage().reference().child("songs/\(title)")
+        
+        
+        
         
         if let fileURL = accessBookmarkedFile() {
-            // Upload the file to Firebase
+            
+            // Security Scoping
             let isAccessible = fileURL.startAccessingSecurityScopedResource()
+            
             if let temp = try? Data(contentsOf: fileURL) {
                 print("File is accessible: \(isAccessible)")
+                
                 if isAccessible {
+                    
+                    
                     // Upload the file
                     storageRef.putData(temp, metadata: meta) { metadata, error in
     //                    fileURL.stopAccessingSecurityScopedResource()
@@ -172,7 +180,6 @@ struct UploadAudioView: View {
             print("No bookmark data found")
             return nil
         }
-
         var isStale = false
         do {
             let fileURL = try URL(resolvingBookmarkData: bookmarkData, bookmarkDataIsStale: &isStale)

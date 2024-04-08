@@ -8,13 +8,13 @@
 import Foundation
 import SwiftUI
 
-struct DrawGridLines: View {
+public struct DrawGridLines: View {
     // Access the shared CanvasEngineGlobal instance
 //    @ObservedObject var canvasGlobals = CanvasEngineGlobal.shared
     // Define the maximum allowed dimensions
-    private let maxDimension: CGFloat = 10000
+    public let maxDimension: CGFloat = 10000
     
-    var body: some View {
+    public var body: some View {
         GeometryReader { geometry in
             Canvas { context, size in
                 

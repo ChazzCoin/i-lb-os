@@ -8,6 +8,7 @@
 import SwiftUI
 import FirebaseCore
 import RealmSwift
+import CoreEngine
 
 class AppDelegate: NSObject, UIApplicationDelegate {
   func application(_ application: UIApplication,
@@ -29,9 +30,21 @@ struct WrldsApp: SwiftUI.App {
     
     var body: some Scene {
         WindowGroup {
-            CanvasEngine().onAppear() {
-                
-            }
+            CoreCanvasEngine(
+                global: { _,_ in
+                    
+                },
+                canvas: { gps in
+                    ZStack{
+                        Text("HELLO")
+                    }
+                    .frame(width: 200, height: 200)
+                    .background(.blue)
+                    .position(using: gps, at: .bottomCenter)
+                })
+//            CanvasEngine().onAppear() {
+//                
+//            }
         }
     }
 }

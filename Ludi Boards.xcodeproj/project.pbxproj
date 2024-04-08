@@ -40,6 +40,7 @@
 		FB18F1892B6B12FD00D89F8D /* RecordingTimeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB18F1882B6B12FD00D89F8D /* RecordingTimeline.swift */; };
 		FB2AA1032B74137800BD631C /* SolIconTextButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB2AA1022B74137800BD631C /* SolIconTextButton.swift */; };
 		FB2AA1072B74352A00BD631C /* SolToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB2AA1062B74352A00BD631C /* SolToggle.swift */; };
+		FB3A28392BC48AE700D38D3E /* CoreEngine in Frameworks */ = {isa = PBXBuildFile; productRef = FB3A28382BC48AE700D38D3E /* CoreEngine */; };
 		FB3E02B32B0C6B5100D8558C /* SessionPlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02B22B0C6B5100D8558C /* SessionPlanView.swift */; };
 		FB3E02B52B0C6B6000D8558C /* ActivityPlanBindingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02B42B0C6B6000D8558C /* ActivityPlanBindingView.swift */; };
 		FB3E02BD2B0C90E600D8558C /* RoomUserList.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02BC2B0C90E600D8558C /* RoomUserList.swift */; };
@@ -62,11 +63,9 @@
 		FB829F0C2B36A83300FAC6E0 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB829F0B2B36A83300FAC6E0 /* ContentView.swift */; };
 		FB829F0E2B36A83400FAC6E0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FB829F0D2B36A83400FAC6E0 /* Assets.xcassets */; };
 		FB829F112B36A83400FAC6E0 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FB829F102B36A83400FAC6E0 /* Preview Assets.xcassets */; };
-		FB829F192B3D540100FAC6E0 /* ManagedWindowObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB829F182B3D540100FAC6E0 /* ManagedWindowObjects.swift */; };
 		FB87BE092B734425003B880D /* Michael.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB87BE082B734425003B880D /* Michael.swift */; };
 		FB8819D12B46436300C16198 /* CanvasEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB8819D02B46436300C16198 /* CanvasEngine.swift */; };
 		FB8819D32B4649CC00C16198 /* BoardEngineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB8819D22B4649CC00C16198 /* BoardEngineView.swift */; };
-		FB8819D52B464A9B00C16198 /* GridLines.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB8819D42B464A9B00C16198 /* GridLines.swift */; };
 		FB8819E02B464B2300C16198 /* GlobalPositioning.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB8819DF2B464B2200C16198 /* GlobalPositioning.swift */; };
 		FB8819F22B464CA200C16198 /* SessionPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB8819E92B464CA200C16198 /* SessionPlan.swift */; };
 		FB8819F32B464CA200C16198 /* RealmFind.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB8819E32B464CA200C16198 /* RealmFind.swift */; };
@@ -233,11 +232,9 @@
 		FB829F0B2B36A83300FAC6E0 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		FB829F0D2B36A83400FAC6E0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FB829F102B36A83400FAC6E0 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		FB829F182B3D540100FAC6E0 /* ManagedWindowObjects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedWindowObjects.swift; sourceTree = "<group>"; };
 		FB87BE082B734425003B880D /* Michael.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Michael.swift; sourceTree = "<group>"; };
 		FB8819D02B46436300C16198 /* CanvasEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasEngine.swift; sourceTree = "<group>"; };
 		FB8819D22B4649CC00C16198 /* BoardEngineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardEngineView.swift; sourceTree = "<group>"; };
-		FB8819D42B464A9B00C16198 /* GridLines.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridLines.swift; sourceTree = "<group>"; };
 		FB8819DF2B464B2200C16198 /* GlobalPositioning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalPositioning.swift; sourceTree = "<group>"; };
 		FB8819E32B464CA200C16198 /* RealmFind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmFind.swift; sourceTree = "<group>"; };
 		FB8819E42B464CA200C16198 /* RealmChangeListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmChangeListener.swift; sourceTree = "<group>"; };
@@ -351,6 +348,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FB3A28392BC48AE700D38D3E /* CoreEngine in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -532,7 +530,6 @@
 				FB8819FF2B464D9700C16198 /* TimeProvider.swift */,
 				FB8819E12B464CA100C16198 /* Realm */,
 				FB8819DF2B464B2200C16198 /* GlobalPositioning.swift */,
-				FB8819D42B464A9B00C16198 /* GridLines.swift */,
 				FB8819D22B4649CC00C16198 /* BoardEngineView.swift */,
 				FB8819D02B46436300C16198 /* CanvasEngine.swift */,
 				FB829F092B36A83300FAC6E0 /* WrldsApp.swift */,
@@ -695,7 +692,6 @@
 			children = (
 				FB982F8F2B19C41100C0DA03 /* LiveTools */,
 				FB5094272B0584CA000AEA96 /* NavStackWindowView.swift */,
-				FB829F182B3D540100FAC6E0 /* ManagedWindowObjects.swift */,
 				FBAE62AC2B295A8100E008D5 /* ManagedPopUpView.swift */,
 				FBD3DD4A2B7072E600D9242C /* HistoryListView.swift */,
 			);
@@ -868,6 +864,7 @@
 			);
 			name = Wrlds;
 			packageProductDependencies = (
+				FB3A28382BC48AE700D38D3E /* CoreEngine */,
 			);
 			productName = Wrlds;
 			productReference = FB829F072B36A83300FAC6E0 /* Wrlds.app */;
@@ -963,7 +960,6 @@
 			files = (
 				FB18F1202B62288700D89F8D /* Assets.xcassets in Sources */,
 				FB8819E02B464B2300C16198 /* GlobalPositioning.swift in Sources */,
-				FB8819D52B464A9B00C16198 /* GridLines.swift in Sources */,
 				FBDE4F682B4F7736007FE880 /* FireData.swift in Sources */,
 				FB8819F22B464CA200C16198 /* SessionPlan.swift in Sources */,
 				FBDE4F702B4FA831007FE880 /* RecordShapeView.swift in Sources */,
@@ -1096,7 +1092,6 @@
 				FBDE4F6A2B4F773A007FE880 /* FireCore.swift in Sources */,
 				FB982F912B19D1B900C0DA03 /* FirebaseService.swift in Sources */,
 				FB18F15C2B68369400D89F8D /* TeamView.swift in Sources */,
-				FB829F192B3D540100FAC6E0 /* ManagedWindowObjects.swift in Sources */,
 				FBBDD0222B6E186E0009844B /* BoardSettingsToolBar.swift in Sources */,
 				FB18F1612B68390600D89F8D /* CorePicker.swift in Sources */,
 				FB3E02BF2B0C948A00D8558C /* AddBuddyView.swift in Sources */,
@@ -1428,6 +1423,10 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		FB3A28382BC48AE700D38D3E /* CoreEngine */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CoreEngine;
+		};
 		FBF515D72BC08DB60066EAA9 /* CoreEngine */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = FBF515D12BC08AED0066EAA9 /* XCLocalSwiftPackageReference "CoreEngine" */;

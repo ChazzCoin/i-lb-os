@@ -10,6 +10,7 @@ import SwiftUI
 import Combine
 import RealmSwift
 import FirebaseDatabase
+import CoreEngine
 
 class BoardEngineObject : ObservableObject {
 //    static let shared = BoardEngineObject()

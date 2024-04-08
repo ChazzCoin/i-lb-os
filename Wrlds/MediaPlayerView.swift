@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import RealmSwift
 import AVFoundation
+import CoreEngine
 
 class AudioPlayerManager: ObservableObject {
     @Published var audioPlayer: AVPlayer?

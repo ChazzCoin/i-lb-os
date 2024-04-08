@@ -16,6 +16,13 @@ public func firebaseDatabase(block: @escaping (DatabaseReference) -> Void) {
     block(reference)
 }
 
+public func firebaseDatabaseSET(obj: RealmSwift.Object, block: @escaping (DatabaseReference) -> DatabaseReference) {
+    let reference = Database.database().reference()
+    block(reference).setValue(obj.toDict()) { (error: Error?, ref: DatabaseReference) in
+        if let error = error { print("Error updating Firebase: \(error)") }
+    }
+}
+
 public extension DatabaseReference {
         
     func get(onSnapshot: @escaping (DataSnapshot) -> Void) {
