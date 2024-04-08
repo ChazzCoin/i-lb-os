@@ -7,9 +7,10 @@
 
 import Foundation
 import SwiftUI
-import CoreEngine
 
-enum SoccerToolProvider: IconProvider {
+// AnyView(ManagedViewBasicTool(viewId: viewId, activityId: activityId, toolType: temp))
+
+public enum SoccerToolProvider: IconProvider {
     case playerDummy
     case playerJersey
     case steps
@@ -24,7 +25,7 @@ enum SoccerToolProvider: IconProvider {
     case curvedLine
     case dottedLine
 
-    var tool: Tool {
+    public var tool: Tool {
         switch self {
             case .playerDummy: return Tool(title: "Player Body", image: "tools_soccer_dummy", authLevel: 0, color: .black)
             case .playerJersey: return Tool(title: "Player Jersey", image: "tools_soccer_jersey", authLevel: 0, color: .black)
@@ -41,26 +42,44 @@ enum SoccerToolProvider: IconProvider {
             case .dottedLine: return Tool(title: "Dotted Line", image: "tools_soccer_dotted_line", authLevel: 0, color: .black)
         }
     }
+    
+    public func getView(viewId: String, activityId: String) -> AnyView {
+        switch self {
+            case .playerDummy: return AnyView(ManagedViewBasicTool(viewId: viewId, activityId: activityId, toolType: "tools_soccer_dummy"))
+            case .playerJersey: return AnyView(ManagedViewBasicTool(viewId: viewId, activityId: activityId, toolType: "tools_soccer_dummy"))
+            case .steps: return AnyView(ManagedViewBasicTool(viewId: viewId, activityId: activityId, toolType: "tools_soccer_dummy"))
+            case .playerWalking: return AnyView(ManagedViewBasicTool(viewId: viewId, activityId: activityId, toolType: "tools_soccer_dummy"))
+            case .playerRunning: return AnyView(ManagedViewBasicTool(viewId: viewId, activityId: activityId, toolType: "tools_soccer_dummy"))
+            case .goal: return AnyView(ManagedViewBasicTool(viewId: viewId, activityId: activityId, toolType: "tools_soccer_dummy"))
+            case .flagPole: return AnyView(ManagedViewBasicTool(viewId: viewId, activityId: activityId, toolType: "tools_soccer_dummy"))
+            case .tallCone: return AnyView(ManagedViewBasicTool(viewId: viewId, activityId: activityId, toolType: "tools_soccer_dummy"))
+            case .shortCone: return AnyView(ManagedViewBasicTool(viewId: viewId, activityId: activityId, toolType: "tools_soccer_dummy"))
+            case .ladder: return AnyView(ManagedViewBasicTool(viewId: viewId, activityId: activityId, toolType: "tools_soccer_dummy"))
+            case .soccerBall: return AnyView(ManagedViewBasicTool(viewId: viewId, activityId: activityId, toolType: "tools_soccer_dummy"))
+            case .curvedLine: return AnyView(ManagedViewBasicTool(viewId: viewId, activityId: activityId, toolType: "tools_soccer_dummy"))
+            case .dottedLine: return AnyView(ManagedViewBasicTool(viewId: viewId, activityId: activityId, toolType: "tools_soccer_dummy"))
+        }
+    }
 
-    static let allCases = [
+    public static let allCases = [
         playerDummy, playerJersey, steps, playerWalking, playerRunning,
         goal, flagPole, tallCone, shortCone, ladder, soccerBall,
         curvedLine, dottedLine
     ]
 
-    static let sport = "Soccer"
+    public static let sport = "Soccer"
 
-    static func parseByTitle(title: String) -> SoccerToolProvider? {
+    public static func parseByTitle(title: String) -> SoccerToolProvider? {
         return allCases.first { $0.tool.title.lowercased() == title.lowercased() }
     }
 }
 
 
-struct SoccerToolsView: View {
-    private let columns: [GridItem] = Array(repeating: .init(.flexible()), count: 5)
-    private let soccerTools = SoccerToolProvider.allCases
+public struct SoccerToolsView: View {
+    public let columns: [GridItem] = Array(repeating: .init(.flexible()), count: 5)
+    public let soccerTools = SoccerToolProvider.allCases
 
-    var body: some View {
+    public var body: some View {
         // Grid
         ScrollView {
             LazyVGrid(columns: columns, spacing: 10) {
@@ -73,12 +92,17 @@ struct SoccerToolsView: View {
     }
 }
 
-struct ToolButtonIcon: View {
-    var icon: IconProvider // Assuming IconProvider conforms to SwiftUI's View
+public struct ToolButtonIcon: View {
+    public var icon: IconProvider // Assuming IconProvider conforms to SwiftUI's View
 
-    @State private var isLocked = false
+    @State public var isLocked = false
+    
+    public init(icon: IconProvider, isLocked: Bool = false) {
+        self.icon = icon
+        self.isLocked = isLocked
+    }
 
-    var body: some View {
+    public var body: some View {
         Image(icon.tool.image)
             .resizable()
             .frame(width: 40, height: 40)
@@ -94,18 +118,22 @@ struct ToolButtonIcon: View {
 }
 
 
-struct ToolButtonSettingsIcon: View {
-    var icon: IconProvider // Assuming IconProvider conforms to SwiftUI's View
+public struct ToolButtonSettingsIcon: View {
+    public var icon: IconProvider // Assuming IconProvider conforms to SwiftUI's View
 
-    @State private var isLocked = false
+    @State public var isLocked = false
+    
+    public init(icon: IconProvider, isLocked: Bool = false) {
+        self.icon = icon
+        self.isLocked = isLocked
+    }
 
-    var body: some View {
+    public var body: some View {
         Image(icon.tool.image)
             .resizable()
             .frame(width: 100, height: 100)
             .onTapAnimation {
                 print("CodiChannel SendTopic: \(icon.tool.title)")
-//                CodiChannel.TOOL_ON_CREATE.send(value: icon.tool.title)
             }
             .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
     }

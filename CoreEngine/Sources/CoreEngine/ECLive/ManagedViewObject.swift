@@ -11,6 +11,21 @@ import Combine
 import RealmSwift
 import FirebaseDatabase
 
+// Curved
+public func quadBezierPoint(start: CGPoint, end: CGPoint, control: CGPoint) -> CGPoint {
+    let t: CGFloat = 0.5
+    let x = pow(1-t, 2) * start.x + 2*(1-t)*t*control.x + pow(t, 2) * end.x
+    let y = pow(1-t, 2) * start.y + 2*(1-t)*t*control.y + pow(t, 2) * end.y
+    return CGPoint(x: x, y: y)
+}
+// Curved
+public func calculateAngle(startX: CGFloat, startY: CGFloat, endX: CGFloat, endY: CGFloat) -> Double {
+    let deltaX = endX - startX
+    let deltaY = endY - startY
+    let angle = atan2(deltaY, deltaX) * 180 / .pi
+    return Double(angle) + 90
+}
+// Line
 public func rotationAngleOfLine(from startPoint: CGPoint, to endPoint: CGPoint) -> Angle {
     let deltaY = endPoint.y - startPoint.y
     let deltaX = endPoint.x - startPoint.x
@@ -18,19 +33,19 @@ public func rotationAngleOfLine(from startPoint: CGPoint, to endPoint: CGPoint) 
     let angleInRadians = atan2(deltaY, deltaX)
     return Angle(radians: Double(angleInRadians))
 }
-
+// Line
 public func getCenterOfLine(start: CGPoint, end: CGPoint) -> CGPoint {
     let midX = (start.x + end.x) / 2
     let midY = (start.y + end.y) / 2
     return CGPoint(x: midX, y: midY)
 }
-
+// Line
 public func getWidthAndHeightOfLine(start: CGPoint, end: CGPoint) -> (width: CGFloat, height: CGFloat) {
     let width = abs(end.x - start.x)
     let height = abs(end.y - start.y)
     return (width, height)
 }
-
+// Line
 public func boundingRect(start: CGPoint, end: CGPoint) -> CGRect {
     let minX = min(start.x, end.x)
     let minY = min(start.y, end.y)
@@ -65,6 +80,8 @@ public class ManagedViewObject: ObservableObject {
     @Published public var lifeCenterPoint = CGPoint.zero
     @Published public var lifeStartX: CGFloat = 0.0
     @Published public var lifeStartY: CGFloat = 0.0
+    @Published public var lifeCenterX: CGFloat = 0.0
+    @Published public var lifeCenterY: CGFloat = 0.0
     @Published public var lifeEndX: CGFloat = 0.0
     @Published public var lifeEndY: CGFloat = 0.0
     
@@ -90,11 +107,11 @@ public class ManagedViewObject: ObservableObject {
     
     @Published public var offset = CGSize.zero
     @Published public var position = CGPoint(x: 0, y: 0)
-    @GestureState public var dragOffset = CGSize.zero
     @Published public var isDragging = false
     @Published public var useOriginal = true
     @Published public var originalPosition = CGPoint(x: 0, y: 0)
     @Published public var originalLifeStart = CGPoint.zero
+    @Published public var originalLifeCenter = CGPoint.zero
     @Published public var originalLifeEnd = CGPoint.zero
     
     public let realmInstance: Realm = newRealm()
@@ -153,17 +170,49 @@ public class ManagedViewObject: ObservableObject {
     public func isDisabledChecker() -> Bool { return isDisabled }
     public func isDeletedChecker() -> Bool { return isDeleted }
     
+    // Line/Curved
     public var lineLength: CGFloat {
         sqrt(pow(lifeEndX - lifeStartX, 2) + pow(lifeEndY - lifeStartY, 2))-100
+    }
+    
+    // Curved
+    public func calculateAngleAtEndPointOfQuadCurve() -> Double {
+        // Since we are calculating the angle at the end point, t = 1
+        let t: CGFloat = 1.0
+
+        // Breaking down the derivative calculation into smaller parts
+        let dx1 = lifeCenterX - lifeStartX
+        let dy1 = lifeCenterY - lifeStartY
+        let dx2 = lifeEndX - lifeCenterX
+        let dy2 = lifeEndY - lifeCenterY
+
+        let derivativeX = 2 * (1 - t) * dx1 + 2 * t * dx2
+        let derivativeY = 2 * (1 - t) * dy1 + 2 * t * dy2
+
+        // Calculate the angle
+        let angle = atan2(derivativeY, derivativeX) * 180 / .pi
+        return Double(angle) + 90
     }
     
     public func loadRotationOfLine() {
         let lineStart = CGPoint(x: lifeStartX, y: lifeStartY)
         let lineEnd = CGPoint(x: lifeEndX, y: lifeEndY)
-        let temp = rotationAngleOfLine(from: lineStart, to: lineEnd)
-        if temp.radians == 0.0 { return }
-        lifeRotation = temp
+        lifeRotation = rotationAngleOfLine(from: lineStart, to: lineEnd)
         print(lifeRotation)
+    }
+    
+    public func loadWidthAndHeight() {
+        let lineStart = CGPoint(x: lifeStartX, y: lifeStartY)
+        let lineEnd = CGPoint(x: lifeEndX, y: lifeEndY)
+        let (lineWidth, lineHeight) = getWidthAndHeightOfLine(start: lineStart, end: lineEnd)
+        lifeWidthTouch = Double(lineWidth).bound(to: 100...200)
+        lifeHeightTouch = Double(lineHeight).bound(to: 100...200)
+    }
+    
+    public func loadControlAnchor() {
+        let t: CGFloat = 0.5
+        lifeCenterX = (pow(1-t, 2) * lifeStartX + 2*(1-t)*t*lifeCenterX + pow(t, 2) * lifeEndX)
+        lifeCenterY = (pow(1-t, 2) * lifeStartY + 2*(1-t)*t*lifeCenterY + pow(t, 2) * lifeEndY)
     }
     
     public func loadCenterPoint() {
@@ -172,13 +221,7 @@ public class ManagedViewObject: ObservableObject {
         lifeCenterPoint = getCenterOfLine(start: lineStart, end: lineEnd)
         
     }
-    public func loadWidthAndHeight() {
-        let lineStart = CGPoint(x: lifeStartX, y: lifeStartY)
-        let lineEnd = CGPoint(x: lifeEndX, y: lifeEndY)
-        let (lineWidth, lineHeight) = getWidthAndHeightOfLine(start: lineStart, end: lineEnd)
-        lifeWidthTouch = Double(lineWidth)
-        lifeHeightTouch = Double(lineHeight)
-    }
+
     public func lengthOfLine(start: CGPoint, end: CGPoint) -> CGFloat {
         let deltaX = end.x - start.x
         let deltaY = end.y - start.y
@@ -218,6 +261,7 @@ public class ManagedViewObject: ObservableObject {
             }
         }
     }
+    
     public func animateToNextCoordinate() {
         print("!!!COORDINATES COUNT: \(coordinateStack.count)")
         
@@ -233,8 +277,13 @@ public class ManagedViewObject: ObservableObject {
             lifeEndX = nextCoordinate["end"]?.x ?? lifeEndX
             lifeEndY = nextCoordinate["end"]?.y ?? lifeEndY
             lifeCenterPoint = nextCoordinate["center"] ?? lifeCenterPoint
-            loadWidthAndHeight()
-            loadRotationOfLine()
+            lifeCenterX = lifeCenterPoint.x
+            lifeCenterY = lifeCenterPoint.y
+            if self.lifeToolType == ToolTypeProvider.line.name {
+                loadWidthAndHeight()
+                loadRotationOfLine()
+            }
+            
         }
 
         // Schedule the next animation after a delay
@@ -260,6 +309,8 @@ public class ManagedViewObject: ObservableObject {
             position = CGPoint(x: umv.x, y: umv.y)
             lifeStartX = umv.startX
             lifeStartY = umv.startY
+            lifeCenterX = umv.centerX
+            lifeCenterY = umv.centerY
             lifeEndX = umv.endX
             lifeEndY = umv.endY
             
@@ -277,11 +328,13 @@ public class ManagedViewObject: ObservableObject {
             lifeColor = colorFromRGBA(red: lifeColorRed, green: lifeColorGreen, blue: lifeColorBlue, alpha: lifeColorAlpha)
             
             // Handle?
-            loadCenterPoint()
-            loadWidthAndHeight()
-            loadRotationOfLine()
+            if lifeToolType == ToolTypeProvider.line.name {
+                loadCenterPoint()
+                loadWidthAndHeight()
+                loadRotationOfLine()
+            }
             // -> Handle?
-            if lifeToolType == "Basic" {
+            if lifeToolType == ToolTypeProvider.basic.name {
                 minSizeCheck()
             }
             
@@ -313,7 +366,12 @@ public class ManagedViewObject: ObservableObject {
                         let newPosition = CGPoint(x: temp.x, y: temp.y)
                         let startPosition = CGPoint(x: temp.startX, y: temp.startY)
                         let endPosition = CGPoint(x: temp.endX, y: temp.endY)
-                        let centerPosition = getCenterOfLine(start: startPosition, end: endPosition)
+                        var centerPosition: CGPoint
+                        if self.lifeToolType == "line" && self.lifeSubToolType == "curved" {
+                             centerPosition = CGPoint(x: temp.centerX, y: temp.centerY)
+                        } else {
+                            centerPosition = getCenterOfLine(start: startPosition, end: endPosition)
+                        }
                         
                         let coords = [
                             "position": newPosition,
@@ -371,6 +429,8 @@ public class ManagedViewObject: ObservableObject {
                 
                 mv.startX = Double(start?.x ?? CGFloat(self.lifeStartX))
                 mv.startY = Double(start?.y ?? CGFloat(self.lifeStartY))
+                mv.centerX = Double(start?.x ?? CGFloat(self.lifeCenterX))
+                mv.centerY = Double(start?.y ?? CGFloat(self.lifeCenterY))
                 mv.endX = Double(end?.x ?? CGFloat(self.lifeEndX))
                 mv.endY = Double(end?.y ?? CGFloat(self.lifeEndY))
                 
@@ -423,6 +483,8 @@ public class ManagedViewObject: ObservableObject {
                         try realm.write {
                             mv.startX = Double(start?.x ?? CGFloat(self.lifeStartX))
                             mv.startY = Double(start?.y ?? CGFloat(self.lifeStartY))
+                            mv.centerX = Double(start?.x ?? CGFloat(self.lifeCenterX))
+                            mv.centerY = Double(start?.y ?? CGFloat(self.lifeCenterY))
                             mv.endX = Double(end?.x ?? CGFloat(self.lifeEndX))
                             mv.endY = Double(end?.y ?? CGFloat(self.lifeEndY))
                             mv.lastUserId = self.currentUserId
@@ -519,6 +581,8 @@ public class ManagedViewObject: ObservableObject {
                     
                     history.startX = Double(self.lifeStartX)
                     history.startY = Double(self.lifeStartY)
+                    history.centerX = Double(self.lifeCenterX)
+                    history.centerY = Double(self.lifeCenterY)
                     history.endX = Double(self.lifeEndX)
                     history.endY = Double(self.lifeEndY)
                     

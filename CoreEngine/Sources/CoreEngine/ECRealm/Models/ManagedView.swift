@@ -12,8 +12,9 @@ public class ManagedView: Object, ObjectKeyIdentifiable {
     @Persisted(primaryKey: true) public var id: String = UUID().uuidString
     @Persisted public var dateUpdated: Int = 0
     @Persisted public var boardId: String = ""
-    @Persisted public var sport: String = "pool"
-    @Persisted public var toolType: String = "8BALL"
+    @Persisted public var sport: String = "soccer"
+    @Persisted public var toolType: String = "basic"
+    @Persisted public var subToolType: String = "player"
     @Persisted public var toolColor: String = "TOOLCOLOR.BLACK.name"  // Assuming it's a string representation
     @Persisted public var toolSize: String = "TOOLSIZE.MEDIUM.name"  // Assuming it's a string representation
     @Persisted public var x: Double = 0.0

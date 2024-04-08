@@ -9,40 +9,37 @@ import Foundation
 import SwiftUI
 
 public extension View {
-//    func dragger() -> some View {
-//        self.modifier(lbDragger())
-//    }
     
-    public func solEnabled(isEnabled: Bool) -> some View {
+    func solEnabled(isEnabled: Bool) -> some View {
         self.modifier(SolButtonModifier(isEnabled: isEnabled))
     }
     
-    public func onTap(perform action: @escaping () -> Void) -> some View {
+    func onTap(perform action: @escaping () -> Void) -> some View {
         self.onTapGesture {
             hapticFeedback()
             // Perform the custom action
             action()
         }
     }
-    public func onTapAnimation(enabled: Bool = true, perform action: @escaping () -> Void) -> some View {
+    func onTapAnimation(enabled: Bool = true, perform action: @escaping () -> Void) -> some View {
         self.modifier(TapAnimationModifier(action: action, isEnabled: enabled))
     }
     
-    public func onDoubleTap(scale: CGFloat = 2.0, duration: Double = 0.5, completion: @escaping () -> Void = {}) -> some View {
+    func onDoubleTap(scale: CGFloat = 2.0, duration: Double = 0.5, completion: @escaping () -> Void = {}) -> some View {
         modifier(DoubleTapExplodeModifier(scale: scale, duration: duration, completion: completion))
     }
     
-    public func onLongPress(minimumDuration: Double = 0.5, perform action: @escaping () -> Void) -> some View {
+    func onLongPress(minimumDuration: Double = 0.5, perform action: @escaping () -> Void) -> some View {
         modifier(LongPressModifier(minimumDuration: minimumDuration, onLongPress: action))
     }
     
     // Method to set the position of the view based on a specified ScreenArea
-    public func position(using gps: GlobalPositioningSystem, at area: ScreenArea, offsetX: CGFloat = 0, offsetY: CGFloat = 0) -> some View {
+    func position(using gps: GlobalPositioningSystem, at area: ScreenArea, offsetX: CGFloat = 0, offsetY: CGFloat = 0) -> some View {
         self.position(gps.getCoordinate(for: area, offsetX: offsetX, offsetY: offsetY))
     }
 
     // Method to set the offset of the view based on a specified ScreenArea
-    public func offset(using gps: GlobalPositioningSystem, for area: ScreenArea) -> some View {
+    func offset(using gps: GlobalPositioningSystem, for area: ScreenArea) -> some View {
         let offsetSize = gps.getOffset(for: area)
         return self.offset(x: offsetSize.width, y: offsetSize.height)
     }

@@ -7,7 +7,15 @@
 
 import Foundation
 import SwiftUI
+import CoreEngine
 
+
+/*
+ 1. ViewId = "uuid"
+ 2. ActivityId = "uuid"
+ 3. ToolType = "Basic"
+ 4. SubToolType = "Player"
+ */
 
 func ManagedViewToolFactory(toolType: String, viewId: String, activityId: String) -> AnyView {
     switch toolType {
@@ -16,10 +24,9 @@ func ManagedViewToolFactory(toolType: String, viewId: String, activityId: String
     case "CURVED-LINE":
         return AnyView(CurvedLineDrawingManaged(viewId: viewId, activityId: activityId))
     default:
-        if let temp = SoccerToolProvider.parseByTitle(title: toolType)?.tool.image {
-            return AnyView(ManagedViewBasicTool(viewId: viewId, activityId: activityId, toolType: temp))
+        if let view = SoccerToolProvider.parseByTitle(title: toolType)?.getView(viewId: viewId, activityId: activityId) {
+            return view
         } else {
-            // Return a default view or an error view
             return AnyView(Text("Unsupported tool type"))
         }
     }

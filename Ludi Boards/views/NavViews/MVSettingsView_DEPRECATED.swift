@@ -12,12 +12,7 @@ import RealmSwift
 import FirebaseDatabase
 import CoreEngine
 
-enum ToolLevels: Int {
-    case BASIC = 1
-    case LINE = 11
-    case SMART = 21
-    case PREMIUM = 31
-}
+
 
 struct SettingsView: View {
     
@@ -81,7 +76,7 @@ struct SettingsView: View {
             
             if self.BEO.isLoggedIn {
                 Section(header: Text("Connection Status").font(.headline)) {
-                    InternetSpeedChecker()
+//                    InternetSpeedChecker()
                 }
             }
             

@@ -177,77 +177,64 @@ struct LineDrawingManaged: View {
 }
 
 
-struct MatchedShape: View {
-    var startPoint: CGPoint
-    var endPoint: CGPoint
-    var controlPoint1: CGPoint
-    
-    var body: some View {
-        Path { path in
-            path.move(to: startPoint)
-            path.addQuadCurve(to: endPoint,
-                              control: controlPoint1)
-        }
-        .stroke(Color.black.opacity(0.01), style: StrokeStyle(lineWidth: 300.0, dash: [1]))
-    }
-}
 
-struct LineOverlay: View {
-    var startPoint: CGPoint
-    var endPoint: CGPoint
-    let lineThickness: CGFloat = 10 // Adjust as needed
 
-    private var lineLength: CGFloat {
-        sqrt(pow(endPoint.x - startPoint.x, 2) + pow(endPoint.y - startPoint.y, 2))
-    }
-
-    private var centerPoint: CGPoint {
-        CGPoint(x: (startPoint.x + endPoint.x) / 2, y: (startPoint.y + endPoint.y) / 2)
-    }
-
-    private var rotationAngle: Angle {
-        rotationAngleOfLine(from: startPoint, to: endPoint)
-    }
-
-    var body: some View {
-        Rectangle()
-            .frame(width: lineLength, height: lineThickness)
-            .rotationEffect(rotationAngle)
-            .position(x: centerPoint.x, y: centerPoint.y)
-    }
-}
+//struct LineOverlay: View {
+//    var startPoint: CGPoint
+//    var endPoint: CGPoint
+//    let lineThickness: CGFloat = 10 // Adjust as needed
+//
+//    private var lineLength: CGFloat {
+//        sqrt(pow(endPoint.x - startPoint.x, 2) + pow(endPoint.y - startPoint.y, 2))
+//    }
+//
+//    private var centerPoint: CGPoint {
+//        CGPoint(x: (startPoint.x + endPoint.x) / 2, y: (startPoint.y + endPoint.y) / 2)
+//    }
+//
+//    private var rotationAngle: Angle {
+//        rotationAngleOfLine(from: startPoint, to: endPoint)
+//    }
+//
+//    var body: some View {
+//        Rectangle()
+//            .frame(width: lineLength, height: lineThickness)
+//            .rotationEffect(rotationAngle)
+//            .position(x: centerPoint.x, y: centerPoint.y)
+//    }
+//}
 
 
 
-struct Arrowhead: Shape {
-    var size: CGFloat
+//struct Arrowhead: Shape {
+//    var size: CGFloat
+//
+//    func path(in rect: CGRect) -> Path {
+//        var path = Path()
+//
+//        // Drawing a simple triangle
+//        path.move(to: CGPoint(x: rect.midX, y: rect.minY))
+//        path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
+//        path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
+//        path.closeSubpath()
+//
+//        return path
+//    }
+//}
 
-    func path(in rect: CGRect) -> Path {
-        var path = Path()
-
-        // Drawing a simple triangle
-        path.move(to: CGPoint(x: rect.midX, y: rect.minY))
-        path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
-        path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
-        path.closeSubpath()
-
-        return path
-    }
-}
-
-struct Arrowheady: Shape {
-    var size: CGFloat
-
-    func path(in rect: CGRect) -> Path {
-        var path = Path()
-
-        // Defining the arrowhead path
-        path.move(to: CGPoint(x: 0, y: -size / 2)) // Top point
-        path.addLine(to: CGPoint(x: size / 2, y: size / 2)) // Bottom right
-        path.addLine(to: CGPoint(x: -size / 2, y: size / 2)) // Bottom left
-        path.closeSubpath()
-
-        return path
-    }
-}
+//struct Arrowheady: Shape {
+//    var size: CGFloat
+//
+//    func path(in rect: CGRect) -> Path {
+//        var path = Path()
+//
+//        // Defining the arrowhead path
+//        path.move(to: CGPoint(x: 0, y: -size / 2)) // Top point
+//        path.addLine(to: CGPoint(x: size / 2, y: size / 2)) // Bottom right
+//        path.addLine(to: CGPoint(x: -size / 2, y: size / 2)) // Bottom left
+//        path.closeSubpath()
+//
+//        return path
+//    }
+//}
 

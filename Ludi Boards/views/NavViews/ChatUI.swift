@@ -12,19 +12,6 @@ import Combine
 import RealmSwift
 import CoreEngine
 
-//struct Message: Identifiable {
-//    let id: Int
-//    let text: String
-//    let isCurrentUser: Bool
-//    let timestamp: String
-//}
-
-// Define a custom color extension to match the AOL/AIM theme
-extension Color {
-    static let AOLGray = Color(red: 0.82, green: 0.84, blue: 0.86)
-    static let AIMYellow = Color(red: 1.0, green: 0.71, blue: 0.0)
-}
-
 struct ChatView: View {
     @EnvironmentObject var boardEngineObject: BoardEngineObject
     @State var chatId: String = ""

@@ -8,26 +8,7 @@
 import Foundation
 import SwiftUI
 
-
-enum ToolTypes {
-    case basic
-    case LINE
-    case LINE_DOTTED
-    case LINE_CURVED
-}
-
-struct Tool {
-    let title: String
-    let image: String // Using SwiftUI's Image type for image resources
-    let authLevel: Int
-    let color: Color
-}
-
-protocol IconProvider {
-    var tool: Tool { get }
-}
-
-enum MenuBarProvider: IconProvider {
+public enum MenuBarProvider: IconProvider {
     case menuBar
     case info
     case toolbox
@@ -53,7 +34,7 @@ enum MenuBarProvider: IconProvider {
     case image
     case webBrowser
 
-    var tool: Tool {
+    public var tool: Tool {
         switch self {
             // Main
             case .menuBar: return Tool(title: "Menubar", image: "line.horizontal.3", authLevel: 0, color: .white)
@@ -90,14 +71,13 @@ enum MenuBarProvider: IconProvider {
         }
     }
 
-
-    static let allCases: [MenuBarProvider] = [
+    public static let allCases: [MenuBarProvider] = [
         .menuBar, .info, .toolbox, .lock, .video, .play, .canvasGrid, .navHome, .buddyList, .boardSettings, .boardList,
         .boardCreate, .boardDetails, .reset, .trash, .boardBackground,
         .profile, .share, .router, .note, .chat, .paint, .image, .webBrowser
     ]
 
-    static func parseByTitle(title: String) -> MenuBarProvider? {
+    public static func parseByTitle(title: String) -> MenuBarProvider? {
         return allCases.first { $0.tool.title.lowercased() == title.lowercased() }
     }
 }

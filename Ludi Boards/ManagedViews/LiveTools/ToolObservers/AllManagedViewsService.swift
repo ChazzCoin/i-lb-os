@@ -24,9 +24,7 @@ class AllManagedViewsService: ObservableObject {
         verifyLoginStatus()
     }
     
-    func verifyLoginStatus() {
-//        self.isLoggedIn = realmInstance.userIsLoggedIn()
-    }
+    func verifyLoginStatus() { self.isLoggedIn = UserTools.isLoggedIn }
 
     func startObserving(activityId: String) {
         if !self.isLoggedIn || activityId == "SOL" {return}
@@ -47,6 +45,9 @@ class AllManagedViewsService: ObservableObject {
     }
 }
 
+/*
+ THIS HAS BEEN MIGRATED INTO THE MANAGED VIEW OBJECT
+ */
 class SingleManagedViewService: ObservableObject {
     @Published var realmInstance: Realm = realm()
     @Published var reference: DatabaseReference = Database

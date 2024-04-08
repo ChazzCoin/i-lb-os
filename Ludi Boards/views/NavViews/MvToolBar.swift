@@ -12,7 +12,7 @@ import CoreEngine
 // SwiftUI View for the Emoji Picker
 struct ToolBarPicker<Content: View>: View {
     let content: Content
-    @EnvironmentObject var BEO: BoardEngineObject
+    @AppStorage("toolBarIsShowing") var toolBarIsShowing: Bool = false
     @Environment(\.colorScheme) var colorScheme
     init(@ViewBuilder content: () -> Content) {
         self.content = content()
@@ -35,7 +35,7 @@ struct ToolBarPicker<Content: View>: View {
                     .foregroundColor(getForegroundColor(colorScheme))
                     .padding()
                     .onTapAnimation {
-                        self.BEO.toolBarIsShowing = false
+                        self.toolBarIsShowing = false
                     }
                 
                 

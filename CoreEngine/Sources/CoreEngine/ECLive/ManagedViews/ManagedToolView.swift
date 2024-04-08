@@ -10,17 +10,22 @@ import SwiftUI
 import FirebaseDatabase
 import RealmSwift
 import Combine
-import CoreEngine
 
 
 // Tool Bar Picker Icon View
-struct ManagedViewBasicToolIcon: View {
-    let toolType: String
+public struct ManagedViewBasicToolIcon: View {
+    public let toolType: String
     
-    @State private var color: Color = .black
-    @State private var rotation = 0.0
+    @State public var color: Color = .black
+    @State public var rotation = 0.0
+    
+    public init(toolType: String, color: Color = .black, rotation: Double = 0.0) {
+        self.toolType = toolType
+        self.color = color
+        self.rotation = rotation
+    }
 
-    var body: some View {
+    public var body: some View {
         Image(toolType)
             .resizable()
     }
@@ -28,41 +33,34 @@ struct ManagedViewBasicToolIcon: View {
 
 
 // Main Board Tool View
-struct ManagedViewBasicTool: View {
-    let viewId: String
-    let activityId: String
-    let toolType: String
-    @EnvironmentObject var BEO: BoardEngineObject
+public struct ManagedViewBasicTool: View {
+    public let viewId: String
+    public let activityId: String
+    public let toolType: String
     
-    @State private var color: Color = .black
-    @State private var rotation = 0.0
+    @State public var color: Color = .black
+    @State public var rotation = 0.0
     
-    @State private var position = CGPoint(x: 100, y: 100)
-    @GestureState private var dragOffset = CGSize.zero
-    @State private var isDragging = false
+    @State public var position = CGPoint(x: 100, y: 100)
+    @GestureState public var dragOffset = CGSize.zero
+    @State public var isDragging = false
 
-    var body: some View {
+    public var body: some View {
         Image(toolType)
             .resizable()
             .enableManagedViewBasic(viewId: viewId, activityId: activityId)
     }
 }
 
-extension View {
-    func enableManagedViewBasic(viewId: String, activityId: String) -> some View {
-        self.modifier(enableManagedViewTool(viewId: viewId, activityId: activityId))
-    }
-}
-
-struct enableManagedViewTool : ViewModifier {
+public struct enableManagedViewTool : ViewModifier {
     
-    @State var viewId: String
-    @State var activityId: String
+    @State public var viewId: String
+    @State public var activityId: String
     
-    @StateObject var MVO: ManagedViewObject = ManagedViewObject()
+    @StateObject public var MVO: ManagedViewObject = ManagedViewObject()
     @GestureState public var dragOffset = CGSize.zero
     
-    func body(content: Content) -> some View {
+    public func body(content: Content) -> some View {
         GeometryReader { geo in
             content
         }
@@ -85,7 +83,7 @@ struct enableManagedViewTool : ViewModifier {
         }
     }
     
-    func gestureDragBasicTool() -> some Gesture {
+    public func gestureDragBasicTool() -> some Gesture {
         DragGesture()
             .onChanged { drag in
                 DispatchQueue.main.async { self.MVO.ignoreUpdates = true }

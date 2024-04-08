@@ -448,6 +448,7 @@ struct BoardEngine: View {
             line.width = 10
             line.toolColor = "Black"
             line.toolType = self.BEO.drawType
+            line.subToolType = ""
             line.lineDash = 1
             line.dateUpdated = Int(Date().timeIntervalSince1970)
             r.create(ManagedView.self, value: line, update: .all)

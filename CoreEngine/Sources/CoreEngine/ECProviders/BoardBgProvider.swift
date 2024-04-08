@@ -7,8 +7,7 @@
 
 import Foundation
 
-
-enum BoardBgProvider: IconProvider {
+public enum BoardBgProvider: IconProvider {
     case soccerOne
     case soccerTwo
     case basketballOne
@@ -18,8 +17,8 @@ enum BoardBgProvider: IconProvider {
     case bracketOne
     case poolOne
 
-    var tool: Tool {
-            switch self {
+    public var tool: Tool {
+        switch self {
             case .soccerOne:
                 return Tool(title: "Soccer 1", image: "soccer_field_two", authLevel: 0, color: .black)
             case .soccerTwo:
@@ -36,15 +35,15 @@ enum BoardBgProvider: IconProvider {
                 return Tool(title: "Bracket 1", image: "bracket_one", authLevel: 0, color: .black)
             case .poolOne:
                 return Tool(title: "Pool 1", image: "pool_table", authLevel: 0, color: .black)
-            }
         }
+    }
 
-    static let allCases = [
+    public static let allCases = [
         soccerOne, soccerTwo, basketballOne, basketballTwo, basketballThree,
         baseballOne, bracketOne, poolOne
     ]
 
-    static func parseByTitle(title: String) -> BoardBgProvider? {
+    public static func parseByTitle(title: String) -> BoardBgProvider? {
         return allCases.first { $0.tool.title.lowercased() == title.lowercased() }
     }
 }

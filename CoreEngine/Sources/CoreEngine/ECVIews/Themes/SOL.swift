@@ -1,15 +1,15 @@
 //
-//  Backgrounds.swift
-//  Ludi Boards
+//  File.swift
+//  
 //
-//  Created by Charles Romeo on 2/4/24.
+//  Created by Charles Romeo on 4/7/24.
 //
 
 import Foundation
 import SwiftUI
-import CoreEngine
 
-extension View {
+
+public extension View {
     func solBackground() -> some View {
         self.modifier(SOLBackgroundModifier())
     }
@@ -22,9 +22,9 @@ extension View {
 }
 
 
-struct SOLBackgroundModifier: ViewModifier {
+public struct SOLBackgroundModifier: ViewModifier {
     @Environment(\.colorScheme) var colorScheme
-    func body(content: Content) -> some View {
+    public func body(content: Content) -> some View {
         content
             .background(
                 RoundedRectangle(cornerRadius: 15)
@@ -36,8 +36,8 @@ struct SOLBackgroundModifier: ViewModifier {
            )
     }
 }
-struct SOLBackgroundDarkModifier: ViewModifier {
-    func body(content: Content) -> some View {
+public struct SOLBackgroundDarkModifier: ViewModifier {
+    public func body(content: Content) -> some View {
         content
             .background(
                 RoundedRectangle(cornerRadius: 15)
@@ -46,8 +46,8 @@ struct SOLBackgroundDarkModifier: ViewModifier {
             )
     }
 }
-struct SOLBackgroundPrimaryModifier: ViewModifier {
-    func body(content: Content) -> some View {
+public struct SOLBackgroundPrimaryModifier: ViewModifier {
+    public func body(content: Content) -> some View {
         content
             .background(
                 RoundedRectangle(cornerRadius: 15)

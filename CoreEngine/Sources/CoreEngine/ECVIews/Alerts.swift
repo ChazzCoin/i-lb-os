@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-extension View {
+public extension View {
     
     func alertConfirm(isPresented: Binding<Bool>, title: String, message: String, action: @escaping () -> Void) -> some View {
         self.modifier(ConfirmModifier(showAlert: isPresented, title: title, message: message, action: action))
@@ -24,13 +24,13 @@ extension View {
     
 }
 
-struct ConfirmModifier: ViewModifier {
+public struct ConfirmModifier: ViewModifier {
     @Binding var showAlert: Bool
     let title: String
     let message: String
     let action: () -> Void
     
-    func body(content: Content) -> some View {
+    public func body(content: Content) -> some View {
         content
             .alert(title, isPresented: $showAlert) {
                 Button("Cancel", role: .cancel) {
@@ -46,14 +46,14 @@ struct ConfirmModifier: ViewModifier {
     }
 }
 
-struct ConfirmSaveModifier: ViewModifier {
+public struct ConfirmSaveModifier: ViewModifier {
     @Binding var showAlert: Bool
     let saveAction: () -> Void
     let title: String = "Save"
     let message: String = "Are you sure you want to save?"
     
     
-    func body(content: Content) -> some View {
+    public func body(content: Content) -> some View {
         content
             .alert(title, isPresented: $showAlert) {
                 Button("Cancel", role: .cancel) {
