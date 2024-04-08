@@ -93,17 +93,17 @@ struct CanvasEngine: View {
             }
     }
     
-    func toggleDrawingMode(drawingType:String="LINE") {
+    func toggleDrawingMode(shapeSubType:String=ShapeToolProvider.line_straight) {
         if self.BEO.isDraw {
             disableDrawing()
         } else {
-            enableDrawing(drawingType: drawingType)
+            enableDrawing(shapeSubType: shapeSubType)
         }
     }
     
-    func enableDrawing(drawingType:String="LINE") {
+    func enableDrawing(shapeSubType:String=ShapeToolProvider.line_straight) {
         self.BEO.isDraw = true
-        self.BEO.drawType = drawingType
+        self.BEO.shapeSubType = shapeSubType
         self.BEO.gesturesAreLocked = true
         self.BEO.toolBarIsShowing = false
         self.showMenuBar = false
@@ -192,12 +192,12 @@ struct CanvasEngine: View {
                         LineIconView(isBgColor: false)
                             .frame(width: 50, height: 50)
                             .onTapAnimation {
-                                enableDrawing(drawingType: "LINE")
+                                enableDrawing(shapeSubType: ShapeToolProvider.line_straight)
                             }
                         CurvedLineIconView()
                             .frame(width: 50, height: 50)
                             .onTapAnimation {
-                                enableDrawing(drawingType: "CURVED-LINE")
+                                enableDrawing(shapeSubType: ShapeToolProvider.line_curved)
                             }
                     }
                     .zIndex(2.0)
@@ -392,11 +392,11 @@ struct CanvasEngine: View {
     }
     func addMvSettingsWindow() {
         let caller = "mv_settings"
-        managedWindowsObject.addNewViewToPool(viewId: caller, viewBuilder: {
-            AnyView(NavStackFloatingWindow(id: caller, viewBuilder: {
-                SettingsView(onDelete: {}).environmentObject(self.BEO)
-            }))
-        })
+//        managedWindowsObject.addNewViewToPool(viewId: caller, viewBuilder: {
+//            AnyView(NavStackFloatingWindow(id: caller, viewBuilder: {
+//                SettingsView(onDelete: {}).environmentObject(self.BEO)
+//            }))
+//        })
     }
 }
 

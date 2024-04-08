@@ -16,7 +16,7 @@ struct BoardEngine: View {
     @Environment(\.scenePhase) var deviceState
     @EnvironmentObject var BEO: BoardEngineObject
     @StateObject var PMO = PopupMenuObject()
-    
+    @StateObject var MVFactory = ManagedViewFactory()
     //
     @State var MVS: AllManagedViewsService? = nil
     @State var SPS: SessionPlanService? = nil
@@ -51,10 +51,19 @@ struct BoardEngine: View {
                  ForEach(self.BEO.basicTools) { item in
                      if !item.isDeleted {
                          
-                         // Main Tool Management Functionality
-                         ManagedViewToolFactory(toolType: item.toolType, viewId: item.id, activityId: item.boardId)
+//                         item.toolType
+//                         item.toolSubType
+//                         item.id
+//                         item.boardId
+                         ManagedViewFactory.build(type: item.toolType, subType: item.subToolType, sport: item.sport)
+                             .getView(viewId: item.id, activityId: item.boardId)
                              .zIndex(20.0)
                              .environmentObject(self.BEO)
+                         
+                         // Main Tool Management Functionality
+//                         ManagedViewToolFactory(toolType: item.toolType, viewId: item.id, activityId: item.boardId)
+//                             .zIndex(20.0)
+//                             .environmentObject(self.BEO)
                          
                      }
                      
@@ -180,18 +189,26 @@ struct BoardEngine: View {
     @MainActor
     func onToolCreated() {
         CodiChannel.TOOL_ON_CREATE.receive(on: RunLoop.main) { tool in
-            let newTool = ManagedView()
-            newTool.toolType = tool as! String
-            newTool.boardId = self.BEO.currentActivityId
-            newTool.x = 0.0
-            newTool.y = 0.0
-            self.BEO.realmInstance.safeWrite { r in
-                r.create(ManagedView.self, value: newTool, update: .all)
+            if let temp = tool as? ManagedTool {
+                ManagedViewFactory(type: temp.type, subType: temp.subType, sport: temp.sport)
+                    .createNewTool(activityId: self.BEO.currentActivityId)
             }
-            createHistoricalSnapShotAtStart(tool: newTool)
-            if userIsVerifiedToProceed() {
-                newTool.fireSave(parentId: self.BEO.currentActivityId, id: newTool.id)
-            }
+            
+            
+//            let newTool = ManagedView()
+//            newTool.toolType = tool as! String
+//            newTool.subToolType = ""
+//            newTool.sport = ""
+//            newTool.boardId = self.BEO.currentActivityId
+//            newTool.x = 0.0
+//            newTool.y = 0.0
+//            self.BEO.realmInstance.safeWrite { r in
+//                r.create(ManagedView.self, value: newTool, update: .all)
+//            }
+//            createHistoricalSnapShotAtStart(tool: newTool)
+//            if userIsVerifiedToProceed() {
+//                newTool.fireSave(parentId: self.BEO.currentActivityId, id: newTool.id)
+//            }
             
         }.store(in: &cancellables)
     }
@@ -447,8 +464,9 @@ struct BoardEngine: View {
             line.y = Double(start.y)
             line.width = 10
             line.toolColor = "Black"
-            line.toolType = self.BEO.drawType
-            line.subToolType = ""
+            line.sport = self.BEO.defaultSport
+            line.toolType = ShapeToolProvider.type
+            line.subToolType = self.BEO.shapeSubType
             line.lineDash = 1
             line.dateUpdated = Int(Date().timeIntervalSince1970)
             r.create(ManagedView.self, value: line, update: .all)

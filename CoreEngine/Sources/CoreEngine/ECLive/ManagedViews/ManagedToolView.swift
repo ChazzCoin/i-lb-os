@@ -38,6 +38,12 @@ public struct ManagedViewBasicTool: View {
     public let activityId: String
     public let toolType: String
     
+    public init(viewId: String, activityId: String, toolType: String) {
+        self.viewId = viewId
+        self.activityId = activityId
+        self.toolType = toolType
+    }
+    
     @State public var color: Color = .black
     @State public var rotation = 0.0
     
@@ -79,6 +85,7 @@ public struct enableManagedViewTool : ViewModifier {
             if !self.MVO.toolSettingsIsShowing { MVO.popUpIsVisible = false }
         })
         .onAppear {
+            print("OnAppear: BasicTool.")
             self.MVO.initializeWithViewId(viewId: viewId)
         }
     }

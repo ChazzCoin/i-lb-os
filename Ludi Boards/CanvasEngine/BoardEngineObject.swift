@@ -90,7 +90,7 @@ class BoardEngineObject : ObservableObject {
     // Current Board
     @Published var showTipViewStatic: Bool = false
     @Published var isDraw: Bool = false
-    @Published var drawType: String = "LINE"
+    @Published var shapeSubType: String = "LINE"
     @Published var isLoading: Bool = true
     
     // Shared

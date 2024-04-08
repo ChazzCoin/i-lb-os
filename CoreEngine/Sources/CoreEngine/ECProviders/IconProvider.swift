@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum SolIcon {
+public enum SolIcon {
     case save
     case delete
     case load
@@ -15,7 +15,7 @@ enum SolIcon {
     case add
     
     
-    var icon: String {
+    public var icon: String {
         switch self {
             case .save: return "square.and.arrow.down"
             case .delete: return "trash"
@@ -25,7 +25,7 @@ enum SolIcon {
         }
     }
     
-    var title: String {
+    public var title: String {
         switch self {
             case .save: return "Save"
             case .delete: return "Delete"
@@ -36,7 +36,7 @@ enum SolIcon {
         }
     }
     
-    var confirmMessage: String {
+    public var confirmMessage: String {
         switch self {
             case .save: return "Are you sure you want to save this?"
             case .delete: return "Are you sure you want to delete this?"

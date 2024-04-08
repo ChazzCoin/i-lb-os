@@ -35,6 +35,22 @@ public class WindowController {
     }
 }
 
+public class OnCreateTool {
+    public var toolType: String = ""
+    public var toolSubType: String = ""
+    public var sport: String = ""
+    public var viewId: String = ""
+    public var activityId: String = ""
+    
+    public init(toolType: String, toolSubType: String, sport: String, viewId: String, activityId: String) {
+        self.toolType = toolType
+        self.toolSubType = toolSubType
+        self.sport = sport
+        self.viewId = viewId
+        self.activityId = activityId
+    }
+}
+
 public class ViewAtts {
     public var viewId: String = ""
     public var size: Double? = nil

@@ -27,7 +27,7 @@ struct ToolBarSettingsPicker<Content: View>: View {
             HStack {
                
                 ForEach(soccerTools, id: \.self) { tool in
-                    ToolButtonSettingsIcon(icon: tool)
+//                    ToolButtonSettingsIcon(icon: tool)
                 }
                 
             }.padding()

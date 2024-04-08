@@ -8,20 +8,20 @@
 import Foundation
 import SwiftUI
 
-struct Triangle: Shape {
-    func path(in rect: CGRect) -> Path {
-        var path = Path()
-        // Start at the bottom-left corner
-        path.move(to: CGPoint(x: rect.minX, y: rect.maxY))
-        // Draw line to the top-center
-        path.addLine(to: CGPoint(x: rect.midX, y: rect.minY))
-        // Draw line to the bottom-right
-        path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
-        // Draw line to close the path (back to bottom-left)
-        path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
-        return path
-    }
-}
+//struct Triangle: Shape {
+//    func path(in rect: CGRect) -> Path {
+//        var path = Path()
+//        // Start at the bottom-left corner
+//        path.move(to: CGPoint(x: rect.minX, y: rect.maxY))
+//        // Draw line to the top-center
+//        path.addLine(to: CGPoint(x: rect.midX, y: rect.minY))
+//        // Draw line to the bottom-right
+//        path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
+//        // Draw line to close the path (back to bottom-left)
+//        path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
+//        return path
+//    }
+//}
 
 struct ResizableTriangle: View {
     @State private var point1 = CGPoint(x: 150, y: 100)

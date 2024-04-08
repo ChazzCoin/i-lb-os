@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-public enum MenuBarProvider: IconProvider {
+public enum MenuBarProvider: CoreIcon {
     case menuBar
     case info
     case toolbox

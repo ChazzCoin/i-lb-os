@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum BoardBgProvider: IconProvider {
+public enum BoardBgProvider: CoreIcon {
     case soccerOne
     case soccerTwo
     case basketballOne

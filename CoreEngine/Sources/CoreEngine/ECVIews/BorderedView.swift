@@ -8,21 +8,21 @@
 import Foundation
 import SwiftUI
 
-struct BorderedView<Content: View>: View {
-    let content: Content
-    var borderColor: Color = .white
-    var borderWidth: CGFloat = 2
+public struct BorderedView<Content: View>: View {
+    public let content: Content
+    public var borderColor: Color = .white
+    public var borderWidth: CGFloat = 2
 
-    init(@ViewBuilder content: () -> Content) {
+    public init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
     
-    init(color:Color, @ViewBuilder content: () -> Content) {
+    public init(color:Color, @ViewBuilder content: () -> Content) {
         self.borderColor = color
         self.content = content()
     }
 
-    var body: some View {
+    public var body: some View {
         HStack {
             content
         }
@@ -33,21 +33,21 @@ struct BorderedView<Content: View>: View {
     }
 }
 
-struct BorderedVStack<Content: View>: View {
-    let content: Content
-    var borderColor: Color = .primaryBackground
-    var borderWidth: CGFloat = 2
+public struct BorderedVStack<Content: View>: View {
+    public let content: Content
+    public var borderColor: Color = .blue
+    public var borderWidth: CGFloat = 2
 
-    init(@ViewBuilder content: () -> Content) {
+    public init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
     
-    init(color:Color, @ViewBuilder content: () -> Content) {
+    public init(color:Color, @ViewBuilder content: () -> Content) {
         self.borderColor = color
         self.content = content()
     }
 
-    var body: some View {
+    public var body: some View {
         VStack {
             content
         }

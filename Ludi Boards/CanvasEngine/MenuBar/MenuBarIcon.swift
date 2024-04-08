@@ -11,7 +11,7 @@ import Combine
 import CoreEngine
 
 struct MenuButtonIcon: View {
-    var icon: IconProvider // Assuming IconProvider conforms to SwiftUI's View
+    var icon: CoreIcon // Assuming IconProvider conforms to SwiftUI's View
     @Environment(\.colorScheme) var colorScheme
     @EnvironmentObject var BEO: BoardEngineObject
     @State private var lifeColor = Color.white

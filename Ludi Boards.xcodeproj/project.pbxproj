@@ -39,7 +39,6 @@
 		FB18F1872B6B10CE00D89F8D /* RecordingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB18F1862B6B10CE00D89F8D /* RecordingView.swift */; };
 		FB18F1892B6B12FD00D89F8D /* RecordingTimeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB18F1882B6B12FD00D89F8D /* RecordingTimeline.swift */; };
 		FB2AA1032B74137800BD631C /* SolIconTextButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB2AA1022B74137800BD631C /* SolIconTextButton.swift */; };
-		FB2AA1052B74305E00BD631C /* IconProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB2AA1042B74305E00BD631C /* IconProvider.swift */; };
 		FB2AA1072B74352A00BD631C /* SolToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB2AA1062B74352A00BD631C /* SolToggle.swift */; };
 		FB3E02B32B0C6B5100D8558C /* SessionPlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02B22B0C6B5100D8558C /* SessionPlanView.swift */; };
 		FB3E02B52B0C6B6000D8558C /* ActivityPlanBindingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02B42B0C6B6000D8558C /* ActivityPlanBindingView.swift */; };
@@ -53,8 +52,6 @@
 		FB48409C2B1EBE8B0003377A /* StopWatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB48409B2B1EBE8B0003377A /* StopWatch.swift */; };
 		FB5094262B058215000AEA96 /* LazyRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5094252B058215000AEA96 /* LazyRow.swift */; };
 		FB5094282B0584CA000AEA96 /* NavStackWindowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5094272B0584CA000AEA96 /* NavStackWindowView.swift */; };
-		FB50942A2B05856D000AEA96 /* LineToolView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5094292B05856D000AEA96 /* LineToolView.swift */; };
-		FB58A1B42B17D1420024B9A2 /* MvToolBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58A1B32B17D1420024B9A2 /* MvToolBar.swift */; };
 		FB58A1B62B1804C80024B9A2 /* FlashingLight.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58A1B52B1804C80024B9A2 /* FlashingLight.swift */; };
 		FB58E8802B02B26C00FD9E2E /* DragAndDrop.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58E87F2B02B26C00FD9E2E /* DragAndDrop.swift */; };
 		FB58E8822B030F1D00FD9E2E /* RealmFind.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB58E8812B030F1D00FD9E2E /* RealmFind.swift */; };
@@ -109,7 +106,6 @@
 		FBABDAC72B20456700321A00 /* ToolBarSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBABDAC62B20456700321A00 /* ToolBarSettings.swift */; };
 		FBABDAC92B20469900321A00 /* ManagedViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBABDAC82B20469900321A00 /* ManagedViewManager.swift */; };
 		FBAE62AD2B295A8100E008D5 /* ManagedPopUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBAE62AC2B295A8100E008D5 /* ManagedPopUpView.swift */; };
-		FBAE62AF2B2A3FD200E008D5 /* CurvedLineToolView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBAE62AE2B2A3FD200E008D5 /* CurvedLineToolView.swift */; };
 		FBB450022B052B180096F8EB /* FireLiveData.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBB450012B052B180096F8EB /* FireLiveData.swift */; };
 		FBBAD3BC2B1F8ECC004A4332 /* Timer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBBAD3BB2B1F8ECC004A4332 /* Timer.swift */; };
 		FBBAD3BE2B1FBF58004A4332 /* NavPad.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBBAD3BD2B1FBF58004A4332 /* NavPad.swift */; };
@@ -162,7 +158,6 @@
 		FBF1A5F92B5E342B0088150C /* SolIconButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF1A5F82B5E342B0088150C /* SolIconButton.swift */; };
 		FBF1A5FC2B5F7BB70088150C /* Triangle.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF1A5FB2B5F7BB70088150C /* Triangle.swift */; };
 		FBF3902E2B2D78CF00C0508A /* TipProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF3902D2B2D78CF00C0508A /* TipProvider.swift */; };
-		FBF404432B19304700FA0545 /* BorderedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF404422B19304700FA0545 /* BorderedView.swift */; };
 		FBF515A72BBB29840066EAA9 /* SportsPositions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF515A62BBB29840066EAA9 /* SportsPositions.swift */; };
 		FBF515AA2BBB5D8F0066EAA9 /* BaseDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF515A92BBB5D8F0066EAA9 /* BaseDetailsView.swift */; };
 		FBF515AC2BBB5F420066EAA9 /* OrganizationDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF515AB2BBB5F420066EAA9 /* OrganizationDetailsView.swift */; };
@@ -213,7 +208,6 @@
 		FB18F1862B6B10CE00D89F8D /* RecordingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingView.swift; sourceTree = "<group>"; };
 		FB18F1882B6B12FD00D89F8D /* RecordingTimeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingTimeline.swift; sourceTree = "<group>"; };
 		FB2AA1022B74137800BD631C /* SolIconTextButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolIconTextButton.swift; sourceTree = "<group>"; };
-		FB2AA1042B74305E00BD631C /* IconProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconProvider.swift; sourceTree = "<group>"; };
 		FB2AA1062B74352A00BD631C /* SolToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolToggle.swift; sourceTree = "<group>"; };
 		FB3E02B22B0C6B5100D8558C /* SessionPlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionPlanView.swift; sourceTree = "<group>"; };
 		FB3E02B42B0C6B6000D8558C /* ActivityPlanBindingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityPlanBindingView.swift; sourceTree = "<group>"; };
@@ -227,8 +221,6 @@
 		FB48409B2B1EBE8B0003377A /* StopWatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopWatch.swift; sourceTree = "<group>"; };
 		FB5094252B058215000AEA96 /* LazyRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LazyRow.swift; sourceTree = "<group>"; };
 		FB5094272B0584CA000AEA96 /* NavStackWindowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavStackWindowView.swift; sourceTree = "<group>"; };
-		FB5094292B05856D000AEA96 /* LineToolView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineToolView.swift; sourceTree = "<group>"; };
-		FB58A1B32B17D1420024B9A2 /* MvToolBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MvToolBar.swift; sourceTree = "<group>"; };
 		FB58A1B52B1804C80024B9A2 /* FlashingLight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlashingLight.swift; sourceTree = "<group>"; };
 		FB58E8772B01F40300FD9E2E /* FireCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireCore.swift; sourceTree = "<group>"; };
 		FB58E87F2B02B26C00FD9E2E /* DragAndDrop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragAndDrop.swift; sourceTree = "<group>"; };
@@ -285,7 +277,6 @@
 		FBABDAC62B20456700321A00 /* ToolBarSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolBarSettings.swift; sourceTree = "<group>"; };
 		FBABDAC82B20469900321A00 /* ManagedViewManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedViewManager.swift; sourceTree = "<group>"; };
 		FBAE62AC2B295A8100E008D5 /* ManagedPopUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedPopUpView.swift; sourceTree = "<group>"; };
-		FBAE62AE2B2A3FD200E008D5 /* CurvedLineToolView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurvedLineToolView.swift; sourceTree = "<group>"; };
 		FBB450012B052B180096F8EB /* FireLiveData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireLiveData.swift; sourceTree = "<group>"; };
 		FBBAD3BB2B1F8ECC004A4332 /* Timer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timer.swift; sourceTree = "<group>"; };
 		FBBAD3BD2B1FBF58004A4332 /* NavPad.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavPad.swift; sourceTree = "<group>"; };
@@ -338,7 +329,6 @@
 		FBF1A5F82B5E342B0088150C /* SolIconButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolIconButton.swift; sourceTree = "<group>"; };
 		FBF1A5FB2B5F7BB70088150C /* Triangle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Triangle.swift; sourceTree = "<group>"; };
 		FBF3902D2B2D78CF00C0508A /* TipProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TipProvider.swift; sourceTree = "<group>"; };
-		FBF404422B19304700FA0545 /* BorderedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BorderedView.swift; sourceTree = "<group>"; };
 		FBF515A62BBB29840066EAA9 /* SportsPositions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SportsPositions.swift; sourceTree = "<group>"; };
 		FBF515A92BBB5D8F0066EAA9 /* BaseDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseDetailsView.swift; sourceTree = "<group>"; };
 		FBF515AB2BBB5F420066EAA9 /* OrganizationDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrganizationDetailsView.swift; sourceTree = "<group>"; };
@@ -469,7 +459,6 @@
 				FB15DD332B074E6E00A21290 /* ChatUI.swift */,
 				FBBDD01C2B6CA8A20009844B /* MvSettingsToolBar.swift */,
 				FBBDD0212B6E186E0009844B /* BoardSettingsToolBar.swift */,
-				FB58A1B32B17D1420024B9A2 /* MvToolBar.swift */,
 				FBBAD3BD2B1FBF58004A4332 /* NavPad.swift */,
 				FBABDAC62B20456700321A00 /* ToolBarSettings.swift */,
 				FB9F1DD32B15307E00FD9078 /* UserSignUp.swift */,
@@ -485,7 +474,6 @@
 			isa = PBXGroup;
 			children = (
 				FB9F1DD12B1529E400FD9078 /* LoadingView.swift */,
-				FBF404422B19304700FA0545 /* BorderedView.swift */,
 				FB9F1DD52B1532AB00FD9078 /* ImagePicker.swift */,
 				FB426A972B53435A0058CD9D /* Lists */,
 				FB3E02C42B0D2A8500D8558C /* ThumbnailListView.swift */,
@@ -615,8 +603,6 @@
 			isa = PBXGroup;
 			children = (
 				FBBDD01F2B6E12BC0009844B /* ManagedViewFactory.swift */,
-				FB5094292B05856D000AEA96 /* LineToolView.swift */,
-				FBAE62AE2B2A3FD200E008D5 /* CurvedLineToolView.swift */,
 				FB18F1072B619B5700D89F8D /* ToolObservers */,
 			);
 			path = LiveTools;
@@ -725,7 +711,6 @@
 				FB10AE082B0DD76C00295F4B /* EmojiProvider.swift */,
 				FBE2C6292B1C2B67004C0116 /* SharedPrefs.swift */,
 				FBDE4F5A2B4D1038007FE880 /* InternetProvider.swift */,
-				FB2AA1042B74305E00BD631C /* IconProvider.swift */,
 			);
 			path = Providers;
 			sourceTree = "<group>";
@@ -1021,7 +1006,6 @@
 				FBF515B02BBB64F90066EAA9 /* PlayerDetailsView.swift in Sources */,
 				FB9F1DD62B1532AB00FD9078 /* ImagePicker.swift in Sources */,
 				FB18F1732B68CE6400D89F8D /* SearchableActivityListView.swift in Sources */,
-				FBF404432B19304700FA0545 /* BorderedView.swift in Sources */,
 				FBF515BE2BBDF7560066EAA9 /* TeamManager.swift in Sources */,
 				FB18F17B2B69A26400D89F8D /* SearchablePlayerRefListView.swift in Sources */,
 				FBF515B72BBCE4560066EAA9 /* ActivityDetailsView.swift in Sources */,
@@ -1051,7 +1035,6 @@
 				FBE2C6202B1AFD20004C0116 /* SessionPlanThumbView.swift in Sources */,
 				FB18F1422B63946B00D89F8D /* OShape.swift in Sources */,
 				FB93BB1B2B03471C00864CB2 /* FireData.swift in Sources */,
-				FB58A1B42B17D1420024B9A2 /* MvToolBar.swift in Sources */,
 				FBF515B22BBB8DE90066EAA9 /* Assigners.swift in Sources */,
 				FBE2C61C2B1AF961004C0116 /* BoardBackgrounder.swift in Sources */,
 				FBF515B92BBD03FF0066EAA9 /* BoardEngineObject.swift in Sources */,
@@ -1085,7 +1068,6 @@
 				FB9EB6D62BB65F3800FDD5DE /* DataPuller.swift in Sources */,
 				FBE2C6172B1AF595004C0116 /* GrassFieldView.swift in Sources */,
 				FBF515B42BBCE2320066EAA9 /* TrainingEquipment.swift in Sources */,
-				FB50942A2B05856D000AEA96 /* LineToolView.swift in Sources */,
 				FBF515BC2BBDF6070066EAA9 /* OrganizationManager.swift in Sources */,
 				FB881A382B47397600C16198 /* RealmObserver.swift in Sources */,
 				FBA20A2F2B166FCE00045D1C /* MVSettingsView_DEPRECATED.swift in Sources */,
@@ -1095,8 +1077,6 @@
 				FBABDAC92B20469900321A00 /* ManagedViewManager.swift in Sources */,
 				FB15DD272B07440700A21290 /* ViewWrapper.swift in Sources */,
 				FBF3902E2B2D78CF00C0508A /* TipProvider.swift in Sources */,
-				FB2AA1052B74305E00BD631C /* IconProvider.swift in Sources */,
-				FBAE62AF2B2A3FD200E008D5 /* CurvedLineToolView.swift in Sources */,
 				FBD9AFBA2AFF03D7005F8620 /* CanvasEngine.swift in Sources */,
 				FB5094262B058215000AEA96 /* LazyRow.swift in Sources */,
 				FB87BE092B734425003B880D /* Michael.swift in Sources */,

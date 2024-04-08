@@ -279,7 +279,7 @@ public class ManagedViewObject: ObservableObject {
             lifeCenterPoint = nextCoordinate["center"] ?? lifeCenterPoint
             lifeCenterX = lifeCenterPoint.x
             lifeCenterY = lifeCenterPoint.y
-            if self.lifeToolType == ToolTypeProvider.line.name {
+            if self.lifeToolType == ManagedViewFactory.shape {
                 loadWidthAndHeight()
                 loadRotationOfLine()
             }
@@ -328,13 +328,13 @@ public class ManagedViewObject: ObservableObject {
             lifeColor = colorFromRGBA(red: lifeColorRed, green: lifeColorGreen, blue: lifeColorBlue, alpha: lifeColorAlpha)
             
             // Handle?
-            if lifeToolType == ToolTypeProvider.line.name {
+            if lifeToolType == ManagedViewFactory.shape {
                 loadCenterPoint()
                 loadWidthAndHeight()
                 loadRotationOfLine()
             }
             // -> Handle?
-            if lifeToolType == ToolTypeProvider.basic.name {
+            if lifeToolType == ManagedViewFactory.basic {
                 minSizeCheck()
             }
             
@@ -367,7 +367,7 @@ public class ManagedViewObject: ObservableObject {
                         let startPosition = CGPoint(x: temp.startX, y: temp.startY)
                         let endPosition = CGPoint(x: temp.endX, y: temp.endY)
                         var centerPosition: CGPoint
-                        if self.lifeToolType == "line" && self.lifeSubToolType == "curved" {
+                        if self.lifeToolType == ManagedViewFactory.shape && self.lifeSubToolType == ShapeToolProvider.line_curved {
                              centerPosition = CGPoint(x: temp.centerX, y: temp.centerY)
                         } else {
                             centerPosition = getCenterOfLine(start: startPosition, end: endPosition)

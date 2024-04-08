@@ -11,34 +11,13 @@ import RealmSwift
 import Combine
 import FirebaseDatabase
 import CoreGraphics
-import CoreEngine
 
-//struct OverlayLineV: View {
-//    @Binding var startX: CGFloat
-//    @Binding var startY: CGFloat
-//    @Binding var centerX: CGFloat
-//    @Binding var centerY: CGFloat
-//    @Binding var endX: CGFloat
-//    @Binding var endY: CGFloat
-//    
-//    
-//    var body: some View {
-//        Path { path in
-//                path.move(to: CGPoint(x: startX, y: startY))
-//                path.addQuadCurve(to: CGPoint(x: endX, y: endY),
-//                                  control: CGPoint(x: centerX, y: centerY))
-//            }
-//        .stroke(Color.black, style: StrokeStyle(lineWidth: 100, dash: [0.0]))
-//    }
-//}
-
-
-struct MatchedShape: View {
-    var startPoint: CGPoint
-    var endPoint: CGPoint
-    var controlPoint1: CGPoint
+public struct MatchedShape: View {
+    public var startPoint: CGPoint
+    public var endPoint: CGPoint
+    public var controlPoint1: CGPoint
     
-    var body: some View {
+    public var body: some View {
         Path { path in
             path.move(to: startPoint)
             path.addQuadCurve(to: endPoint,
@@ -48,130 +27,20 @@ struct MatchedShape: View {
     }
 }
 
-struct CurvedLineDrawingManaged: View {
-    @State var viewId: String
-    @State var activityId: String
-//    @EnvironmentObject var BEO: BoardEngineObject
-//    var managedView: ManagedView? = nil
-//    private let menuWindowId = "mv_settings"
+public struct CurvedLineDrawingManaged: View {
+    @State public var viewId: String
+    @State public var activityId: String
+    public init(viewId: String, activityId: String) {
+        self.viewId = viewId
+        self.activityId = activityId
+    }
     
-//    @State private var isWriting = false
-//    @State private var coordinateStack: [[String:CGPoint]] = []
+    public let realmInstance = realm()
     
-    let realmInstance = realm()
-    
-    @StateObject var MVO: ManagedViewObject = ManagedViewObject()
-//    @GestureState public var dragOffset = CGSize.zero
-    
-//    @State private var managedViewNotificationToken: NotificationToken? = nil
-//    @State private var MVS: SingleManagedViewService = SingleManagedViewService()
-//    @State private var isDisabled = false
-//    @State private var lifeIsLocked = false
-//    @State private var lifeDateUpdated = Int(Date().timeIntervalSince1970)
-//    
-//    @State var lifeToolType = "CURVED-LINE"
-//    
-    @State private var dragOffset: CGSize = .zero
-//    @GestureState private var dragOffseter: CGSize = .zero
-//    @State private var lifeCenterX: CGFloat = 0.0
-//    @State private var lifeCenterY: CGFloat = 0.0
-//    @State private var lifeStartX: CGFloat = 0.0
-//    @State private var lifeStartY: CGFloat = 0.0
-//    @State private var lifeEndX: CGFloat = 0.0
-//    @State private var lifeEndY: CGFloat = 0.0
-//    
-//    @State private var lifeLineLength = 0.0
-//    @State private var lifeWidthTouch = 300.0
-//    @State private var lifeHeightTouch = 300.0
-//    
-//    @State private var lifeWidth: Double = 10.0
-//    @State private var lifeColor = Color.red
-//    
-//    @State private var lifeColorRed = 0.0
-//    @State private var lifeColorGreen = 0.0
-//    @State private var lifeColorBlue = 0.0
-//    @State private var lifeColorAlpha = 1.0
-//    @State private var lifeLineDash = 1.0
-//    @State private var lifeHeadIsEnabled = true
-//    @State private var lifeRotation: Angle = Angle.zero
-//    
-//    @State private var popUpIsVisible = false
-//    @State private var anchorsAreVisible = false
-//    
-//    @State private var offset = CGSize.zero
-//    @State private var position = CGPoint(x: 0, y: 0)
-////    @GestureState private var dragOffset = CGSize.zero
-//    @State private var isDragging = false
-//    @State var originalLifeStart = CGPoint.zero
-//    @State var originalLifeEnd = CGPoint.zero
-//    @State var originalLifeCenter = CGPoint.zero
-//    
-//    @State private var objectNotificationToken: NotificationToken? = nil
-//    @State private var cancellables = Set<AnyCancellable>()
-    
-    // Functions
-//    func isDisabledChecker() -> Bool { return isDisabled }
-//    func isDeletedChecker() -> Bool { return self.MVS.isDeleted }
+    @StateObject public var MVO: ManagedViewObject = ManagedViewObject()
+    @State public var dragOffset: CGSize = .zero
 
-//    private var lineLength: CGFloat {
-//        sqrt(pow(lifeEndX - lifeStartX, 2) + pow(lifeEndY - lifeStartY, 2))-100
-//    }
-//    
-//    func loadRotationOfLine() {
-//        let lineStart = CGPoint(x: lifeStartX, y: lifeStartY)
-//        let lineEnd = CGPoint(x: lifeEndX, y: lifeEndY)
-//        lifeRotation = rotationAngleOfLine(from: lineStart, to: lineEnd)
-//        print(lifeRotation)
-//    }
-//    
-//    func loadWidthAndHeight() {
-//        let lineStart = CGPoint(x: lifeStartX, y: lifeStartY)
-//        let lineEnd = CGPoint(x: lifeEndX, y: lifeEndY)
-//        let (lineWidth, lineHeight) = getWidthAndHeightOfLine(start: lineStart, end: lineEnd)
-//        lifeWidthTouch = Double(lineWidth).bound(to: 100...200)
-//        lifeHeightTouch = Double(lineHeight).bound(to: 100...200)
-//    }
-//    
-//    func loadControlAnchor() {
-//        let t: CGFloat = 0.5
-//        lifeCenterX = (pow(1-t, 2) * lifeStartX + 2*(1-t)*t*lifeCenterX + pow(t, 2) * lifeEndX)
-//        lifeCenterY = (pow(1-t, 2) * lifeStartY + 2*(1-t)*t*lifeCenterY + pow(t, 2) * lifeEndY)
-//    }
-    
-//    func quadBezierPoint(start: CGPoint, end: CGPoint, control: CGPoint) -> CGPoint {
-//        let t: CGFloat = 0.5
-//        let x = pow(1-t, 2) * start.x + 2*(1-t)*t*control.x + pow(t, 2) * end.x
-//        let y = pow(1-t, 2) * start.y + 2*(1-t)*t*control.y + pow(t, 2) * end.y
-//        return CGPoint(x: x, y: y)
-//    }
-//    
-//    func calculateAngle(startX: CGFloat, startY: CGFloat, endX: CGFloat, endY: CGFloat) -> Double {
-//        let deltaX = endX - startX
-//        let deltaY = endY - startY
-//        let angle = atan2(deltaY, deltaX) * 180 / .pi
-//        return Double(angle) + 90
-//    }
-    
-//    func calculateAngleAtEndPointOfQuadCurve() -> Double {
-//        // Since we are calculating the angle at the end point, t = 1
-//        let t: CGFloat = 1.0
-//
-//        // Breaking down the derivative calculation into smaller parts
-//        let dx1 = lifeCenterX - lifeStartX
-//        let dy1 = lifeCenterY - lifeStartY
-//        let dx2 = lifeEndX - lifeCenterX
-//        let dy2 = lifeEndY - lifeCenterY
-//
-//        let derivativeX = 2 * (1 - t) * dx1 + 2 * t * dx2
-//        let derivativeY = 2 * (1 - t) * dy1 + 2 * t * dy2
-//
-//        // Calculate the angle
-//        let angle = atan2(derivativeY, derivativeX) * 180 / .pi
-//        return Double(angle) + 90
-//    }
-
-    
-    var body: some View {
+    public var body: some View {
         Path { path in
             path.move(to: CGPoint(x: MVO.lifeStartX, y: MVO.lifeStartY))
             path.addQuadCurve(to: CGPoint(x: MVO.lifeEndX, y: MVO.lifeEndY),
@@ -250,11 +119,12 @@ struct CurvedLineDrawingManaged: View {
             }
         })
         .onAppear() {
-
+            print("OnAppear: CurvedLineTool.")
+            MVO.initializeWithViewId(viewId: self.viewId)
         }
     }
     
-    func fullCurvedLineDragGesture() -> some Gesture {
+    public func fullCurvedLineDragGesture() -> some Gesture {
         DragGesture()
             .onChanged { value in
                 if MVO.lifeIsLocked || MVO.anchorsAreVisible { return }
@@ -281,7 +151,7 @@ struct CurvedLineDrawingManaged: View {
             
     }
     
-    func handleFullDragTranslation(value: DragGesture.Value) {
+    public func handleFullDragTranslation(value: DragGesture.Value) {
         let dragAmount = value.translation
         let startPoint = CGPoint(x: MVO.originalLifeStart.x + dragAmount.width, y: MVO.originalLifeStart.y + dragAmount.height)
         let controlPoint = CGPoint(x: MVO.originalLifeCenter.x + dragAmount.width, y: MVO.originalLifeCenter.y + dragAmount.height)
@@ -300,7 +170,7 @@ struct CurvedLineDrawingManaged: View {
     }
     
     // Drag gesture definition
-    private func doubleTapForSettingsAndAnchors() -> some Gesture {
+    public func doubleTapForSettingsAndAnchors() -> some Gesture {
         TapGesture(count: 2).onEnded({ _ in
             print("Tapped double")
             MVO.anchorsAreVisible = !MVO.anchorsAreVisible
@@ -314,7 +184,7 @@ struct CurvedLineDrawingManaged: View {
         })
     }
     
-    func dragCurvedCenterAnchor() -> some Gesture {
+    public func dragCurvedCenterAnchor() -> some Gesture {
         DragGesture()
             .onChanged { value in
                 if MVO.lifeIsLocked || !MVO.anchorsAreVisible {return}
@@ -337,7 +207,7 @@ struct CurvedLineDrawingManaged: View {
     }
 
     // Drag gesture definition
-    private func dragSingleAnchor(isStart: Bool) -> some Gesture {
+    public func dragSingleAnchor(isStart: Bool) -> some Gesture {
         DragGesture()
             .onChanged { value in
                 if MVO.lifeIsLocked || !MVO.anchorsAreVisible {return}
@@ -371,20 +241,20 @@ struct CurvedLineDrawingManaged: View {
     }
     
     // Basic Gestures
-    private func singleTapGesture() -> some Gesture {
+    public func singleTapGesture() -> some Gesture {
         TapGesture(count: 1).onEnded({ _ in
             print("Tapped single")
          })
     }
     
-    private func doubleTapGesture() -> some Gesture {
+    public func doubleTapGesture() -> some Gesture {
         TapGesture(count: 2).onEnded({ _ in
             print("Tapped double")
 //            toggleMenuSettings()
          })
     }
     
-    private func longPressGesture() -> some Gesture {
+    public func longPressGesture() -> some Gesture {
         LongPressGesture(minimumDuration: 0.4).onEnded { _ in
             MVO.anchorsAreVisible = !MVO.anchorsAreVisible
        }

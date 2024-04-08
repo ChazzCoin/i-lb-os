@@ -50,7 +50,7 @@ struct MenuBarStatic: View {
     ]
     let timer = Timer.publish(every: 10.0, on: .main, in: .common).autoconnect()
 
-    @State var icons: [IconProvider] = []
+    @State var icons: [CoreIcon] = []
 
     var body: some View {
         VStack {

@@ -108,11 +108,11 @@ struct TimelineItemView: View {
     var body: some View {
         VStack {
             Spacer()
-            if let temp = SoccerToolProvider.parseByTitle(title: recording.toolType)?.tool.image {
-                Image(temp)
-                    .resizable()
-                    .frame(width: 25, height: 25)
-            }
+//            if let temp = SoccerToolProvider.parseByTitle(title: recording.toolType)?.tool.image {
+//                Image(temp)
+//                    .resizable()
+//                    .frame(width: 25, height: 25)
+//            }
             
             Text("Action")
                 .font(.subheadline)
@@ -134,7 +134,7 @@ struct HistoryItemView: View {
     var body: some View {
         VStack {
             Spacer()
-            ToolIconFactory(toolType: action.toolType)
+//            ToolIconFactory(toolType: action.toolType)
             Text("Action")
                 .font(.subheadline)
                 .padding(.top, 5)

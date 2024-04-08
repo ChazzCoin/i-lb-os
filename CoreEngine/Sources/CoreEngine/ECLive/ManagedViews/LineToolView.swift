@@ -10,15 +10,18 @@ import SwiftUI
 import RealmSwift
 import Combine
 import FirebaseDatabase
-import CoreEngine
 
-struct LineDrawingManaged: View {
-    @State var viewId: String
-    @State var activityId: String
+public struct LineDrawingManaged: View {
+    @State public var viewId: String
+    @State public var activityId: String
+    public init(viewId: String, activityId: String) {
+        self.viewId = viewId
+        self.activityId = activityId
+    }
     
-    @StateObject var MVO: ManagedViewObject = ManagedViewObject()
+    @StateObject public var MVO: ManagedViewObject = ManagedViewObject()
     
-    var body: some View {
+    public var body: some View {
         Path { path in
             path.move(to: CGPoint(x: MVO.lifeStartX, y: MVO.lifeStartY))
             path.addLine(to: CGPoint(x: MVO.lifeEndX, y: MVO.lifeEndY))
@@ -86,7 +89,7 @@ struct LineDrawingManaged: View {
     }
     
     // Gestures
-    private func fullLineDragGesture() -> some Gesture {
+    public func fullLineDragGesture() -> some Gesture {
         DragGesture()
             .onChanged { value in
                 DispatchQueue.main.async { self.MVO.ignoreUpdates = true }
@@ -126,7 +129,7 @@ struct LineDrawingManaged: View {
             }
     }
     
-    private func singleAnchorDragGesture(isStart: Bool) -> some Gesture {
+    public func singleAnchorDragGesture(isStart: Bool) -> some Gesture {
         DragGesture()
             .onChanged { value in
                 if self.MVO.lifeIsLocked || !MVO.anchorsAreVisible { return }
@@ -153,13 +156,13 @@ struct LineDrawingManaged: View {
     }
     
     // Basic Gestures
-    private func singleTapGesture() -> some Gesture {
+    public func singleTapGesture() -> some Gesture {
         TapGesture(count: 1).onEnded({ _ in
             print("Tapped single")
          })
     }
     
-    private func doubleTapGesture() -> some Gesture {
+    public func doubleTapGesture() -> some Gesture {
         TapGesture(count: 2).onEnded({ _ in
             print("Tapped double")
             MVO.popUpIsVisible = !MVO.popUpIsVisible
@@ -168,73 +171,11 @@ struct LineDrawingManaged: View {
          })
     }
     
-    private func longPressGesture() -> some Gesture {
+    public func longPressGesture() -> some Gesture {
         LongPressGesture(minimumDuration: 0.4).onEnded { _ in
             MVO.anchorsAreVisible = !MVO.anchorsAreVisible
        }
     }
     
 }
-
-
-
-
-//struct LineOverlay: View {
-//    var startPoint: CGPoint
-//    var endPoint: CGPoint
-//    let lineThickness: CGFloat = 10 // Adjust as needed
-//
-//    private var lineLength: CGFloat {
-//        sqrt(pow(endPoint.x - startPoint.x, 2) + pow(endPoint.y - startPoint.y, 2))
-//    }
-//
-//    private var centerPoint: CGPoint {
-//        CGPoint(x: (startPoint.x + endPoint.x) / 2, y: (startPoint.y + endPoint.y) / 2)
-//    }
-//
-//    private var rotationAngle: Angle {
-//        rotationAngleOfLine(from: startPoint, to: endPoint)
-//    }
-//
-//    var body: some View {
-//        Rectangle()
-//            .frame(width: lineLength, height: lineThickness)
-//            .rotationEffect(rotationAngle)
-//            .position(x: centerPoint.x, y: centerPoint.y)
-//    }
-//}
-
-
-
-//struct Arrowhead: Shape {
-//    var size: CGFloat
-//
-//    func path(in rect: CGRect) -> Path {
-//        var path = Path()
-//
-//        // Drawing a simple triangle
-//        path.move(to: CGPoint(x: rect.midX, y: rect.minY))
-//        path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
-//        path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
-//        path.closeSubpath()
-//
-//        return path
-//    }
-//}
-
-//struct Arrowheady: Shape {
-//    var size: CGFloat
-//
-//    func path(in rect: CGRect) -> Path {
-//        var path = Path()
-//
-//        // Defining the arrowhead path
-//        path.move(to: CGPoint(x: 0, y: -size / 2)) // Top point
-//        path.addLine(to: CGPoint(x: size / 2, y: size / 2)) // Bottom right
-//        path.addLine(to: CGPoint(x: -size / 2, y: size / 2)) // Bottom left
-//        path.closeSubpath()
-//
-//        return path
-//    }
-//}
 
