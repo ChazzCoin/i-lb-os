@@ -94,8 +94,8 @@ struct OrganizationDetailsView: View {
             bodyBuilder: {
                 Section("Organization Details") {
                     PickerSport(selection: $sport, isEdit: $isEditMode)
-                    InputText(label: "Organization Name", text: $orgName, isEdit: $isEditMode)
-                    InputText(label: "Location", text: $location, isEdit: $isEditMode)
+                    CoreInputText(label: "Organization Name", text: $orgName, isEdit: $isEditMode)
+                    CoreInputText(label: "Location", text: $location, isEdit: $isEditMode)
                     PickerYear(selection: $founded, isEdit: $isEditMode)
                     InputTextMultiLine("Details", text: $descriptionText, isEdit: $isEditMode)
                 }

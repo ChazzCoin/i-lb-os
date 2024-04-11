@@ -49,7 +49,7 @@ extension Object {
     
     func fireSave(parentId: String, id:String) {
         fireRef(parentId: parentId, id: id, block: { db in
-            db.save(obj: self)
+            db.saveFused(obj: self)
         })
     }
     
@@ -69,7 +69,7 @@ extension Object {
     
     func fireSave(id:String) {
         fireRef(id: id, block: { db in
-            db.save(obj: self)
+            db.saveFused(obj: self)
         })
     }
     

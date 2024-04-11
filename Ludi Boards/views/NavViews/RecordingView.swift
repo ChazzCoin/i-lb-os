@@ -41,48 +41,51 @@ struct RecordingView: View {
 
     var body: some View {
         Form {
+//            
+//            DStack {
+//                CoreConfirmButton(
+//                    title: "Save",
+//                    message: "Are you sure you want to save this Recording?",
+//                    action: {
+//                        self.BEO.realmInstance.safeFindByField(Recording.self, value: self.recordingId) { obj in
+//                            self.BEO.realmInstance.safeWrite { _ in
+//                                obj.name = name
+//                                obj.details = details
+//                                obj.dateCreated = dateCreated
+//                            }
+//                        }
+//                    },
+//                    isEnabled: true
+//                )
+//                
+//                CoreConfirmButton(
+//                    title: "Delete",
+//                    message: "Are you sure you want to delete this Recording?",
+//                    action: {
+//                        self.BEO.realmInstance.safeFindByField(Recording.self, value: self.recordingId) { obj in
+//                            self.BEO.realmInstance.safeWrite { r in
+//                                r.delete(obj)
+//                                presentationMode.wrappedValue.dismiss()
+//                            }
+//                        }
+//                    },
+//                    isEnabled: true
+//                )
+//                
+//                CoreConfirmButton(
+//                    title: "Load and Play",
+//                    message: "Play animation?",
+//                    action: {
+//                        self.BEO.playbackRecordingId = self.recordingId
+//                        self.isShowing = false
+//                        self.BEO.playAnimationRecording()
+//                    },
+//                    isEnabled: true
+//                )
+//            }
             
-            DStack {
-                SolConfirmButton(
-                    title: "Save",
-                    message: "Are you sure you want to save this Recording?",
-                    action: {
-                        self.BEO.realmInstance.safeFindByField(Recording.self, value: self.recordingId) { obj in
-                            self.BEO.realmInstance.safeWrite { _ in
-                                obj.name = name
-                                obj.details = details
-                                obj.dateCreated = dateCreated
-                            }
-                        }
-                    }
-                )
-                
-                SolConfirmButton(
-                    title: "Delete",
-                    message: "Are you sure you want to delete this Recording?",
-                    action: {
-                        self.BEO.realmInstance.safeFindByField(Recording.self, value: self.recordingId) { obj in
-                            self.BEO.realmInstance.safeWrite { r in
-                                r.delete(obj)
-                                presentationMode.wrappedValue.dismiss()
-                            }
-                        }
-                    }
-                )
-                
-                SolConfirmButton(
-                    title: "Load and Play",
-                    message: "Play animation?",
-                    action: {
-                        self.BEO.playbackRecordingId = self.recordingId
-                        self.isShowing = false
-                        self.BEO.playAnimationRecording()
-                    }
-                )
-            }
-            
-            SolTextField("Name", text: $name)
-            SolTextField("Details", text: $details)
+            CoreTextField("Name", text: $name)
+            CoreTextField("Details", text: $details)
             
             HeaderText("Duration: \(duration.rounded()) seconds")
                 .padding()

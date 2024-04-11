@@ -78,7 +78,7 @@ struct ActivityPlanSingleView: View {
                         CodiChannel.SESSION_ON_ID_CHANGE.send(value: ActivityChange(activityId: self.activityId))
                         self.isCurrentPlan = true
                     }
-                ).solEnabled(isEnabled: !self.isCurrentPlan)
+                ).isEnabled(isEnabled: !self.isCurrentPlan)
                 
                 SOLCON(
                     icon: SolIcon.delete,
@@ -93,25 +93,25 @@ struct ActivityPlanSingleView: View {
                             self.presentationMode.wrappedValue.dismiss()
                         }
                     }
-                ).solEnabled(isEnabled: self.sessionId != "SOL-LIVE-DEMO" && self.sessionId != "SOL" && self.activityId != "new")
+                ).isEnabled(isEnabled: self.sessionId != "SOL-LIVE-DEMO" && self.sessionId != "SOL" && self.activityId != "new")
             }
             
             // Details Section
             Section(header: AlignLeft { HeaderText("Activity Details", color: getFontColor(colorScheme)) }) {
                 
                 DStack {
-                    SolTextField("Title", text: $title)
-                    SolTextField("Sub Title", text: $subTitle)
+                    CoreTextField("Title", text: $title)
+                    CoreTextField("Sub Title", text: $subTitle)
                 }
                 
                 DStack {
-                    SolTextField("Date", text: $date)
-                    SolTextField("Time Period", text: $timePeriod)
+                    CoreTextField("Date", text: $date)
+                    CoreTextField("Time Period", text: $timePeriod)
                 }
                 
                 DStack {
-                    SolTextField("Duration", text: $duration)
-                    SolTextField("Age Level", text: $ageLevel)
+                    CoreTextField("Duration", text: $duration)
+                    CoreTextField("Age Level", text: $ageLevel)
                 }
                 
                 DStack {

@@ -344,7 +344,7 @@ struct BoardEngine: View {
         if self.BEO.currentActivityId == "SOL" || self.BEO.currentActivityId.isEmpty {return}
         if let activityPlan = self.BEO.realmInstance.findByField(ActivityPlan.self, field: "id", value: self.BEO.currentActivityId) {
             if activityPlan.id == "SOL" {return}
-            activityPlan.fireSave(id: activityPlan.id)
+//            activityPlan.fireSave(id: activityPlan.id)
         }
     }
     

@@ -168,20 +168,20 @@ class FirebaseRoomService: ObservableObject {
             
             if let allUserPresences = snapshot.toLudiObjects(Room.self, realm: self.allRooms.realm?.thaw() ?? newRealm()) {
                 // Assuming UserPresence has properties `roomId` and `status`
-                let inRoom = allUserPresences.filter { $0.roomId == roomId }
+//                let inRoom = allUserPresences.filter { $0.roomId == roomId }
                 
                 var inTemp: [CoreUser] = []
                 var roomTemp: [Room] = []
-                for r in inRoom {
-                    if r.userId == getFirebaseUserId() { continue }
-                    roomTemp.safeAdd(r)
-                    if let user = self.allRooms.realm?.findByField(CoreUser.self, field: "userId", value: r.id) {
-                        inTemp.safeAdd(user)
-                    } else {
-                        if r.userId.isEmpty {continue}
-                        fireGetSolUserAsync(userId: r.id, realm: self.allRooms.realm?.thaw() ?? newRealm())
-                    }
-                }
+//                for r in inRoom {
+//                    if r.userId == getFirebaseUserId() { continue }
+//                    roomTemp.safeAdd(r)
+//                    if let user = self.allRooms.realm?.findByField(CoreUser.self, field: "userId", value: r.id) {
+//                        inTemp.safeAdd(user)
+//                    } else {
+//                        if r.userId.isEmpty {continue}
+//                        fireGetSolUserAsync(userId: r.id, realm: self.allRooms.realm?.thaw() ?? newRealm())
+//                    }
+//                }
                 self.objsInCurrentRoom = roomTemp
                 
                 for i in roomTemp {
@@ -197,7 +197,7 @@ class FirebaseRoomService: ObservableObject {
                         self.userHasEnteredTheRoom(user: item)
                     } else {
                         for snapItem in snapPresence {
-                            if item.userId != snapItem.userId {continue}
+//                            if item.userId != snapItem.userId {continue}
                             if item.status == "OUT" && snapItem.status == "IN" {
                                 self.userHasLeftTheRoom(user: item)
                             }
@@ -214,12 +214,12 @@ class FirebaseRoomService: ObservableObject {
     
     func userHasLeftTheRoom(user: Room) {
         print("User has Left Room: \(self.currentRoomId)")
-        CodiChannel.ON_NOTIFICATION.send(value: NotificationController(message: "\(user.userName) has left the room.", icon: "door_closed"))
+//        CodiChannel.ON_NOTIFICATION.send(value: NotificationController(message: "\(user.userName) has left the room.", icon: "door_closed"))
     }
     
     func userHasEnteredTheRoom(user: Room) {
         print("User has Entered Room: \(self.currentRoomId)")
-        CodiChannel.ON_NOTIFICATION.send(value: NotificationController(message: "\(user.userName) has entered the room.", icon: "door_open"))
+//        CodiChannel.ON_NOTIFICATION.send(value: NotificationController(message: "\(user.userName) has entered the room.", icon: "door_open"))
     }
 
     func stopObserving() {

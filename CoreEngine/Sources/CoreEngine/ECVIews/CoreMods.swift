@@ -10,27 +10,8 @@ import SwiftUI
 
 public extension View {
     
-    func solEnabled(isEnabled: Bool) -> some View {
-        self.modifier(SolButtonModifier(isEnabled: isEnabled))
-    }
-    
-    func onTap(perform action: @escaping () -> Void) -> some View {
-        self.onTapGesture {
-            hapticFeedback()
-            // Perform the custom action
-            action()
-        }
-    }
-    func onTapAnimation(enabled: Bool = true, perform action: @escaping () -> Void) -> some View {
-        self.modifier(TapAnimationModifier(action: action, isEnabled: enabled))
-    }
-    
-    func onDoubleTap(scale: CGFloat = 2.0, duration: Double = 0.5, completion: @escaping () -> Void = {}) -> some View {
-        modifier(DoubleTapExplodeModifier(scale: scale, duration: duration, completion: completion))
-    }
-    
-    func onLongPress(minimumDuration: Double = 0.5, perform action: @escaping () -> Void) -> some View {
-        modifier(LongPressModifier(minimumDuration: minimumDuration, onLongPress: action))
+    func isEnabled(isEnabled: Bool) -> some View {
+        self.modifier(CoreButtonModifier(isEnabled: isEnabled))
     }
     
     // Method to set the position of the view based on a specified ScreenArea
@@ -155,7 +136,7 @@ public func getFontColor(_ scheme: ColorScheme) -> Color {
         }
 }
 
-public struct SolButtonModifier: ViewModifier {
+public struct CoreButtonModifier: ViewModifier {
     var isEnabled: Bool
 
     public func body(content: Content) -> some View {
@@ -175,64 +156,7 @@ public func hapticFeedback(style: UIImpactFeedbackGenerator.FeedbackStyle = .hea
     generator.impactOccurred()
 }
 
-public struct TapAnimationModifier: ViewModifier {
-    let action: () -> Void
-    let isEnabled: Bool
-    @State private var isPressed = false
 
-    public func body(content: Content) -> some View {
-        content
-            .scaleEffect(isPressed ? 0.90 : 1.0)
-            .animation(.easeInOut(duration: 0.1), value: isPressed)
-            .onTapGesture {
-                if !isEnabled {return}
-                hapticFeedback()
-                self.isPressed = true
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                    self.isPressed = false
-                    self.action()
-                }
-            }
-    }
-}
-public struct DoubleTapExplodeModifier: ViewModifier {
-    let scale: CGFloat
-    let duration: Double
-    let completion: () -> Void
-
-    @State private var isAnimating = false
-
-    public func body(content: Content) -> some View {
-        content
-            .scaleEffect(isAnimating ? scale : 1.0)
-            .animation(.easeInOut(duration: duration), value: isAnimating)
-            .onTapGesture(count: 2) {
-                isAnimating = true
-                DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
-                    isAnimating = false
-                    completion()
-                }
-            }
-    }
-}
-
-// 1. Define the LongPressModifier
-public struct LongPressModifier: ViewModifier {
-    var minimumDuration: Double
-    var onLongPress: () -> Void
-
-    public func body(content: Content) -> some View {
-        content
-            // 2. Add the gesture to the modifier
-            .onLongPressGesture(minimumDuration: minimumDuration, pressing: { isPressing in
-                if isPressing {
-                    // Handle the gesture start (optional)
-                } else {
-                    // Handle the gesture end (optional)
-                }
-            }, perform: onLongPress)
-    }
-}
 
 // Helper view to simulate Box from Compose
 public struct BoxView<Content: View>: View {

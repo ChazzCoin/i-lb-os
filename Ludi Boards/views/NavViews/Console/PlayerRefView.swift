@@ -48,7 +48,7 @@ struct PlayerRefView: View {
                         isEditMode.toggle()
                         if !isEditMode { isShowing = false }
                     }
-                ).solEnabled(isEnabled: self.isEditMode)
+                ).isEnabled(isEnabled: self.isEditMode)
                 
                 SOLCON(
                     icon: SolIcon.delete,
@@ -57,7 +57,7 @@ struct PlayerRefView: View {
                         isEditMode.toggle()
                         if !isEditMode { isShowing = false }
                     }
-                ).solEnabled(isEnabled: isEditMode && playerId != "new")
+                ).isEnabled(isEnabled: isEditMode && playerId != "new")
                 
                 Text(playerName)
                     .font(.largeTitle)
@@ -107,14 +107,14 @@ struct PlayerRefView: View {
         
             // Player Details
             Section {
-                SolTextField("Player Name", text: $playerName, isEditable: $isEditMode)
+                CoreTextField("Player Name", text: $playerName, isEditable: $isEditMode)
                 PickerSport(selection: $playerSport, isEdit: $isEditMode)
-                SolTextField("Position", text: $playerPosition, isEditable: $isEditMode)
-                SolTextField("Number", text: $playerNumber, isEditable: $isEditMode)
-                SolTextField("Foot", text: $playerFoot, isEditable: $isEditMode)
-                SolTextField("Hand", text: $playerHand, isEditable: $isEditMode)
-                SolTextField("Age", text: $playerAge, isEditable: $isEditMode)
-                SolTextField("Year", text: $playerYear, isEditable: $isEditMode)
+                CoreTextField("Position", text: $playerPosition, isEditable: $isEditMode)
+                CoreTextField("Number", text: $playerNumber, isEditable: $isEditMode)
+                CoreTextField("Foot", text: $playerFoot, isEditable: $isEditMode)
+                CoreTextField("Hand", text: $playerHand, isEditable: $isEditMode)
+                CoreTextField("Age", text: $playerAge, isEditable: $isEditMode)
+                CoreTextField("Year", text: $playerYear, isEditable: $isEditMode)
                 
             }
             

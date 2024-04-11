@@ -10,10 +10,10 @@ import SwiftUI
 import FirebaseStorage
 import UniformTypeIdentifiers
 import AVFoundation
+import CoreEngine
 
-
-struct DocumentPicker: UIViewControllerRepresentable {
-    var allowedContentTypes: [UTType] = [UTType.audio]
+struct DocumentPickerLocal: UIViewControllerRepresentable {
+    var allowedContentTypes: [UTType] = [UTType.audio, UTType.video]
     var onPick: (URL) -> Void
 
     func makeUIViewController(context: Context) -> UIDocumentPickerViewController {
@@ -29,9 +29,9 @@ struct DocumentPicker: UIViewControllerRepresentable {
     }
 
     class Coordinator: NSObject, UIDocumentPickerDelegate {
-        var parent: DocumentPicker
+        var parent: DocumentPickerLocal
 
-        init(_ documentPicker: DocumentPicker) {
+        init(_ documentPicker: DocumentPickerLocal) {
             self.parent = documentPicker
         }
 
@@ -44,8 +44,9 @@ struct DocumentPicker: UIViewControllerRepresentable {
 
 
 struct UploadAudioView: View {
-    @State private var showDocumentPicker = false
-    @State private var pickedURL: URL?
+    @State public var showDocumentPicker = false
+    @State public var isLoading = false
+    @State public var pickedURL: URL?
     
     @State var songTitle = ""
     @State var songArtist = ""
@@ -56,23 +57,19 @@ struct UploadAudioView: View {
                 Text("Picked file: \(url.lastPathComponent)")
                 
                 Text("Song Name: \(url.lastPathComponent)")
-                TextEditor(text:$songTitle)
-                    .frame(height: 25)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 5)
-                            .stroke(Color.gray, lineWidth: 1)
-                    )
+                CoreInputText(label: "Song Title", text: $songTitle, isEdit: .constant(true))
                 
                 Text("Song Artist: \(url.lastPathComponent)")
-                TextEditor(text:$songArtist)
-                    .frame(height: 25)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 5)
-                            .stroke(Color.gray, lineWidth: 1)
-                    )
+                CoreInputText(label: "Song Artist", text: $songArtist, isEdit: .constant(true))
+                
                 if !songTitle.isEmpty {
                     Button("Upload to Firebase") {
-                        uploadFileToFirebaseStorage(title: songTitle, fileURL: url)
+                        isLoading = true
+                        CoreFirebaseStorage.uploadSong(title: songTitle, artist: songArtist, fileUrl: url) { durl in
+                            isLoading = false
+                        }
+//                        uploadFileToFirebaseStorage(title: songTitle, fileURL: url)
+//                        isLoading = false
                     }
                 }
                 
@@ -82,17 +79,18 @@ struct UploadAudioView: View {
                 }
             }
         }
+        .isLoading(showLoading: $isLoading)
         .sheet(isPresented: $showDocumentPicker) {
-            DocumentPicker { url in
+            DocumentPickerLocal { url in
                 self.pickedURL = url
             }
         }
+//        .onAppear() {
+//            isLoading = true
+//        }
     }
     
-//    func verifyFileUrl(fileUrl: URL) -> Bool {
-//        let fileManager = FileManager.default
-//        return fileManager.fileExists(atPath: fileUrl.path) && fileManager.isReadableFile(atPath: fileUrl.path)
-//    }
+
     
     func uploadFileToFirebaseStorage(title: String, fileURL: URL) {
         // Security Scoping

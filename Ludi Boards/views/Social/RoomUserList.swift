@@ -23,21 +23,21 @@ struct RoomUserList: View {
                     .frame(maxWidth: .infinity)
             }
             
-            List(self.ROOM.objsInCurrentRoom) { buddy in
-                NavigationLink(destination: BuddyProfileView(solUserId: buddy.userId, friendStatus: "unknown")) { // Replace DestinationView with your desired destination view
-                    HStack {
-                        Circle()
-                            .fill(buddy.status == "IN" ? Color.green : Color.gray)
-                            .frame(width: 10, height: 10)
-                        Text(buddy.userName)
-                            .font(.system(size: 14))
-                        Spacer()
-                        Text(buddy.status == "IN" ? "Online" : "Away")
-                            .font(.system(size: 12))
-                            .foregroundColor(.gray)
-                    }
-                }
-            }
+//            List(self.ROOM.objsInCurrentRoom) { buddy in
+//                NavigationLink(destination: BuddyProfileView(solUserId: buddy.userId, friendStatus: "unknown")) { // Replace DestinationView with your desired destination view
+//                    HStack {
+//                        Circle()
+//                            .fill(buddy.status == "IN" ? Color.green : Color.gray)
+//                            .frame(width: 10, height: 10)
+//                        Text(buddy.userName)
+//                            .font(.system(size: 14))
+//                        Spacer()
+//                        Text(buddy.status == "IN" ? "Online" : "Away")
+//                            .font(.system(size: 12))
+//                            .foregroundColor(.gray)
+//                    }
+//                }
+//            }
         }
         .navigationBarTitle("Buddy List", displayMode: .inline)
         .toolbar {

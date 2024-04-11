@@ -8,6 +8,23 @@
 import Foundation
 import SwiftUI
 
+public enum RoomStatus: CaseIterable {
+    case in_room
+    case out_of_room
+    case inactive
+    case waiting_approval
+    
+    public var name: String {
+        switch self {
+            case .in_room: return "in_room"
+            case .out_of_room: return "out_of_room"
+            case .inactive: return "inactive"
+            case .waiting_approval: return "waiting_approval"
+        }
+    }
+    
+}
+
 public enum UserRole: CaseIterable {
     case player
     case parent

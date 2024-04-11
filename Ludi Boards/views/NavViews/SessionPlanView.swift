@@ -60,7 +60,7 @@ struct SessionPlanView: View {
     
     @State private var shareIds: [String] = []
     
-    @StateObject var sessionRealmObserver = RealmChangeListener()
+//    @StateObject var sessionRealmObserver = RealmChangeListener()
     @EnvironmentObject var BEO: BoardEngineObject
     @EnvironmentObject var NavStack: NavStackWindowObservable
     @State private var isLoading = false
@@ -126,14 +126,14 @@ struct SessionPlanView: View {
                             CodiChannel.SESSION_ON_ID_CHANGE.send(value: ActivityChange(activityId: self.activities.first?.id ?? "nil"))
                             isCurrentPlan = true
                         }
-                    ).solEnabled(isEnabled: !self.isCurrentPlan && self.sessionId != "new")
+                    ).isEnabled(isEnabled: !self.isCurrentPlan && self.sessionId != "new")
                     SOLCON(
                         icon: SolIcon.delete,
                         onTap: {
                             runLoading()
                             deleteSessionPlan()
                         }
-                    ).solEnabled(isEnabled: self.sessionId != "new")
+                    ).isEnabled(isEnabled: self.sessionId != "new")
                     
                     Spacer().padding()
                     
@@ -144,14 +144,14 @@ struct SessionPlanView: View {
                         onTap: {
                             showNewActivity = true
                         }
-                    ).solEnabled(isEnabled: true)
+                    ).isEnabled(isEnabled: true)
                     
                     SolIconTextButton(
                         title: "Share Session",
                         systemName: SolIcon.share.icon, onTap: {
                             self.showShareSheet = true
                         }
-                    ).solEnabled(isEnabled: self.isSharable && self.isLive)
+                    ).isEnabled(isEnabled: self.isSharable && self.isLive)
                 }
                 
             }.clearSectionBackground()
@@ -220,7 +220,7 @@ struct SessionPlanView: View {
         }
         .onDisappear() {
             self.NavStack.removeFromStack()
-            self.sessionRealmObserver.stop()
+//            self.sessionRealmObserver.stop()
             self.sessionNotificationToken = nil
         }
         .navigationBarTitle(isCurrentPlan ? "Current Session" : "Session Plan", displayMode: .inline)
@@ -383,15 +383,15 @@ struct SessionPlanView: View {
         fireGetActivitiesBySessionId(sessionId: self.sessionId, realm: self.allActivities.realm?.thaw() ?? newRealm())
         
         if let sp = self.allActivities.realm?.thaw().findByField(SessionPlan.self, value: self.sessionId) {
-            self.sessionRealmObserver.observe(object: sp, onChange: { obj in
-                title = sp.title
-                description = sp.sessionDetails
-                objective = sp.objectiveDetails
-                isLive = sp.isLive
-                if sp.ownerId != self.BEO.userId && sp.ownerId != CURRENT_USER_ID {
-                    self.BEO.isShared = true
-                }
-            })
+//            self.sessionRealmObserver.observe(object: sp, onChange: { obj in
+//                title = sp.title
+//                description = sp.sessionDetails
+//                objective = sp.objectiveDetails
+//                isLive = sp.isLive
+//                if sp.ownerId != self.BEO.userId && sp.ownerId != CURRENT_USER_ID {
+//                    self.BEO.isShared = true
+//                }
+//            })
             
             title = sp.title
             description = sp.sessionDetails

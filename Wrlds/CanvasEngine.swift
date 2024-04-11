@@ -97,7 +97,8 @@ struct CanvasEngine: View {
         
         
         GlobalPositioningZStack { geo, gps in
-            
+//            UserLoginSignupView()
+//                .position(gps.getCoordinate(for: .bottomCenter))
 //            MusicPlayerView()
 //                .frame(width: 500, height: 500)
 //                .background(Color.white)
@@ -121,7 +122,7 @@ struct CanvasEngine: View {
             
         }
         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-        .background(Color.white.opacity(0.001))
+        .background(Color.purple.opacity(0.5))
         .gesture(self.BEO.gesturesAreLocked ? nil : dragAngleGestures.simultaneously(with: scaleGestures))
         .zIndex(0.0)
         .onAppear() {

@@ -98,11 +98,11 @@ class BoardEngineObject : ObservableObject {
         return CGVector(dx: dx, dy: dy)
     }
     func loadUser() {
-        self.realmInstance.loadGetCurrentSolUser { su in
-            userId = su.userId
-            userName = su.userName
-            isLoggedIn = su.isLoggedIn
-        }
+//        self.realmInstance.loadGetCurrentSolUser { su in
+//            userId = su.userId
+//            userName = su.userName
+//            isLoggedIn = su.isLoggedIn
+//        }
     }
     
     func fullScreen() {
@@ -169,7 +169,18 @@ struct BoardEngine: View {
                      .background(Color.white)
 //                     .position()
              }
-            
+             
+             NavStackFloatingWindow(id: "new", viewBuilder: {
+                 UserLoginSignupView()
+//                     .frame(width: 500, height: 500)
+//                     .scaleEffect(7.0)
+                     
+             })
+             .frame(width: 500, height: 500)
+             .scaleEffect(7.0)
+//             .position(CGPoint(x: 15000.0, y: -2000.0))
+             
+             
         }
         .frame(width: self.BEO.boardWidth, height: self.BEO.boardHeight)
         .background(

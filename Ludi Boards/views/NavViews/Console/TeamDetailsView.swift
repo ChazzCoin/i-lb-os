@@ -97,10 +97,10 @@ struct TeamDetailsView: View {
             bodyBuilder: {
                 Section("Team Details") {
                     PickerSport(selection: $sport, isEdit: $isEditMode)
-                    InputText(label: "Team Name", text: $teamName, isEdit: $isEditMode)
-                    InputText(label: "Coach Name", text: $coachName, isEdit: $isEditMode)
-                    InputText(label: "Location", text: $homeCity, isEdit: $isEditMode)
-                    InputText(label: "League", text: $league, isEdit: $isEditMode)
+                    CoreInputText(label: "Team Name", text: $teamName, isEdit: $isEditMode)
+                    CoreInputText(label: "Coach Name", text: $coachName, isEdit: $isEditMode)
+                    CoreInputText(label: "Location", text: $homeCity, isEdit: $isEditMode)
+                    CoreInputText(label: "League", text: $league, isEdit: $isEditMode)
                     PickerYear(selection: $foundedYear, isEdit: $isEditMode)
                     
                 }

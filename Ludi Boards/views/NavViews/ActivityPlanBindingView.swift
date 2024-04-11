@@ -113,7 +113,7 @@ struct ActivityPlanBindingView: View {
             }
             
             Form {
-                SolTextField("Title", text: $title)
+                CoreTextField("Title", text: $title)
                 PickerTimeDuration(selection: $duration, isEdit: .constant(true))
                 PickerIntensity(selection: $intensity, isEdit: .constant(true))
                 PickerAgeLevel(selection: $ageLevel, isEdit: .constant(true))
@@ -323,7 +323,7 @@ struct ActivityItemView: View {
                             CodiChannel.SESSION_ON_ID_CHANGE.send(value: ActivityChange(activityId: item.id))
 //                            self.isCurrentPlan = true
                         }
-                    ).solEnabled(isEnabled: true)
+                    ).isEnabled(isEnabled: true)
                     
                     SwitchShowHide(status: $isExpanded)
                         .onChange(of: isExpanded, perform: { value in
@@ -344,7 +344,7 @@ struct ActivityItemView: View {
                             CodiChannel.SESSION_ON_ID_CHANGE.send(value: ActivityChange(activityId: item.id))
 //                            self.isCurrentPlan = true
                         }
-                    ).solEnabled(isEnabled: true)
+                    ).isEnabled(isEnabled: true)
                     
                     SwitchShowHide(status: $isExpanded)
                         .onChange(of: isExpanded, perform: { value in
@@ -401,7 +401,7 @@ struct ExpandableFormView: View {
     var body: some View {
         Form {
             Section(header: Text(title)) {
-                SolTextField("Title", text: $title)
+                CoreTextField("Title", text: $title)
                 AdaptiveStack {
                     PickerTimeDuration(selection: $duration, isEdit: .constant(true))
                     PickerIntensity(selection: $intensity, isEdit: .constant(true))

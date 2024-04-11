@@ -1,18 +1,31 @@
 import SwiftUI
 
+
+
+
+
+/*
+ 
+        VIEW BREAKDOWN
+ 
+    View ->
+    ViewModifier ->
+    DynamicProperty ->
+ 
+ */
+
+
+
+
 public class CoreEngine {
     public static func checkEngineCore() -> String {
         return "Engine Core Online!"
     }
 }
 
-
 public func hideKeyboard() {
     UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
 }
-
-
-//
 
 public extension Comparable {
     func bound(minValue: Self, maxValue: Self) -> Self {

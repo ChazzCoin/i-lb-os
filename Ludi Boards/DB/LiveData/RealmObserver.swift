@@ -10,6 +10,7 @@ import SwiftUI
 import RealmSwift
 import CoreEngine
 
+@available(*, deprecated, renamed: "ObservedResults", message: "Migrated to Observed Results.")
 class RealmObserver<T:Object>: ObservableObject {
     @Published var realmInstance: Realm = realm()
     private var nofityToken: NotificationToken? = nil

@@ -53,14 +53,14 @@ struct TeamView: View {
                             saveTeam()
                         }
                     }
-                ).solEnabled(isEnabled: self.isEditMode)
+                ).isEnabled(isEnabled: self.isEditMode)
                 
                 SOLCON(
                     icon: SolIcon.delete,
                     onTap: {
                         deleteTeam()
                     }
-                ).solEnabled(isEnabled: isEditMode && teamId != "new")
+                ).isEnabled(isEnabled: isEditMode && teamId != "new")
                 
                 Text(teamName)
                     .font(.largeTitle)
@@ -104,9 +104,9 @@ struct TeamView: View {
             
             Section {
                 PickerSport(selection: $sport, isEdit: $isEditMode)
-                InputText(label: "Team Name", text: $teamName, isEdit: $isEditMode)
-                InputText(label: "Coach Name", text: $teamCoach, isEdit: $isEditMode)
-                InputText(label: "Year", text: $teamYear, isEdit: $isEditMode)
+                CoreInputText(label: "Team Name", text: $teamName, isEdit: $isEditMode)
+                CoreInputText(label: "Coach Name", text: $teamCoach, isEdit: $isEditMode)
+                CoreInputText(label: "Year", text: $teamYear, isEdit: $isEditMode)
             }
             
             Section {

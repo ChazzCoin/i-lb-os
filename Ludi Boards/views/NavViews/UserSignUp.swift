@@ -11,7 +11,8 @@ import FirebaseStorage
 import CoreEngine
 
 struct SignUpView: View {
-    @EnvironmentObject var BEO: BoardEngineObject
+    
+    @AppStorage("isLoggedIn") public var isLoggedIn: Bool = false
     @State private var username = ""
     @State private var email = ""
     @State private var phone = ""
@@ -29,7 +30,7 @@ struct SignUpView: View {
         
     @State var realmInstance = realm()
     @State var isLoading: Bool = false
-    @State var isLoggedIn: Bool = false
+    
     @State private var showCompletion = false
     
     @State var showSignInFailedAlert = false
@@ -45,14 +46,13 @@ struct SignUpView: View {
 
     var body: some View {
         
-        if self.BEO.isLoggedIn {
-            ProfileView()
-                .opacity(self.BEO.isLoggedIn ? 1.0 : 0.0)
-                .environmentObject(self.BEO)
+        if self.isLoggedIn {
+//            ProfileView()
+//                .opacity(self.isLoggedIn ? 1.0 : 0.0)
         } else {
             LoadingForm() { runLoading in
                 HStack {
-                    SolTextField("Sign-Up Code", text: $loginCode)
+                    CoreTextField("Sign-Up Code", text: $loginCode)
                         .padding(.leading)
                         .padding(.trailing)
                         .onChange(of: loginCode) { newValue in
@@ -76,7 +76,7 @@ struct SignUpView: View {
                            
                             
                             HStack {
-                                SolTextField("Email", text: $email)
+                                CoreTextField("Email", text: $email)
                                     .onChange(of: email) { newValue in
                                         if newValue.count < 4 {return}
                                         UserTools.checkEmailExists(newValue) { result in
@@ -98,7 +98,7 @@ struct SignUpView: View {
                             .padding(.trailing)
                             
                             HStack {
-                                SolTextField("Username", text: $username)
+                                CoreTextField("Username", text: $username)
                                     .onChange(of: username) { newValue in
                                         if newValue.count < 4 {return}
                                         UserTools.checkUsernameExists(newValue) { result in
@@ -119,16 +119,16 @@ struct SignUpView: View {
                             .padding(.leading)
                             .padding(.trailing)
                             
-                            SolTextField("Name", text: $name)
+                            CoreTextField("Name", text: $name)
                                 .padding(.leading)
                                 .padding(.trailing)
                             
-                            SolTextField("Password", text: $password)
+                            CoreTextField("Password", text: $password)
                                 .padding(.leading)
                                 .padding(.trailing)
 
                             HStack {
-                                SolSecureField("Verify Password", text: $verifyPassword)
+                                CoreSecureField("Verify Password", text: $verifyPassword)
                                     .onChange(of: verifyPassword) { newValue in
                                         arePasswordsMatching = (password == newValue)
                                     }
@@ -144,7 +144,7 @@ struct SignUpView: View {
                         }
                     }
                     
-                    SolButton(
+                    CoreButton(
                         title: "Sign Up",
                         action: {
                             runLoading()
@@ -169,27 +169,27 @@ struct SignUpView: View {
                         .shadow(color: .gray, radius: 2, x: 2, y: 2)
                         .multilineTextAlignment(.center)
                     
-                    SolTextField("Email", text: $emailLogin)
+                    CoreTextField("Email", text: $emailLogin)
                         .padding(.leading)
                         .padding(.trailing)
 
-                    SolSecureField("Password", text: $passLogin)
+                    CoreSecureField("Password", text: $passLogin)
                         .padding(.leading)
                         .padding(.trailing)
                     
-                    SolButton(
-                        title: "Login",
-                        action: {
-                            runLoading()
-                            UserTools.login(email: emailLogin, password: passLogin,
-                                onResult: { result in
-                                    print("User LogIn: \(result)")
-                                },
-                                onError: { error in
-                                    self.showSignInFailedAlert = true
-                                })
-                        }, isEnabled: true
-                    ).padding()
+//                    CoreButton(
+//                        title: "Login",
+//                        action: {
+//                            runLoading()
+//                            UserTools.login(email: emailLogin, password: passLogin,
+//                                onResult: { result in
+//                                    print("User LogIn: \(result)")
+//                                },
+//                                onError: { error in
+//                                    self.showSignInFailedAlert = true
+//                                })
+//                        }, isEnabled: true
+//                    ).padding()
                     
                 }
                 

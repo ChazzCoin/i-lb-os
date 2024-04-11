@@ -13,6 +13,7 @@ import CoreEngine
 
 struct CanvasEngine: View {
     
+    @ObservedObject var UTO = UserToolsObservable()
     @ObservedObject var BEO = BoardEngineObject()
     @ObservedObject var DO = OrientationInfo()
     
@@ -139,6 +140,8 @@ struct CanvasEngine: View {
         self.masterResetCanvas = false
     }
     
+    
+    
     var body: some View {
         
         if !masterResetCanvas {
@@ -208,7 +211,7 @@ struct CanvasEngine: View {
                 // Drawing Mode Popup
                 if self.BEO.isPlayingAnimation {
                     GeometryReader { geo in
-                        ModeAlert(title: "Playing in Progress...", subTitle: "Playback Mode.", showButton: true) {
+                        ModePanel(title: "Playing in Progress...", subTitle: "Playback Mode.", showButton: true) {
                             self.BEO.stopAnimationRecording()
                         }
                     }
@@ -219,7 +222,7 @@ struct CanvasEngine: View {
                 // Drawing Mode Popup
                 if self.BEO.isRecording {
                     GeometryReader { geo in
-                        ModeAlert(title: "Recording in Progress...", subTitle: "Animation Mode.", showButton: true) {
+                        ModePanel(title: "Recording in Progress...", subTitle: "Animation Mode.", showButton: true) {
                             self.BEO.stopRecording()
                         }
                     }
@@ -252,7 +255,7 @@ struct CanvasEngine: View {
                 // Notify Box
                 if self.showNotification {
                     GeometryReader { geo in
-                        NotificationView(message: self.$notificationMessage, icon: self.$notificationIcon)
+                        NotificationPanel(message: self.$notificationMessage, icon: self.$notificationIcon)
                     }
                     .zIndex(50.0)
                     .position(using: gps, at: .topRight, offsetX: 150, offsetY: 0)
@@ -268,6 +271,8 @@ struct CanvasEngine: View {
                     BoardEngine()
                         .zIndex(2.0)
                         .environmentObject(self.BEO)
+                    
+                    
                 }
                 .zIndex(1.0)
                 .frame(width: 20000, height: 20000)
@@ -300,9 +305,67 @@ struct CanvasEngine: View {
                 self.BEO.loadUser()
                 menuBarButtonListener()
                 addWindowsToNavManager()
+//                exportPDF()
+                
+//                if let user = newRealm().findByField(CoreUser.self, value: UserTools.currentUserId) {
+//                    newRealm().safeWrite { r in
+//                        user.handle = "tester 2 sir"
+//                        CoreUserQueue.addToUpdateQueue(item: user)
+//                    }
+//                }
+//                
+//                if let user = UserTools.user {
+//                    newRealm().safeWrite { r in
+//                        user.handle = "tester 1 sir"
+//                        CoreUserQueue.addToUpdateQueue(item: user)
+//                    }
+//                }
+//                UserTools.login(email: "chazzromeo@gmail.com", password: "soccer23", onResult: { _ in
+//                    if let user = UserTools.user {
+//                        newRealm().safeWrite { r in
+//                            user.handle = "tester 1 sir"
+//                            CoreUserQueue.addToUpdateQueue(item: user)
+//                        }
+//                    }
+//                }, onError: { _ in
+//                    print("failed to login")
+//                })
+                
+                
+                
+                
             }
         }
         
+        
+    }
+    
+
+    @MainActor
+    private func exportPDF() {
+        guard let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
+     
+        print("attempting to convert board view into pdf")
+        let renderedUrl = documentDirectory.appending(path: "boardView.pdf")
+     
+        if let consumer = CGDataConsumer(url: renderedUrl as CFURL),
+           let pdfContext = CGContext(consumer: consumer, mediaBox: nil, nil) {
+     
+            let renderer = ImageRenderer(content: ChatView())
+            renderer.render { size, renderer in
+                let options: [CFString: Any] = [
+                    kCGPDFContextMediaBox: CGRect(origin: .zero, size: size)
+                ]
+     
+                pdfContext.beginPDFPage(options as CFDictionary)
+     
+                renderer(pdfContext)
+                pdfContext.endPDFPage()
+                pdfContext.closePDF()
+            }
+        }
+     
+        print("Saving PDF to \(renderedUrl.path())")
         
     }
     

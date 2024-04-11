@@ -30,6 +30,18 @@ extension DatabaseReference {
             completion(snapshot)
         })
     }
+    
+//    func fireObserveChildAdded(completion: @escaping (DataSnapshot) -> Void) -> DatabaseHandle {
+//        return self.observe(.childAdded, with: { snapshot in
+//            completion(snapshot)
+//        })
+//    }
+//    
+//    func fireObserveChildRemoved(completion: @escaping (DataSnapshot) -> Void) -> DatabaseHandle {
+//        return self.observe(.childRemoved, with: { snapshot in
+//            completion(snapshot)
+//        })
+//    }
 }
 
 

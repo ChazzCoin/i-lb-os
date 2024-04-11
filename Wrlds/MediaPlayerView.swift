@@ -203,10 +203,10 @@ struct MusicPlayerView: View {
     
     func fetchSongs() {
         firebaseDatabase { db in
-            db.child("songs").get { snapshot in
+            db.child("songs").get(onSnapshot: { snapshot in
                 let results = snapshot.toLudiObjects(Song.self, realm: songs.realm?.thaw())
                 print("Songs Incoming: \(String(describing: results))")
-            }
+            })
         }
     }
 }

@@ -142,7 +142,7 @@ struct ActivityDetailsView: View {
             bodyBuilder: {
                 Section("Activity Details") {
                     
-                    SolTextField("Title", text: $title)
+                    CoreTextField("Title", text: $title)
                     PickerTimeDuration(selection: $duration, isEdit: .constant(true))
                     PickerIntensity(selection: $intensity, isEdit: .constant(true))
                     PickerAgeLevel(selection: $ageLevel, isEdit: .constant(true))

@@ -93,7 +93,7 @@ struct SolIconConfirmButton: View {
         }
         .frame(width: width, height: height)
         .solBackgroundPrimaryGradient()
-        .solEnabled(isEnabled: isEnabled)
+//        .isEnabled(isEnabled: isEnabled)
         .onTapAnimation(enabled: isEnabled) {
             if isEnabled {
                 sheetIsShowing = true
@@ -113,8 +113,8 @@ struct SolIconConfirmButton: View {
     }
 }
 
-#Preview {
-    SolIconButton(systemName: MenuBarProvider.trash.tool.image) {
-        
-    }
-}
+//#Preview {
+//    SolIconButton(systemName: MenuBarProvider.trash.tool.image) {
+//        
+//    }
+//}

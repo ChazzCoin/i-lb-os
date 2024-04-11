@@ -8,6 +8,7 @@
 import Foundation
 import RealmSwift
 import Combine
+import CoreEngine
 
 class ManagedViewListViewModel: ObservableObject {
     private var realm: Realm

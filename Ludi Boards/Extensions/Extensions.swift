@@ -9,7 +9,7 @@ import Foundation
 import CoreGraphics
 import UIKit
 import CoreEngine
-
+import RealmSwift
 
 
 
@@ -117,8 +117,37 @@ extension Array where Element: ActivityPlan {
 }
 
 
+public extension Array where Element == String {
+    mutating func safeAdd(_ item: String) {
+        if !self.contains(item) {
+            // Item not found, add it
+            self.append(item)
+        }
+    }
+    
+    mutating func safeRemove(_ item: String) {
+        if let index = self.firstIndex(of: item) {
+            // Item found, remove it
+            self.remove(at: index)
+        }
+    }
+}
 
-
+public extension List where Element == String {
+    func safeAdd(_ item: String) {
+        if !self.contains(item) {
+            // Item not found, add it
+            self.append(item)
+        }
+    }
+    
+    func safeRemove(_ item: String) {
+        if let index = self.firstIndex(of: item) {
+            // Item found, remove it
+            self.remove(at: index)
+        }
+    }
+}
 
 
 

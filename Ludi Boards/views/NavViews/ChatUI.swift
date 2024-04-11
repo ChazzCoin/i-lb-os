@@ -12,85 +12,35 @@ import Combine
 import RealmSwift
 import CoreEngine
 
-struct ChatView: View {
-    @EnvironmentObject var boardEngineObject: BoardEngineObject
-    @State var chatId: String = ""
-    @State var currentUserId: String = ""
-    @State private var messageText = ""
-    @State private var messages: [String: Chat?] = [:]
-    @State private var lastMessageId: String?
-    
-    @StateObject var ROOM = FirebaseRoomService()
-    @StateObject var keyboardResponder = KeyboardResponder()
-    
-    @State private var isSidebarVisible = false
-    
-    private let realmInstance = realm()
-    
-    let delaySeconds = 2.0
-    
-    @State private var isReloading = false
-    @State var cancellables = Set<AnyCancellable>()
-    @State var chatRef = fireGetReference(dbPath: DatabasePaths.chat)
-    
-    @State var firebaseSubscription: DatabaseHandle? = nil
-//    @State var currentUser = newRealm().getCurrentSolUser()
-    
-    
-    
-    @ObservedResults(Chat.self) var allMessages
-    var roomMessages: Results<Chat> {
-        return allMessages.filter("chatId == %@", self.boardEngineObject.currentActivityId)
-    }
-    // Function to sort chats by timestamp
-    func sortChatsByTimestamp(chats: Results<Chat>) -> Results<Chat> {
-        return chats.sorted(byKeyPath: "timestamp", ascending: true)
-    }
-    
-    func observeChat() {
-        stopObserver()
-        firebaseSubscription = self.chatRef.child(boardEngineObject.currentActivityId).fireObserver { snapshot in
-            if let results = snapshot.toLudiObjects(Chat.self, realm: self.realmInstance) {
-                print("New Chat Messages: \(results)")
-            }
-        }
-    }
 
-    func stopObserver() {
-        if let fs = firebaseSubscription {
-            self.chatRef.removeObserver(withHandle: fs)
-            firebaseSubscription = nil
-        }
-    }
+
+struct ChatView: View {
+    @AppStorage("currentRoomId") public var currentRoomId: String = ""
+
+    @State private var messageText = ""
     
-    func reloader() {
-        let results = realmInstance.findAllByField(Chat.self, field: "chatId", value: boardEngineObject.currentActivityId)
-        var temp: [String:Chat] = [:]
-        guard let r = results else {return}
-        for i in r { temp[i.id] = i }
-        messages = temp
-        self.isReloading = false
-    }
-    
+    @StateObject public var CHAT = ChatObserver()
+    @StateObject public var keyboardResponder = KeyboardResponder()
+    @State public var isSidebarVisible = false
+    public let realmInstance = realm()
+    @State public var delaySeconds = 2.0
+    @State public var isReloading = false
+
+
     var mainContentView: some View {
         VStack {
             // Messages list
             ScrollViewReader { scrollViewProxy in
                 ScrollView {
                     LazyVStack(spacing: 12) {
-                        if !(roomMessages.realm?.isInWriteTransaction ?? true) {
-                            ForEach(sortChatsByTimestamp(chats: roomMessages)) { chat in
-                                ChatMessageRow(chat: chat)
-                            }
+                        ForEach(CHAT.roomMessages) { chat in
+                            ChatMessageRow(chat: chat)
                         }
                     }
-                }.onChange(of: roomMessages.count) { _ in
-                    
-                    if !(roomMessages.realm?.isInWriteTransaction ?? true) {
-                        if let lastChat = sortChatsByTimestamp(chats: roomMessages).last {
-                            withAnimation {
-                                scrollViewProxy.scrollTo(lastChat.id, anchor: .bottom)
-                            }
+                }.onChange(of: CHAT.roomMessages.count) { _ in
+                    if let lastChat = CHAT.roomMessages.last {
+                        withAnimation {
+                            scrollViewProxy.scrollTo(lastChat.id, anchor: .bottom)
                         }
                     }
                 }
@@ -123,26 +73,19 @@ struct ChatView: View {
         .onTap {
             self.keyboardResponder.safeHideKeyboard()
         }
-        .onChange(of: boardEngineObject.currentActivityId) { _ in
-            chatId = boardEngineObject.currentActivityId
-            observeChat()
-            self.ROOM.stopObserving()
-            self.ROOM.startObserving(roomId: chatId)
+        .onChange(of: currentRoomId) { newValue in
+            self.CHAT.start(chatId: newValue)
         }
         .onAppear() {
-            chatId = boardEngineObject.currentActivityId
-            observeChat()
-            self.ROOM.startObserving(roomId: chatId)
+            self.CHAT.start(chatId: currentRoomId)
         }
         .onDisappear() {
-            stopObserver()
-            self.ROOM.stopObserving()
+            self.CHAT.stop()
         }
     }
     var sidebarView: some View {
         RoomUserList()
-            .environmentObject(self.boardEngineObject)
-            .environmentObject(self.ROOM)
+            
     }
     
     var body: some View {
@@ -159,7 +102,7 @@ struct ChatView: View {
             }
             
         }
-        .navigationBarTitle("SOL Chat", displayMode: .inline)
+        .navigationBarTitle("Chat", displayMode: .inline)
         .navigationBarItems(leading: Button(action: {
             withAnimation {
                 isSidebarVisible.toggle()
@@ -167,86 +110,31 @@ struct ChatView: View {
         }) {
             Image(systemName: "line.horizontal.3")
         })
-        .onAppear() {
-            
-            safeFirebaseUserId { uId in
-                self.currentUserId = uId
-            }
-            
-            observeChat()
-            
-            CodiChannel.SESSION_ON_ID_CHANGE.receive(on: RunLoop.main) { onChange in
-                if let temp = onChange as? ActivityChange {
-                    if let roomId = temp.activityId {
-                        if self.chatId != roomId {
-                            print("Changing Chat ID: \(roomId)")
-                            self.chatId = roomId
-                            observeChat()
-                        }
-                    }
-                }
-            }.store(in: &cancellables)
-            
-        }
+
     }
-    
     
 
     func sendMessage() {
         
-//        UserTools.currentUserId
-        
-//        realmInstance.getCurrentSolUser() { user in
-//            let newMessage = Chat()
-//            newMessage.chatId = chatId
-//            newMessage.messageText = messageText
-//            newMessage.senderId = user.userId
-//            newMessage.senderName = user.userName
-//            newMessage.senderImage = user.imgUrl
-//            newMessage.timestamp = getCurrentTimestamp()
-//            
-//            firebaseDatabase { db in
-//                db.child(DatabasePaths.chat.rawValue)
-//                    .child(chatId)
-//                    .child(newMessage.id)
-//                    .setValue(newMessage.toDict())
-//            }
-//            
-//            messageText = ""
-//        }
-        
-        
+        let newMessage = Chat()
+        newMessage.chatId = currentRoomId
+        newMessage.messageText = messageText
+        newMessage.senderId = UserTools.currentUserId
+        newMessage.senderName = UserTools.currentUserId
+        newMessage.senderImage = ""
+        newMessage.timestamp = getCurrentTimestamp()
+
+        firebaseDatabase { db in
+            db.child(DatabasePaths.chat.rawValue)
+                .child(currentRoomId)
+                .child(newMessage.id)
+                .setValue(newMessage.toDict())
+        }
+
+        messageText = ""
     }
 
-    func getCurrentTime() -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm"
-        return formatter.string(from: Date())
-    }
     
-    func sortedMessagesByTimestamp() -> [(key: String, value: Chat?)] {
-        return messages.sorted { first, second in
-            // Assuming the keys are in a format that can be compared directly
-            return first.key < second.key
-        }
-    }
-    
-    func sortAndResetMessages() {
-        let sortedArray = messages.sorted { first, second in
-            // Assuming the keys are in a format that can be compared directly
-            return first.key < second.key
-        }
-        
-        // Convert the sorted array back to a dictionary
-        var sortedDictionary = [String: Chat?]()
-        for (key, value) in sortedArray {
-            sortedDictionary[key] = value
-        }
-
-        // Reset the messages with sorted dictionary
-        messages = sortedDictionary
-    }
-
 
 }
 

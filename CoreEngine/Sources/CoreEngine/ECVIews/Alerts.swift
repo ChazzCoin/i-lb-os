@@ -22,6 +22,10 @@ public extension View {
         self.modifier(ConfirmDeleteModifier(showAlert: isPresented, deleteAction: deleteAction))
     }
     
+    func isLoading(showLoading: Binding<Bool>, loadingText: String = "Loading...") -> some View {
+        self.modifier(LoadingViewModifier(showLoading: showLoading, loadingText: loadingText))
+    }
+    
 }
 
 public struct ConfirmModifier: ViewModifier {
@@ -69,14 +73,14 @@ public struct ConfirmSaveModifier: ViewModifier {
     }
 }
 
-struct ConfirmDeleteModifier: ViewModifier {
-    @Binding var showAlert: Bool
-    let deleteAction: () -> Void
-    let title: String = "Delete"
-    let message: String = "Are you sure you want to delete?"
+public struct ConfirmDeleteModifier: ViewModifier {
+    @Binding public var showAlert: Bool
+    public let deleteAction: () -> Void
+    public let title: String = "Delete"
+    public let message: String = "Are you sure you want to delete?"
     
     
-    func body(content: Content) -> some View {
+    public func body(content: Content) -> some View {
         content
             .alert(title, isPresented: $showAlert) {
                 Button("Cancel", role: .cancel) {
@@ -93,3 +97,36 @@ struct ConfirmDeleteModifier: ViewModifier {
 }
 
 
+public struct LoadingViewModifier: ViewModifier {
+    @Binding public var showLoading: Bool
+    public var loadingText: String = "Loading..."
+
+    public func body(content: Content) -> some View {
+        ZStack {
+            content
+                .blur(radius: showLoading ? 3 : 0)
+                .disabled(showLoading)
+
+            if showLoading {
+                // Loading Overlay
+                Color.black.opacity(0.4)
+                    .edgesIgnoringSafeArea(.all)
+
+                // Loading Indicator and Text
+                VStack(spacing: 20) {
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle(tint: .blue))
+                        .scaleEffect(1.5)
+
+                    Text(loadingText)
+                        .font(.headline)
+                        .foregroundColor(.blue)
+                }
+                .padding(40)
+                .background(Color(.systemBackground).opacity(0.85))
+                .cornerRadius(12)
+                .shadow(radius: 10)
+            }
+        }
+    }
+}

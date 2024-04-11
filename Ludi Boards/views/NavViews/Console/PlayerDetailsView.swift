@@ -93,8 +93,8 @@ struct PlayerDetailsView: View {
             bodyBuilder: {
                 Section("Player Details") {
                     PickerSport(selection: $sport, isEdit: $isEditMode)
-                    InputText(label: "Player Name", text: $playerName, isEdit: $isEditMode)
-                    InputText(label: "Tag", text: $tag, isEdit: $isEditMode)
+                    CoreInputText(label: "Player Name", text: $playerName, isEdit: $isEditMode)
+                    CoreInputText(label: "Tag", text: $tag, isEdit: $isEditMode)
                     PickerSoccerPosition(selection: $position, isEdit: $isEditMode)
                     PickerAgeLevel(selection: $age, isEdit: $isEditMode)
                     PickerDominateFoot(selection: $foot, isEdit: $isEditMode)
