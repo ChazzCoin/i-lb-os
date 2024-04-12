@@ -8,7 +8,7 @@
 import Foundation
 import RealmSwift
 
-public class Event: Object, ObjectKeyIdentifiable {
+public class CoreEvent: Object, ObjectKeyIdentifiable {
     @Persisted(primaryKey: true) public var id: String = UUID().uuidString
     @Persisted public var orgId: String = ""
     @Persisted public var teamId: String = ""

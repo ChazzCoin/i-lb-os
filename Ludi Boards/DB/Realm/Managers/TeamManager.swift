@@ -66,8 +66,8 @@ class TeamManager {
         return realm.objects(ActivityPlan.self).filter("teamId == %@", teamId)
     }
     // Events
-    func getEventsForTeam(teamId: String) -> Results<Event> {
-        return realm.objects(Event.self).filter("teamId == %@", teamId)
+    func getEventsForTeam(teamId: String) -> Results<CoreEvent> {
+        return realm.objects(CoreEvent.self).filter("teamId == %@", teamId)
     }
     
 }

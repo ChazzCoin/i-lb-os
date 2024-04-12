@@ -75,8 +75,8 @@ public class CoreFirebaseStorage {
         }
 
         // Save the Song object and write to Firebase Realtime Database
-        firebaseDatabaseSET(obj: newSong) { db in
-            db.child("songs").child(newSong.id)
-        }
+//        firebaseDatabaseSET(obj: newSong) { db in
+//            db.child("songs").child(newSong.id)
+//        }
     }
 }

@@ -8,40 +8,24 @@
 import Foundation
 import FirebaseDatabase
 import RealmSwift
+import Realm
 
-public enum DatabasePaths: String {
-    case sports = "sports"
+
+public enum DatabasePaths: String, CaseIterable {
     case users = "users"
-    case admin = "admin"
-    case coaches = "coaches"
-    case parents = "parents"
-    case players = "players"
-    case reviews = "reviews"
-    case services = "services"
+    case rooms = "rooms"
+    case managedViews = "managedViews"
+    case chat = "chat"
     case organizations = "organizations"
     case teams = "teams"
+    case players = "players"
     case notes = "notes"
-    case chat = "chat"
-    case evaluations = "evaluations"
-    case rosters = "rosters"
-    case tryouts = "tryouts"
-    case reviewTemplates = "review_templates"
-    case redzones = "redzones"
     case events = "events"
     case sessionPlan = "sessionPlan"
     case activityPlan = "activityPlan"
-    case boardSession = "boardSession"
-    case managedViews = "managedViews"
-    case stopWatch = "stopWatch"
-    case timer = "timer"
     case userToSession = "userToSession"
     case userToActivity = "userToActivity"
-    case connections = "connections"
-    case rooms = "rooms"
     case userInRoom = "userInRoom"
-//    case rooms = "rooms"
-//    case rooms = "rooms"
-//    case rooms = "rooms"
     
     // Function to map object type to DatabasePaths
     public static func path(forObjectType objectType: Object.Type) -> DatabasePaths? {
@@ -58,21 +42,28 @@ public enum DatabasePaths: String {
                 return .chat
             case is CoreUser.Type:
                 return .users
-            case is UserToSession.Type:
-                return .userToSession
             case is Room.Type:
                 return .rooms
             case is UserInRoom.Type:
-                return .rooms
+                return .userInRoom
+            case is Organization.Type:
+                return .organizations
+            case is Team.Type:
+                return .teams
+            case is CoreEvent.Type:
+                return .events
+            case is UserToActivity.Type:
+                return .userToActivity
             default:
                 return nil
         }
     }
+
     
     public static func objectType(path: String) -> Object.Type? {
         switch path {
             case DatabasePaths.sessionPlan.rawValue:
-                    return SessionPlan.self
+                return SessionPlan.self
             case DatabasePaths.activityPlan.rawValue:
                 return ActivityPlan.self
             case DatabasePaths.managedViews.rawValue:
@@ -90,19 +81,18 @@ public enum DatabasePaths: String {
             case DatabasePaths.teams.rawValue:
                 return Team.self
             case DatabasePaths.events.rawValue:
-                return Event.self
+                return CoreEvent.self
             case DatabasePaths.chat.rawValue:
                 return Chat.self
+            case DatabasePaths.userToActivity.rawValue:
+                return UserToActivity.self
+            case DatabasePaths.players.rawValue:
+                return PlayerRef.self
             default:
                 return nil
         }
     }
+
     
-    var ref: DatabaseReference {
-        return Database.database().reference().child(self.rawValue)
-    }
-    
-    public static func reference(path: String) -> DatabaseReference? {
-        return Database.database().reference().child(path)
-    }
+
 }

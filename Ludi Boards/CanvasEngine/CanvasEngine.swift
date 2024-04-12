@@ -307,24 +307,19 @@ struct CanvasEngine: View {
                 addWindowsToNavManager()
 //                exportPDF()
                 
-//                if let user = newRealm().findByField(CoreUser.self, value: UserTools.currentUserId) {
-//                    newRealm().safeWrite { r in
-//                        user.handle = "tester 2 sir"
-//                        CoreUserQueue.addToUpdateQueue(item: user)
-//                    }
-//                }
+                
 //                
-//                if let user = UserTools.user {
-//                    newRealm().safeWrite { r in
-//                        user.handle = "tester 1 sir"
-//                        CoreUserQueue.addToUpdateQueue(item: user)
-//                    }
-//                }
+                if let user = UserTools.user {
+                    fusedWriter { r in
+                        user.name = "Johnny Law Dog"
+                        return user
+                    }
+                }
 //                UserTools.login(email: "chazzromeo@gmail.com", password: "soccer23", onResult: { _ in
 //                    if let user = UserTools.user {
 //                        newRealm().safeWrite { r in
-//                            user.handle = "tester 1 sir"
-//                            CoreUserQueue.addToUpdateQueue(item: user)
+//                            user.handle = "YESSSSSSSSSSS"
+//                            FusedDB.saveToFirebase(item: user)
 //                        }
 //                    }
 //                }, onError: { _ in

@@ -19,7 +19,7 @@ struct HomeDashboardView: View {
   
     @ObservedResults(PlayerRef.self) var players
     @ObservedResults(Team.self) var teams
-    @ObservedResults(Event.self) var events
+    @ObservedResults(CoreEvent.self) var events
     
     @ObservedResults(UserToSession.self, where: { $0.status != "removed" }) var guestSessions
     var sharedSessionIds: [String] {

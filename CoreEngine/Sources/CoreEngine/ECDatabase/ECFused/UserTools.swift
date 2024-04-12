@@ -162,7 +162,7 @@ public class UserTools {
             firebaseDatabase { ref in
                 ref.child(DatabasePaths.users.rawValue)
                     .child(cui)
-                    .get { snapshot in
+                    .observeSingleEvent(of: .value) { snapshot in
                         print("User SnapShot: \(snapshot)")
                         if let user = snapshot.toCoreObject(CoreUser.self, realm: newRealm()) {
                             setCurrentUserHandle(user.userName)
@@ -188,9 +188,7 @@ public class UserTools {
     }
     
     public static func saveUserToFirebase(user:CoreUser) {
-        firebaseDatabase { db in
-            db.saveFused(obj: user)
-        }
+        FusedDB.saveToFirebase(item: user)
     }
     
     public static func forgotPassword(email: String, onSuccess: @escaping () -> Void, onError: @escaping (any Error) -> Void) {

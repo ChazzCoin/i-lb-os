@@ -26,6 +26,11 @@ public func realm() -> Realm { return RealmInstance.instance }
 public func newRealm() -> Realm { return RealmInstance.instance }
 public func isRealmObjectValid(_ object: Object) -> Bool { return !object.isInvalidated }
 
+public func realmWriter(_ realm: Realm = newRealm(), action: @escaping (Realm) -> Void) {
+    realm.safeWrite { r in action(r) }
+}
+
+
 public func safeAccess<T>(to object: T, action: (T) -> Void) where T: Object {
     guard !object.isInvalidated else {
         print("Object is invalidated.")
@@ -197,6 +202,12 @@ public extension Object {
 
 public extension Object {
     
+    func getId() -> String? {
+        return self.value(forKey: "id") as? String
+    }
+    func getField<T>(_ fieldName: String) -> T? {
+        return self.value(forKey: fieldName) as? T
+    }
     func safeCreate<T: Object>(_ type: T.Type) {
         newRealm().safeWrite { r in
             r.create(type, value: self, update: .all)

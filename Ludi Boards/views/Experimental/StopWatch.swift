@@ -76,8 +76,8 @@ class StopwatchViewModel: ObservableObject {
     var reference: DatabaseReference = Database
         .database()
         .reference()
-        .child(DatabasePaths.stopWatch.rawValue)
-        .child("default-1")
+//        .child(DatabasePaths.stopWatch.rawValue)
+//        .child("default-1")
     
     init() {
 //        watch.hostId = hostId

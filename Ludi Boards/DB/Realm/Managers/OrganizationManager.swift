@@ -64,8 +64,8 @@ class OrganizationManager {
         return realm.objects(ActivityPlan.self).filter("orgId == %@", orgId)
     }
     // Events
-    func getEventsForOrganization(orgId: String) -> Results<Event> {
-        return realm.objects(Event.self).filter("orgId == %@", orgId)
+    func getEventsForOrganization(orgId: String) -> Results<CoreEvent> {
+        return realm.objects(CoreEvent.self).filter("orgId == %@", orgId)
     }
 }
 

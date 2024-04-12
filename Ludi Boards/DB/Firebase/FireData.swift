@@ -49,48 +49,48 @@ extension Object {
     
     func fireSave(parentId: String, id:String) {
         fireRef(parentId: parentId, id: id, block: { db in
-            db.saveFused(obj: self)
+//            db.saveFused(obj: self)
         })
     }
     
     func fireDelete(parentId: String, id:String) {
         fireRef(parentId: parentId, id: id, block: { db in
-            db.delete(id: id)
+//            db.delete(id: id)
         })
     }
     
     func fireGet(parentId: String, id:String) {
         fireRef(parentId: parentId, id: id, block: { db in
-            db.get { snapshot in
-                let _ = snapshot.toLudiObjects(Self.self)
-            }
+//            db.get { snapshot in
+//                let _ = snapshot.toLudiObjects(Self.self)
+//            }
         })
     }
     
     func fireSave(id:String) {
         fireRef(id: id, block: { db in
-            db.saveFused(obj: self)
+//            db.saveFused(obj: self)
         })
     }
     
     func fireDelete(id:String) {
         fireRef(id: id, block: { db in
-            db.delete(id: id)
+//            db.delete(id: id)
         })
     }
     
     func fireGet(id:String) {
         fireRef(id: id, block: { db in
-            db.get { snapshot in
-                let _ = snapshot.toLudiObjects(Self.self)
-            }
+//            db.get { snapshot in
+//                let _ = snapshot.toLudiObjects(Self.self)
+//            }
         })
     }
     
     func fireObserve(parentId: String, id:String, block: (DatabaseHandle) -> Void) {
         fireRef(parentId: parentId, id: id, block: { db in
             block(db.fireObserver(completion: { snapshot in
-                let _ = snapshot.toLudiObjects(Self.self)
+//                let _ = snapshot.toLudiObjects(Self.self)
             }))
         })
     }

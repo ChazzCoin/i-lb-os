@@ -9,6 +9,30 @@ import Foundation
 import FirebaseDatabase
 import RealmSwift
 
+public extension DatabaseQuery {
+    func pull<T:Object>(_ obj: T.Type, realm: Realm=newRealm(), onReturn: @escaping (List<T>) -> Void={ _ in }) {
+        self.observeSingleEvent(of: .value) { snapshot, _ in
+            if let items = snapshot.toCoreObjects(T.self, realm: realm) {
+                print("Successfully Fused In From Firebase.")
+                onReturn(items)
+            }
+        }
+    }
+    func fuse<T:Object>(_ obj: T.Type, realm: Realm=newRealm(), onReturn: @escaping (List<T>) -> Void={ _ in }) -> DatabaseHandle {
+        return self.observe(.value) { snapshot in
+            if let items = snapshot.toCoreObjects(T.self, realm: realm) {
+                print("Successfully Fused In From Firebase.")
+                onReturn(items)
+            }
+        }
+    }
+    func pullByField<T:Object>(_ obj: T.Type, value: String, field: String="id", realm: Realm=newRealm(), onReturn: @escaping (List<T>) -> Void={ _ in }) {
+        self.queryEqual(toValue: value, childKey: field).pull(obj, onReturn: onReturn)
+    }
+    func fuseByField<T:Object>(_ obj: T.Type, value: String, field: String="id", realm: Realm=newRealm(), onReturn: @escaping (List<T>) -> Void={ _ in }) -> DatabaseHandle {
+        return self.queryEqual(toValue: value, childKey: field).fuse(obj, onReturn: onReturn)
+    }
+}
 
 public class DataPuller {
     
@@ -32,10 +56,11 @@ public class DataPuller {
             for id in ids {
                 ref.child(DatabasePaths.users.rawValue)
                     .child(id)
-                    .observeSingleEvent(of: .value) { snapshot, _ in
-                        print("Users SnapShot: \(snapshot)")
-                        let _ = snapshot.toCoreObject(CoreUser.self, realm: realm)
-                    }
+                    .pull(CoreUser.self)
+//                    .observeSingleEvent(of: .value) { snapshot, _ in
+//                        print("Users SnapShot: \(snapshot)")
+//                        let _ = snapshot.toCoreObject(CoreUser.self, realm: realm)
+//                    }
             }
         }
     }

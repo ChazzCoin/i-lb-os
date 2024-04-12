@@ -27,7 +27,7 @@ public class FusedCurrentUserFriends : ObservableObject {
         if let f = realmInstance.findByField(Friends.self, field: "userId", value: currentUserId) {
             realmInstance.safeWrite { r in
                 f.friendIds.safeAddString(friendId)
-                self.ref.saveFused(id: f.id, obj: f)
+                FusedDB.saveToFirebase(item: f)
             }
         }
     }

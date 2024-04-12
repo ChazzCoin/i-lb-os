@@ -61,8 +61,8 @@ class SessionUserManager {
         return realm.objects(ActivityPlan.self).filter("sessionId == %@", sessionId)
     }
     // Events
-    func getEventsForSessionPlan(sessionId: String) -> Results<Event> {
-        return realm.objects(Event.self).filter("sessionId == %@", sessionId)
+    func getEventsForSessionPlan(sessionId: String) -> Results<CoreEvent> {
+        return realm.objects(CoreEvent.self).filter("sessionId == %@", sessionId)
     }
     
 }

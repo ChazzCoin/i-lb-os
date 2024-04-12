@@ -68,7 +68,7 @@ public extension DataSnapshot {
     func toHashMap() -> [String: Any] {
         var hashMap = [String: Any]()
         
-        if self.childrenCount < 2 {
+        if self.childrenCount <= 1 {
             return self.value as? [String:Any] ?? hashMap
         }
         
