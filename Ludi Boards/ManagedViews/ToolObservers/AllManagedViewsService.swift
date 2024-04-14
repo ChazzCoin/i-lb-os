@@ -80,7 +80,7 @@ class SingleManagedViewService: ObservableObject {
     }
     
     func verifyLoginStatus() {
-        self.isLoggedIn = userIsVerifiedToProceed()
+        self.isLoggedIn = UserTools.userIsVerifiedToProceed()
     }
 
     func startFirebaseObserver() {
@@ -142,7 +142,7 @@ class SingleManagedViewService: ObservableObject {
             print("Denying MVS Request: Writing")
             return true
         }
-        if !userIsVerifiedToProceed() {
+        if !UserTools.userIsVerifiedToProceed() {
             print("Denying MVS Request: Login")
             return true
         }

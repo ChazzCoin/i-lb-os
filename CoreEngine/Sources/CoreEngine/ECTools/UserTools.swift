@@ -18,6 +18,9 @@ public class UserTools {
     public static let isLoggedIn: Bool = UserDefaults.standard.bool(forKey: "isLoggedIn")
     public static func setisLoggedIn(_ id: Bool) { UserDefaults.standard.set(id, forKey: "isLoggedIn") }
     
+    public static let cloudIsEnabled: Bool = UserDefaults.standard.bool(forKey: "cloudIsEnabled")
+    public static func setCloudIsEnabled(_ id: Bool) { UserDefaults.standard.set(id, forKey: "cloudIsEnabled") }
+    
     public static let currentUserId: String? = UserDefaults.standard.string(forKey: "currentUserId")
     public static func setCurrentUserId(_ id: String?) { UserDefaults.standard.set(id, forKey: "currentUserId") }
     
@@ -64,13 +67,17 @@ public class UserTools {
             print("Overriding Verification Request")
             return true
         }
-        if isConnected {
-            print("User IS Connected to the Internet")
-            return true
+        if !isConnected {
+            print("User IS NOT Connected to the Internet")
+            return false
         }
-        if isLoggedIn {
-            print("User IS Logged In")
-            return true
+        if !isLoggedIn {
+            print("User IS NOT Logged In")
+            return false
+        }
+        if !cloudIsEnabled {
+            print("User has CLOUD DISABLED")
+            return false
         }
         print("User Is NOT Logged In")
         return false
@@ -84,12 +91,17 @@ public class UserTools {
             return true
         }
         
-        if isLoggedIn {
+        if !isConnected {
+            print("User IS NOT Connected to the Internet")
+            return false
+        }
+        
+        if !isLoggedIn {
             print("User IS Logged In")
-            return true
+            return false
         }
         print("User Is NOT Logged In")
-        return false
+        return true
         
     }
     
@@ -188,7 +200,7 @@ public class UserTools {
     }
     
     public static func saveUserToFirebase(user:CoreUser) {
-        FusedDB.saveToFirebase(item: user)
+        FusedTools.saveToFirebase(item: user)
     }
     
     public static func forgotPassword(email: String, onSuccess: @escaping () -> Void, onError: @escaping (any Error) -> Void) {

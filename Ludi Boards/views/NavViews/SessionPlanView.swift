@@ -287,11 +287,9 @@ struct SessionPlanView: View {
     }
     
     func getShareIds() {
-        safeFirebaseUserId() { userId in
-            if let umvs = self.allActivities.realm?.objects(UserToSession.self) {
-                for i in umvs {
-                    self.shareIds.append(i.sessionId)
-                }
+        if let umvs = self.allActivities.realm?.objects(UserToSession.self) {
+            for i in umvs {
+                self.shareIds.append(i.sessionId)
             }
         }
     }
@@ -323,11 +321,11 @@ struct SessionPlanView: View {
         newSP.sessionDetails = description
         newSP.objectiveDetails = objective
         newSP.isOpen = isLive
-        newSP.ownerId = getFirebaseUserIdOrCurrentLocalId()
+        newSP.ownerId = UserTools.currentUserId ?? ""
         // New Activity
         let newAP = ActivityPlan()
         newAP.sessionId = newSP.id
-        newAP.ownerId = getFirebaseUserIdOrCurrentLocalId()
+        newAP.ownerId = UserTools.currentUserId ?? ""
         newAP.title = "\(title) Activity"
         newAP.orderIndex = 0
         newAP.isLocal = isLive
@@ -338,20 +336,20 @@ struct SessionPlanView: View {
         }
         
         // TODO: Firebase
-        newSP.fireSave(id: newSP.id)
-        newAP.fireSave(id: newAP.id)
+//        newSP.fireSave(id: newSP.id)
+//        newAP.fireSave(id: newAP.id)
     }
     
     func updateSessionPlan() {
         if let sp = self.BEO.realmInstance.findByField(SessionPlan.self, value: self.sessionId) {
             self.BEO.realmInstance.safeWrite { r in
                 // TODO: FIX THIS
-                sp.ownerId = getFirebaseUserIdOrCurrentLocalId()
+                sp.ownerId = UserTools.currentUserId ?? ""
                 sp.title = title
                 sp.sessionDetails = description
                 sp.objectiveDetails = objective
                 sp.isLive = isLive
-                sp.fireSave(id: sp.id)
+//                sp.fireSave(id: sp.id)
             }
         }
     }
@@ -379,8 +377,8 @@ struct SessionPlanView: View {
             self.isCurrentPlan = true
         }
         
-        fireGetSessionPlanAsync(sessionId: self.sessionId, realm: self.allActivities.realm?.thaw() ?? newRealm())
-        fireGetActivitiesBySessionId(sessionId: self.sessionId, realm: self.allActivities.realm?.thaw() ?? newRealm())
+//        fireGetSessionPlanAsync(sessionId: self.sessionId, realm: self.allActivities.realm?.thaw() ?? newRealm())
+//        fireGetActivitiesBySessionId(sessionId: self.sessionId, realm: self.allActivities.realm?.thaw() ?? newRealm())
         
         if let sp = self.allActivities.realm?.thaw().findByField(SessionPlan.self, value: self.sessionId) {
 //            self.sessionRealmObserver.observe(object: sp, onChange: { obj in

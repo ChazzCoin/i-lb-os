@@ -70,6 +70,7 @@ struct LiveRooms: DynamicProperty {
         }
     }
     
+    @available(*, deprecated, renamed: "ObservedResults", message: "Replaced with Observed Results")
     private class RealmRoomObserver: ObservableObject {
         @Published var objects: Results<Room>? = nil
         @Published var notificationToken: NotificationToken? = nil
@@ -83,10 +84,10 @@ struct LiveRooms: DynamicProperty {
             self.objects = self.realmInstance.objects(Room.self).filter("roomId == %@ AND status == %@", roomId, "IN")
             self.notificationToken = self.objects?.observe { [weak self] (changes: RealmCollectionChange) in
                 guard let self = self else { return }
-                if !userIsVerifiedToProceed() {
-                    destroy()
-                    return
-                }
+//                if !userIsVerifiedToProceed() {
+//                    destroy()
+//                    return
+//                }
                 switch changes {
                     case .initial(_):
                         print("LiveRoom: Initial")
@@ -156,7 +157,7 @@ class FirebaseRoomService: ObservableObject {
     }
     
     func startObserving(roomId: String) {
-        if !userIsVerifiedToProceed() || !self.realmInstance.isLiveSessionPlan(activityId: roomId) { return }
+//        if !userIsVerifiedToProceed() || !self.realmInstance.isLiveSessionPlan(activityId: roomId) { return }
         guard !isObserving else { return }
         self.currentRoomId = roomId
         firebaseSubscription = self.reference.child(roomId).observe(.value, with: { snapshot in
@@ -166,7 +167,7 @@ class FirebaseRoomService: ObservableObject {
             let realmy = newRealm().freeze()
             let snapPresence = realmy.objects(Room.self).filter("roomId == %@", roomId)
             
-            if let allUserPresences = snapshot.toLudiObjects(Room.self, realm: self.allRooms.realm?.thaw() ?? newRealm()) {
+            if let allUserPresences = snapshot.toCoreObjects(Room.self, realm: self.allRooms.realm?.thaw() ?? newRealm()) {
                 // Assuming UserPresence has properties `roomId` and `status`
 //                let inRoom = allUserPresences.filter { $0.roomId == roomId }
                 

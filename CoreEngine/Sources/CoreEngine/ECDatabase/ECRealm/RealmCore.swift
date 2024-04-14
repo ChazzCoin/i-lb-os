@@ -19,6 +19,8 @@ import Realm
                 GO AWAY.
  */
 
+
+
 public class RealmInstance {
     static let instance: Realm = { return try! Realm() }()
 }
@@ -40,7 +42,6 @@ public func safeAccess<T>(to object: T, action: (T) -> Void) where T: Object {
 }
 
 public func getPrimaryKey<T: Object>(_ item: T, defaultValue:String="") -> String {
-    let realm = try! Realm()
     if let primaryKeyProperty = T.primaryKey(), let primaryKeyValue = item.value(forKey: primaryKeyProperty) as? String {
         return primaryKeyValue
     }
@@ -70,8 +71,22 @@ public extension Realm {
 }
 
 public extension Results {
+    
     func toArray() -> [Element] {
         return Array(self)
+    }
+    
+    func toRealmList<T: Object>() -> List<T> {
+        let list = List<T>()
+        realmWriter { r in
+            self.forEach { result in
+                // Ensure the result is of the expected type before adding it to the list
+                if let result = result as? T {
+                    list.append(result)
+                }
+            }
+        }
+        return list
     }
 }
 

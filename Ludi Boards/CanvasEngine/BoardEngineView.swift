@@ -19,14 +19,14 @@ struct BoardEngine: View {
     @StateObject var MVFactory = ManagedViewFactory()
     //
     @State var MVS: AllManagedViewsService? = nil
-    @State var SPS: SessionPlanService? = nil
-    @State var APS: ActivityPlanService? = nil
+//    @State var SPS: SessionPlanService? = nil
+//    @State var APS: ActivityPlanService? = nil
     @State var cancellables = Set<AnyCancellable>()
     
     // NEW
-    @State private var sessionObserver = RealmChangeListener<SessionPlan>()
-    @State private var activityObserver = RealmChangeListener<ActivityPlan>()
-    @State private var managedViewsObserver = RealmChangeListener<ManagedView>()
+//    @State private var sessionObserver = RealmChangeListener<SessionPlan>()
+//    @State private var activityObserver = RealmChangeListener<ActivityPlan>()
+//    @State private var managedViewsObserver = RealmChangeListener<ManagedView>()
     
     // TODO: -> Move to Central Board Object
     @State private var reference: DatabaseReference = Database.database().reference()
@@ -51,10 +51,6 @@ struct BoardEngine: View {
                  ForEach(self.BEO.basicTools) { item in
                      if !item.isDeleted {
                          
-//                         item.toolType
-//                         item.toolSubType
-//                         item.id
-//                         item.boardId
                          ManagedViewFactory.build(type: item.toolType, subType: item.subToolType, sport: item.sport)
                              .getView(viewId: item.id, activityId: item.boardId)
                              .zIndex(20.0)
@@ -66,7 +62,6 @@ struct BoardEngine: View {
 //                             .environmentObject(self.BEO)
                          
                      }
-                     
                  }
              }
              
@@ -95,10 +90,6 @@ struct BoardEngine: View {
             })
             .position(x: self.BEO.boardStartPosX, y: self.BEO.boardStartPosY).zIndex(2.0)
         )
-        .modifier(SnapshotViewModifier(takeSnapshot: self.$BEO.doSnapshot) { image in
-            // Do something with the image, like saving it to the photo album
-            UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
-        })
         .onDrop(of: [.text], delegate: self.BEO.dropDelegate!)
         .simultaneousGesture( self.BEO.isDraw ?
             DragGesture()
@@ -143,8 +134,8 @@ struct BoardEngine: View {
             ActivityDetailsView(activityId: "new", isShowing: $showCreateActivitySheet)
         })
         .onDisappear() {
-            SPS?.stopObserving()
-            APS?.stopObserving()
+//            SPS?.stopObserving()
+//            APS?.stopObserving()
             MVS?.stopObserving()
             stopObserving()
         }
@@ -155,8 +146,8 @@ struct BoardEngine: View {
             
             self.BEO.loadUser()
             
-            SPS = SessionPlanService(realm: self.BEO.realmInstance)
-            APS = ActivityPlanService(realm: self.BEO.realmInstance)
+//            SPS = SessionPlanService(realm: self.BEO.realmInstance)
+//            APS = ActivityPlanService(realm: self.BEO.realmInstance)
             MVS = AllManagedViewsService(realm: self.BEO.realmInstance)
             
             self.threeLoadActivityPlan()
@@ -230,20 +221,20 @@ struct BoardEngine: View {
                 self.BEO.activities.append(act)
                 
                 // Realm
-                self.activityObserver.observe(object: act, onChange: { temp in
-                    self.BEO.setColor(red: temp.backgroundRed, green: temp.backgroundGreen, blue: temp.backgroundBlue, alpha: temp.backgroundAlpha)
-                    self.BEO.setFieldLineColor(colorIn: Color(red: temp.backgroundLineRed, green: temp.backgroundLineGreen, blue: temp.backgroundLineBlue).opacity(temp.backgroundLineAlpha))
-                    self.BEO.boardBgName = temp.backgroundView
-                    self.BEO.boardFeildRotation = temp.backgroundRotation
-                    self.BEO.boardFeildLineStroke = temp.backgroundLineStroke
-                })
+//                self.activityObserver.observe(object: act, onChange: { temp in
+//                    self.BEO.setColor(red: temp.backgroundRed, green: temp.backgroundGreen, blue: temp.backgroundBlue, alpha: temp.backgroundAlpha)
+//                    self.BEO.setFieldLineColor(colorIn: Color(red: temp.backgroundLineRed, green: temp.backgroundLineGreen, blue: temp.backgroundLineBlue).opacity(temp.backgroundLineAlpha))
+//                    self.BEO.boardBgName = temp.backgroundView
+//                    self.BEO.boardFeildRotation = temp.backgroundRotation
+//                    self.BEO.boardFeildLineStroke = temp.backgroundLineStroke
+//                })
                 
                 // Firebase
-                if self.BEO.isLiveSession {
-                    APS?.startObserving(activityId: self.BEO.currentActivityId)
-                } else {
-                    APS?.stopObserving()
-                }
+//                if self.BEO.isLiveSession {
+//                    APS?.startObserving(activityId: self.BEO.currentActivityId)
+//                } else {
+//                    APS?.stopObserving()
+//                }
                 
             }
             fourLoadManagedViewTools()
@@ -373,7 +364,7 @@ struct BoardEngine: View {
         // TODO: ONLY WORRY ABOUT ACTIVITY CHANGES!
         
         self.BEO.runCanvasLoading()
-        APS?.stopObserving()
+//        APS?.stopObserving()
         MVS?.stopObserving()
         stopObserving()
         
@@ -396,8 +387,8 @@ struct BoardEngine: View {
         newOrg.founded = "2024"
         newOrg.location = "Birmingham, AL"
         newOrg.memberCount = 2
-        self.BEO.realmInstance.safeWrite { r in
-            r.create(Organization.self, value: newOrg, update: .all)
+        FusedTools.fusedCreator(Organization.self) { _ in
+            return newOrg
         }
         
         OrganizationManager(realm: self.BEO.realmInstance).addUserToOrganization(userId: self.BEO.currentUserId, organizationId: newOrg.id) {
@@ -417,8 +408,8 @@ struct BoardEngine: View {
         newTeam.homeCity = "Birmingham, AL"
         newTeam.league = "Private Training"
         newTeam.manager = "Charles Romeo"
-        self.BEO.realmInstance.safeWrite { r in
-            r.create(Team.self, value: newTeam, update: .all)
+        FusedTools.fusedCreator(Team.self) { _ in
+            return newTeam
         }
         TeamManager().addUserToTeam(userId: self.BEO.currentUserId, teamId: newTeam.id) { e in
             print("Failed to Create Connection to Team.")
@@ -433,7 +424,7 @@ struct BoardEngine: View {
         newActivity.title = "Auto Generated Activity"
         newActivity.subTitle = "Initial Setup for Testing"
         
-        newActivity.ownerId = getFirebaseUserId() ?? CURRENT_USER_ID
+        newActivity.ownerId = UserTools.currentUserId ?? ""
         newActivity.sessionId = self.BEO.currentSessionId
         
         let rgbb = Color.secondaryBackground.toRGBA()
@@ -447,15 +438,18 @@ struct BoardEngine: View {
         self.BEO.realmInstance.safeWrite { r in
             r.create(ActivityPlan.self, value: newActivity, update: .all)
         }
+        FusedTools.fusedCreator(ActivityPlan.self) { _ in
+            return newActivity
+        }
     }
     
     // TODO: MOVE TO CENTRAL BOARD OBJECT
     // Line/Drawing
     private func saveLineData(start: CGPoint, end: CGPoint) {
-        self.BEO.realmInstance.safeWrite { r in
+        FusedTools.fusedCreator(ManagedView.self)  { r in
             let line = ManagedView()
             line.boardId = self.BEO.currentActivityId
-            line.lastUserId = getFirebaseUserIdOrCurrentLocalId()
+            line.lastUserId = UserTools.currentUserId ?? ""
             line.startX = Double(start.x)
             line.startY = Double(start.y)
             line.endX = Double(end.x)
@@ -469,12 +463,13 @@ struct BoardEngine: View {
             line.subToolType = self.BEO.shapeSubType
             line.lineDash = 1
             line.dateUpdated = Int(Date().timeIntervalSince1970)
-            r.create(ManagedView.self, value: line, update: .all)
-            line.fireSave(id: line.id)
+//            r.create(ManagedView.self, value: line, update: .all)
+//            line.fireSave(id: line.id)
             // History
             let history = ManagedViewAction()
             history.absorb(from: line)
             r.create(ManagedViewAction.self, value: history, update: .all)
+            return line
         }
     }
 }

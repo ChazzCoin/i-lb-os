@@ -11,7 +11,7 @@ import RealmSwift
 import CoreEngine
 
 struct HomeDashboardView: View {
-    @State var userId: String = getFirebaseUserId() ?? "SOL"
+//    @State var userId: String = getFirebaseUserId() ?? "SOL"
     
     @Environment(\.colorScheme) var colorScheme
     @EnvironmentObject var BEO: BoardEngineObject

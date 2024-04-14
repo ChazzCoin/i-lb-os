@@ -11,14 +11,15 @@ import RealmSwift
 import CoreEngine
 
 struct RoomUserList: View {
-    @EnvironmentObject var BEO: BoardEngineObject
-    @EnvironmentObject var ROOM: FirebaseRoomService
+//    @EnvironmentObject var BEO: BoardEngineObject
+//    @EnvironmentObject var ROOM: FirebaseRoomService
+    @AppStorage("currentRoomId") public var currentRoomId: String = ""
     @State private var showingAddBuddyView = false
 
     var body: some View {
         
         VStack {
-            if self.ROOM.objsInCurrentRoom.isEmpty {
+            if self.currentRoomId.isEmpty {
                 Text("This room seems to be empty.")
                     .frame(maxWidth: .infinity)
             }
@@ -50,7 +51,7 @@ struct RoomUserList: View {
             }
         }
         .refreshable {
-            restart()
+            
         }
         .sheet(isPresented: $showingAddBuddyView) {
             AddBuddyView(isPresented: $showingAddBuddyView, sessionId: .constant("none"))
@@ -59,11 +60,6 @@ struct RoomUserList: View {
         
     }
     
-    func restart() {
-        self.ROOM.stopObserving()
-        self.ROOM.startObserving(roomId: self.BEO.currentActivityId)
-    }
-    
-    
+
 }
 

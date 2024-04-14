@@ -22,21 +22,21 @@ class SessionPlanService: ObservableObject {
 
     func startObserving(sessionId: String) {
         
-        if !userIsVerifiedToProceed()
-            || self.realmInstance.isLiveSessionPlan(sessionId: sessionId) { return }
+//        if !userIsVerifiedToProceed()
+//            || self.realmInstance.isLiveSessionPlan(sessionId: sessionId) { return }
         
         guard !isObserving else { return }
         observerHandle = reference
             .child(DatabasePaths.sessionPlan.rawValue)
             .child(sessionId).observe(.value, with: { snapshot in
                 print("New Session Arriving...")
-                let _ = snapshot.toLudiObject(SessionPlan.self, realm: self.realmInstance)
+                let _ = snapshot.toCoreObjects(SessionPlan.self, realm: self.realmInstance)
             })
 
         isObserving = true
     }
     
-    func startObserving(ownerId: String? = getFirebaseUserId()) {
+    func startObserving(ownerId: String? = UserTools.currentUserId) {
         guard let ownerId = ownerId else { return }
         guard !isObserving else { return }
         observerHandle = reference
@@ -45,7 +45,7 @@ class SessionPlanService: ObservableObject {
             .queryEqual(toValue: ownerId)
             .observe(.value, with: { snapshot in
                 print("New Session Arriving...")
-                let _ = snapshot.toLudiObject(SessionPlan.self, realm: self.realmInstance)
+                let _ = snapshot.toCoreObjects(SessionPlan.self, realm: self.realmInstance)
             })
 
         isObserving = true

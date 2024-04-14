@@ -16,7 +16,7 @@ public struct CoreCanvasEngine<G: View, C: View>: View {
         self.canvas = canvas
     }
     
-    @StateObject public var managedWindowsObject: NavWindowController = NavWindowController()
+//    @StateObject public var managedWindowsObject: NavWindowController = NavWindowController()
     @ObservedObject public var DO = OrientationInfo()
     @AppStorage("gesturesAreLocked") public var gesturesAreLocked: Bool = false
     @AppStorage("isLoading") public var isLoading: Bool = false

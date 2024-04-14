@@ -26,6 +26,8 @@ public enum DatabasePaths: String, CaseIterable {
     case userToSession = "userToSession"
     case userToActivity = "userToActivity"
     case userInRoom = "userInRoom"
+    case friends = "friends"
+    case friendRequests = "friendRequests"
     
     // Function to map object type to DatabasePaths
     public static func path(forObjectType objectType: Object.Type) -> DatabasePaths? {
@@ -54,6 +56,10 @@ public enum DatabasePaths: String, CaseIterable {
                 return .events
             case is UserToActivity.Type:
                 return .userToActivity
+            case is Friends.Type:
+                return .friends
+            case is FriendRequest.Type:
+                return .friendRequests
             default:
                 return nil
         }
@@ -88,6 +94,10 @@ public enum DatabasePaths: String, CaseIterable {
                 return UserToActivity.self
             case DatabasePaths.players.rawValue:
                 return PlayerRef.self
+            case DatabasePaths.friends.rawValue:
+                return Friends.self
+            case DatabasePaths.friendRequests.rawValue:
+                return FriendRequest.self
             default:
                 return nil
         }

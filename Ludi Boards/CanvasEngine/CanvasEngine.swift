@@ -144,6 +144,10 @@ struct CanvasEngine: View {
     
     var body: some View {
         
+//        let boardView = BoardEngine()
+//            .zIndex(2.0)
+//            .environmentObject(self.BEO)
+        
         if !masterResetCanvas {
             GlobalPositioningZStack { geo, gps in
                 
@@ -159,7 +163,6 @@ struct CanvasEngine: View {
                 
                 // Menu Bar
                 MenuBarStatic(showIcons: $menuIsOpen, gps: gps){}
-                    .environmentObject(self.BEO)
                 
                 // Navigation Bar
                 NavPadView()
@@ -167,12 +170,13 @@ struct CanvasEngine: View {
                     .position(using: gps, at: .bottomCenter, offsetX: 0, offsetY: 150)
                 
                 if !self.managedWindowsObject.reload {
-                    ForEach(Array(managedWindowsObject.activeViews.keys), id: \.self) { key in
-                        managedWindowsObject.getView(withId: key)
-                            .viewBuilder()
-                            .zIndex(50.0)
-                            .environmentObject(self.BEO)
-                    }
+                    ForEachActiveManagedWindow(managedWindowsObject: managedWindowsObject)
+//                    ForEach(Array(managedWindowsObject.activeViews.keys), id: \.self) { key in
+//                        managedWindowsObject.getView(withId: key)
+//                            .viewBuilder()
+//                            .zIndex(50.0)
+//                            .environmentObject(self.BEO)
+//                    }
                 }
                 
                 if self.BEO.boardSettingsIsShowing && !self.BEO.screenIsActiveAndLocked() {
@@ -268,10 +272,10 @@ struct CanvasEngine: View {
                 
                 // Board/Canvas Level
                 ZStack() {
+                    
                     BoardEngine()
                         .zIndex(2.0)
                         .environmentObject(self.BEO)
-                    
                     
                 }
                 .zIndex(1.0)
@@ -305,16 +309,22 @@ struct CanvasEngine: View {
                 self.BEO.loadUser()
                 menuBarButtonListener()
                 addWindowsToNavManager()
-//                exportPDF()
                 
                 
-//                
-                if let user = UserTools.user {
-                    fusedWriter { r in
-                        user.name = "Johnny Law Dog"
-                        return user
-                    }
-                }
+//                if let results = newRealm().findByField(CoreUser.self, field: "", value: "") {
+//                    print("The Old way... -> \(results)")
+//                }
+//                FusedTools.findByField(CoreUser.self, value: "ckrphone@gmail.com", field: "email") { results in
+//                    print("Fused this bitch up!!! -> \(results)")
+//                }
+                
+                
+//                if let user = UserTools.user {
+//                    fusedWriter { r in
+//                        user.name = "Johnny Law Dog"
+//                        return user
+//                    }
+//                }
 //                UserTools.login(email: "chazzromeo@gmail.com", password: "soccer23", onResult: { _ in
 //                    if let user = UserTools.user {
 //                        newRealm().safeWrite { r in
@@ -414,28 +424,28 @@ struct CanvasEngine: View {
     
     func handleNavPad() {
         let caller = MenuBarProvider.navHome.tool.title
-        managedWindowsObject.addNewViewToPool(viewId: caller, viewBuilder: { AnyView(NavPadView().environmentObject(self.BEO)) })
+        managedWindowsObject.addNewViewToPool(viewId: caller, viewBuilder: { NavPadView().environmentObject(self.BEO) })
     }
     func addChatWindow() {
         let caller = MenuBarProvider.chat.tool.title
         managedWindowsObject.addNewViewToPool(viewId: caller, viewBuilder: {
-            AnyView(NavStackWindow(id: caller, viewBuilder: {
+            NavStackWindow(id: caller, isFloatable: true, contentBuilder: {
                 ChatView().environmentObject(self.BEO)
-            }))
+            })
         })
     }
     func addProfileWindow() {
         let caller = MenuBarProvider.profile.tool.title
         managedWindowsObject.addNewViewToPool(viewId: caller, viewBuilder: {
-            AnyView(NavStackWindow(id: caller, viewBuilder: {
+            NavStackWindow(id: caller, contentBuilder: {
                 SignUpView().environmentObject(self.BEO)
-            }))
+            })
         })
     }
     func addSessionPlanWindow() {
         let caller = MenuBarProvider.boardDetails.tool.title
         managedWindowsObject.addNewViewToPool(viewId: caller, viewBuilder: {
-            AnyView(NavStackWindow(id: caller, viewBuilder: {
+            AnyView(NavStackWindow(id: caller, contentBuilder: {
                 SessionPlanView(sessionId: "SOL", isShowing: .constant(true), isMasterWindow: true).environmentObject(self.BEO)
             }))
         })
@@ -443,13 +453,13 @@ struct CanvasEngine: View {
     func addSessionPlansWindow() {
         let caller = MenuBarProvider.boardCreate.tool.title
         managedWindowsObject.addNewViewToPool(viewId: caller, viewBuilder: {
-            AnyView(NavStackWindow(id: caller, viewBuilder: {
+            AnyView(NavStackWindow(id: caller, contentBuilder: {
                 HomeDashboardView().environmentObject(self.BEO)
             }))
         })
     }
     func addMvSettingsWindow() {
-        let caller = "mv_settings"
+//        let caller = "mv_settings"
 //        managedWindowsObject.addNewViewToPool(viewId: caller, viewBuilder: {
 //            AnyView(NavStackFloatingWindow(id: caller, viewBuilder: {
 //                SettingsView(onDelete: {}).environmentObject(self.BEO)

@@ -141,7 +141,7 @@ struct ChatView: View {
 struct ChatMessageRow: View {
     let chat: Chat
     var isCurrentUser: Bool {
-        chat.senderId == getFirebaseUserId()
+        chat.senderId == UserTools.currentUserId ?? ""
     }
     
     func toHumanReadableTime(ts: String) -> String {

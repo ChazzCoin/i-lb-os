@@ -9,7 +9,7 @@ import Foundation
 import RealmSwift
 
 
-extension List where Element: RealmCollectionValue {
+public extension List where Element: RealmCollectionValue {
     
     @discardableResult
     func pop() -> Element? {
@@ -32,19 +32,23 @@ extension List where Element: RealmCollectionValue {
         // Return the popped element.
         return lastElement
     }
+    
+    func toArray() -> [Element] {
+        return Array(self)
+    }
 }
 
 
-struct RealmListUtility {
+public struct RealmListUtility {
 
-    static func safeAdd(item: String, to list: List<String>) {
+    public static func safeAdd(item: String, to list: List<String>) {
         if !list.contains(item) {
             // Item not found, add it
             list.append(item)
         }
     }
     
-    static func safeRemove(item: String, from list: List<String>) {
+    public static func safeRemove(item: String, from list: List<String>) {
         if let index = list.index(of: item) {
             // Item found, remove it
             list.remove(at: index)

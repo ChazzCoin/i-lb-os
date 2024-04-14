@@ -56,7 +56,7 @@ struct ActivityDetailsView: View {
         if let activityPlan = realmInstance.findByField(ActivityPlan.self, value: activityId) {
             realmInstance.safeWrite { r in
                 activityPlan.orderIndex = 0
-                activityPlan.ownerId = getFirebaseUserIdOrCurrentLocalId()
+                activityPlan.ownerId = UserTools.currentUserId ?? ""
                 activityPlan.title = title
                 activityPlan.subTitle = subTitle
                 activityPlan.duration = duration
@@ -71,7 +71,7 @@ struct ActivityDetailsView: View {
     func new() {
         let newPlan = ActivityPlan()
         newPlan.orderIndex = 0
-        newPlan.ownerId = getFirebaseUserIdOrCurrentLocalId()
+        newPlan.ownerId = UserTools.currentUserId ?? ""
         newPlan.title = title
         newPlan.subTitle = subTitle
         newPlan.duration = duration

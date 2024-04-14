@@ -41,6 +41,23 @@ public extension Array where Element == Object {
     
 }
 
+/*
+    -> Adding Models to the FusedQueue
+        1. Add List<Model> of the model object here.
+            -> @Persisted public var modelQueue: List<Model> = List()
+        2. Add the DatabasePath in the enum.
+            -> case model: "model"
+            -> path()
+            -> objectType()
+        3. Add the new path to every DatabasePath function and in the Extensions as well.
+            -> getReference()
+            -> getQueue()
+            -> clearQueue()
+        4. Add Models to MasterFusedQueue function
+            -> addToQueue()
+        5. You have now enabled fused caching for your new model object.
+ */
+
 public class FusedDatabaseQueue: Object, ObjectKeyIdentifiable {
     @Persisted(primaryKey: true) public var id: String = FusedQueueType.update.rawValue
     @Persisted public var userQueue: List<CoreUser> = List()
@@ -56,6 +73,7 @@ public class FusedDatabaseQueue: Object, ObjectKeyIdentifiable {
     @Persisted public var activityPlanQueue: List<ActivityPlan> = List()
     @Persisted public var userToSessionQueue: List<UserToSession> = List()
     @Persisted public var userToActivityQueue: List<UserToActivity> = List()
-    
+    @Persisted public var friendsQueue: List<Friends> = List()
+    @Persisted public var friendRequestsQueue: List<FriendRequest> = List()
     
 }

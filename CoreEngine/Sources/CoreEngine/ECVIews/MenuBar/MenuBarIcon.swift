@@ -8,24 +8,24 @@
 import Foundation
 import SwiftUI
 import Combine
-import CoreEngine
 
-struct MenuButtonIcon: View {
-    var icon: CoreIcon // Assuming IconProvider conforms to SwiftUI's View
-    @Environment(\.colorScheme) var colorScheme
-    @EnvironmentObject var BEO: BoardEngineObject
-    @State private var lifeColor = Color.white
-        
-    func setupButton() {
+
+public struct MenuButtonIcon: View {
+    public var icon: CoreIcon // Assuming IconProvider conforms to SwiftUI's View
+    @Environment(\.colorScheme) public var colorScheme
+    @State public var lifeColor = Color.white
+    @AppStorage("gesturesAreLocked") public var gesturesAreLocked: Bool = false
+    
+    public func setupButton() {
         
         lifeColor = getForegroundColor(colorScheme)
         
         if icon.tool.title == MenuBarProvider.lock.tool.title {
-            lifeColor = self.BEO.gesturesAreLocked ? Color.red : getForegroundColor(colorScheme)
+            lifeColor = gesturesAreLocked ? Color.red : getForegroundColor(colorScheme)
         }
     }
 
-    var body: some View {
+    public var body: some View {
         
         VStack {
             Image(systemName: icon.tool.image)
@@ -38,7 +38,7 @@ struct MenuButtonIcon: View {
         }
         .frame(width: 60, height: 60)
         .solBackgroundDark()
-        .onChange(of: self.BEO.gesturesAreLocked, perform: { value in
+        .onChange(of: gesturesAreLocked, perform: { value in
             setupButton()
         })
         .onTapAnimation {
@@ -49,18 +49,18 @@ struct MenuButtonIcon: View {
 }
 
 
-struct TrashCanButtonIcon: View {
-    @Environment(\.colorScheme) var colorScheme
-    @State var cancellables = Set<AnyCancellable>()
-    @State private var isHovering = false
-    @State private var lifeColor = Color.black
-    @State private var frame: CGRect = .zero
+public struct TrashCanButtonIcon: View {
+    @Environment(\.colorScheme) public var colorScheme
+    @State public var cancellables = Set<AnyCancellable>()
+    @State public var isHovering = false
+    @State public var lifeColor = Color.black
+    @State public var frame: CGRect = .zero
     
-    func setColorScheme() {
+    public func setColorScheme() {
         lifeColor = foregroundColorForScheme(colorScheme)
     }
 
-    var body: some View {
+    public var body: some View {
         GeometryReader { geo in
             Image(systemName: isHovering ? "trash.fill" : "trash")
                 .resizable()
@@ -99,12 +99,12 @@ struct TrashCanButtonIcon: View {
         }
     }
     
-    func foregroundColorForScheme(_ scheme: ColorScheme) -> Color {
+    public func foregroundColorForScheme(_ scheme: ColorScheme) -> Color {
         // Replace with your color logic
         return scheme == .dark ? .white : .black
     }
     
-    func backgroundColorForScheme(_ scheme: ColorScheme) -> Color {
+    public func backgroundColorForScheme(_ scheme: ColorScheme) -> Color {
         // Replace with your color logic
         return scheme == .dark ? .black : .white
     }

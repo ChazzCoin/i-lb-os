@@ -93,31 +93,34 @@ public struct enableManagedViewTool : ViewModifier {
     public func gestureDragBasicTool() -> some Gesture {
         DragGesture()
             .onChanged { drag in
-                DispatchQueue.main.async { self.MVO.ignoreUpdates = true }
-                if MVO.lifeIsLocked { return }
-                MVO.isDragging = true
-                if MVO.useOriginal {
-                    self.MVO.originalPosition = MVO.position
-                    self.MVO.useOriginal = false
+                DispatchQueue.main.async { 
+                    self.MVO.ignoreUpdates = true
+                    if MVO.lifeIsLocked { return }
+                    MVO.isDragging = true
+                    if MVO.useOriginal {
+                        self.MVO.originalPosition = MVO.position
+                        self.MVO.useOriginal = false
+                    }
+                    let translation = drag.translation
+                    MVO.position = CGPoint(x: MVO.originalPosition.x + translation.width,
+                                           y: MVO.originalPosition.y + translation.height)
+                    MVO.updateRealmPos(x: MVO.originalPosition.x + translation.width,
+                                                  y: MVO.originalPosition.y + translation.height)
                 }
-                let translation = drag.translation
-                MVO.position = CGPoint(x: MVO.originalPosition.x + translation.width,
-                                       y: MVO.originalPosition.y + translation.height)
-                MVO.updateRealmPos(x: MVO.originalPosition.x + translation.width,
-                                              y: MVO.originalPosition.y + translation.height)
-//                self.sendXY(width: translation.width, height: translation.height)
             }
             .onEnded { drag in
-                DispatchQueue.main.async { self.MVO.ignoreUpdates = false }
-                if MVO.lifeIsLocked { return }
-                MVO.isDragging = false
-                let translation = drag.translation
-                MVO.position = CGPoint(
-                    x: MVO.originalPosition.x + translation.width,
-                    y: MVO.originalPosition.y + translation.height
-                )
-                self.MVO.updateRealm()
-                self.MVO.useOriginal = true
+                DispatchQueue.main.async {
+                    self.MVO.ignoreUpdates = false
+                    if MVO.lifeIsLocked { return }
+                    MVO.isDragging = false
+                    let translation = drag.translation
+                    MVO.position = CGPoint(
+                        x: MVO.originalPosition.x + translation.width,
+                        y: MVO.originalPosition.y + translation.height
+                    )
+                    self.MVO.updateRealm()
+                    self.MVO.useOriginal = true
+                }
             }.simultaneously(with: TapGesture(count: 2)
                 .onEnded { _ in
                     print("Tapped")

@@ -7,10 +7,8 @@
 
 import Foundation
 import FirebaseDatabase
-//import RealmSwift
+import RealmSwift
 import SwiftUI
-
-
 
 
 public func FireReference(dbPath: DatabasePaths) -> DatabaseReference {

@@ -8,6 +8,35 @@
 import Foundation
 import RealmSwift
 
+/*
+    -> Adding Models to the FusedQueue
+        1. Add List<Model> of the model object here.
+            -> @Persisted public var modelQueue: List<Model> = List()
+        2. Add the DatabasePath in the enum.
+            -> case model: "model"
+            -> path()
+            -> objectType()
+        3. Add the new path to every DatabasePath function and in the Extensions as well.
+            -> getReference()
+            -> getQueue()
+            -> clearQueue()
+        4. Add Models to MasterFusedQueue function
+            -> addToQueue()
+        5. You have now enabled fused caching for your new model object.
+ */
+
+public enum FusedQueueType : String, CaseIterable {
+//    case create = "create"
+    case delete = "delete"
+    case update = "update"
+    case cache = "cache"
+}
+
+public enum OperationType : String, CaseIterable {
+//    case create = "create"
+    case delete = "delete"
+    case update = "update"
+}
 
 public class MasterFusedQueue {
     
@@ -28,15 +57,20 @@ public class MasterFusedQueue {
         if let _ = newRealm().findByField(FusedDatabaseQueue.self, value: FusedQueueType.update.rawValue) {
             return
         }
+        // Create/Update Queue
         let updateQueue = FusedDatabaseQueue()
         updateQueue.id = FusedQueueType.update.rawValue
-        
+        // Delete Queue
         let deleteQueue = FusedDatabaseQueue()
         deleteQueue.id = FusedQueueType.delete.rawValue
+        // Internal Caching Queue
+        let cacheQueue = FusedDatabaseQueue()
+        cacheQueue.id = FusedQueueType.cache.rawValue
         
-        newRealm().safeWrite { r in
+        realmWriter { r in
             r.create(FusedDatabaseQueue.self, value: updateQueue, update: .all)
             r.create(FusedDatabaseQueue.self, value: deleteQueue, update: .all)
+            r.create(FusedDatabaseQueue.self, value: cacheQueue, update: .all)
         }
     }
     public static func FusedQueue(queueType: FusedQueueType, safeQueue: @escaping (FusedDatabaseQueue, Realm) -> Void) {
@@ -80,6 +114,10 @@ public class MasterFusedQueue {
                     q.userToSessionQueue.safeAddReplace(userToSessionItem)
                 case let userToActivityItem as UserToActivity:
                     q.userToActivityQueue.safeAddReplace(userToActivityItem)
+                case let friendsItem as Friends:
+                    q.friendsQueue.safeAddReplace(friendsItem)
+                case let friendRequestsItem as FriendRequest:
+                    q.friendRequestsQueue.safeAddReplace(friendRequestsItem)
                 default: print("No Update Queue Available for this Object: \(type(of: item))")
             }
         }
@@ -143,57 +181,7 @@ public class MasterFusedQueue {
     }
 }
 
-public func fusedWriter(_ realm: Realm = newRealm(), action: @escaping (Realm) -> Object) {
-    realm.safeWrite { r in FusedDB.saveToFirebase(item: action(r)) }
-}
 
-public class FusedDB {
-
-    
-    public static func saveToFirebase<T: Object>(item: T) {
-        if !UserTools.userIsVerifiedForFirebaseRequest() {
-            MasterFusedQueue.addToQueue(queueType: .update, item: item)
-            return
-        }
-        guard let path = DatabasePaths.path(forObjectType: T.self) else {
-            MasterFusedQueue.addToQueue(queueType: .update, item: item)
-            return
-        }
-        if let id = item.getId() {
-            DatabasePaths
-                .getReference(path: path)?
-                .ref.child(id)
-                .setValue(item.toDict()) { error, _ in
-                    if let error = error {
-                        print("FusedDatabaseQueue -> Error updating obj \(id): \(error)")
-                        MasterFusedQueue.addToQueue(queueType: .update, item: item)
-                    } else {
-                        print("FusedDatabaseQueue -> Process Update Success.")
-                    }
-                }
-        }
-    }
-    
-    public static func deleteFromFirebase(item: Object, path: DatabasePaths) {
-        if !UserTools.userIsVerifiedForFirebaseRequest() {
-            MasterFusedQueue.addToQueue(queueType: .delete, item: item)
-            return
-        }
-        if let id = item.getId() {
-            DatabasePaths
-                .getReference(path: path)?
-                .ref.child(id)
-                .setValue(item.toDict()) { error, _ in
-                    if let error = error {
-                        print("FusedDatabaseQueue -> Error updating obj \(id): \(error)")
-                        MasterFusedQueue.addToQueue(queueType: .delete, item: item)
-                    } else {
-                        print("FusedDatabaseQueue -> Process Update Success.")
-                    }
-                }
-        }
-    }
-}
 
 
 

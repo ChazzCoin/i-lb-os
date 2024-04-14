@@ -36,8 +36,6 @@ struct CanvasEngine: View {
     let initialWidth: CGFloat = 6000
     let initialHeight: CGFloat = 6000
     
-//    @ObservedObject var managedWindowsObject = ManagedViewWindows.shared
-    
     var dragAngleGestures: some Gesture {
         DragGesture()
             .onChanged { gesture in

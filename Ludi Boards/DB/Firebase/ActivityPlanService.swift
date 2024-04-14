@@ -24,16 +24,16 @@ class ActivityPlanService: ObservableObject {
 
     func startObserving(activityId: String) {
         
-        if !userIsVerifiedToProceed()
-            || !self.realmInstance.isLiveSessionPlan(activityId: activityId)
-            || activityId.isEmpty { return }
+//        if !userIsVerifiedToProceed()
+//            || !self.realmInstance.isLiveSessionPlan(activityId: activityId)
+//            || activityId.isEmpty { return }
         
         guard !isObserving else { return }
         self.activityId = activityId
         observerHandle = reference.child(DatabasePaths.activityPlan.rawValue)
             .child(activityId).observe(.value, with: { snapshot in
                 print("New Activity Arriving...")
-                let _ = snapshot.toLudiObject(ActivityPlan.self, realm: self.realmInstance)
+                let _ = snapshot.toCoreObjects(ActivityPlan.self, realm: self.realmInstance)
             })
 
         isObserving = true

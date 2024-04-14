@@ -205,7 +205,7 @@ struct ActivityPlanBindingView: View {
                 currentAp.sessionId = self.sessionId
                 currentAp.orderIndex = 0
                 
-                currentAp.ownerId = getFirebaseUserIdOrCurrentLocalId()
+                currentAp.ownerId = UserTools.currentUserId ?? ""
                 
                 currentAp.title = title
                 currentAp.subTitle = subTitle
@@ -231,7 +231,7 @@ struct ActivityPlanBindingView: View {
         newAP.sessionId = self.sessionId
         newAP.orderIndex = 0
         
-        newAP.ownerId = getFirebaseUserId() ?? "SOL"
+        newAP.ownerId = UserTools.currentUserId ?? ""
         
         newAP.title = title
         newAP.subTitle = subTitle
@@ -271,7 +271,7 @@ struct ActivityPlanBindingView: View {
     func updateInFirebase(newAP: ActivityPlan) {
         // TODO: Firebase Users ONLY
         self.realmInstance.safeWrite { _ in
-            newAP.ownerId = getFirebaseUserId() ?? "SOL"
+            newAP.ownerId = UserTools.currentUserId ?? ""
         }
         firebaseDatabase { db in
             db.child(DatabasePaths.activityPlan.rawValue)

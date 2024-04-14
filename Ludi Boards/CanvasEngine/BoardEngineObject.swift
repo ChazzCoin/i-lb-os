@@ -514,12 +514,12 @@ struct CustomDropDelegate: DropDelegate {
                 }
                 
                 // TODO: Firebase Users ONLY
-                firebaseDatabase(safeFlag: userIsVerifiedToProceed()) { fdb in
-                    fdb.child(DatabasePaths.managedViews.rawValue)
-                        .child(BEO.currentActivityId)
-                        .child(newTool.id)
-                        .setValue(newTool.toDict())
-                }
+//                firebaseDatabase(safeFlag: UserTools.userIsVerifiedToProceed()) { fdb in
+//                    fdb.child(DatabasePaths.managedViews.rawValue)
+//                        .child(BEO.currentActivityId)
+//                        .child(newTool.id)
+//                        .setValue(newTool.toDict())
+//                }
 
                 // Update the position
                 updatePosition(dropLocation)

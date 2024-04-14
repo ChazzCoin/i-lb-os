@@ -51,6 +51,10 @@ public extension DatabasePaths {
                 return self.managedViews.ref
             case .userToActivity:
                 return self.userToActivity.ref
+            case .friends:
+                return self.friends.ref
+            case .friendRequests:
+                return self.friendRequests.ref
             default:
                 return nil
         }
@@ -87,6 +91,10 @@ public extension DatabasePaths {
                 return q.userToSessionQueue.toArray()
             case DatabasePaths.userToActivity.rawValue:
                 return q.userToActivityQueue.toArray()
+            case DatabasePaths.friends.rawValue:
+                return q.friendsQueue.toArray()
+            case DatabasePaths.friendRequests.rawValue:
+                return q.friendRequestsQueue.toArray()
             default:
                 return nil
         }
@@ -124,6 +132,10 @@ public extension DatabasePaths {
                 realm.safeWrite { _ in q.userToSessionQueue.removeAll() }
             case DatabasePaths.userToActivity.rawValue:
                 realm.safeWrite { _ in q.userToActivityQueue.removeAll() }
+            case DatabasePaths.friends.rawValue:
+                realm.safeWrite { _ in q.friendsQueue.removeAll() }
+            case DatabasePaths.friendRequests.rawValue:
+                realm.safeWrite { _ in q.friendRequestsQueue.removeAll() }
             default:
                 break
         }

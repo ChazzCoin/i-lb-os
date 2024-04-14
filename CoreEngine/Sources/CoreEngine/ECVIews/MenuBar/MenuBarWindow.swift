@@ -7,26 +7,30 @@
 
 import Foundation
 import SwiftUI
-import CoreEngine
+import Combine
 
-struct MenuBarStatic: View {
-    @Binding var showIcons: Bool
-    @State var gps: GlobalPositioningSystem
-    var onClick: () -> Void
-    @EnvironmentObject var BEO: BoardEngineObject
-    @StateObject private var rcl = RealmObserver<CoreUser>()
-//    @State private var showIcons = false
-    @State private var iconStates = Array(repeating: false, count: 11)
-    @Environment(\.colorScheme) var colorScheme
-    @State private var isLocked = false
-    @State private var lifeColor = Color.black
+public struct MenuBarStatic: View {
+    @Binding public var showIcons: Bool
+    @State public var gps: GlobalPositioningSystem
+    public var onClick: () -> Void
     
-    @State var isAnimating = false
-    
-    
-    func setColorScheme() { lifeColor = getForegroundColor(colorScheme) }
+    public init(showIcons: Binding<Bool>, gps: GlobalPositioningSystem, onClick: @escaping () -> Void) {
+        self._showIcons = showIcons
+        self._gps = State(initialValue: gps)
+        self.onClick = onClick
+    }
 
-    let iconsLoggedOut = [
+    @AppStorage("isLoggedIn") public var isLoggedIn: Bool = false
+    @AppStorage("guideModeIsEnabled") public var guideModeIsEnabled: Bool = false
+    @State public var iconStates = Array(repeating: false, count: 11)
+    @Environment(\.colorScheme) public var colorScheme
+    @State public var isLocked = false
+    @State public var lifeColor = Color.black
+    @State public var isAnimating = false
+    
+    public func setColorScheme() { lifeColor = getForegroundColor(colorScheme) }
+
+    public let iconsLoggedOut = [
         MenuBarProvider.info,
         MenuBarProvider.lock,
         MenuBarProvider.toolbox,
@@ -37,7 +41,7 @@ struct MenuBarStatic: View {
         MenuBarProvider.profile
     ]
     
-    let iconsLoggedIn = [
+    public let iconsLoggedIn = [
         MenuBarProvider.info,
         MenuBarProvider.lock,
         MenuBarProvider.toolbox,
@@ -48,11 +52,11 @@ struct MenuBarStatic: View {
         MenuBarProvider.chat,
         MenuBarProvider.profile
     ]
-    let timer = Timer.publish(every: 10.0, on: .main, in: .common).autoconnect()
+    public let timer = Timer.publish(every: 10.0, on: .main, in: .common).autoconnect()
 
-    @State var icons: [CoreIcon] = []
+    @State public var icons: [CoreIcon] = []
 
-    var body: some View {
+    public var body: some View {
         VStack {
             // Toggle Button
             VStack {
@@ -80,39 +84,36 @@ struct MenuBarStatic: View {
                     if iconStates[index] {
                         MenuButtonIcon(icon: icons[index])
                             .transition(.opacity)
-                            .environmentObject(self.BEO)
                     }
                 }
             }
             
             
         }
-        .frame(width: self.BEO.guideModeIsEnabled ? 100 : 60, height: showIcons ? (gps.screenSize.height - 100) : 60)
+        .frame(width: self.guideModeIsEnabled ? 100 : 60, height: showIcons ? (gps.screenSize.height - 100) : 60)
         .background(Color.clear)
         .position(using: gps, at: .topLeft, offsetX: 50, offsetY: showIcons ? ((gps.screenSize.height - 60) / 2) : 50)
-        .onAppear() {
-            if userIsVerifiedToProceed() {
+        .onChange(of: isLoggedIn, perform: { value in
+            if value {
                 icons = iconsLoggedIn
             } else {
                 icons = iconsLoggedOut
             }
             iconStates = Array(repeating: false, count: icons.count)
-            
-            rcl.observeId(id: "SOL") { _ in
-                if userIsVerifiedToProceed() {
-                    icons = iconsLoggedIn
-                } else {
-                    icons = iconsLoggedOut
-                }
-                iconStates = Array(repeating: false, count: icons.count)
-                showIcons = true
-                animateIcons()
+            showIcons = true
+            animateIcons()
+        })
+        .onAppear() {
+            if UserTools.isLoggedIn {
+                icons = iconsLoggedIn
+            } else {
+                icons = iconsLoggedOut
             }
-            
+            iconStates = Array(repeating: false, count: icons.count)
         }
     }
     
-    private func animateIcons() {
+    public func animateIcons() {
         if showIcons {
             isAnimating = true
             // Show icons one by one

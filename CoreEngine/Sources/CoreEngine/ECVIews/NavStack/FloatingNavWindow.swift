@@ -10,14 +10,15 @@ import SwiftUI
 import Combine
 
 
-public struct NavStackFloatingWindow : View {
+public struct NavStackFloatingWindow<Content: View> : View {
     @State public var id: String
-    public var viewBuilder: () -> AnyView
+    @ViewBuilder public var viewBuilder: () -> Content
     
+    @StateObject public var NavStack = NavStackWindowObservable()
     
-    public init<V: View>(id: String, viewBuilder: @escaping () -> V) {
+    public init(id: String, @ViewBuilder viewBuilder: @escaping () -> Content) {
         self.id = id
-        self.viewBuilder = { AnyView(viewBuilder()) }
+        self.viewBuilder = viewBuilder
     }
     @State public var screenWidth = UIScreen.main.bounds.width
     @State public var screenHeight = UIScreen.main.bounds.height

@@ -15,6 +15,9 @@ public class FriendRequest: Object, ObjectKeyIdentifiable {
     @Persisted public var status: String = ""
 }
 
+func test() {
+    
+}
 
 public class Friends: Object, ObjectKeyIdentifiable {
     

@@ -8,14 +8,14 @@
 import Foundation
 import SwiftUI
 
-public struct ViewWrapper: Identifiable {
+public struct ViewWrapper<Content: View>: Identifiable {
     public let id: UUID
-    public let viewClosure: () -> AnyView
+    @ViewBuilder public let viewHolder: () -> Content
 
-    public init(id: UUID = UUID(), viewClosure: @escaping () -> AnyView) {
+    public init(id: UUID = UUID(), @ViewBuilder viewHolder: @escaping () -> Content) {
         self.id = id
-        self.viewClosure = viewClosure
+        self.viewHolder = viewHolder
     }
     
-    public func view() -> AnyView { viewClosure() }
+    public func view() -> () -> Content { return viewHolder }
 }

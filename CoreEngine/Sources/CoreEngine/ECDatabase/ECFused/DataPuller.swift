@@ -10,6 +10,7 @@ import FirebaseDatabase
 import RealmSwift
 
 public extension DatabaseQuery {
+    
     func pull<T:Object>(_ obj: T.Type, realm: Realm=newRealm(), onReturn: @escaping (List<T>) -> Void={ _ in }) {
         self.observeSingleEvent(of: .value) { snapshot, _ in
             if let items = snapshot.toCoreObjects(T.self, realm: realm) {
@@ -27,11 +28,12 @@ public extension DatabaseQuery {
         }
     }
     func pullByField<T:Object>(_ obj: T.Type, value: String, field: String="id", realm: Realm=newRealm(), onReturn: @escaping (List<T>) -> Void={ _ in }) {
-        self.queryEqual(toValue: value, childKey: field).pull(obj, onReturn: onReturn)
+        self.queryOrdered(byChild: field).queryEqual(toValue: value).pull(obj, realm: realm, onReturn: onReturn)
     }
     func fuseByField<T:Object>(_ obj: T.Type, value: String, field: String="id", realm: Realm=newRealm(), onReturn: @escaping (List<T>) -> Void={ _ in }) -> DatabaseHandle {
-        return self.queryEqual(toValue: value, childKey: field).fuse(obj, onReturn: onReturn)
+        return self.queryEqual(toValue: value, childKey: field).fuse(obj, realm: realm, onReturn: onReturn)
     }
+    
 }
 
 public class DataPuller {

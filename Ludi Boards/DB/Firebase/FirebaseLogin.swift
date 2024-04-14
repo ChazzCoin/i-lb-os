@@ -137,39 +137,39 @@ import CoreEngine
 //    r.invalidate()
 //}
 
-func getFirebaseUser() -> FirebaseAuth.User? {
-    return Auth.auth().currentUser
-}
-
-func getFirebaseUserId() -> String? {
-    return Auth.auth().currentUser?.uid
-}
-
-func getFirebaseUserIdOrCurrentLocalId() -> String {
-    return Auth.auth().currentUser?.uid ?? CURRENT_USER_ID
-}
-
-func safeFirebaseUserId(safe: (String) -> Void) {
-    if let userId = Auth.auth().currentUser?.uid {
-        safe(userId)
-    }
-}
-
-func userIsVerifiedToProceed(overrideFlag:Bool=false) -> Bool {
-    
-    if overrideFlag {
-        print("Overriding Verification Request")
-        return true
-    }
-    
-    if let _ = Auth.auth().currentUser {
-        print("User IS Logged In")
-        return true
-    }
-    print("User Is NOT Logged In")
-    return false
-    
-}
+//func getFirebaseUser() -> FirebaseAuth.User? {
+//    return Auth.auth().currentUser
+//}
+//
+//func getFirebaseUserId() -> String? {
+//    return Auth.auth().currentUser?.uid
+//}
+//
+//func getFirebaseUserIdOrCurrentLocalId() -> String {
+//    return Auth.auth().currentUser?.uid ?? CURRENT_USER_ID
+//}
+//
+//func safeFirebaseUserId(safe: (String) -> Void) {
+//    if let userId = Auth.auth().currentUser?.uid {
+//        safe(userId)
+//    }
+//}
+//
+//func userIsVerifiedToProceed(overrideFlag:Bool=false) -> Bool {
+//    
+//    if overrideFlag {
+//        print("Overriding Verification Request")
+//        return true
+//    }
+//    
+//    if let _ = Auth.auth().currentUser {
+//        print("User IS Logged In")
+//        return true
+//    }
+//    print("User Is NOT Logged In")
+//    return false
+//    
+//}
 
 //func loginUser(withEmail email: String, password: String, completion: @escaping (Bool) -> Void) {
 //    Auth.auth().signIn(withEmail: email, password: password) { authResult, error in

@@ -10,6 +10,7 @@ import RealmSwift
 import Combine
 import CoreEngine
 
+@available(*, deprecated, renamed: "ObservedResults", message: "Replaced for Observed Results")
 class ManagedViewListViewModel: ObservableObject {
     private var realm: Realm = newRealm()
     private var results: Results<ManagedView>

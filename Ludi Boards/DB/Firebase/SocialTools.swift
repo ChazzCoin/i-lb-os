@@ -79,7 +79,7 @@ class SocialTools {
                 .queryEqual(toValue: uId)
                 .observeSingleEvent(of: .value) { snapshot in
                     if snapshot.exists() {
-                        if let objs = snapshot.toLudiObjects(T.self, realm: realmInstance) {
+                        if let objs = snapshot.toCoreObjects(T.self, realm: realmInstance) {
                             onResult(objs)
                         }
                     } else {
