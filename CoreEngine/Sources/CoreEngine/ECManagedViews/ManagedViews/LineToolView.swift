@@ -92,40 +92,39 @@ public struct LineDrawingManaged: View {
     public func fullLineDragGesture() -> some Gesture {
         DragGesture()
             .onChanged { value in
-                DispatchQueue.main.async { self.MVO.ignoreUpdates = true }
-                if self.MVO.lifeIsLocked {return}
-                self.MVO.isDragging = true
-                if MVO.useOriginal {
-                    self.MVO.originalLifeStart = CGPoint(x: MVO.lifeStartX, y: MVO.lifeStartY)
-                    self.MVO.originalLifeEnd = CGPoint(x: MVO.lifeEndX, y: MVO.lifeEndY)
-                    self.MVO.useOriginal = false
-                }
+                DispatchQueue.main.async { 
+                    self.MVO.ignoreUpdates = true
+                    if self.MVO.lifeIsLocked {return}
+                    self.MVO.isDragging = true
+                    if MVO.useOriginal {
+                        self.MVO.originalLifeStart = CGPoint(x: MVO.lifeStartX, y: MVO.lifeStartY)
+                        self.MVO.originalLifeEnd = CGPoint(x: MVO.lifeEndX, y: MVO.lifeEndY)
+                        self.MVO.useOriginal = false
+                    }
 
-                let translation = value.translation
-                MVO.lifeStartX = self.MVO.originalLifeStart.x + translation.width
-                MVO.lifeStartY = self.MVO.originalLifeStart.y + translation.height
-                MVO.lifeEndX = self.MVO.originalLifeEnd.x + translation.width
-                MVO.lifeEndY = self.MVO.originalLifeEnd.y + translation.height
-                if !MVO.useOriginal { MVO.loadCenterPoint() }
-//                CodiChannel.TOOL_ON_FOLLOW.send(value: ViewFollowing(
-//                    viewId: self.viewId,
-//                    x: lifeStartX,
-//                    y: lifeStartY
-//                ))
-                MVO.updateRealmPos(start: CGPoint(x: MVO.lifeStartX, y: MVO.lifeStartY),
-                            end: CGPoint(x: MVO.lifeEndX, y: MVO.lifeEndY))
+                    let translation = value.translation
+                    MVO.lifeStartX = self.MVO.originalLifeStart.x + translation.width
+                    MVO.lifeStartY = self.MVO.originalLifeStart.y + translation.height
+                    MVO.lifeEndX = self.MVO.originalLifeEnd.x + translation.width
+                    MVO.lifeEndY = self.MVO.originalLifeEnd.y + translation.height
+                    if !MVO.useOriginal { MVO.loadCenterPoint() }
+                    MVO.updateRealmPos(start: CGPoint(x: MVO.lifeStartX, y: MVO.lifeStartY),
+                                end: CGPoint(x: MVO.lifeEndX, y: MVO.lifeEndY))
+                }
             }
             .onEnded { value in
-                DispatchQueue.main.async { self.MVO.ignoreUpdates = false }
-                if self.MVO.lifeIsLocked {return}
-                let translation = value.translation
-                MVO.lifeStartX = self.MVO.originalLifeStart.x + translation.width
-                MVO.lifeStartY = self.MVO.originalLifeStart.y + translation.height
-                MVO.lifeEndX = self.MVO.originalLifeEnd.x + translation.width
-                MVO.lifeEndY = self.MVO.originalLifeEnd.y + translation.height
-                self.MVO.isDragging = false
-                self.MVO.updateRealm()
-                self.MVO.useOriginal = true
+                DispatchQueue.main.async {
+                    self.MVO.ignoreUpdates = false
+                    if self.MVO.lifeIsLocked {return}
+                    let translation = value.translation
+                    MVO.lifeStartX = self.MVO.originalLifeStart.x + translation.width
+                    MVO.lifeStartY = self.MVO.originalLifeStart.y + translation.height
+                    MVO.lifeEndX = self.MVO.originalLifeEnd.x + translation.width
+                    MVO.lifeEndY = self.MVO.originalLifeEnd.y + translation.height
+                    self.MVO.isDragging = false
+                    self.MVO.updateRealm()
+                    self.MVO.useOriginal = true
+                }
             }
     }
     

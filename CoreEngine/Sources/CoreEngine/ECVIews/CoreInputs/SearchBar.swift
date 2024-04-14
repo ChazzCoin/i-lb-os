@@ -8,6 +8,8 @@
 import Foundation
 import SwiftUI
 
+
+// Master SearchBar
 public struct SearchBar : View {
     @Binding public var text: String
     @State public var placeholder: String
@@ -28,7 +30,9 @@ public struct SearchBar : View {
     }
 }
 
-public struct SearchBarView: UIViewRepresentable {
+
+
+private struct SearchBarView: UIViewRepresentable {
     @Binding var text: String
     var textColor: Color
     var placeholder: String

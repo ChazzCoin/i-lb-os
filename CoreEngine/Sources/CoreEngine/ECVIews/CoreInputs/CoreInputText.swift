@@ -8,6 +8,8 @@
 import Foundation
 import SwiftUI
 
+
+// MASTER -> Toggle-able.
 public struct CoreInputText : View {
     @State public var label: String = ""
     @Binding public var text: String
@@ -28,7 +30,7 @@ public struct CoreInputText : View {
     }
 }
 
-
+// Edit Mode.
 public struct CoreTextField: View {
     @Binding var text: String
     var onChange: (String) -> Void

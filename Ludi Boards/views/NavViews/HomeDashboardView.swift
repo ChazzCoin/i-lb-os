@@ -66,7 +66,7 @@ struct HomeDashboardView: View {
             
             List {
                 
-                OrganizationDashboardView(orgId: self.BEO.currentOrgId)
+//                OrganizationDashboardView(orgId: self.BEO.currentOrgId)
                 
                 // Teams
                 if teams.isEmpty {
@@ -83,9 +83,9 @@ struct HomeDashboardView: View {
 //                if players.isEmpty {
 //                    Text("No Members of SOL Academy")
 //                }
-                ForEach(OrganizationManager().getAllUsersInOrganization(organizationId: BEO.currentOrgId), id: \.self) { item in
-                    Text(item.name)
-                }
+//                ForEach(OrganizationManager().getAllUsersInOrganization(organizationId: BEO.currentOrgId), id: \.self) { item in
+//                    Text(item.name)
+//                }
                 
                 // Events
                 if events.isEmpty {

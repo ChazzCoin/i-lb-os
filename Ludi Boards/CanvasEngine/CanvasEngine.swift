@@ -169,14 +169,9 @@ struct CanvasEngine: View {
                     .environmentObject(self.BEO)
                     .position(using: gps, at: .bottomCenter, offsetX: 0, offsetY: 150)
                 
-                if !self.managedWindowsObject.reload {
-                    ForEachActiveManagedWindow(managedWindowsObject: managedWindowsObject)
-//                    ForEach(Array(managedWindowsObject.activeViews.keys), id: \.self) { key in
-//                        managedWindowsObject.getView(withId: key)
-//                            .viewBuilder()
-//                            .zIndex(50.0)
-//                            .environmentObject(self.BEO)
-//                    }
+//                ForEachActiveManagedWindow(managedWindowsObject: managedWindowsObject)
+                if !managedWindowsObject.reload {
+                    managedWindowsObject.ForEachView(for: .global)
                 }
                 
                 if self.BEO.boardSettingsIsShowing && !self.BEO.screenIsActiveAndLocked() {
@@ -248,7 +243,7 @@ struct CanvasEngine: View {
                 // Tip Box
                 if self.BEO.showTipViewStatic {
                     GeometryReader { geo in
-                        TipBoxViewStatic(tips: TipLineGestures, subTitle: "General Tips"){
+                        TipBoxViewStaticPanel(tips: TipLineGestures, subTitle: "General Tips"){
                             self.BEO.showTipViewStatic = false
                         }
                     }
@@ -452,11 +447,9 @@ struct CanvasEngine: View {
     }
     func addSessionPlansWindow() {
         let caller = MenuBarProvider.boardCreate.tool.title
-        managedWindowsObject.addNewViewToPool(viewId: caller, viewBuilder: {
-            AnyView(NavStackWindow(id: caller, contentBuilder: {
-                HomeDashboardView().environmentObject(self.BEO)
-            }))
-        })
+        let temp = VF.BuildNavStackWindow(callerId: caller, viewContent: { HomeDashboardView() })
+        managedWindowsObject.addNewViewToPool(viewId: caller, viewBuilder: { temp })
+        
     }
     func addMvSettingsWindow() {
 //        let caller = "mv_settings"

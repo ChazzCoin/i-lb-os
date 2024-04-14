@@ -9,6 +9,8 @@ import Foundation
 import SwiftUI
 import DispatchIntrospection
 
+
+
 public struct InputTextMultiLine: View {
     @Binding var text: String
     var placeholder: String
@@ -117,7 +119,7 @@ public struct CustomTextEditor: View {
     }
 }
 
-public struct TextView: UIViewRepresentable {
+private struct TextView: UIViewRepresentable {
     @Binding var text: String
     @Binding var height: CGFloat
     var textColor: Color

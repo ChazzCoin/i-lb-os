@@ -197,22 +197,22 @@ public struct NavStackWindow<Content: View, SideBar: View> : View {
         }
         .onAppear() {
             self.NavStack.fullScreenPosition(gps: self.gps)
-            CodiChannel.MENU_WINDOW_TOGGLER.receive(on: RunLoop.main) { windowType in
-                print(windowType)
-                if (windowType as! String) != self.id { return }
-                self.NavStack.fullScreenPosition(gps: self.gps)
-                if self.NavStack.isHidden {
-                    self.NavStack.isHidden = false
-                } else {
-                    self.NavStack.isHidden = true
-                }
-            }.store(in: &cancellables)
-            
-            CodiChannel.MENU_WINDOW_CONTROLLER.receive(on: RunLoop.main) { wc in
-                print(wc)
-//                let temp = wc as! WindowController
-                self.NavStack.fullScreenPosition(gps: self.gps)
-            }.store(in: &cancellables)
+//            CodiChannel.MENU_WINDOW_TOGGLER.receive(on: RunLoop.main) { windowType in
+//                print(windowType)
+//                if (windowType as! String) != self.id { return }
+//                self.NavStack.fullScreenPosition(gps: self.gps)
+//                if self.NavStack.isHidden {
+//                    self.NavStack.isHidden = false
+//                } else {
+//                    self.NavStack.isHidden = true
+//                }
+//            }.store(in: &cancellables)
+//            
+//            CodiChannel.MENU_WINDOW_CONTROLLER.receive(on: RunLoop.main) { wc in
+//                print(wc)
+////                let temp = wc as! WindowController
+//                self.NavStack.fullScreenPosition(gps: self.gps)
+//            }.store(in: &cancellables)
         }
         
         
@@ -326,22 +326,22 @@ public struct NavStackWindow<Content: View, SideBar: View> : View {
         }
         .onAppear() {
             self.NavStack.fullScreenPosition(gps: self.gps)
-            CodiChannel.MENU_WINDOW_TOGGLER.receive(on: RunLoop.main) { windowType in
-                print(windowType)
-                if (windowType as! String) != self.id { return }
-                self.NavStack.fullScreenPosition(gps: self.gps)
-                if self.NavStack.isHidden {
-                    self.NavStack.isHidden = false
-                } else {
-                    self.NavStack.isHidden = true
-                }
-            }.store(in: &cancellables)
-            
-            CodiChannel.MENU_WINDOW_CONTROLLER.receive(on: RunLoop.main) { wc in
-                print(wc)
-//                let temp = wc as! WindowController
-                self.NavStack.fullScreenPosition(gps: self.gps)
-            }.store(in: &cancellables)
+//            CodiChannel.MENU_WINDOW_TOGGLER.receive(on: RunLoop.main) { windowType in
+//                print(windowType)
+//                if (windowType as! String) != self.id { return }
+//                self.NavStack.fullScreenPosition(gps: self.gps)
+//                if self.NavStack.isHidden {
+//                    self.NavStack.isHidden = false
+//                } else {
+//                    self.NavStack.isHidden = true
+//                }
+//            }.store(in: &cancellables)
+//            
+//            CodiChannel.MENU_WINDOW_CONTROLLER.receive(on: RunLoop.main) { wc in
+//                print(wc)
+////                let temp = wc as! WindowController
+//                self.NavStack.fullScreenPosition(gps: self.gps)
+//            }.store(in: &cancellables)
         }
         
     }

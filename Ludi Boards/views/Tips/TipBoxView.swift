@@ -149,7 +149,7 @@ struct TipBoxViewFlasher: View {
 
 
 
-struct TipBoxViewStatic: View {
+struct TipBoxViewStaticPanel: View {
     var tips: [String]
     var subTitle: String
     var disableCallback: () -> Void

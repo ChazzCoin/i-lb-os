@@ -8,35 +8,6 @@
 import Foundation
 import SwiftUI
 
-public struct TextLabel: View {
-    @State public var title: String
-    @State public var subtitle: String
-    
-    public init(_ title: String, text: String) {
-        self.title = title
-        self.subtitle = text
-    }
-    
-    public var body: some View {
-        HStack(alignment: .center, spacing: 8) {
-            Text(title)
-                .font(.headline) 
-                .foregroundColor(.blue)
-                .padding(.trailing)
-            Spacer()
-            Text(subtitle)
-                .font(.headline)
-                .foregroundColor(.black)
-        }
-        .onAppear() {
-            if subtitle.isEmpty {
-                self.subtitle = "Empty"
-            }
-        }
-    }
-}
-
-
 public func HeaderText(_ content: String, color:Color = .white) -> some View {
     Text(content)
         .font(.system(size: 24, weight: .bold))

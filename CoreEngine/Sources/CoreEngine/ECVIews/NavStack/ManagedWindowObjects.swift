@@ -48,11 +48,18 @@ public enum WindowLevel: String, CaseIterable {
 
 @ViewBuilder
 public func ForEachActiveManagedWindow(managedWindowsObject: NavWindowController) -> some View {
-    ForEach(Array(managedWindowsObject.globalViews.keys), id: \.self) { key in
-        managedWindowsObject.getGlobalView(withId: key)
-            .viewBuilder().zIndex(50.0)
+    if !managedWindowsObject.reload {
+        ForEach(Array(managedWindowsObject.globalViews.keys), id: \.self) { key in
+            managedWindowsObject.getWindow(withId: key)?.viewBuilder().zIndex(50.0)
+        }
     }
 }
+
+// Open Window
+
+// Close Window
+
+// Toggle Window
 
 public class ManagedViewWindow: Identifiable {
     
@@ -79,9 +86,11 @@ public class ManagedViewWindow: Identifiable {
 // Used within Canvas
 public class NavWindowController: ObservableObject {
     @Published public var reload: Bool = false
+    @Published public var registeredCallers: [String] = []
     @Published public var globalViews: [String: ManagedViewWindow] = [:]
     @Published public var canvasViews: [String: ManagedViewWindow] = [:]
     @Published public var viewPool: [String: ManagedViewWindow] = [:]
+    @Published public var isMultiView: Bool = false
     
     @Published public var cancellables = Set<AnyCancellable>()
     
@@ -91,141 +100,92 @@ public class NavWindowController: ObservableObject {
     }
     
     public init() {
-        DispatchQueue.main.async {
-            CodiChannel.MENU_WINDOW_CONTROLLER.receive(on: RunLoop.main) { wc in
-                let temp = wc as! WindowController
-                
-                if temp.windowId == "master" {
-                    self.removeAllFromActive()
-                }
-                
-                if !self.doesKeyExist(temp.windowId) {
-                    return
-                }
-                                
-                for item in self.globalViews {
-                    if item.key != temp.windowId {
-                        self.removeFromActive(forKey: item.key)
-                    }
-                }
-                
-                if temp.stateAction == "toggle" {
-                    self.toggleGlobalView(viewId: temp.windowId)
-                } else if temp.stateAction == "open" {
+        CodiChannel.MENU_WINDOW_CONTROLLER.receive(on: RunLoop.main) { wc in
+            let temp = wc as! WindowController
+            switch temp.stateAction {
+                case "toggle":
+                    print("toggling \(temp.windowId)")
+                    self.toggleView(viewId: temp.windowId, .global)
+                case "open":
                     self.moveToActive(viewId: temp.windowId, .global)
-                } else if temp.stateAction == "close" {
+                case "close":
                     self.removeFromActive(forKey: temp.windowId)
-                }
-                self.doReload()
-            }.store(in: &self.cancellables)
-        }
+                default:
+                    break
+            }
+        }.store(in: &self.cancellables)
         
     }
     // ViewBuilders
     
     @ViewBuilder
-    public func ForEachGlobalManagedWindow() -> some View {
-        ForEach(Array(globalViews.keys), id: \.self) { key in
-            self.getGlobalView(withId: key).viewBuilder().zIndex(50.0)
+    public func ForEachView(for level: WindowLevel = .global) -> some View {
+        if !reload {
+            let views = level == .global ? globalViews : canvasViews
+            ForEach(Array(views.keys), id: \.self) { key in
+               views[key]?.viewBuilder().zIndex(50.0)
+            }
         }
     }
-    
-    @ViewBuilder
-    public func ForEachCanvasManagedWindow() -> some View {
-        ForEach(Array(globalViews.keys), id: \.self) { key in
-            self.getCanvasView(withId: key).viewBuilder().zIndex(50.0)
-        }
-    }
-    
+
     public func addNewViewToPool<Content: View>(viewId: String, @ViewBuilder viewBuilder: @escaping () -> Content) {
-        // Check if the view already exists in the pool or active views to avoid duplicates
-        if viewPool[viewId] == nil && globalViews[viewId] == nil {
-            let newView = ManagedViewWindow(id: viewId, viewBuilder: viewBuilder)
-            viewPool[viewId] = newView
-        }
-    }
-    
-    public func addNewViewToPool(viewId: String, viewBuilder: @escaping () -> AnyView) {
-        // Check if the view already exists in the pool or active views to avoid duplicates
-        if viewPool[viewId] == nil && globalViews[viewId] == nil {
-            let newView = ManagedViewWindow(id: viewId, viewBuilder: viewBuilder)
-            viewPool[viewId] = newView
-        }
+        if registeredCallers.contains(viewId) { return }
+        print("Registering new window: \(viewId)")
+        registeredCallers.append(viewId)
+        viewPool[viewId] = ManagedViewWindow(id: viewId, viewBuilder: viewBuilder)
     }
     
     // Queue Management
     public func doesKeyExist(_ key: String) -> Bool { return viewPool[key] != nil }
     
-    public func getGlobalView(withId viewId: String) -> ManagedViewWindow {
-        if let view = globalViews[viewId] {
-            return view
-        } else {
-            return prepareViewForGlobal(withId: viewId)
+    public func getWindow(withId viewId: String, _ level: WindowLevel = .global) -> ManagedViewWindow? {
+        switch level {
+            case .global: return globalViews[viewId]
+            case .canvas: return canvasViews[viewId]
+            default: return nil
         }
     }
     
-    public func getCanvasView(withId viewId: String) -> ManagedViewWindow {
-        if let view = canvasViews[viewId] {
-            return view
-        } else {
-            return prepareViewForGlobal(withId: viewId)
-        }
-    }
-    
-    public func prepareViewForGlobal(withId viewId: String) -> ManagedViewWindow {
-        if let reusedView = viewPool[viewId] {
-            // Reuse a view from the pool if available
-            globalViews[viewId] = reusedView
-            return reusedView
-        } else {
-            // Create a new view if not available in the pool
-            let newView = ManagedViewWindow(id: viewId, viewBuilder: { EmptyView() })
-            globalViews[viewId] = newView
-            return newView
-        }
-    }
-    
-    public func prepareViewForCanvas(withId viewId: String) -> ManagedViewWindow {
-        if let reusedView = viewPool[viewId] {
-            // Reuse a view from the pool if available
-            canvasViews[viewId] = reusedView
-            return reusedView
-        } else {
-            // Create a new view if not available in the pool
-            let newView = ManagedViewWindow(id: viewId, viewBuilder: { EmptyView() })
-            canvasViews[viewId] = newView
-            return newView
-        }
-    }
-    
-    public func toggleGlobalView(viewId: String) {
-        if let _ = globalViews[viewId] {
+    private func toggleView(viewId: String, _ level: WindowLevel = .global) {
+        let targetDictionary = level == .global ? globalViews : canvasViews
+        if targetDictionary[viewId] != nil {
             removeFromActive(forKey: viewId)
-            return
+        } else {
+            moveToActive(viewId: viewId, level)
         }
-        if let viewInPool = viewPool[viewId] {
-            globalViews[viewId] = viewInPool
-        }
+        self.doReload()
     }
-    
-    public func toggleCanvasView(viewId: String) {
-        if let _ = canvasViews[viewId] {
-            removeFromActive(forKey: viewId)
-            return
-        }
-        if let viewInPool = viewPool[viewId] {
-            canvasViews[viewId] = viewInPool
-        }
-    }
+
     
     public func moveToActive(viewId: String, _ level: WindowLevel = .global) {
-        guard let view = viewPool[viewId] else { return }
-        switch level {
-            case .global: globalViews[viewId] = view
-            case .canvas: canvasViews[viewId] = view
-            case .fullscreen: globalViews[viewId] = view
-            default: return
+        
+        if !self.isMultiView {
+            switch level {
+               case .global:
+                    self.globalViews.removeAll()
+               case .canvas:
+                    self.canvasViews.removeAll()
+               default:
+                    break
+            }
         }
+        guard let view = viewPool[viewId] else {
+            print("Cant find window: \(viewId)")
+            return
+        }
+        main {
+            switch level {
+               case .global:
+                    print("Adding window to Global: \(viewId)")
+                    self.globalViews[viewId] = view
+               case .canvas:
+                    print("Adding window to Canvas: \(viewId)")
+                    self.canvasViews[viewId] = view
+               default: 
+                    break
+            }
+        }
+        
     }
     
     public func removeAllFromActive() {
@@ -233,16 +193,22 @@ public class NavWindowController: ObservableObject {
         canvasViews.removeAll()
     }
     
-    public func removeAllFromActiveButId(viewId: String) {
-        self.removeAllFromActive()
-        moveToActive(viewId: viewId, .global)
+    public func removeAllFrom(_ level: WindowLevel = .global) {
+        for item in self.globalViews {
+            self.removeFromActive(forKey: item.key)
+        }
     }
     
-    public func safelyRemoveItem(forKey key: String) {
-        DispatchQueue.main.async {
-            self.viewPool.removeValue(forKey: key)
-            self.globalViews.removeValue(forKey: key)
-            self.canvasViews.removeValue(forKey: key)
+//    public func removeAllFromActiveButId(viewId: String) {
+//        self.removeAllFromActive()
+//        moveToActive(viewId: viewId, .global)
+//    }
+//    
+    public func rgvs() {
+        print(self.registeredCallers)
+        for item in self.registeredCallers {
+            print("Removing: \(item)")
+            self.globalViews.removeValue(forKey: item)
         }
     }
     public func removeFromActive(forKey key: String) {

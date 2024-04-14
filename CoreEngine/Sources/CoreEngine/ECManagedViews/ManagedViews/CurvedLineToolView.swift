@@ -127,28 +127,31 @@ public struct CurvedLineDrawingManaged: View {
     public func fullCurvedLineDragGesture() -> some Gesture {
         DragGesture()
             .onChanged { value in
-                if MVO.lifeIsLocked || MVO.anchorsAreVisible { return }
-                self.MVO.isDragging = true
-                self.MVO.ignoreUpdates = true
-                if MVO.originalLifeStart == .zero {
-                    MVO.originalLifeStart = CGPoint(x: MVO.lifeStartX, y: MVO.lifeStartY)
-                    MVO.originalLifeEnd = CGPoint(x: MVO.lifeEndX, y: MVO.lifeEndY)
-                    MVO.originalLifeCenter = CGPoint(x: MVO.lifeCenterX, y: MVO.lifeCenterY)
+                main {
+                    if MVO.lifeIsLocked || MVO.anchorsAreVisible { return }
+                    self.MVO.isDragging = true
+                    self.MVO.ignoreUpdates = true
+                    if MVO.originalLifeStart == .zero {
+                        MVO.originalLifeStart = CGPoint(x: MVO.lifeStartX, y: MVO.lifeStartY)
+                        MVO.originalLifeEnd = CGPoint(x: MVO.lifeEndX, y: MVO.lifeEndY)
+                        MVO.originalLifeCenter = CGPoint(x: MVO.lifeCenterX, y: MVO.lifeCenterY)
+                    }
+                    
+                    handleFullDragTranslation(value: value)
                 }
-                
-                handleFullDragTranslation(value: value)
             }
             .onEnded { value in
-                if MVO.lifeIsLocked || MVO.anchorsAreVisible { return }
-                self.MVO.ignoreUpdates = false
-                handleFullDragTranslation(value: value)
-                self.MVO.isDragging = false
-                
-                MVO.originalLifeStart = .zero
-                MVO.originalLifeEnd = .zero
-                MVO.originalLifeCenter = .zero
+                main {
+                    if MVO.lifeIsLocked || MVO.anchorsAreVisible { return }
+                    self.MVO.ignoreUpdates = false
+                    handleFullDragTranslation(value: value)
+                    self.MVO.isDragging = false
+                    
+                    MVO.originalLifeStart = .zero
+                    MVO.originalLifeEnd = .zero
+                    MVO.originalLifeCenter = .zero
+                }
             }
-            
     }
     
     public func handleFullDragTranslation(value: DragGesture.Value) {
@@ -187,22 +190,26 @@ public struct CurvedLineDrawingManaged: View {
     public func dragCurvedCenterAnchor() -> some Gesture {
         DragGesture()
             .onChanged { value in
-                if MVO.lifeIsLocked || !MVO.anchorsAreVisible {return}
-                MVO.isDragging = true
-                self.MVO.ignoreUpdates = true
-                if self.dragOffset == .zero {
-                    self.dragOffset = CGSize(width: (MVO.lifeCenterX - value.startLocation.x),
-                                             height: (MVO.lifeCenterY - value.startLocation.y))
+                main {
+                    if MVO.lifeIsLocked || !MVO.anchorsAreVisible {return}
+                    MVO.isDragging = true
+                    self.MVO.ignoreUpdates = true
+                    if self.dragOffset == .zero {
+                        self.dragOffset = CGSize(width: (MVO.lifeCenterX - value.startLocation.x),
+                                                 height: (MVO.lifeCenterY - value.startLocation.y))
+                    }
+                    MVO.lifeCenterX = (value.location.x + dragOffset.width)
+                    MVO.lifeCenterY = (value.location.y + dragOffset.height)
                 }
-                MVO.lifeCenterX = (value.location.x + dragOffset.width)
-                MVO.lifeCenterY = (value.location.y + dragOffset.height)
             }
             .onEnded { _ in
-                if MVO.lifeIsLocked || !MVO.anchorsAreVisible { return }
-                self.dragOffset = .zero
-                MVO.isDragging = false
-                self.MVO.ignoreUpdates = false
-                MVO.updateRealm()
+                main {
+                    if MVO.lifeIsLocked || !MVO.anchorsAreVisible { return }
+                    self.dragOffset = .zero
+                    MVO.isDragging = false
+                    self.MVO.ignoreUpdates = false
+                    MVO.updateRealm()
+                }
             }
     }
 
@@ -210,33 +217,32 @@ public struct CurvedLineDrawingManaged: View {
     public func dragSingleAnchor(isStart: Bool) -> some Gesture {
         DragGesture()
             .onChanged { value in
-                if MVO.lifeIsLocked || !MVO.anchorsAreVisible {return}
-                MVO.isDragging = true
-                self.MVO.ignoreUpdates = true
-                if isStart {
-                    MVO.lifeStartX = value.location.x
-                    MVO.lifeStartY = value.location.y
-//                    CodiChannel.TOOL_ON_FOLLOW.send(value: ViewFollowing(
-//                        viewId: self.viewId,
-//                        x: self.lifeStartX,
-//                        y: (self.lifeStartY + 200)
-//                    ))
-                } else {
-                    MVO.lifeEndX = value.location.x
-                    MVO.lifeEndY = value.location.y
+                main {
+                    if MVO.lifeIsLocked || !MVO.anchorsAreVisible {return}
+                    MVO.isDragging = true
+                    self.MVO.ignoreUpdates = true
+                    if isStart {
+                        MVO.lifeStartX = value.location.x
+                        MVO.lifeStartY = value.location.y
+                    } else {
+                        MVO.lifeEndX = value.location.x
+                        MVO.lifeEndY = value.location.y
+                    }
+                    MVO.loadWidthAndHeight()
+                    MVO.loadRotationOfLine()
+                    MVO.updateRealmPos(start: CGPoint(x: MVO.lifeStartX, y: MVO.lifeStartY),
+                                       end: CGPoint(x: MVO.lifeEndX, y: MVO.lifeEndY))
                 }
-                MVO.loadWidthAndHeight()
-                MVO.loadRotationOfLine()
-                MVO.updateRealmPos(start: CGPoint(x: MVO.lifeStartX, y: MVO.lifeStartY),
-                                   end: CGPoint(x: MVO.lifeEndX, y: MVO.lifeEndY))
             }
             .onEnded { _ in
-                if MVO.lifeIsLocked || !MVO.anchorsAreVisible {return}
-                MVO.isDragging = false
-                self.MVO.ignoreUpdates = false
-                MVO.updateRealmPos(start: CGPoint(x: MVO.lifeStartX, y: MVO.lifeStartY),
-                                   end: CGPoint(x: MVO.lifeEndX, y: MVO.lifeEndY))
-                MVO.saveSnapshotToHistoryInRealm()
+                main {
+                    if MVO.lifeIsLocked || !MVO.anchorsAreVisible {return}
+                    MVO.isDragging = false
+                    self.MVO.ignoreUpdates = false
+                    MVO.updateRealmPos(start: CGPoint(x: MVO.lifeStartX, y: MVO.lifeStartY),
+                                       end: CGPoint(x: MVO.lifeEndX, y: MVO.lifeEndY))
+                    MVO.saveSnapshotToHistoryInRealm()
+                }
             }
     }
     

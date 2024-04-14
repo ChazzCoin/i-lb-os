@@ -8,6 +8,8 @@
 import Foundation
 import SwiftUI
 
+
+// Master Secure Text Input
 public struct CoreSecureField: View {
     @Binding var text: String
     var placeholder: String = ""

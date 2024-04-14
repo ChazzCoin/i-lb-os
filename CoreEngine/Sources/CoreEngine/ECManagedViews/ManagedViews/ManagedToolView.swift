@@ -38,18 +38,11 @@ public struct ManagedViewBasicTool: View {
     public let activityId: String
     public let toolType: String
     
-    public init(viewId: String, activityId: String, toolType: String) {
+    public init(viewId: String, activityId: String="", toolType: String) {
         self.viewId = viewId
         self.activityId = activityId
         self.toolType = toolType
     }
-    
-    @State public var color: Color = .black
-    @State public var rotation = 0.0
-    
-    @State public var position = CGPoint(x: 100, y: 100)
-    @GestureState public var dragOffset = CGSize.zero
-    @State public var isDragging = false
 
     public var body: some View {
         Image(toolType)
@@ -62,6 +55,11 @@ public struct enableManagedViewTool : ViewModifier {
     
     @State public var viewId: String
     @State public var activityId: String
+    
+    public init(viewId: String, activityId: String="") {
+        self.viewId = viewId
+        self.activityId = activityId
+    }
     
     @StateObject public var MVO: ManagedViewObject = ManagedViewObject()
     @GestureState public var dragOffset = CGSize.zero
@@ -76,8 +74,9 @@ public struct enableManagedViewTool : ViewModifier {
         .border(MVO.popUpIsVisible ? MVO.lifeBorderColor : Color.clear, width: 10) // Border modifier
         .position(x: MVO.position.x + (MVO.isDragging ? dragOffset.width : 0) + (MVO.lifeWidth),
                   y: MVO.position.y + (MVO.isDragging ? dragOffset.height : 0) + (MVO.lifeHeight))
-        .simultaneousGesture(gestureDragBasicTool())
+        
         .opacity(!MVO.isDisabledChecker() && !MVO.isDeletedChecker() ? 1 : 0.0)
+        .simultaneousGesture(gestureDragBasicTool())
         .onChange(of: self.MVO.toolBarCurrentViewId, perform: { _ in
             if self.MVO.toolBarCurrentViewId != self.viewId { MVO.popUpIsVisible = false }
         })
@@ -93,7 +92,7 @@ public struct enableManagedViewTool : ViewModifier {
     public func gestureDragBasicTool() -> some Gesture {
         DragGesture()
             .onChanged { drag in
-                DispatchQueue.main.async { 
+                main {
                     self.MVO.ignoreUpdates = true
                     if MVO.lifeIsLocked { return }
                     MVO.isDragging = true
@@ -109,7 +108,7 @@ public struct enableManagedViewTool : ViewModifier {
                 }
             }
             .onEnded { drag in
-                DispatchQueue.main.async {
+                main {
                     self.MVO.ignoreUpdates = false
                     if MVO.lifeIsLocked { return }
                     MVO.isDragging = false
@@ -121,7 +120,8 @@ public struct enableManagedViewTool : ViewModifier {
                     self.MVO.updateRealm()
                     self.MVO.useOriginal = true
                 }
-            }.simultaneously(with: TapGesture(count: 2)
+            }
+            .simultaneously(with: TapGesture(count: 2)
                 .onEnded { _ in
                     print("Tapped")
                     MVO.popUpIsVisible = !MVO.popUpIsVisible

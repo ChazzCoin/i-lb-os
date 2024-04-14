@@ -22,12 +22,22 @@ public extension View {
         self.modifier(TapAnimationModifier(action: action, isEnabled: enabled))
     }
     
-    func onDoubleTap(scale: CGFloat = 2.0, duration: Double = 0.5, completion: @escaping () -> Void = {}) -> some View {
-        modifier(DoubleTapExplodeModifier(scale: scale, duration: duration, completion: completion))
+    func onDoubleTap(action: @escaping () -> Void = {}) -> some View {
+        modifier(DoubleTapModifier(action: action))
     }
     
     func onLongPress(minimumDuration: Double = 0.5, perform action: @escaping () -> Void) -> some View {
         modifier(LongPressModifier(minimumDuration: minimumDuration, onLongPress: action))
+    }
+    
+    func onDrag(onChange: @escaping (DragGesture.Value) -> Void={ _ in }, onEnded: @escaping (DragGesture.Value) -> Void={ _ in }) -> some View {
+        modifier(OnDragModifier(onChange: onChange, onEnded: onEnded))
+    }
+    func onDragChange(_ onChange: @escaping (DragGesture.Value) -> Void) -> some View {
+        modifier(OnDragModifier(onChange: onChange, onEnded: { _ in }))
+    }
+    func onDragEnded(_ onEnded: @escaping (DragGesture.Value) -> Void) -> some View {
+        modifier(OnDragModifier(onChange: { _ in }, onEnded: onEnded))
     }
     
 }
@@ -58,6 +68,22 @@ public struct TapAnimationModifier: ViewModifier {
             }
     }
 }
+
+
+public struct DoubleTapModifier: ViewModifier {
+    public let action: () -> Void
+
+    public func body(content: Content) -> some View {
+        content
+            .onTapGesture(count: 2) {
+                action()
+            }
+    }
+}
+
+
+//
+
 public struct DoubleTapExplodeModifier: ViewModifier {
     public let scale: CGFloat
     public let duration: Double
@@ -99,5 +125,28 @@ public struct LongPressModifier: ViewModifier {
                     // Handle the gesture end (optional)
                 }
             }, perform: onLongPress)
+    }
+}
+
+// On Drag
+
+// 1. Define the LongPressModifier
+public struct OnDragModifier: ViewModifier {
+    public var onChange: (DragGesture.Value) -> Void
+    public var onEnded: (DragGesture.Value) -> Void
+    
+    
+    public init(onChange: @escaping (DragGesture.Value) -> Void, onEnded: @escaping (DragGesture.Value) -> Void) {
+        self.onChange = onChange
+        self.onEnded = onEnded
+    }
+
+    public func body(content: Content) -> some View {
+        content
+            .simultaneousGesture(
+                DragGesture()
+                    .onChanged { drag in main { onChange(drag) } }
+                    .onEnded { drag in main { onEnded(drag) } }
+            )
     }
 }

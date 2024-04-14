@@ -11,7 +11,7 @@ import SwiftUI
 
 extension View {
     
-    func enableManagedViewBasic(viewId: String, activityId: String) -> some View {
+    func enableManagedViewBasic(viewId: String, activityId: String="") -> some View {
         self.modifier(enableManagedViewTool(viewId: viewId, activityId: activityId))
     }
     

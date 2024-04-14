@@ -8,42 +8,51 @@
 import Foundation
 import SwiftUI
 
+public typealias VF = ViewFactory
 
-public class ManagedWindowFactory {
+public enum WindowSubscriptions : String, CaseIterable {
+    case master = "master"
+    case home = "home"
+    case chat = "chat"
+    case profile = "profile"
+    case dashboard = "dashboard"
+    case settings = "settings"
+}
+
+public class ViewFactory {
     
     public static func Build<Content: View, Sidebar: View>(
-        
-        callerId: String,
+        callerId: String, isFloatable: Bool = false,
         @ViewBuilder viewContent: @escaping () -> Content,
-        @ViewBuilder sideContent: @escaping () -> Sidebar
-    
+        @ViewBuilder sideContent: @escaping () -> Sidebar = { EmptyView() }
     ) -> ManagedViewWindow {
-        
         // Nav Window Holder
         let nsw = NavStackWindow(
-            id: callerId,
-            isFloatable: false,
-            contentBuilder: {
-                viewContent()
-            },
-            sideBarBuilder: {
-                sideContent()
-            }
+            id: callerId, isFloatable: isFloatable,
+            contentBuilder: { viewContent() },
+            sideBarBuilder: { sideContent() }
         )
         // View Holder
-        return ManagedViewWindow(
-            id: callerId,
-            viewBuilder: {
-                nsw
-            }
+        return ManagedViewWindow(id: callerId, viewBuilder: { nsw })
+    }
+    
+    @ViewBuilder
+    public static func BuildNavStackWindow<Content: View, Sidebar: View>(
+        callerId: String, isFloatable: Bool = false,
+        @ViewBuilder viewContent: @escaping () -> Content,
+        @ViewBuilder sideContent: @escaping () -> Sidebar = { EmptyView() }
+    ) -> some View {
+        // Nav Window Holder
+        NavStackWindow(
+            id: callerId, isFloatable: isFloatable,
+            contentBuilder: { viewContent() },
+            sideBarBuilder: { sideContent() }
         )
         
     }
-    
-//    func addChatWindow() {
-//        let caller = MenuBarProvider.chat.tool.title
-//        managedWindowsObject.addNewViewToPool(viewId: caller, viewBuilder: {
-//            
-//        })
-//    }
+
+    public static func BuildManagedViewWindow<Content: View>(callerId: String, @ViewBuilder viewContent: @escaping () -> Content) -> ManagedViewWindow {
+        // View Holder
+        return ManagedViewWindow(id: callerId, viewBuilder: { viewContent() } )
+    }
 }

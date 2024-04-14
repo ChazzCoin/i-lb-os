@@ -17,7 +17,6 @@ public struct NotificationPanel: View {
         self._icon = icon
     }
     
-    
     public let iconDoorOpen = "door_open"
     public let iconDoorClose = "door_closed"
     
