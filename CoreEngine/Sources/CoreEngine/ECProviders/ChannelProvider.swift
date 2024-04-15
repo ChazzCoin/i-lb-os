@@ -35,6 +35,29 @@ public class WindowController {
     }
 }
 
+public class NavStackMessage {
+    public var navId: String = "master"
+    public var isOpen: NavStackState? = nil
+    public var sidebarIsOpen: NavStackState? = nil
+    public var size: NavStackSize? = nil
+    public var navTo: String? = nil
+    
+    public init(
+        navId: String = "master",
+        isOpen: NavStackState? = nil,
+        sidebarIsOpen: NavStackState? = nil,
+        size: NavStackSize? = nil,
+        navTo: String? = nil
+    ) {
+        self.navId = navId
+        self.isOpen = isOpen
+        self.sidebarIsOpen = sidebarIsOpen
+        self.size = size
+        self.navTo = navTo
+    }
+}
+
+
 public class OnCreateTool {
     public var toolType: String = ""
     public var toolSubType: String = ""
@@ -139,6 +162,7 @@ public enum CodiChannel {
     case central
     case message
     case broadcast
+    case NavStackMessage
     case SESSION_ON_ID_CHANGE
     case ACTIVITY_ON_ID_CHANGE
     case MENU_TOGGLER
@@ -170,6 +194,8 @@ public enum CodiChannel {
                 return MessageChannel.shared.subject
             case .broadcast:
                 return BroadcastChannel.shared.subject
+            case .NavStackMessage:
+                return NavStackToggleChannel.shared.subject
             case .SESSION_ON_ID_CHANGE:
                 return SessionOnIdChangeChannel.shared.subject
             case .ACTIVITY_ON_ID_CHANGE:
@@ -216,6 +242,10 @@ public enum CodiChannel {
     }
 }
 
+public class NavStackToggleChannel {
+    static let shared = NavStackToggleChannel()
+    let subject = PassthroughSubject<Any, Never>()
+}
 // Example of a channel
 public class GeneralChannel {
     static let shared = GeneralChannel()

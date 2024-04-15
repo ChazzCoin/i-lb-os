@@ -10,17 +10,21 @@ import SwiftUI
 
 public class NavTools: NavWindowController {
     
+//    public static var masterNavWindow: Nav/*StackWindow = VF.BuildEmptyStackWindow(callerId: WindowProvider.master.rawValue)*/
+    
 //    @ObservedObject public var navController: NavWindowController = NavWindowController()
     
 //    @AppStorageList(key: "registeredWindows") public var registeredWindows: [String] = []
-    public func openChat() {
-        if registeredWindows.contains(WindowProvider.chat.rawValue) {
-            BroadcastTools.send(.MENU_WINDOW_CONTROLLER, value: WindowController(windowId: WindowProvider.chat.rawValue, stateAction: .open))
-            return
-        }
-        self.addNewNavStackToPool(viewId: WindowProvider.chat.rawValue, viewBuilder: WindowProvider.chat.view)
-        self.baseNav(windowId: WindowProvider.chat.rawValue, .open)
-    }
+//    public func openChat() {
+//        
+//        NavTools.masterNavWindow.updateContentBuilder(contentBuilder: ChatView() )
+//        if registeredWindows.contains(WindowProvider.chat.rawValue) {
+//            BroadcastTools.send(.MENU_WINDOW_CONTROLLER, value: WindowController(windowId: WindowProvider.chat.rawValue, stateAction: .open))
+//            return
+//        }
+//        self.addNewNavStackToPool(viewId: WindowProvider.chat.rawValue, viewBuilder: WindowProvider.chat.view)
+//        self.baseNav(windowId: WindowProvider.chat.rawValue, .open)
+//    }
     
     // MARK: -> Static Navigation Helpers
     public static let registeredWindows: [String]? = UserDefaults.standard.string(forKey: "registeredWindows")?.toList()

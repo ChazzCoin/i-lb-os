@@ -38,7 +38,7 @@ struct CanvasEngine: View {
     let initialWidth: CGFloat = 6000
     let initialHeight: CGFloat = 6000
     
-    @StateObject var navTools: NavTools = NavTools()
+    @StateObject var navTools: NavWindowController = NavWindowController()
     
     var dragAngleGestures: some Gesture {
         DragGesture()
@@ -165,7 +165,7 @@ struct CanvasEngine: View {
                     .environmentObject(self.BEO)
                     .position(using: gps, at: .bottomCenter, offsetX: 0, offsetY: 150)
                 
-                navTools.ForEachView(in: .global)
+                navTools.getNavStackView()
                 
                 if self.BEO.boardSettingsIsShowing && !self.BEO.screenIsActiveAndLocked() {
                     BoardSettingsBar()
@@ -300,34 +300,21 @@ struct CanvasEngine: View {
             .onAppear() {
                 self.BEO.loadUser()
                 menuBarButtonListener()
-                addWindowsToNavManager()
-                
-                
-//                if let results = newRealm().findByField(CoreUser.self, field: "", value: "") {
-//                    print("The Old way... -> \(results)")
-//                }
-//                FusedTools.findByField(CoreUser.self, value: "ckrphone@gmail.com", field: "email") { results in
-//                    print("Fused this bitch up!!! -> \(results)")
-//                }
-                
-                
-//                if let user = UserTools.user {
-//                    fusedWriter { r in
-//                        user.name = "Johnny Law Dog"
-//                        return user
-//                    }
-//                }
-//                UserTools.login(email: "chazzromeo@gmail.com", password: "soccer23", onResult: { _ in
-//                    if let user = UserTools.user {
-//                        newRealm().safeWrite { r in
-//                            user.handle = "YESSSSSSSSSSS"
-//                            FusedDB.saveToFirebase(item: user)
-//                        }
-//                    }
-//                }, onError: { _ in
-//                    print("failed to login")
-//                })
-                
+                navTools.addView(
+                    callerId: MenuBarProvider.profile.tool.title,
+                    mainContent: { SignUpView() },
+                    sideContent: { EmptyView() }
+                )
+                navTools.addView(
+                    callerId: MenuBarProvider.boardCreate.tool.title,
+                    mainContent: { HomeDashboardView().environmentObject(self.BEO) },
+                    sideContent: { MenuListView(isShowing: .constant(true)).clearSectionBackground() }
+                )
+                NavTools.openNavStack()
+                delayThenMain(3, mainBlock: {
+                    navTools.navTo(viewId: MenuBarProvider.boardCreate.tool.title)
+                })
+                                
             }
         }
         
@@ -439,11 +426,16 @@ struct CanvasEngine: View {
 //            }))
 //        })
 //    }
-//    func addSessionPlansWindow() {
-//        let caller = MenuBarProvider.boardCreate.tool.title
+    func addSessionPlansWindow() {
+        let caller = MenuBarProvider.boardCreate.tool.title
+        navTools.addView(window: VF.BuildManagedHolder(
+            callerId: MenuBarProvider.boardCreate.tool.title,
+            mainContent: { HomeDashboardView().environmentObject(self.BEO) },
+            sideContent: { EmptyView() }
+        ))
 //        navTools.addNewNavStackToPool(viewId: caller, viewBuilder: { HomeDashboardView().environmentObject(self.BEO) })
-//        
-//    }
+        
+    }
     func addMvSettingsWindow() {
 //        let caller = "mv_settings"
 //        managedWindowsObject.addNewViewToPool(viewId: caller, viewBuilder: {

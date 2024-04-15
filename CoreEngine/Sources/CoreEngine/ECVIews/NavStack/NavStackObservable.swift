@@ -7,10 +7,11 @@
 
 import Foundation
 import SwiftUI
+import Combine
 
 public class NavStackWindowObservable : ObservableObject {
     
-    public init() {}
+    public init() { }
     
     @Published public var isHidden = false
     @Published public var isLocked = false
@@ -36,6 +37,10 @@ public class NavStackWindowObservable : ObservableObject {
     @Published public var offPos = CGPoint(x: 0, y: 0)
     @GestureState public var dragOffset = CGSize.zero
     @Published public var isDragging = false
+    
+    @ObservedObject public var broadcaster: BroadcastTools = BroadcastTools()
+    @Published public var cancellables = Set<AnyCancellable>()
+    
     
     public func resetNavStack(gps: GlobalPositioningSystem) {
         self.width = UIScreen.main.bounds.width * 0.9

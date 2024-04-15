@@ -8,9 +8,6 @@
 import Foundation
 import SwiftUI
 
-
-
-
 @propertyWrapper
 public struct AppStorageList {
     public var key: String
@@ -28,13 +25,8 @@ public struct AppStorageList {
     }
 
     public var wrappedValue: [String] {
-        get {
-//            (try? JSONDecoder().decode([String].self, from: Data(storedData.utf8))) ?? []
-            storedData.toList()
-        }
-        set {
-            storedData = newValue.toString()
-        }
+        get { storedData.toList() }
+        set { storedData = newValue.toString() }
     }
     
     // Optionally, you can provide a 'projectedValue' if you need direct access to more complex behavior or additional data.

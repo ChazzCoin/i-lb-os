@@ -41,6 +41,7 @@ public enum WindowAction: String, CaseIterable {
     case close = "close"
     case open = "open"
     case toggle = "toggle"
+    case back = "back"
     case remove = "remove"
     case toGlobal = "toGlobal"
     case toCanvas = "toCanvas"
@@ -48,7 +49,7 @@ public enum WindowAction: String, CaseIterable {
 
 public enum WindowLevel: String, CaseIterable {
     case closed = "closed"
-    case global = "global"
-    case canvas = "canvas"
+    case main = "global"
+    case sidebar = "canvas"
     case fullscreen = "fullscreen"
 }
