@@ -96,11 +96,11 @@ struct HomeDashboardView: View {
                 }
                 
                 // Activities
-                Section(header: Text("Activities")) {
-                    SearchableActivityListView()
-                        .environmentObject(self.BEO)
-                        .environmentObject(self.NavStack)
-                }.clearSectionBackground()
+//                Section(header: Text("Activities")) {
+//                    SearchableActivityListView()
+//                        .environmentObject(self.BEO)
+////                        .environmentObject(self.NavStack)
+//                }.clearSectionBackground()
                 
                 
                 
@@ -127,11 +127,11 @@ struct HomeDashboardView: View {
             Image(systemName: "line.horizontal.3")
         })
         .onAppear() {
-            self.NavStack.addToStack()
+//            self.NavStack.addToStack()
             fetchAllSessionsFromFirebase()
         }
         .onDisappear() {
-            self.NavStack.removeFromStack()
+//            self.NavStack.removeFromStack()
         }
         .loading(isShowing: $isLoading)
 //        .sheet(isPresented: $showNewPlanSheet) {

@@ -59,11 +59,11 @@ struct NavPadView: View {
                 let temp = wc as! WindowController
                 if temp.windowId != MenuBarProvider.navHome.tool.title { return }
                 
-                if temp.stateAction == "toggle" {
+                if temp.stateAction == .toggle {
                     self.isHidden = !self.isHidden
-                } else if temp.stateAction == "open" {
+                } else if temp.stateAction == .open {
                     self.isHidden = false
-                } else if temp.stateAction == "close" {
+                } else if temp.stateAction == .close {
                     self.isHidden = true
                 }
             }.store(in: &cancellables)

@@ -189,15 +189,15 @@ struct PopupMenuView: View {
                 }
             }
             
-            if temp.stateAction == "toggle" {
+            if temp.stateAction == .toggle {
                 if self.isHidden {
                     self.isHidden = false
                 } else {
                     self.isHidden = true
                 }
-            } else if temp.stateAction == "open" {
+            } else if temp.stateAction == .open {
                 self.isHidden = false
-            } else if temp.stateAction == "close" {
+            } else if temp.stateAction == .close {
                 self.isHidden = true
             }
             
@@ -210,7 +210,7 @@ struct PopupMenuView: View {
     }
     
     func closeWindow() {
-        CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: "pop_settings", stateAction: "close", viewId: self.PMO.viewId))
+        CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: "pop_settings", stateAction: .close, viewId: self.PMO.viewId))
     }
     
     private func dragGesture(for positionBinding: Binding<CGPoint>) -> some Gesture {

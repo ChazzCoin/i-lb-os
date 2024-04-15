@@ -15,6 +15,7 @@ import CoreEngine
 struct BoardEngine: View {
     @Environment(\.scenePhase) var deviceState
     @EnvironmentObject var BEO: BoardEngineObject
+    @EnvironmentObject var managedWindowsObject: NavWindowController
     @StateObject var PMO = PopupMenuObject()
     @StateObject var MVFactory = ManagedViewFactory()
     //
@@ -45,6 +46,8 @@ struct BoardEngine: View {
     
     var body: some View {
          ZStack() {
+             
+//             managedWindowsObject.ForEachView().scaleEffect(10.0)'
              
              // Board Tools
              if self.BEO.boardRefreshFlag {
@@ -142,9 +145,9 @@ struct BoardEngine: View {
         .onAppear {
            
             print("BoardEngineView onAppear")
-            self.BEO.runCanvasLoading()
+//            self.BEO.runCanvasLoading()
             
-            self.BEO.loadUser()
+//            self.BEO.loadUser()
             
 //            SPS = SessionPlanService(realm: self.BEO.realmInstance)
 //            APS = ActivityPlanService(realm: self.BEO.realmInstance)

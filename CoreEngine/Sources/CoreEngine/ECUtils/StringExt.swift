@@ -8,7 +8,14 @@
 import Foundation
 import SwiftUI
 
+
+public extension [String] {
+    func toString() -> String { return (try? String(data: JSONEncoder().encode(self), encoding: .utf8)) ?? "" }
+}
+
 public extension String {
+    
+    func toList() -> [String] { return (try? JSONDecoder().decode([String].self, from: Data(self.utf8))) ?? [] }
     
     func heightWithConstrainedWidth(width: CGFloat, font: UIFont) -> CGFloat {
         let constraintRect = CGSize(width: width, height: .greatestFiniteMagnitude)

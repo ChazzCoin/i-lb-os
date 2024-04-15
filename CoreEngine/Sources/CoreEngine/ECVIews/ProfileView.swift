@@ -14,10 +14,15 @@ public struct CoreProfileView: View {
     
     public init() {}
     
-    @AppStorage("isLoggedIn") public var isLoggedIn: Bool = false
     @State public var realmInstance = realm()
     
-    @ObservedResults(CoreUser.self) public var solUsers
+    @ObservedResults(CoreUser.self) public var allUsers
+    public var currentUser: CoreUser? {
+        if let id = UserTools.currentUserId {
+            return allUsers.filter("id == %@", id).first
+        }
+        return nil
+    }
 
     @State public var showNewPlanSheet = false
     @State public var showChatButton = true
@@ -50,7 +55,7 @@ public struct CoreProfileView: View {
 //                    .font(.subheadline)
 //                    .fontWeight(.bold)
                 
-                if self.isLoggedIn {
+                if UserTools.isLoggedIn {
                     Section(header: Text("Connection Status")) {
 //                        InternetSpeedChecker()
                     }

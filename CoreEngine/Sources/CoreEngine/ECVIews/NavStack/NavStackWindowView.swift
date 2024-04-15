@@ -10,7 +10,7 @@ import SwiftUI
 import Combine
 
 
-public class NavStackWindowFactory {
+public class NavStackFactory {
     
     public static func BuildNavStackWindow<Content: View, SideBar: View>(
         caller: String="master",
@@ -89,7 +89,7 @@ public struct NavStackWindow<Content: View, SideBar: View> : View {
                     .navigationBarItems(leading: HStack {
                         // Add buttons or icons here for minimize, maximize, close, etc.
                         Button(action: {
-                            CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: self.id, stateAction: "close", viewId: "self"))
+                            CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: self.id, stateAction: .close, viewId: "self"))
                         }) {
                             Image(systemName: "minus.circle")
                                 .resizable()
@@ -226,7 +226,7 @@ public struct NavStackWindow<Content: View, SideBar: View> : View {
                 .navigationBarItems(leading: HStack {
                     // Add buttons or icons here for minimize, maximize, close, etc.
                     Button(action: {
-                        CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: self.id, stateAction: "close", viewId: "self"))
+                        CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: self.id, stateAction: .close, viewId: "self"))
                     }) {
                         Image(systemName: "minus.circle")
                             .resizable()

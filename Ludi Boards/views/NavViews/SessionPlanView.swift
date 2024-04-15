@@ -229,7 +229,7 @@ struct SessionPlanView: View {
             if self.NavStack.navStackCount >= 2 {
                 
                 Button(action: {
-                    CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: "master", stateAction: "close", viewId: "self"))
+                    CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: "master", stateAction: .close, viewId: "self"))
                 }) {
                     Image(systemName: "minus.circle")
                         .resizable()

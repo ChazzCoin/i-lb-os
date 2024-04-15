@@ -106,7 +106,11 @@ public class UserTools {
     }
     
     public static func sendAuthChangeNotification() {
+        // Old Way
         NotificationCenter.default.post(name: NSNotification.Name("AuthChange"), object: nil)
+        // New Way
+        BroadcastTools.send(.authChange)
+        BroadcastTools.send(.authChange, value: nil)
     }
     
     public static func login(email: String, password: String, onResult: @escaping (AuthDataResult) -> Void, onError: @escaping (any Error) -> Void) {

@@ -10,14 +10,14 @@ import SwiftUI
 import FirebaseDatabase
 import Combine
 import RealmSwift
-import CoreEngine
 
-
-
-struct ChatView: View {
+public struct ChatView: View {
+    
+    public init() {}
+    
     @AppStorage("currentRoomId") public var currentRoomId: String = ""
 
-    @State private var messageText = ""
+    @State public var messageText = ""
     
     @StateObject public var CHAT = ChatObserver()
     @StateObject public var keyboardResponder = KeyboardResponder()
@@ -27,7 +27,7 @@ struct ChatView: View {
     @State public var isReloading = false
 
 
-    var mainContentView: some View {
+    public var mainContentView: some View {
         VStack {
             // Messages list
             ScrollViewReader { scrollViewProxy in
@@ -54,7 +54,7 @@ struct ChatView: View {
                     .padding(.horizontal)
                     .frame(height: 44)
                     .foregroundColor(Color.white)
-                    .background(Color.secondaryBackground)
+//                    .background(Color.secondaryBackground)
                     .cornerRadius(22)
 
                 Button(action: sendMessage) {
@@ -68,7 +68,7 @@ struct ChatView: View {
             }
             .padding(.horizontal)
         }
-        .loading(isShowing: $isReloading)
+        .isLoading(showLoading: $isReloading)
         .background(Color.white)
         .onTap {
             self.keyboardResponder.safeHideKeyboard()
@@ -83,12 +83,12 @@ struct ChatView: View {
             self.CHAT.stop()
         }
     }
-    var sidebarView: some View {
-        RoomUserList()
-            
+    public var sidebarView: some View {
+//        RoomUserList()
+        EmptyView()
     }
     
-    var body: some View {
+    public var body: some View {
         
         // Main Content and Sidebar
         ZStack(alignment: .leading) {
@@ -114,7 +114,7 @@ struct ChatView: View {
     }
     
 
-    func sendMessage() {
+    public func sendMessage() {
         
         let newMessage = Chat()
         newMessage.chatId = currentRoomId
@@ -197,7 +197,7 @@ struct MessageBubbleView: View {
             Text(text)
                 .padding(10)
                 .foregroundColor(isCurrentUser ? Color.white : Color.white)
-                .background(isCurrentUser ? Color.blue : Color.primaryBackground)
+                .background(isCurrentUser ? Color.blue : Color.green)
                 .cornerRadius(10)
 
             Text(dateTime)

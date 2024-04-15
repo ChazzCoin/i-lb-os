@@ -43,7 +43,8 @@ public struct MenuButtonIcon: View {
         })
         .onTapAnimation {
             print("CodiChannel SendTopic: \(icon.tool.title)")
-            CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: icon.tool.title, stateAction: "toggle"))
+            BroadcastTools.send(.MENU_WINDOW_CONTROLLER, value: WindowController(windowId: icon.tool.title, stateAction: .toggle))
+//            CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: icon.tool.title, stateAction: .toggle))
         }
     }
 }

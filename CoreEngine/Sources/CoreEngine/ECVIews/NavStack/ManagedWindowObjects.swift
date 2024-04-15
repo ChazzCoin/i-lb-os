@@ -39,12 +39,7 @@ import Combine
  
  */
 
-public enum WindowLevel: String, CaseIterable {
-    case closed = "closed"
-    case global = "global"
-    case canvas = "canvas"
-    case fullscreen = "fullscreen"
-}
+
 
 @ViewBuilder
 public func ForEachActiveManagedWindow(managedWindowsObject: NavWindowController) -> some View {
@@ -54,12 +49,6 @@ public func ForEachActiveManagedWindow(managedWindowsObject: NavWindowController
         }
     }
 }
-
-// Open Window
-
-// Close Window
-
-// Toggle Window
 
 public class ManagedViewWindow: Identifiable {
     
@@ -83,16 +72,31 @@ public class ManagedViewWindow: Identifiable {
     public func toggleFullScreen() { isFullScreen = !isFullScreen }
 }
 
+
+public func goToWindow(callerId: String, _ action: WindowAction = .toggle) {
+    BroadcastTools.send(.MENU_WINDOW_CONTROLLER, value: WindowController(windowId: callerId, stateAction: action))
+//    CodiChannel.MENU_WINDOW_CONTROLLER.send(value: WindowController(windowId: callerId, stateAction: action))
+}
+
+public typealias Nav = NavWindowController
+
+//{ HomeDashboardView().environmentObject(self.BEO) }
 // Used within Canvas
 public class NavWindowController: ObservableObject {
+    
+    @AppStorage("activeGlobalWindowId") public var activeGlobalWindowId: String = ""
+    @AppStorage("activeCanvasWindowId") public var activeCanvasWindowId: String = ""
+    @AppStorageList(key: "registeredWindows") public var registeredWindows: [String] = []
+    @ObservedObject public var broadcaster: BroadcastTools = BroadcastTools()
+    
     @Published public var reload: Bool = false
-    @Published public var registeredCallers: [String] = []
     @Published public var globalViews: [String: ManagedViewWindow] = [:]
     @Published public var canvasViews: [String: ManagedViewWindow] = [:]
     @Published public var viewPool: [String: ManagedViewWindow] = [:]
     @Published public var isMultiView: Bool = false
     
     @Published public var cancellables = Set<AnyCancellable>()
+    @Published public var cancellables2 = Set<AnyCancellable>()
     
     public func doReload() {
         reload = true
@@ -100,26 +104,54 @@ public class NavWindowController: ObservableObject {
     }
     
     public init() {
-        CodiChannel.MENU_WINDOW_CONTROLLER.receive(on: RunLoop.main) { wc in
-            let temp = wc as! WindowController
-            switch temp.stateAction {
-                case "toggle":
-                    print("toggling \(temp.windowId)")
-                    self.toggleView(viewId: temp.windowId, .global)
-                case "open":
-                    self.moveToActive(viewId: temp.windowId, .global)
-                case "close":
-                    self.removeFromActive(forKey: temp.windowId)
-                default:
-                    break
-            }
-        }.store(in: &self.cancellables)
-        
+        self.appWillTerminate()
+        print("Registered Callers: \(self.registeredWindows)")
+        main { self.subscribeToWindowChannel() }
     }
-    // ViewBuilders
     
+    private func appWillTerminate() {
+        print("App is terminating, removing registered callers.")
+        self.registeredWindows.removeAll()
+    }
+    
+    public func subscribeToWindowChannel() {
+//        broadcaster.subscribeTo(.appWillTerminate, { _ in
+//            self.appWillTerminate()
+//        })
+        broadcaster.subscribeTo(.MENU_WINDOW_CONTROLLER, storeIn: &cancellables) { wc in
+            if let temp = wc as? WindowController {
+                self.windowNav(windowId: temp.windowId.lowercased(), temp.stateAction)
+            }
+            
+//            self.baseNav(windowId: temp.windowId, temp.stateAction)
+        }
+    }
+    
+    public func windowNav(windowId: String, _ action: WindowAction) {
+        
+        if self.containsRegisteredWindow(windowId) {
+            self.baseNav(windowId: windowId, action)
+            return
+        }
+        
+        if let window = WindowProvider.parseToWindow(windowId: windowId) {
+            self.addNewNavStackToPool(viewId: windowId, viewBuilder: window.view)
+            self.baseNav(windowId: windowId, action)
+        }
+    }
+    
+    public func baseNav(windowId: String, _ action: WindowAction) {
+        switch action {
+            case .toggle: self.toggleView(viewId: windowId, .global)
+            case .open: self.moveToActive(viewId: windowId, .global)
+            case .close: self.removeFromActive(forKey: windowId)
+            default: break
+        }
+    }
+    
+    // ViewBuilders
     @ViewBuilder
-    public func ForEachView(for level: WindowLevel = .global) -> some View {
+    public func ForEachView(in level: WindowLevel = .global) -> some View {
         if !reload {
             let views = level == .global ? globalViews : canvasViews
             ForEach(Array(views.keys), id: \.self) { key in
@@ -128,14 +160,66 @@ public class NavWindowController: ObservableObject {
         }
     }
 
-    public func addNewViewToPool<Content: View>(viewId: String, @ViewBuilder viewBuilder: @escaping () -> Content) {
-        if registeredCallers.contains(viewId) { return }
+    // MARK: -> Add any view to an embedded Nav Stack ...to the pool
+    public func addNewNavStackToPool<Content: View>(viewId: String, @ViewBuilder viewBuilder: @escaping () -> Content) {
+        if self.containsRegisteredWindow(viewId) { return }
         print("Registering new window: \(viewId)")
-        registeredCallers.append(viewId)
-        viewPool[viewId] = ManagedViewWindow(id: viewId, viewBuilder: viewBuilder)
+        self.addRegisteredWindow(viewId: viewId)
+        viewPool[viewId] = VF.BuildManagedStack(callerId: viewId, viewContent: { viewBuilder() })
+    }
+    // MARK: -> Add any view ...to the pool
+    public func addNewViewToPool<Content: View>(viewId: String, @ViewBuilder anyView: @escaping () -> Content) {
+        if self.containsRegisteredWindow(viewId) { return }
+        print("Registering new window: \(viewId)")
+        self.addRegisteredWindow(viewId: viewId)
+        viewPool[viewId] = VF.BuildManagedHolder(callerId: viewId, viewContent: anyView)
     }
     
+    // MARK: -> Add any view ...to the pool
+    public func addNewViewToPool<Content: View>(viewId: String, viewBuilder: Content) {
+        if self.containsRegisteredWindow(viewId) { return }
+        print("Registering new window: \(viewId)")
+        self.addRegisteredWindow(viewId: viewId)
+        viewPool[viewId] = VF.BuildManagedHolder(callerId: viewId, viewContent: {viewBuilder})
+    }
+    
+    // MARK: -> Add pre-built Managed View ...to the pool
+    public func addNewViewToPool(viewId: String, managedView: ManagedViewWindow) {
+        if self.containsRegisteredWindow(viewId) { return }
+        print("Registering new window: \(viewId)")
+        self.addRegisteredWindow(viewId: viewId)
+        viewPool[viewId] = managedView
+    }
     // Queue Management
+    public func containsRegisteredWindow(_ viewId: String) -> Bool { return registeredWindows.contains(viewId.lowercased()) }
+    public func addRegisteredWindow(viewId: String) { registeredWindows.append(viewId.lowercased()) }
+    
+    public func setActiveWindowId(windowId: String, windowLevel: WindowLevel) {
+        switch windowLevel {
+            case .global: self.setActiveGlobalWindowId(windowId)
+            case .canvas: self.setActiveCanvasWindowId(windowId)
+            default: return
+        }
+    }
+    
+    public func isActiveWindowId(windowId: String, windowLevel: WindowLevel) -> Bool {
+        switch windowLevel {
+            case .global: 
+                return self.hasActiveGlobalWindowId(windowId)
+            case .canvas:
+                return self.hasActiveCanvasWindowId(windowId)
+            default: return false
+        }
+    }
+    
+    public func setActiveGlobalWindowId(_ windowId: String) { self.activeGlobalWindowId = windowId }
+    public func clearActiveGlobalWindowId(_ windowId: String) { self.activeGlobalWindowId = "" }
+    public func hasActiveGlobalWindowId(_ windowId: String) -> Bool { !self.activeGlobalWindowId.isEmpty }
+    
+    public func setActiveCanvasWindowId(_ windowId: String) { self.activeCanvasWindowId = windowId }
+    public func clearActiveCanvasWindowId(_ windowId: String) { self.activeCanvasWindowId = "" }
+    public func hasActiveCanvasWindowId(_ windowId: String) -> Bool { !self.activeCanvasWindowId.isEmpty }
+    
     public func doesKeyExist(_ key: String) -> Bool { return viewPool[key] != nil }
     
     public func getWindow(withId viewId: String, _ level: WindowLevel = .global) -> ManagedViewWindow? {
@@ -156,36 +240,26 @@ public class NavWindowController: ObservableObject {
         self.doReload()
     }
 
-    
     public func moveToActive(viewId: String, _ level: WindowLevel = .global) {
+        
+        if !self.isActiveWindowId(windowId: viewId, windowLevel: level) { return }
         
         if !self.isMultiView {
             switch level {
-               case .global:
-                    self.globalViews.removeAll()
-               case .canvas:
-                    self.canvasViews.removeAll()
-               default:
-                    break
+               case .global: self.globalViews.removeAll()
+               case .canvas: self.canvasViews.removeAll()
+               default:  break
             }
         }
-        guard let view = viewPool[viewId] else {
-            print("Cant find window: \(viewId)")
-            return
-        }
+        guard let view = viewPool[viewId] else { return }
+        self.setActiveWindowId(windowId: viewId, windowLevel: level)
         main {
             switch level {
-               case .global:
-                    print("Adding window to Global: \(viewId)")
-                    self.globalViews[viewId] = view
-               case .canvas:
-                    print("Adding window to Canvas: \(viewId)")
-                    self.canvasViews[viewId] = view
-               default: 
-                    break
+               case .global: self.globalViews[viewId] = view
+               case .canvas: self.canvasViews[viewId] = view
+               default:  break
             }
         }
-        
     }
     
     public func removeAllFromActive() {
@@ -199,14 +273,9 @@ public class NavWindowController: ObservableObject {
         }
     }
     
-//    public func removeAllFromActiveButId(viewId: String) {
-//        self.removeAllFromActive()
-//        moveToActive(viewId: viewId, .global)
-//    }
-//    
     public func rgvs() {
-        print(self.registeredCallers)
-        for item in self.registeredCallers {
+        print(self.registeredWindows)
+        for item in self.registeredWindows {
             print("Removing: \(item)")
             self.globalViews.removeValue(forKey: item)
         }
@@ -221,39 +290,3 @@ public class NavWindowController: ObservableObject {
     }
 }
 
-//public class ManagedViewWindows: ObservableObject {
-//    
-//    @Published public var managedViewWindows: [ManagedViewWindow] = []
-//    @Published public var managedViewGenerics: [String:ManagedViewWindow] = [:]
-//    
-////    public func newManagedViewWindow(viewId: String) -> ManagedViewWindow {
-////        return ManagedViewWindow(id: viewId, viewBuilder: {ChatView()})
-////    }
-//    
-//    public func toggleManagedViewWindowById(viewId: String) {
-//        guard let temp = managedViewWindows.first(where: { $0.id == viewId }) else { return }
-//        temp.toggleMinimized()
-//    }
-//    
-//    public func toggleItem(key: String, item: ManagedViewWindow) {
-//        DispatchQueue.main.async {
-//            if self.managedViewGenerics[key] != nil {
-//                self.managedViewGenerics.removeValue(forKey: key)
-//            } else {
-//                self.managedViewGenerics[key] = item
-//            }
-//        }
-//    }
-//    
-//    public func safelyAddItem(key: String, item: ManagedViewWindow) {
-//        DispatchQueue.main.async {
-//            self.managedViewGenerics[key] = item
-//        }
-//    }
-//    public func safelyRemoveItem(forKey key: String) {
-//        DispatchQueue.main.async {
-//            self.managedViewGenerics.removeValue(forKey: key)
-//        }
-//    }
-//
-//}

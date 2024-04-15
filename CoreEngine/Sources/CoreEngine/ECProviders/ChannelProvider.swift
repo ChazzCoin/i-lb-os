@@ -21,12 +21,12 @@ public class NotificationController {
 
 public class WindowController {
     public var windowId: String = ""
-    public var stateAction: String = "open" //close
+    public var stateAction: WindowAction = .toggle
     public var viewId: String = ""
     public var x: CGFloat? = nil
     public var y: CGFloat? = nil
     
-    public init(windowId: String, stateAction: String, viewId: String="", x: CGFloat?=nil, y: CGFloat?=nil) {
+    public init(windowId: String, stateAction: WindowAction = .toggle, viewId: String="", x: CGFloat?=nil, y: CGFloat?=nil) {
         self.windowId = windowId
         self.stateAction = stateAction
         self.viewId = viewId
@@ -131,6 +131,7 @@ public class ViewFollowing {
         return CGPoint(x: self.x, y: self.y)
     }
 }
+
 
 //@State var cancellables = Set<AnyCancellable>()
 public enum CodiChannel {

@@ -8,20 +8,22 @@
 import Foundation
 import SwiftUI
 
-public typealias VF = ViewFactory
 
-public enum WindowSubscriptions : String, CaseIterable {
-    case master = "master"
-    case home = "home"
-    case chat = "chat"
-    case profile = "profile"
-    case dashboard = "dashboard"
-    case settings = "settings"
-}
+
+//public enum WindowSubscriptions : String, CaseIterable {
+//    case master = "master"
+//    case home = "home"
+//    case chat = "chat"
+//    case profile = "profile"
+//    case dashboard = "dashboard"
+//    case settings = "settings"
+//}
 
 public class ViewFactory {
     
-    public static func Build<Content: View, Sidebar: View>(
+    public static func BuildView<Content: View>(_ view: Content) -> () -> AnyView { return { AnyView(view) } }
+    
+    public static func BuildManagedStack<Content: View, Sidebar: View>(
         callerId: String, isFloatable: Bool = false,
         @ViewBuilder viewContent: @escaping () -> Content,
         @ViewBuilder sideContent: @escaping () -> Sidebar = { EmptyView() }
@@ -37,7 +39,7 @@ public class ViewFactory {
     }
     
     @ViewBuilder
-    public static func BuildNavStackWindow<Content: View, Sidebar: View>(
+    public static func BuildStackWindow<Content: View, Sidebar: View>(
         callerId: String, isFloatable: Bool = false,
         @ViewBuilder viewContent: @escaping () -> Content,
         @ViewBuilder sideContent: @escaping () -> Sidebar = { EmptyView() }
@@ -48,10 +50,9 @@ public class ViewFactory {
             contentBuilder: { viewContent() },
             sideBarBuilder: { sideContent() }
         )
-        
     }
 
-    public static func BuildManagedViewWindow<Content: View>(callerId: String, @ViewBuilder viewContent: @escaping () -> Content) -> ManagedViewWindow {
+    public static func BuildManagedHolder<Content: View>(callerId: String, @ViewBuilder viewContent: @escaping () -> Content) -> ManagedViewWindow {
         // View Holder
         return ManagedViewWindow(id: callerId, viewBuilder: { viewContent() } )
     }

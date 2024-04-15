@@ -11,7 +11,6 @@
 		FB10AE0B2B0F162F00295F4B /* ActivityPlanThumbView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB10AE0A2B0F162F00295F4B /* ActivityPlanThumbView.swift */; };
 		FB10AE0D2B0F16B100295F4B /* ActivityPlanThumbList.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB10AE0C2B0F16B100295F4B /* ActivityPlanThumbList.swift */; };
 		FB15DD2A2B07443600A21290 /* BoardEngineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB15DD292B07443600A21290 /* BoardEngineView.swift */; };
-		FB15DD342B074E6E00A21290 /* ChatUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB15DD332B074E6E00A21290 /* ChatUI.swift */; };
 		FB18F1202B62288700D89F8D /* Assets.xcassets in Sources */ = {isa = PBXBuildFile; fileRef = FB829F0D2B36A83400FAC6E0 /* Assets.xcassets */; };
 		FB18F13E2B6391B500D89F8D /* Square.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB18F13D2B6391B500D89F8D /* Square.swift */; };
 		FB18F1402B63946100D89F8D /* XShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB18F13F2B63946100D89F8D /* XShape.swift */; };
@@ -152,7 +151,6 @@
 		FB10AE0A2B0F162F00295F4B /* ActivityPlanThumbView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityPlanThumbView.swift; sourceTree = "<group>"; };
 		FB10AE0C2B0F16B100295F4B /* ActivityPlanThumbList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityPlanThumbList.swift; sourceTree = "<group>"; };
 		FB15DD292B07443600A21290 /* BoardEngineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardEngineView.swift; sourceTree = "<group>"; };
-		FB15DD332B074E6E00A21290 /* ChatUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatUI.swift; sourceTree = "<group>"; };
 		FB18F13D2B6391B500D89F8D /* Square.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Square.swift; sourceTree = "<group>"; };
 		FB18F13F2B63946100D89F8D /* XShape.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XShape.swift; sourceTree = "<group>"; };
 		FB18F1412B63946B00D89F8D /* OShape.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OShape.swift; sourceTree = "<group>"; };
@@ -388,7 +386,6 @@
 				FB3E02B22B0C6B5100D8558C /* SessionPlanView.swift */,
 				FB3E02B42B0C6B6000D8558C /* ActivityPlanBindingView.swift */,
 				FB18F1762B6988E100D89F8D /* ActivityPlanSingleView.swift */,
-				FB15DD332B074E6E00A21290 /* ChatUI.swift */,
 				FBBDD01C2B6CA8A20009844B /* MvSettingsToolBar.swift */,
 				FBBDD0212B6E186E0009844B /* BoardSettingsToolBar.swift */,
 				FBBAD3BD2B1FBF58004A4332 /* NavPad.swift */,
@@ -886,7 +883,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				FB2AA1072B74352A00BD631C /* SolToggle.swift in Sources */,
-				FB15DD342B074E6E00A21290 /* ChatUI.swift in Sources */,
 				FB9EB6DC2BB682AF00FDD5DE /* OrganizationHome.swift in Sources */,
 				FB10AE052B0DC8E600295F4B /* Tips.swift in Sources */,
 				FBBDD01D2B6CA8A20009844B /* MvSettingsToolBar.swift in Sources */,

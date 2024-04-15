@@ -38,7 +38,7 @@ struct CanvasEngine: View {
     let initialWidth: CGFloat = 6000
     let initialHeight: CGFloat = 6000
     
-    @StateObject var managedWindowsObject: NavWindowController = NavWindowController()
+    @StateObject var navTools: NavTools = NavTools()
     
     var dragAngleGestures: some Gesture {
         DragGesture()
@@ -144,22 +144,18 @@ struct CanvasEngine: View {
     
     var body: some View {
         
-//        let boardView = BoardEngine()
-//            .zIndex(2.0)
-//            .environmentObject(self.BEO)
-        
         if !masterResetCanvas {
             GlobalPositioningZStack { geo, gps in
                 
-                if self.BEO.isLoading {
-                    ProgressView()
-                        .frame(width: 300, height: 300)
-                        .progressViewStyle(.circular)
-                        .scaleEffect(5) // Adjust the size as needed
-                        .padding(20)
-                        .cornerRadius(10)
-                        .position(using: gps, at: .center)
-                }
+//                if self.BEO.isLoading {
+//                    ProgressView()
+//                        .frame(width: 300, height: 300)
+//                        .progressViewStyle(.circular)
+//                        .scaleEffect(5) // Adjust the size as needed
+//                        .padding(20)
+//                        .cornerRadius(10)
+//                        .position(using: gps, at: .center)
+//                }
                 
                 // Menu Bar
                 MenuBarStatic(showIcons: $menuIsOpen, gps: gps){}
@@ -169,10 +165,7 @@ struct CanvasEngine: View {
                     .environmentObject(self.BEO)
                     .position(using: gps, at: .bottomCenter, offsetX: 0, offsetY: 150)
                 
-//                ForEachActiveManagedWindow(managedWindowsObject: managedWindowsObject)
-                if !managedWindowsObject.reload {
-                    managedWindowsObject.ForEachView(for: .global)
-                }
+                navTools.ForEachView(in: .global)
                 
                 if self.BEO.boardSettingsIsShowing && !self.BEO.screenIsActiveAndLocked() {
                     BoardSettingsBar()
@@ -271,6 +264,7 @@ struct CanvasEngine: View {
                     BoardEngine()
                         .zIndex(2.0)
                         .environmentObject(self.BEO)
+                        .environmentObject(self.navTools)
                     
                 }
                 .zIndex(1.0)
@@ -282,7 +276,7 @@ struct CanvasEngine: View {
             }
             .zIndex(0.0)
             .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-            .blur(radius: self.BEO.isLoading ? 10 : 0)
+//            .blur(radius: self.BEO.isLoading ? 10 : 0)
             .background(Color.white.opacity(0.001))
             .gesture(self.BEO.gesturesAreLocked ? nil : dragAngleGestures.simultaneously(with: scaleGestures))
             .onChange(of: self.DO.orientation, perform: { value in
@@ -300,6 +294,9 @@ struct CanvasEngine: View {
                     self.BEO.toolBarIsShowing = false
                 }
             })
+            .onDisappear() {
+
+            }
             .onAppear() {
                 self.BEO.loadUser()
                 menuBarButtonListener()
@@ -330,9 +327,6 @@ struct CanvasEngine: View {
 //                }, onError: { _ in
 //                    print("failed to login")
 //                })
-                
-                
-                
                 
             }
         }
@@ -410,47 +404,46 @@ struct CanvasEngine: View {
     }
     
     func addWindowsToNavManager() {
-        addSessionPlanWindow()
-        addSessionPlansWindow()
-        addChatWindow()
-        addProfileWindow()
-        addMvSettingsWindow()
+//        addSessionPlanWindow()
+//        addSessionPlansWindow()
+//        addChatWindow()
+//        addProfileWindow()
+//        addMvSettingsWindow()
     }
     
-    func handleNavPad() {
-        let caller = MenuBarProvider.navHome.tool.title
-        managedWindowsObject.addNewViewToPool(viewId: caller, viewBuilder: { NavPadView().environmentObject(self.BEO) })
-    }
-    func addChatWindow() {
-        let caller = MenuBarProvider.chat.tool.title
-        managedWindowsObject.addNewViewToPool(viewId: caller, viewBuilder: {
-            NavStackWindow(id: caller, isFloatable: true, contentBuilder: {
-                ChatView().environmentObject(self.BEO)
-            })
-        })
-    }
-    func addProfileWindow() {
-        let caller = MenuBarProvider.profile.tool.title
-        managedWindowsObject.addNewViewToPool(viewId: caller, viewBuilder: {
-            NavStackWindow(id: caller, contentBuilder: {
-                SignUpView().environmentObject(self.BEO)
-            })
-        })
-    }
-    func addSessionPlanWindow() {
-        let caller = MenuBarProvider.boardDetails.tool.title
-        managedWindowsObject.addNewViewToPool(viewId: caller, viewBuilder: {
-            AnyView(NavStackWindow(id: caller, contentBuilder: {
-                SessionPlanView(sessionId: "SOL", isShowing: .constant(true), isMasterWindow: true).environmentObject(self.BEO)
-            }))
-        })
-    }
-    func addSessionPlansWindow() {
-        let caller = MenuBarProvider.boardCreate.tool.title
-        let temp = VF.BuildNavStackWindow(callerId: caller, viewContent: { HomeDashboardView() })
-        managedWindowsObject.addNewViewToPool(viewId: caller, viewBuilder: { temp })
-        
-    }
+//    func handleNavPad() {
+//        let caller = MenuBarProvider.navHome.tool.title
+//        navTools.addNewViewToPool(viewId: caller, viewBuilder: { NavPadView().environmentObject(self.BEO) })
+//    }
+//    func addChatWindow() {
+//        let caller = MenuBarProvider.chat.tool.title
+//        navTools.addNewViewToPool(viewId: caller, viewBuilder: {
+//            NavStackWindow(id: caller, isFloatable: true, contentBuilder: {
+//                ChatView().environmentObject(self.BEO)
+//            })
+//        })
+//    }
+//    func addProfileWindow() {
+//        let caller = MenuBarProvider.profile.tool.title
+//        navTools.addNewViewToPool(viewId: caller, viewBuilder: {
+//            NavStackWindow(id: caller, contentBuilder: {
+//                SignUpView().environmentObject(self.BEO)
+//            })
+//        })
+//    }
+//    func addSessionPlanWindow() {
+//        let caller = MenuBarProvider.boardDetails.tool.title
+//        navTools.addNewViewToPool(viewId: caller, viewBuilder: {
+//            AnyView(NavStackWindow(id: caller, contentBuilder: {
+//                SessionPlanView(sessionId: "SOL", isShowing: .constant(true), isMasterWindow: true).environmentObject(self.BEO)
+//            }))
+//        })
+//    }
+//    func addSessionPlansWindow() {
+//        let caller = MenuBarProvider.boardCreate.tool.title
+//        navTools.addNewNavStackToPool(viewId: caller, viewBuilder: { HomeDashboardView().environmentObject(self.BEO) })
+//        
+//    }
     func addMvSettingsWindow() {
 //        let caller = "mv_settings"
 //        managedWindowsObject.addNewViewToPool(viewId: caller, viewBuilder: {
