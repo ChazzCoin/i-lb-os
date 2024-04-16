@@ -107,25 +107,25 @@ struct BoardEngine: View {
                     saveLineData(start: value.startLocation, end: value.location)
                 } : nil
         )
-        .onChange(of: self.BEO.doSnapshot) { snap in
-            if self.BEO.doSnapshot {
-                takeSnapshot()
-            }
-        }
+//        .onChange(of: self.BEO.doSnapshot) { snap in
+//            if self.BEO.doSnapshot {
+//                takeSnapshot()
+//            }
+//        }
         .onChange(of: self.deviceState) { newScenePhase in
             switch newScenePhase {
                 case .active:
                     print("App is in foreground")
-                    FirebaseRoomService.enterRoom(roomId: self.BEO.currentActivityId)
+//                    FirebaseRoomService.enterRoom(roomId: self.BEO.currentActivityId)
                 case .inactive:
                     print("App is inactive")
-                    FirebaseRoomService.awayRoom(roomId: self.BEO.currentActivityId)
+//                    FirebaseRoomService.awayRoom(roomId: self.BEO.currentActivityId)
                 case .background:
                     print("App is in background")
-                    FirebaseRoomService.leaveRoom(roomId: self.BEO.currentActivityId)
+//                    FirebaseRoomService.leaveRoom(roomId: self.BEO.currentActivityId)
                 @unknown default:
                     print("A new case was added that we're not handling")
-                    FirebaseRoomService.leaveRoom(roomId: self.BEO.currentActivityId)
+//                    FirebaseRoomService.leaveRoom(roomId: self.BEO.currentActivityId)
             }
         }
         .onChange(of: showCreateActivitySheet) { value in
@@ -425,6 +425,10 @@ struct BoardEngine: View {
     }
     
     func createNewActivityPlan() {
+        
+        if !self.BEO.realmInstance.objects(ActivityPlan.self).isEmpty {
+            return
+        }
         
         let newActivity = ActivityPlan()
         self.BEO.changeActivity(activityId: newActivity.id)

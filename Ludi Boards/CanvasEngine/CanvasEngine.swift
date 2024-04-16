@@ -139,23 +139,11 @@ struct CanvasEngine: View {
         self.masterResetCanvas = true
         self.masterResetCanvas = false
     }
-    
-    
-    
+     
     var body: some View {
         
         if !masterResetCanvas {
             GlobalPositioningZStack { geo, gps in
-                
-//                if self.BEO.isLoading {
-//                    ProgressView()
-//                        .frame(width: 300, height: 300)
-//                        .progressViewStyle(.circular)
-//                        .scaleEffect(5) // Adjust the size as needed
-//                        .padding(20)
-//                        .cornerRadius(10)
-//                        .position(using: gps, at: .center)
-//                }
                 
                 // Menu Bar
                 MenuBarStatic(showIcons: $menuIsOpen, gps: gps){}
@@ -300,20 +288,34 @@ struct CanvasEngine: View {
             .onAppear() {
                 self.BEO.loadUser()
                 menuBarButtonListener()
-                navTools.addView(
-                    callerId: MenuBarProvider.profile.tool.title,
-                    mainContent: { SignUpView() },
-                    sideContent: { EmptyView() }
-                )
+                
+                let newUser = CoreUser()
+                newUser.userName = "john boi"
+                newUser.handle = "jboi"
+                
+                let json = newUser.toDict()
+                
+                print("User Dict: \(json)")
+                
+//                navTools.addView(
+//                    callerId: MenuBarProvider.profile.tool.title,
+//                    mainContent: { SignUpView() },
+//                    sideContent: { EmptyView() }
+//                )
+//                navTools.addView(
+//                    callerId: MenuBarProvider.profile.tool.title,
+//                    mainContent: { CoreSignUpView() },
+//                    sideContent: { EmptyView() }
+//                )
                 navTools.addView(
                     callerId: MenuBarProvider.boardCreate.tool.title,
                     mainContent: { HomeDashboardView().environmentObject(self.BEO) },
                     sideContent: { MenuListView(isShowing: .constant(true)).clearSectionBackground() }
                 )
                 NavTools.openNavStack()
-                delayThenMain(3, mainBlock: {
-                    navTools.navTo(viewId: MenuBarProvider.boardCreate.tool.title)
-                })
+//                delayThenMain(3, mainBlock: {
+//                    navTools.navTo(viewId: MenuBarProvider.profile.tool.title)
+//                })
                                 
             }
         }

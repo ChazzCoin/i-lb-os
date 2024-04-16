@@ -37,11 +37,11 @@
 		FB3A28392BC48AE700D38D3E /* CoreEngine in Frameworks */ = {isa = PBXBuildFile; productRef = FB3A28382BC48AE700D38D3E /* CoreEngine */; };
 		FB3E02B32B0C6B5100D8558C /* SessionPlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02B22B0C6B5100D8558C /* SessionPlanView.swift */; };
 		FB3E02B52B0C6B6000D8558C /* ActivityPlanBindingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02B42B0C6B6000D8558C /* ActivityPlanBindingView.swift */; };
-		FB3E02BD2B0C90E600D8558C /* RoomUserList.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02BC2B0C90E600D8558C /* RoomUserList.swift */; };
+		FB3E02BD2B0C90E600D8558C /* _RoomUserList.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02BC2B0C90E600D8558C /* _RoomUserList.swift */; };
 		FB3E02BF2B0C948A00D8558C /* AddBuddyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02BE2B0C948A00D8558C /* AddBuddyView.swift */; };
 		FB3E02C12B0C9A6D00D8558C /* BuddyProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02C02B0C9A6D00D8558C /* BuddyProfileView.swift */; };
 		FB3E02C52B0D2A8500D8558C /* ThumbnailListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02C42B0D2A8500D8558C /* ThumbnailListView.swift */; };
-		FB426AA12B55B6A30058CD9D /* NotificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB426AA02B55B6A30058CD9D /* NotificationView.swift */; };
+		FB426AA12B55B6A30058CD9D /* _NotificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB426AA02B55B6A30058CD9D /* _NotificationView.swift */; };
 		FB4840962B1D43AD0003377A /* BarListPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB4840952B1D43AD0003377A /* BarListPicker.swift */; };
 		FB48409A2B1EBC940003377A /* Sports.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB4840992B1EBC940003377A /* Sports.swift */; };
 		FB48409C2B1EBE8B0003377A /* StopWatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB48409B2B1EBE8B0003377A /* StopWatch.swift */; };
@@ -61,12 +61,12 @@
 		FB8819F32B464CA200C16198 /* RealmFind.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB8819E32B464CA200C16198 /* RealmFind.swift */; };
 		FB8819F92B464CA200C16198 /* RealmChangeListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB8819E42B464CA200C16198 /* RealmChangeListener.swift */; };
 		FB881A002B464D9700C16198 /* TimeProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB8819FF2B464D9700C16198 /* TimeProvider.swift */; };
-		FB881A382B47397600C16198 /* RealmObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB881A372B47397600C16198 /* RealmObserver.swift */; };
+		FB881A382B47397600C16198 /* _RealmObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB881A372B47397600C16198 /* _RealmObserver.swift */; };
 		FB881A3C2B47CD4400C16198 /* UserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB881A3B2B47CD4400C16198 /* UserView.swift */; };
-		FB881A402B48775800C16198 /* SocialTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB881A3F2B48775800C16198 /* SocialTools.swift */; };
-		FB881A442B48C61400C16198 /* BuddyRequestListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB881A432B48C61400C16198 /* BuddyRequestListView.swift */; };
+		FB881A402B48775800C16198 /* _SocialTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB881A3F2B48775800C16198 /* _SocialTools.swift */; };
+		FB881A442B48C61400C16198 /* _BuddyRequestListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB881A432B48C61400C16198 /* _BuddyRequestListView.swift */; };
 		FB93BB172B033E2000864CB2 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FB93BB162B033E2000864CB2 /* GoogleService-Info.plist */; };
-		FB982F912B19D1B900C0DA03 /* FirebaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB982F902B19D1B900C0DA03 /* FirebaseService.swift */; };
+		FB982F912B19D1B900C0DA03 /* _FirebaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB982F902B19D1B900C0DA03 /* _FirebaseService.swift */; };
 		FB9EB6DC2BB682AF00FDD5DE /* OrganizationHome.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9EB6DB2BB682AF00FDD5DE /* OrganizationHome.swift */; };
 		FB9EB6DE2BB6920F00FDD5DE /* RealmSOL.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9EB6DD2BB6920F00FDD5DE /* RealmSOL.swift */; };
 		FB9EB6E12BB6959700FDD5DE /* SessionCategoryProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9EB6E02BB6959700FDD5DE /* SessionCategoryProvider.swift */; };
@@ -74,9 +74,9 @@
 		FB9EB6E52BB9201000FDD5DE /* MenuListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9EB6E42BB9201000FDD5DE /* MenuListView.swift */; };
 		FB9F1DD02B1528FC00FD9078 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9F1DCF2B1528FC00FD9078 /* Extensions.swift */; };
 		FB9F1DD22B1529E400FD9078 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9F1DD12B1529E400FD9078 /* LoadingView.swift */; };
-		FB9F1DD42B15307E00FD9078 /* UserSignUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9F1DD32B15307E00FD9078 /* UserSignUp.swift */; };
+		FB9F1DD42B15307E00FD9078 /* _UserSignUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9F1DD32B15307E00FD9078 /* _UserSignUp.swift */; };
 		FB9F1DD62B1532AB00FD9078 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9F1DD52B1532AB00FD9078 /* ImagePicker.swift */; };
-		FB9F1DD92B1533C400FD9078 /* FirebaseLogin.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9F1DD82B1533C400FD9078 /* FirebaseLogin.swift */; };
+		FB9F1DD92B1533C400FD9078 /* _FirebaseLogin.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9F1DD82B1533C400FD9078 /* _FirebaseLogin.swift */; };
 		FBA20A2F2B166FCE00045D1C /* MVSettingsView_DEPRECATED.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBA20A2E2B166FCE00045D1C /* MVSettingsView_DEPRECATED.swift */; };
 		FBABDAC52B20376F00321A00 /* ConfirmationPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBABDAC42B20376F00321A00 /* ConfirmationPopup.swift */; };
 		FBABDAC72B20456700321A00 /* ToolBarSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBABDAC62B20456700321A00 /* ToolBarSettings.swift */; };
@@ -90,7 +90,7 @@
 		FBBDD0222B6E186E0009844B /* BoardSettingsToolBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBBDD0212B6E186E0009844B /* BoardSettingsToolBar.swift */; };
 		FBBDD0242B6F6D8B0009844B /* CanvasExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBBDD0232B6F6D8B0009844B /* CanvasExtensions.swift */; };
 		FBC2FC6C2B59C4A400D1AB77 /* DStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBC2FC6B2B59C4A400D1AB77 /* DStack.swift */; };
-		FBC2FC6E2B5A0BB200D1AB77 /* TabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBC2FC6D2B5A0BB200D1AB77 /* TabView.swift */; };
+		FBC2FC6E2B5A0BB200D1AB77 /* _TabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBC2FC6D2B5A0BB200D1AB77 /* _TabView.swift */; };
 		FBD3DD492B70695500D9242C /* ToolHistoryObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD3DD482B70695500D9242C /* ToolHistoryObserver.swift */; };
 		FBD3DD4B2B7072E600D9242C /* HistoryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD3DD4A2B7072E600D9242C /* HistoryListView.swift */; };
 		FBD9AFA82AFF00BF005F8620 /* LudiBoardsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFA72AFF00BF005F8620 /* LudiBoardsApp.swift */; };
@@ -99,10 +99,10 @@
 		FBD9AFAF2AFF00BF005F8620 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FBD9AFAE2AFF00BF005F8620 /* Preview Assets.xcassets */; };
 		FBD9AFB82AFF0253005F8620 /* GridLines.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFB72AFF0253005F8620 /* GridLines.swift */; };
 		FBD9AFBA2AFF03D7005F8620 /* CanvasEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD9AFB92AFF03D7005F8620 /* CanvasEngine.swift */; };
-		FBDE4F572B4CF883007FE880 /* LogoutObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDE4F562B4CF883007FE880 /* LogoutObserver.swift */; };
+		FBDE4F572B4CF883007FE880 /* _LogoutObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDE4F562B4CF883007FE880 /* _LogoutObserver.swift */; };
 		FBDE4F592B4D0C12007FE880 /* SessionPlanService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDE4F582B4D0C12007FE880 /* SessionPlanService.swift */; };
 		FBDE4F5B2B4D1038007FE880 /* InternetProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDE4F5A2B4D1038007FE880 /* InternetProvider.swift */; };
-		FBDE4F5D2B4E2345007FE880 /* LiveRooms.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDE4F5C2B4E2345007FE880 /* LiveRooms.swift */; };
+		FBDE4F5D2B4E2345007FE880 /* _LiveRooms.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDE4F5C2B4E2345007FE880 /* _LiveRooms.swift */; };
 		FBDE4F5F2B4F722D007FE880 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FBDE4F5E2B4F722D007FE880 /* GoogleService-Info.plist */; };
 		FBDE4F612B4F734C007FE880 /* MediaPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDE4F602B4F734C007FE880 /* MediaPlayerView.swift */; };
 		FBDE4F632B4F73C2007FE880 /* Song.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDE4F622B4F73C2007FE880 /* Song.swift */; };
@@ -121,11 +121,11 @@
 		FBE2C61A2B1AF7D5004C0116 /* FootballFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C6192B1AF7D5004C0116 /* FootballFieldView.swift */; };
 		FBE2C61C2B1AF961004C0116 /* BoardBackgrounder.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C61B2B1AF961004C0116 /* BoardBackgrounder.swift */; };
 		FBE2C6202B1AFD20004C0116 /* SessionPlanThumbView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C61F2B1AFD20004C0116 /* SessionPlanThumbView.swift */; };
-		FBE2C6222B1B1490004C0116 /* ManagedViewListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C6212B1B1490004C0116 /* ManagedViewListViewModel.swift */; };
+		FBE2C6222B1B1490004C0116 /* _ManagedViewListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C6212B1B1490004C0116 /* _ManagedViewListViewModel.swift */; };
 		FBE2C6242B1B2E01004C0116 /* HomeDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C6232B1B2E01004C0116 /* HomeDashboardView.swift */; };
 		FBE2C6262B1BD7BA004C0116 /* TipBoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C6252B1BD7BA004C0116 /* TipBoxView.swift */; };
-		FBE385502B4B32950090901C /* FriendsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE3854F2B4B32950090901C /* FriendsListView.swift */; };
-		FBEBEF962B49506800B8BA32 /* LiveChat.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBEBEF952B49506800B8BA32 /* LiveChat.swift */; };
+		FBE385502B4B32950090901C /* _FriendsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE3854F2B4B32950090901C /* _FriendsListView.swift */; };
+		FBEBEF962B49506800B8BA32 /* _LiveChat.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBEBEF952B49506800B8BA32 /* _LiveChat.swift */; };
 		FBF1A5F92B5E342B0088150C /* SolIconButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF1A5F82B5E342B0088150C /* SolIconButton.swift */; };
 		FBF1A5FC2B5F7BB70088150C /* Triangle.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF1A5FB2B5F7BB70088150C /* Triangle.swift */; };
 		FBF3902E2B2D78CF00C0508A /* TipProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF3902D2B2D78CF00C0508A /* TipProvider.swift */; };
@@ -144,6 +144,16 @@
 		FBF515C22BBDF76A0066EAA9 /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF515C12BBDF76A0066EAA9 /* SessionManager.swift */; };
 		FBF515C42BBDFA700066EAA9 /* TheAssigner.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF515C32BBDFA700066EAA9 /* TheAssigner.swift */; };
 		FBF515D82BC08DB60066EAA9 /* CoreEngine in Frameworks */ = {isa = PBXBuildFile; productRef = FBF515D72BC08DB60066EAA9 /* CoreEngine */; };
+		FBFF5CD62BCDFBF900149A31 /* RealityKitContent in Frameworks */ = {isa = PBXBuildFile; productRef = FBFF5CD52BCDFBF900149A31 /* RealityKitContent */; };
+		FBFF5CD82BCDFBF900149A31 /* SouthVisionApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBFF5CD72BCDFBF900149A31 /* SouthVisionApp.swift */; };
+		FBFF5CDA2BCDFBF900149A31 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBFF5CD92BCDFBF900149A31 /* ContentView.swift */; };
+		FBFF5CDC2BCDFBF900149A31 /* ImmersiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBFF5CDB2BCDFBF900149A31 /* ImmersiveView.swift */; };
+		FBFF5CDE2BCDFBFA00149A31 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FBFF5CDD2BCDFBFA00149A31 /* Assets.xcassets */; };
+		FBFF5CE12BCDFBFA00149A31 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FBFF5CE02BCDFBFA00149A31 /* Preview Assets.xcassets */; };
+		FBFF5CE92BCE02D500149A31 /* CoreCanvas.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBFF5CE82BCE02D500149A31 /* CoreCanvas.swift */; };
+		FBFF5CEB2BCE031100149A31 /* CanvasGPS.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBFF5CEA2BCE031100149A31 /* CanvasGPS.swift */; };
+		FBFF5CED2BCE068900149A31 /* ARKitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBFF5CEC2BCE068900149A31 /* ARKitView.swift */; };
+		FBFF5CF22BCE4D0E00149A31 /* CoreBuddyListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBFF5CF12BCE4D0D00149A31 /* CoreBuddyListView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -176,11 +186,11 @@
 		FB2AA1062B74352A00BD631C /* SolToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolToggle.swift; sourceTree = "<group>"; };
 		FB3E02B22B0C6B5100D8558C /* SessionPlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionPlanView.swift; sourceTree = "<group>"; };
 		FB3E02B42B0C6B6000D8558C /* ActivityPlanBindingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityPlanBindingView.swift; sourceTree = "<group>"; };
-		FB3E02BC2B0C90E600D8558C /* RoomUserList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomUserList.swift; sourceTree = "<group>"; };
+		FB3E02BC2B0C90E600D8558C /* _RoomUserList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _RoomUserList.swift; sourceTree = "<group>"; };
 		FB3E02BE2B0C948A00D8558C /* AddBuddyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddBuddyView.swift; sourceTree = "<group>"; };
 		FB3E02C02B0C9A6D00D8558C /* BuddyProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuddyProfileView.swift; sourceTree = "<group>"; };
 		FB3E02C42B0D2A8500D8558C /* ThumbnailListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailListView.swift; sourceTree = "<group>"; };
-		FB426AA02B55B6A30058CD9D /* NotificationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationView.swift; sourceTree = "<group>"; };
+		FB426AA02B55B6A30058CD9D /* _NotificationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _NotificationView.swift; sourceTree = "<group>"; };
 		FB4840952B1D43AD0003377A /* BarListPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarListPicker.swift; sourceTree = "<group>"; };
 		FB4840992B1EBC940003377A /* Sports.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sports.swift; sourceTree = "<group>"; };
 		FB48409B2B1EBE8B0003377A /* StopWatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopWatch.swift; sourceTree = "<group>"; };
@@ -190,6 +200,7 @@
 		FB58E8812B030F1D00FD9E2E /* RealmFind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmFind.swift; sourceTree = "<group>"; };
 		FB65D2C82B7D5E2E00564C37 /* SessionProviders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionProviders.swift; sourceTree = "<group>"; };
 		FB65D2CA2B7DC16300564C37 /* SolPickers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolPickers.swift; sourceTree = "<group>"; };
+		FB6C5B4C2BCDF894001B7514 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		FB829F072B36A83300FAC6E0 /* Wrlds.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Wrlds.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FB829F092B36A83300FAC6E0 /* WrldsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WrldsApp.swift; sourceTree = "<group>"; };
 		FB829F0B2B36A83300FAC6E0 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -202,12 +213,12 @@
 		FB8819E32B464CA200C16198 /* RealmFind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmFind.swift; sourceTree = "<group>"; };
 		FB8819E42B464CA200C16198 /* RealmChangeListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmChangeListener.swift; sourceTree = "<group>"; };
 		FB8819FF2B464D9700C16198 /* TimeProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeProvider.swift; sourceTree = "<group>"; };
-		FB881A372B47397600C16198 /* RealmObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmObserver.swift; sourceTree = "<group>"; };
+		FB881A372B47397600C16198 /* _RealmObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _RealmObserver.swift; sourceTree = "<group>"; };
 		FB881A3B2B47CD4400C16198 /* UserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserView.swift; sourceTree = "<group>"; };
-		FB881A3F2B48775800C16198 /* SocialTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialTools.swift; sourceTree = "<group>"; };
-		FB881A432B48C61400C16198 /* BuddyRequestListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuddyRequestListView.swift; sourceTree = "<group>"; };
+		FB881A3F2B48775800C16198 /* _SocialTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _SocialTools.swift; sourceTree = "<group>"; };
+		FB881A432B48C61400C16198 /* _BuddyRequestListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _BuddyRequestListView.swift; sourceTree = "<group>"; };
 		FB93BB162B033E2000864CB2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
-		FB982F902B19D1B900C0DA03 /* FirebaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseService.swift; sourceTree = "<group>"; };
+		FB982F902B19D1B900C0DA03 /* _FirebaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _FirebaseService.swift; sourceTree = "<group>"; };
 		FB9EB6DB2BB682AF00FDD5DE /* OrganizationHome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrganizationHome.swift; sourceTree = "<group>"; };
 		FB9EB6DD2BB6920F00FDD5DE /* RealmSOL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmSOL.swift; sourceTree = "<group>"; };
 		FB9EB6E02BB6959700FDD5DE /* SessionCategoryProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionCategoryProvider.swift; sourceTree = "<group>"; };
@@ -215,9 +226,9 @@
 		FB9EB6E42BB9201000FDD5DE /* MenuListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuListView.swift; sourceTree = "<group>"; };
 		FB9F1DCF2B1528FC00FD9078 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		FB9F1DD12B1529E400FD9078 /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
-		FB9F1DD32B15307E00FD9078 /* UserSignUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSignUp.swift; sourceTree = "<group>"; };
+		FB9F1DD32B15307E00FD9078 /* _UserSignUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _UserSignUp.swift; sourceTree = "<group>"; };
 		FB9F1DD52B1532AB00FD9078 /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
-		FB9F1DD82B1533C400FD9078 /* FirebaseLogin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseLogin.swift; sourceTree = "<group>"; };
+		FB9F1DD82B1533C400FD9078 /* _FirebaseLogin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _FirebaseLogin.swift; sourceTree = "<group>"; };
 		FBA20A2E2B166FCE00045D1C /* MVSettingsView_DEPRECATED.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MVSettingsView_DEPRECATED.swift; sourceTree = "<group>"; };
 		FBABDAC42B20376F00321A00 /* ConfirmationPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmationPopup.swift; sourceTree = "<group>"; };
 		FBABDAC62B20456700321A00 /* ToolBarSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolBarSettings.swift; sourceTree = "<group>"; };
@@ -231,7 +242,7 @@
 		FBBDD0212B6E186E0009844B /* BoardSettingsToolBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardSettingsToolBar.swift; sourceTree = "<group>"; };
 		FBBDD0232B6F6D8B0009844B /* CanvasExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasExtensions.swift; sourceTree = "<group>"; };
 		FBC2FC6B2B59C4A400D1AB77 /* DStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DStack.swift; sourceTree = "<group>"; };
-		FBC2FC6D2B5A0BB200D1AB77 /* TabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabView.swift; sourceTree = "<group>"; };
+		FBC2FC6D2B5A0BB200D1AB77 /* _TabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _TabView.swift; sourceTree = "<group>"; };
 		FBD3DD482B70695500D9242C /* ToolHistoryObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolHistoryObserver.swift; sourceTree = "<group>"; };
 		FBD3DD4A2B7072E600D9242C /* HistoryListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryListView.swift; sourceTree = "<group>"; };
 		FBD9AFA42AFF00BF005F8620 /* Ludi Boards.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Ludi Boards.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -241,10 +252,10 @@
 		FBD9AFAE2AFF00BF005F8620 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		FBD9AFB72AFF0253005F8620 /* GridLines.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridLines.swift; sourceTree = "<group>"; };
 		FBD9AFB92AFF03D7005F8620 /* CanvasEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasEngine.swift; sourceTree = "<group>"; };
-		FBDE4F562B4CF883007FE880 /* LogoutObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogoutObserver.swift; sourceTree = "<group>"; };
+		FBDE4F562B4CF883007FE880 /* _LogoutObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _LogoutObserver.swift; sourceTree = "<group>"; };
 		FBDE4F582B4D0C12007FE880 /* SessionPlanService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionPlanService.swift; sourceTree = "<group>"; };
 		FBDE4F5A2B4D1038007FE880 /* InternetProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InternetProvider.swift; sourceTree = "<group>"; };
-		FBDE4F5C2B4E2345007FE880 /* LiveRooms.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveRooms.swift; sourceTree = "<group>"; };
+		FBDE4F5C2B4E2345007FE880 /* _LiveRooms.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _LiveRooms.swift; sourceTree = "<group>"; };
 		FBDE4F5E2B4F722D007FE880 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		FBDE4F602B4F734C007FE880 /* MediaPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaPlayerView.swift; sourceTree = "<group>"; };
 		FBDE4F622B4F73C2007FE880 /* Song.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Song.swift; sourceTree = "<group>"; };
@@ -262,11 +273,11 @@
 		FBE2C6192B1AF7D5004C0116 /* FootballFieldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FootballFieldView.swift; sourceTree = "<group>"; };
 		FBE2C61B2B1AF961004C0116 /* BoardBackgrounder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardBackgrounder.swift; sourceTree = "<group>"; };
 		FBE2C61F2B1AFD20004C0116 /* SessionPlanThumbView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionPlanThumbView.swift; sourceTree = "<group>"; };
-		FBE2C6212B1B1490004C0116 /* ManagedViewListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedViewListViewModel.swift; sourceTree = "<group>"; };
+		FBE2C6212B1B1490004C0116 /* _ManagedViewListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _ManagedViewListViewModel.swift; sourceTree = "<group>"; };
 		FBE2C6232B1B2E01004C0116 /* HomeDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeDashboardView.swift; sourceTree = "<group>"; };
 		FBE2C6252B1BD7BA004C0116 /* TipBoxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TipBoxView.swift; sourceTree = "<group>"; };
-		FBE3854F2B4B32950090901C /* FriendsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendsListView.swift; sourceTree = "<group>"; };
-		FBEBEF952B49506800B8BA32 /* LiveChat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveChat.swift; sourceTree = "<group>"; };
+		FBE3854F2B4B32950090901C /* _FriendsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _FriendsListView.swift; sourceTree = "<group>"; };
+		FBEBEF952B49506800B8BA32 /* _LiveChat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _LiveChat.swift; sourceTree = "<group>"; };
 		FBF1A5F82B5E342B0088150C /* SolIconButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolIconButton.swift; sourceTree = "<group>"; };
 		FBF1A5FB2B5F7BB70088150C /* Triangle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Triangle.swift; sourceTree = "<group>"; };
 		FBF3902D2B2D78CF00C0508A /* TipProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TipProvider.swift; sourceTree = "<group>"; };
@@ -285,6 +296,18 @@
 		FBF515C12BBDF76A0066EAA9 /* SessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManager.swift; sourceTree = "<group>"; };
 		FBF515C32BBDFA700066EAA9 /* TheAssigner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TheAssigner.swift; sourceTree = "<group>"; };
 		FBF515C52BC084250066EAA9 /* CoreEngine */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = CoreEngine; sourceTree = "<group>"; };
+		FBFF5CD12BCDFBF900149A31 /* SouthVision.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SouthVision.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FBFF5CD42BCDFBF900149A31 /* RealityKitContent */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = RealityKitContent; sourceTree = "<group>"; };
+		FBFF5CD72BCDFBF900149A31 /* SouthVisionApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SouthVisionApp.swift; sourceTree = "<group>"; };
+		FBFF5CD92BCDFBF900149A31 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		FBFF5CDB2BCDFBF900149A31 /* ImmersiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImmersiveView.swift; sourceTree = "<group>"; };
+		FBFF5CDD2BCDFBFA00149A31 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		FBFF5CE02BCDFBFA00149A31 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		FBFF5CE22BCDFBFA00149A31 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FBFF5CE82BCE02D500149A31 /* CoreCanvas.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreCanvas.swift; sourceTree = "<group>"; };
+		FBFF5CEA2BCE031100149A31 /* CanvasGPS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasGPS.swift; sourceTree = "<group>"; };
+		FBFF5CEC2BCE068900149A31 /* ARKitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARKitView.swift; sourceTree = "<group>"; };
+		FBFF5CF12BCE4D0D00149A31 /* CoreBuddyListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreBuddyListView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -301,6 +324,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				FBF515D82BC08DB60066EAA9 /* CoreEngine in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FBFF5CCE2BCDFBF900149A31 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FBFF5CD62BCDFBF900149A31 /* RealityKitContent in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -390,7 +421,7 @@
 				FBBDD0212B6E186E0009844B /* BoardSettingsToolBar.swift */,
 				FBBAD3BD2B1FBF58004A4332 /* NavPad.swift */,
 				FBABDAC62B20456700321A00 /* ToolBarSettings.swift */,
-				FB9F1DD32B15307E00FD9078 /* UserSignUp.swift */,
+				FB9F1DD32B15307E00FD9078 /* _UserSignUp.swift */,
 				FB9EB6DB2BB682AF00FDD5DE /* OrganizationHome.swift */,
 				FB18F1862B6B10CE00D89F8D /* RecordingView.swift */,
 				FBA20A2E2B166FCE00045D1C /* MVSettingsView_DEPRECATED.swift */,
@@ -450,6 +481,7 @@
 		FB829F082B36A83300FAC6E0 /* Wrlds */ = {
 			isa = PBXGroup;
 			children = (
+				FB6C5B4C2BCDF894001B7514 /* Info.plist */,
 				FBDE4F6B2B4F846C007FE880 /* FireParser.swift */,
 				FBDE4F672B4F7736007FE880 /* FireData.swift */,
 				FB58E8772B01F40300FD9E2E /* FireCore.swift */,
@@ -467,6 +499,7 @@
 				FBDE4F642B4F75B4007FE880 /* DocumentPickerView.swift */,
 				FBDE4F6D2B4F9D28007FE880 /* UtbBgOne.swift */,
 				FBDE4F6F2B4FA831007FE880 /* RecordShapeView.swift */,
+				FBFF5CEC2BCE068900149A31 /* ARKitView.swift */,
 			);
 			path = Wrlds;
 			sourceTree = "<group>";
@@ -526,6 +559,8 @@
 				FBF515C52BC084250066EAA9 /* CoreEngine */,
 				FBD9AFA62AFF00BF005F8620 /* Ludi Boards */,
 				FB829F082B36A83300FAC6E0 /* Wrlds */,
+				FBFF5CD22BCDFBF900149A31 /* SouthVision */,
+				FBFF5CD32BCDFBF900149A31 /* Packages */,
 				FBD9AFA52AFF00BF005F8620 /* Products */,
 				FB8819D62B464AD500C16198 /* Frameworks */,
 			);
@@ -536,6 +571,7 @@
 			children = (
 				FBD9AFA42AFF00BF005F8620 /* Ludi Boards.app */,
 				FB829F072B36A83300FAC6E0 /* Wrlds.app */,
+				FBFF5CD12BCDFBF900149A31 /* SouthVision.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -543,6 +579,7 @@
 		FBD9AFA62AFF00BF005F8620 /* Ludi Boards */ = {
 			isa = PBXGroup;
 			children = (
+				FBFF5CF02BCE4D0400149A31 /* holding */,
 				FB18F17F2B6AC49600D89F8D /* Ludi-Boards-Info.plist */,
 				FBEBEF902B494DA600B8BA32 /* DB */,
 				FB829F152B3D4DE100FAC6E0 /* Extensions */,
@@ -574,7 +611,7 @@
 			children = (
 				FBF515BA2BBDF5EF0066EAA9 /* Managers */,
 				FB58E8812B030F1D00FD9E2E /* RealmFind.swift */,
-				FBE2C6212B1B1490004C0116 /* ManagedViewListViewModel.swift */,
+				FBE2C6212B1B1490004C0116 /* _ManagedViewListViewModel.swift */,
 				FB9EB6DD2BB6920F00FDD5DE /* RealmSOL.swift */,
 			);
 			path = Realm;
@@ -584,10 +621,10 @@
 			isa = PBXGroup;
 			children = (
 				FBDE4F692B4F7739007FE880 /* FireCore.swift */,
-				FB9F1DD82B1533C400FD9078 /* FirebaseLogin.swift */,
+				FB9F1DD82B1533C400FD9078 /* _FirebaseLogin.swift */,
 				FBDF0DC62B224D2600FADE44 /* ActivityPlanService.swift */,
 				FBDE4F582B4D0C12007FE880 /* SessionPlanService.swift */,
-				FB881A3F2B48775800C16198 /* SocialTools.swift */,
+				FB881A3F2B48775800C16198 /* _SocialTools.swift */,
 			);
 			path = Firebase;
 			sourceTree = "<group>";
@@ -637,7 +674,7 @@
 			children = (
 				FB48409B2B1EBE8B0003377A /* StopWatch.swift */,
 				FBBAD3BB2B1F8ECC004A4332 /* Timer.swift */,
-				FBC2FC6D2B5A0BB200D1AB77 /* TabView.swift */,
+				FBC2FC6D2B5A0BB200D1AB77 /* _TabView.swift */,
 			);
 			path = Experimental;
 			sourceTree = "<group>";
@@ -647,11 +684,11 @@
 			children = (
 				FB3E02C02B0C9A6D00D8558C /* BuddyProfileView.swift */,
 				FB3E02BE2B0C948A00D8558C /* AddBuddyView.swift */,
-				FB3E02BC2B0C90E600D8558C /* RoomUserList.swift */,
+				FB3E02BC2B0C90E600D8558C /* _RoomUserList.swift */,
 				FBDF0DC42B21811000FADE44 /* SharedSessionsView.swift */,
 				FB881A3B2B47CD4400C16198 /* UserView.swift */,
-				FBE3854F2B4B32950090901C /* FriendsListView.swift */,
-				FB881A432B48C61400C16198 /* BuddyRequestListView.swift */,
+				FBE3854F2B4B32950090901C /* _FriendsListView.swift */,
+				FB881A432B48C61400C16198 /* _BuddyRequestListView.swift */,
 			);
 			path = Social;
 			sourceTree = "<group>";
@@ -670,8 +707,8 @@
 			isa = PBXGroup;
 			children = (
 				FBEBEF922B49503800B8BA32 /* Social */,
-				FB881A372B47397600C16198 /* RealmObserver.swift */,
-				FB982F902B19D1B900C0DA03 /* FirebaseService.swift */,
+				FB881A372B47397600C16198 /* _RealmObserver.swift */,
+				FB982F902B19D1B900C0DA03 /* _FirebaseService.swift */,
 				FBB450012B052B180096F8EB /* FireLiveData.swift */,
 			);
 			path = LiveData;
@@ -680,9 +717,9 @@
 		FBEBEF922B49503800B8BA32 /* Social */ = {
 			isa = PBXGroup;
 			children = (
-				FBDE4F5C2B4E2345007FE880 /* LiveRooms.swift */,
-				FBEBEF952B49506800B8BA32 /* LiveChat.swift */,
-				FBDE4F562B4CF883007FE880 /* LogoutObserver.swift */,
+				FBDE4F5C2B4E2345007FE880 /* _LiveRooms.swift */,
+				FBEBEF952B49506800B8BA32 /* _LiveChat.swift */,
+				FBDE4F562B4CF883007FE880 /* _LogoutObserver.swift */,
 			);
 			path = Social;
 			sourceTree = "<group>";
@@ -704,7 +741,7 @@
 				FBF3902D2B2D78CF00C0508A /* TipProvider.swift */,
 				FB10AE042B0DC8E600295F4B /* Tips.swift */,
 				FBE2C6252B1BD7BA004C0116 /* TipBoxView.swift */,
-				FB426AA02B55B6A30058CD9D /* NotificationView.swift */,
+				FB426AA02B55B6A30058CD9D /* _NotificationView.swift */,
 			);
 			path = Tips;
 			sourceTree = "<group>";
@@ -745,6 +782,45 @@
 				FBF515C32BBDFA700066EAA9 /* TheAssigner.swift */,
 			);
 			path = Managers;
+			sourceTree = "<group>";
+		};
+		FBFF5CD22BCDFBF900149A31 /* SouthVision */ = {
+			isa = PBXGroup;
+			children = (
+				FBFF5CE82BCE02D500149A31 /* CoreCanvas.swift */,
+				FBFF5CEA2BCE031100149A31 /* CanvasGPS.swift */,
+				FBFF5CD72BCDFBF900149A31 /* SouthVisionApp.swift */,
+				FBFF5CD92BCDFBF900149A31 /* ContentView.swift */,
+				FBFF5CDB2BCDFBF900149A31 /* ImmersiveView.swift */,
+				FBFF5CDD2BCDFBFA00149A31 /* Assets.xcassets */,
+				FBFF5CE22BCDFBFA00149A31 /* Info.plist */,
+				FBFF5CDF2BCDFBFA00149A31 /* Preview Content */,
+			);
+			path = SouthVision;
+			sourceTree = "<group>";
+		};
+		FBFF5CD32BCDFBF900149A31 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				FBFF5CD42BCDFBF900149A31 /* RealityKitContent */,
+			);
+			path = Packages;
+			sourceTree = "<group>";
+		};
+		FBFF5CDF2BCDFBFA00149A31 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				FBFF5CE02BCDFBFA00149A31 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		FBFF5CF02BCE4D0400149A31 /* holding */ = {
+			isa = PBXGroup;
+			children = (
+				FBFF5CF12BCE4D0D00149A31 /* CoreBuddyListView.swift */,
+			);
+			path = holding;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -790,6 +866,26 @@
 			productReference = FBD9AFA42AFF00BF005F8620 /* Ludi Boards.app */;
 			productType = "com.apple.product-type.application";
 		};
+		FBFF5CD02BCDFBF900149A31 /* SouthVision */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FBFF5CE52BCDFBFA00149A31 /* Build configuration list for PBXNativeTarget "SouthVision" */;
+			buildPhases = (
+				FBFF5CCD2BCDFBF900149A31 /* Sources */,
+				FBFF5CCE2BCDFBF900149A31 /* Frameworks */,
+				FBFF5CCF2BCDFBF900149A31 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SouthVision;
+			packageProductDependencies = (
+				FBFF5CD52BCDFBF900149A31 /* RealityKitContent */,
+			);
+			productName = SouthVision;
+			productReference = FBFF5CD12BCDFBF900149A31 /* SouthVision.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -797,7 +893,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1500;
+				LastSwiftUpdateCheck = 1530;
 				LastUpgradeCheck = 1500;
 				TargetAttributes = {
 					FB829F062B36A83300FAC6E0 = {
@@ -805,6 +901,9 @@
 					};
 					FBD9AFA32AFF00BF005F8620 = {
 						CreatedOnToolsVersion = 15.0.1;
+					};
+					FBFF5CD02BCDFBF900149A31 = {
+						CreatedOnToolsVersion = 15.3;
 					};
 				};
 			};
@@ -826,6 +925,7 @@
 			targets = (
 				FBD9AFA32AFF00BF005F8620 /* Ludi Boards */,
 				FB829F062B36A83300FAC6E0 /* Wrlds */,
+				FBFF5CD02BCDFBF900149A31 /* SouthVision */,
 			);
 		};
 /* End PBXProject section */
@@ -851,6 +951,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		FBFF5CCF2BCDFBF900149A31 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FBFF5CE12BCDFBFA00149A31 /* Preview Assets.xcassets in Resources */,
+				FBFF5CDE2BCDFBFA00149A31 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -860,6 +969,7 @@
 			files = (
 				FB18F1202B62288700D89F8D /* Assets.xcassets in Sources */,
 				FB8819E02B464B2300C16198 /* GlobalPositioning.swift in Sources */,
+				FBFF5CED2BCE068900149A31 /* ARKitView.swift in Sources */,
 				FBDE4F682B4F7736007FE880 /* FireData.swift in Sources */,
 				FBDE4F702B4FA831007FE880 /* RecordShapeView.swift in Sources */,
 				FB8819F92B464CA200C16198 /* RealmChangeListener.swift in Sources */,
@@ -900,15 +1010,15 @@
 				FBE2C6242B1B2E01004C0116 /* HomeDashboardView.swift in Sources */,
 				FB18F1402B63946100D89F8D /* XShape.swift in Sources */,
 				FB9EB6E32BB695FD00FDD5DE /* ActivityCategoryProvider.swift in Sources */,
-				FBE385502B4B32950090901C /* FriendsListView.swift in Sources */,
-				FB9F1DD92B1533C400FD9078 /* FirebaseLogin.swift in Sources */,
+				FBE385502B4B32950090901C /* _FriendsListView.swift in Sources */,
+				FB9F1DD92B1533C400FD9078 /* _FirebaseLogin.swift in Sources */,
 				FB18F1692B68718000D89F8D /* SearchableSessionListView.swift in Sources */,
 				FBDF0DC52B21811000FADE44 /* SharedSessionsView.swift in Sources */,
 				FBAE62AD2B295A8100E008D5 /* ManagedPopUpView.swift in Sources */,
 				FB18F13E2B6391B500D89F8D /* Square.swift in Sources */,
-				FB426AA12B55B6A30058CD9D /* NotificationView.swift in Sources */,
+				FB426AA12B55B6A30058CD9D /* _NotificationView.swift in Sources */,
 				FB4840962B1D43AD0003377A /* BarListPicker.swift in Sources */,
-				FB3E02BD2B0C90E600D8558C /* RoomUserList.swift in Sources */,
+				FB3E02BD2B0C90E600D8558C /* _RoomUserList.swift in Sources */,
 				FB18F1892B6B12FD00D89F8D /* RecordingTimeline.swift in Sources */,
 				FBD3DD492B70695500D9242C /* ToolHistoryObserver.swift in Sources */,
 				FBD9AFA82AFF00BF005F8620 /* LudiBoardsApp.swift in Sources */,
@@ -919,15 +1029,15 @@
 				FBF515B22BBB8DE90066EAA9 /* Assigners.swift in Sources */,
 				FBE2C61C2B1AF961004C0116 /* BoardBackgrounder.swift in Sources */,
 				FBF515B92BBD03FF0066EAA9 /* BoardEngineObject.swift in Sources */,
-				FB9F1DD42B15307E00FD9078 /* UserSignUp.swift in Sources */,
+				FB9F1DD42B15307E00FD9078 /* _UserSignUp.swift in Sources */,
 				FBF515AA2BBB5D8F0066EAA9 /* BaseDetailsView.swift in Sources */,
 				FBF515AE2BBB64D10066EAA9 /* TeamDetailsView.swift in Sources */,
 				FBDF0DC72B224D2600FADE44 /* ActivityPlanService.swift in Sources */,
 				FBBAD3BC2B1F8ECC004A4332 /* Timer.swift in Sources */,
 				FB48409C2B1EBE8B0003377A /* StopWatch.swift in Sources */,
 				FB3E02B52B0C6B6000D8558C /* ActivityPlanBindingView.swift in Sources */,
-				FBDE4F572B4CF883007FE880 /* LogoutObserver.swift in Sources */,
-				FBE2C6222B1B1490004C0116 /* ManagedViewListViewModel.swift in Sources */,
+				FBDE4F572B4CF883007FE880 /* _LogoutObserver.swift in Sources */,
+				FBE2C6222B1B1490004C0116 /* _ManagedViewListViewModel.swift in Sources */,
 				FBC2FC6C2B59C4A400D1AB77 /* DStack.swift in Sources */,
 				FBF515AC2BBB5F420066EAA9 /* OrganizationDetailsView.swift in Sources */,
 				FB18F1772B6988E200D89F8D /* ActivityPlanSingleView.swift in Sources */,
@@ -944,7 +1054,7 @@
 				FBE2C6172B1AF595004C0116 /* GrassFieldView.swift in Sources */,
 				FBF515B42BBCE2320066EAA9 /* TrainingEquipment.swift in Sources */,
 				FBF515BC2BBDF6070066EAA9 /* OrganizationManager.swift in Sources */,
-				FB881A382B47397600C16198 /* RealmObserver.swift in Sources */,
+				FB881A382B47397600C16198 /* _RealmObserver.swift in Sources */,
 				FBA20A2F2B166FCE00045D1C /* MVSettingsView_DEPRECATED.swift in Sources */,
 				FBBDD01B2B6CA8000009844B /* LineIcons.swift in Sources */,
 				FB3E02B32B0C6B5100D8558C /* SessionPlanView.swift in Sources */,
@@ -957,15 +1067,15 @@
 				FBF515C42BBDFA700066EAA9 /* TheAssigner.swift in Sources */,
 				FB881A3C2B47CD4400C16198 /* UserView.swift in Sources */,
 				FB18F16B2B68A1CE00D89F8D /* SolListItem.swift in Sources */,
-				FBC2FC6E2B5A0BB200D1AB77 /* TabView.swift in Sources */,
+				FBC2FC6E2B5A0BB200D1AB77 /* _TabView.swift in Sources */,
 				FBDE4F5B2B4D1038007FE880 /* InternetProvider.swift in Sources */,
 				FB18F1852B6AEC2100D89F8D /* SearchableRecordingActionsListView.swift in Sources */,
-				FB881A402B48775800C16198 /* SocialTools.swift in Sources */,
+				FB881A402B48775800C16198 /* _SocialTools.swift in Sources */,
 				FB3E02C52B0D2A8500D8558C /* ThumbnailListView.swift in Sources */,
 				FBE2C61A2B1AF7D5004C0116 /* FootballFieldView.swift in Sources */,
-				FBEBEF962B49506800B8BA32 /* LiveChat.swift in Sources */,
+				FBEBEF962B49506800B8BA32 /* _LiveChat.swift in Sources */,
 				FBDE4F6A2B4F773A007FE880 /* FireCore.swift in Sources */,
-				FB982F912B19D1B900C0DA03 /* FirebaseService.swift in Sources */,
+				FB982F912B19D1B900C0DA03 /* _FirebaseService.swift in Sources */,
 				FB18F15C2B68369400D89F8D /* TeamView.swift in Sources */,
 				FBBDD0222B6E186E0009844B /* BoardSettingsToolBar.swift in Sources */,
 				FB18F1612B68390600D89F8D /* CorePicker.swift in Sources */,
@@ -977,16 +1087,17 @@
 				FBF1A5F92B5E342B0088150C /* SolIconButton.swift in Sources */,
 				FB18F1832B6AE54200D89F8D /* SearchableRecordingsListView.swift in Sources */,
 				FB15DD2A2B07443600A21290 /* BoardEngineView.swift in Sources */,
+				FBFF5CF22BCE4D0E00149A31 /* CoreBuddyListView.swift in Sources */,
 				FB18F17E2B6ABDA200D89F8D /* PdfImaging.swift in Sources */,
 				FB9F1DD22B1529E400FD9078 /* LoadingView.swift in Sources */,
 				FBABDAC72B20456700321A00 /* ToolBarSettings.swift in Sources */,
-				FBDE4F5D2B4E2345007FE880 /* LiveRooms.swift in Sources */,
+				FBDE4F5D2B4E2345007FE880 /* _LiveRooms.swift in Sources */,
 				FBB450022B052B180096F8EB /* FireLiveData.swift in Sources */,
 				FB18F1672B686EA900D89F8D /* TeamList.swift in Sources */,
 				FBD3DD4B2B7072E600D9242C /* HistoryListView.swift in Sources */,
 				FBBAD3BE2B1FBF58004A4332 /* NavPad.swift in Sources */,
 				FB9EB6E12BB6959700FDD5DE /* SessionCategoryProvider.swift in Sources */,
-				FB881A442B48C61400C16198 /* BuddyRequestListView.swift in Sources */,
+				FB881A442B48C61400C16198 /* _BuddyRequestListView.swift in Sources */,
 				FB18F1652B68687900D89F8D /* PlayerRefList.swift in Sources */,
 				FB9F1DD02B1528FC00FD9078 /* Extensions.swift in Sources */,
 				FBDE4F592B4D0C12007FE880 /* SessionPlanService.swift in Sources */,
@@ -994,6 +1105,18 @@
 				FB18F1872B6B10CE00D89F8D /* RecordingView.swift in Sources */,
 				FBE2C6142B1AC68D004C0116 /* SoccerFieldBG.swift in Sources */,
 				FB58E8802B02B26C00FD9E2E /* DragAndDrop.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FBFF5CCD2BCDFBF900149A31 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FBFF5CEB2BCE031100149A31 /* CanvasGPS.swift in Sources */,
+				FBFF5CE92BCE02D500149A31 /* CoreCanvas.swift in Sources */,
+				FBFF5CDA2BCDFBF900149A31 /* ContentView.swift in Sources */,
+				FBFF5CD82BCDFBF900149A31 /* SouthVisionApp.swift in Sources */,
+				FBFF5CDC2BCDFBF900149A31 /* ImmersiveView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1011,8 +1134,10 @@
 				DEVELOPMENT_TEAM = 248J2GKL56;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Wrlds/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = WTHN;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
+				INFOPLIST_KEY_NSCameraUsageDescription = AR/VR;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -1043,8 +1168,10 @@
 				DEVELOPMENT_TEAM = 248J2GKL56;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Wrlds/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = WTHN;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
+				INFOPLIST_KEY_NSCameraUsageDescription = AR/VR;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -1255,6 +1382,66 @@
 			};
 			name = Release;
 		};
+		FBFF5CE32BCDFBFA00149A31 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"SouthVision/Preview Content\"";
+				DEVELOPMENT_TEAM = 248J2GKL56;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "$(TARGET_NAME)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "South Cove Society";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = io.SouthVision;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = xros;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator xros xrsimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				XROS_DEPLOYMENT_TARGET = 1.1;
+			};
+			name = Debug;
+		};
+		FBFF5CE42BCDFBFA00149A31 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"SouthVision/Preview Content\"";
+				DEVELOPMENT_TEAM = 248J2GKL56;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "$(TARGET_NAME)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "South Cove Society";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = io.SouthVision;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = xros;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator xros xrsimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				XROS_DEPLOYMENT_TARGET = 1.1;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1285,6 +1472,15 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		FBFF5CE52BCDFBFA00149A31 /* Build configuration list for PBXNativeTarget "SouthVision" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FBFF5CE32BCDFBFA00149A31 /* Debug */,
+				FBFF5CE42BCDFBFA00149A31 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
@@ -1303,6 +1499,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = FBF515D12BC08AED0066EAA9 /* XCLocalSwiftPackageReference "CoreEngine" */;
 			productName = CoreEngine;
+		};
+		FBFF5CD52BCDFBF900149A31 /* RealityKitContent */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RealityKitContent;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

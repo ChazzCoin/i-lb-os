@@ -21,7 +21,7 @@ public struct NavStackWindow: View {
     
     public var body: some View {
         if !NAV.masterResetNavWindow {
-            if #available(iOS 16.0, *) {
+            if #available(iOS 17.0, *) {
                 modernView
             } else {
                 legacyView
@@ -29,35 +29,37 @@ public struct NavStackWindow: View {
         }
     }
     
-    @available(iOS 16.0, *)
+    @available(iOS 17.0, *)
     var modernView: some View {
         NavigationSplitView(
-            columnVisibility: .constant(NAV.sidebarState.sidebar),
+            columnVisibility: .constant(.detailOnly),
             sidebar: {
-                NAV.getActiveView()?.getSidebarView()
+                NAV.getActiveView()?.getSidebarView().toolbar(removing: NAV.sidebarIsEnabled ? .none : .sidebarToggle)
             },
             detail: {
                 NAV.getActiveView()?.getMainView()
                     .background(Image("sol_bg_big").opacity(0.3))
                     .environmentObject(NAV)
                     .navigationBarItems(leading: HStack {
+                            EmptyView()
+                        }, trailing: HStack {
+                        
                         // Add buttons or icons here for minimize, maximize, close, etc.
                         Button(action: {
                             NAV.mainState = .closed
                         }) {
                             Image(systemName: "minus.circle")
                                 .resizable()
-                                .frame(width: 30, height: 30)
+                                .frame(width: 25, height: 25)
                         }
                         
-                    }, trailing: HStack {
                         if self.NAV.keyboardIsShowing {
                             Button(action: {
                                 hideKeyboard()
                             }) {
                                 Image(systemName: "keyboard.chevron.compact.down")
                                     .resizable()
-                                    .frame(width: 30, height: 30)
+                                    .frame(width: 25, height: 25)
                             }
                         }
                         Button(action: {
@@ -65,10 +67,13 @@ public struct NavStackWindow: View {
                         }) {
                             Image(systemName: "arrow.up.left.and.down.right.magnifyingglass")
                                 .resizable()
-                                .frame(width: 30, height: 30)
+                                .frame(width: 25, height: 25)
                         }
                     })
+                    
             })
+//        .navigationSplitViewStyle(.balanced)
+        .toolbar(removing: .sidebarToggle)
         .frame(width: NAV.navSize.width, height: NAV.navSize.height)
         .cornerRadius(15)
         .shadow(radius: 10)

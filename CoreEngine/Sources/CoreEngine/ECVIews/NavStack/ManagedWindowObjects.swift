@@ -135,10 +135,10 @@ public class ManagedViewWindow: Identifiable {
 public extension NavWindowController {
     
     // MARK: OPEN/CLOSE
-    static func openNavStack(sideBar: NavStackState = .closed) { BroadcastTools.send(.NavStackMessage, value: NavStackMessage(isOpen: .open, sidebarIsOpen: sideBar)) }
-    static func closeNavStack() { BroadcastTools.send(.NavStackMessage, value: NavStackMessage(isOpen: .closed, sidebarIsOpen: .closed)) }
-    static func openNavStackSideBar() { BroadcastTools.send(.NavStackMessage, value: NavStackMessage(isOpen: .open, sidebarIsOpen: .open)) }
-    static func closeNavStackSideBar() { BroadcastTools.send(.NavStackMessage, value: NavStackMessage(isOpen: .open, sidebarIsOpen: .closed)) }
+    static func openNavStack(sideBar: WindowAction? = nil) { BroadcastTools.send(.NavStackMessage, value: NavStackMessage(navAction: .open, sidebarAction: sideBar)) }
+//    static func closeNavStack() { BroadcastTools.send(.NavStackMessage, value: NavStackMessage(isOpen: .closed, sidebarIsOpen: .closed)) }
+//    static func openNavStackSideBar() { BroadcastTools.send(.NavStackMessage, value: NavStackMessage(isOpen: .open, sidebarIsOpen: .open)) }
+//    static func closeNavStackSideBar() { BroadcastTools.send(.NavStackMessage, value: NavStackMessage(isOpen: .open, sidebarIsOpen: .closed)) }
     
     // MARK: SIZE
 }
@@ -156,6 +156,7 @@ public class NavWindowController: ObservableObject {
     
     @Published public var navSize: NavStackSize = .full_menu_bar
     @Published public var mainState: NavStackState = .closed
+    @Published public var sidebarIsEnabled: Bool = false
     @Published public var sidebarState: NavStackState = .closed
     
     @Published public var isLocked = false
@@ -180,7 +181,7 @@ public class NavWindowController: ObservableObject {
     @ViewBuilder
     public func getNavStackView() -> some View {
         if self.mainState.main {
-            NavStackWindow().environmentObject(self)
+            NavStackWindow().environmentObject(self).onAppear() { print("updating nav stack...") }
         }
     }
     
@@ -188,27 +189,64 @@ public class NavWindowController: ObservableObject {
         self.broadcaster = BroadcastTools()
         broadcaster.subscribeTo(.NavStackMessage, storeIn: &cancellables) { wc in
             if let navIntake = wc as? NavStackMessage {
-                if navIntake.navId != self.id { return }
-                if let io = navIntake.isOpen {
-                    if self.mainState.rawValue != io.rawValue {
-                        self.mainState = io
+                
+                if navIntake.navId.lowercased() != self.id { return }
+                print("NavStack Intake -> NAV TO: \(String(describing: navIntake.viewName))")
+                
+                if let io = navIntake.navAction {
+                    switch io {
+                        case .toggle:
+                            if self.mainState == NavStackState.open {
+                                self.mainState = NavStackState.closed
+                            } else {
+                                self.mainState = NavStackState.open
+                            }
+                        case .open: self.mainState = NavStackState.open
+                        case .close: return self.mainState = NavStackState.closed
+                        default: return
                     }
                 }
-                if let sio = navIntake.sidebarIsOpen {
-                    if self.sidebarState.rawValue != sio.rawValue {
-                        self.sidebarState = sio
+                if let sio = navIntake.sidebarAction {
+                    switch sio {
+                        case .toggle:
+                            if self.sidebarState == NavStackState.open {
+                                self.sidebarState = NavStackState.closed
+                            } else {
+                                self.sidebarState = NavStackState.open
+                            }
+                        case .open: self.sidebarState = NavStackState.open
+                        case .close: return self.sidebarState = NavStackState.closed
+                        default: return
                     }
                 }
+                
                 if let s = navIntake.size {
                     if self.navSize.rawValue != s.rawValue {
                         self.setSize(gps: self.gps, s)
                     }
                 }
-                if let nt = navIntake.navTo {
-                    self.navTo(viewId: nt)
+                if let nt = navIntake.viewName?.lowercased() {
+                    
+                    if let va = navIntake.viewAction {
+                        switch va {
+                            case .toggle:
+                                if self.activeView?.id == nt {
+                                    self.goBack()
+                                } else {
+                                    self.navTo(viewId: nt)
+                                }
+                            case .open: self.navTo(viewId: nt)
+                            case .close: self.goBack()
+                            default: return
+                        }
+                    }
+                    
+                    
+                    
                 }
             }
         }
+        self.preLoadWithCoreViews()
     }
     
     public func setSize(gps: GlobalPositioningSystem, _ navSize: NavStackSize) {
@@ -235,27 +273,35 @@ public class NavWindowController: ObservableObject {
         masterResetNavWindow = false
     }
     
+    public func preLoadWithCoreViews() {
+        self.addView(
+            callerId: MenuBarProvider.profile.tool.title,
+            mainContent: { CoreSignUpView() },
+            sideContent: { EmptyView() }
+        )
+    }
+    
     // Function to add a view to the pool
     public func addView(window: ManagedViewWindow) {
-       viewPool[window.id] = window
-       if activeView == nil { setActiveViewByID(window.id) }
+       viewPool[window.id.lowercased()] = window
+       if activeView == nil { setActiveViewByID(window.id.lowercased()) }
     }
     
     public func addView<Content: View, Side: View>(callerId: String, @ViewBuilder mainContent: @escaping () -> Content, @ViewBuilder sideContent: @escaping () -> Side) {
         let newManagedWindow = VF.BuildManagedHolder(
-            callerId: callerId,
+            callerId: callerId.lowercased(),
             mainContent: mainContent,
             sideContent: sideContent
         )
-        viewPool[newManagedWindow.id] = newManagedWindow
-        if activeView == nil { setActiveViewByID(newManagedWindow.id) }
+        viewPool[newManagedWindow.id.lowercased()] = newManagedWindow
+        if activeView == nil { setActiveViewByID(newManagedWindow.id.lowercased()) }
     }
 
     // Function to make a view active by its ID
     public func setActiveViewByID(_ id: String) {
-        guard let window = viewPool[id] else { return }
+        guard let window = viewPool[id.lowercased()] else { return }
         activeView = window
-        backStack.enqueue(id)
+        backStack.enqueue(id.lowercased())
     }
 
     // Get the currently active view
@@ -265,25 +311,25 @@ public class NavWindowController: ObservableObject {
     
     // Function to navigate to a specific view by ID
     public func navTo(viewId: String) {
-        guard let window = viewPool[viewId] else { return }
+        guard let window = viewPool[viewId.lowercased()] else { return }
         activeView = window
-        backStack.enqueue(viewId)
+        backStack.enqueue(viewId.lowercased())
     }
 
     // Function to go back to the previous view in the history
     public func goBack() {
         _ = backStack.dequeue() // Remove current view
         guard let previousViewId = backStack.peek() else { return }
-        if let previousView = viewPool[previousViewId] {
+        if let previousView = viewPool[previousViewId.lowercased()] {
             activeView = previousView
         }
     }
     
     public func baseNav(windowId: String, _ action: WindowAction) {
-        guard let window = viewPool[windowId] else { return }
+        guard let window = viewPool[windowId.lowercased()] else { return }
         switch action {
             case .toggle: window.toggleMinimized()
-            case .open: setActiveViewByID(windowId)
+            case .open: setActiveViewByID(windowId.lowercased())
             case .close:
                 window.windowLevel = .closed
                 goBack() // Navigate back if a window is closed

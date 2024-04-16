@@ -24,7 +24,7 @@ struct BoardSettingsBar: View {
     var borderWidth: CGFloat = 2
     
     @EnvironmentObject var BEO: BoardEngineObject
-    @StateObject var managedViews = ManagedViewListener()
+//    @StateObject var managedViews = ManagedViewListener()
     @State var managedViewNotificationToken: NotificationToken? = nil
 
     @State private var refreshView = false

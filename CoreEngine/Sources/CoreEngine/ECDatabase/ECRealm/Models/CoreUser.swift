@@ -30,6 +30,7 @@ public class CoreUser: Object, ObjectKeyIdentifiable {
     // Link to friend requests the user has sent or received
 //    @Persisted(originProperty: "fromUserId") var sentRequests: LinkingObjects<FriendRequest>
 //    @Persisted(originProperty: "toUser") var receivedRequests: LinkingObjects<FriendRequest>
+    @Persisted public var linkedFriends: List<CoreUser> = List()
     
     public static let COLLECTION_NAME = DatabasePaths.users.rawValue
     

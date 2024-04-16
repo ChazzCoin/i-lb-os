@@ -164,9 +164,9 @@ class BoardEngineObject : ObservableObject {
     func changeActivity(activityId:String) {
         if activityId.isEmpty { return }
         if activityId != self.currentActivityId {
-            FirebaseRoomService.leaveRoom(roomId: self.currentActivityId)
+//            FirebaseRoomService.leaveRoom(roomId: self.currentActivityId)
             self.currentActivityId = activityId
-            FirebaseRoomService.enterRoom(roomId: activityId)
+//            FirebaseRoomService.enterRoom(roomId: activityId)
             self.setupToolActions()
         }
     }

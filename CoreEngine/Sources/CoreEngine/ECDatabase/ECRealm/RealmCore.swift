@@ -184,15 +184,29 @@ public extension Object {
             }
         }
     }
-    
-    func toDict() -> [String: Any] {
-        let properties = self.objectSchema.properties.map { $0.name }
-        var dictionary: [String: Any] = [:]
-        for property in properties {
-            dictionary[property] = self.value(forKey: property)
-        }
-        return dictionary
-    }
+    // Convert to dictionary
+   func toDict() -> [String: Any] {
+       let properties = self.objectSchema.properties.filter {
+           if let objectType = $0.objectClassName, objectType.contains("LinkingObjects<") {
+               return false // Exclude LinkingObjects properties
+           }
+           return !$0.name.hasPrefix("linked") // Additionally exclude properties starting with "linked"
+       }.map { $0.name }
+
+       var dictionary: [String: Any] = [:]
+       for property in properties {
+           dictionary[property] = self.value(forKey: property)
+       }
+       return dictionary
+   }
+//    func toDict() -> [String: Any] {
+//        let properties = self.objectSchema.properties.map { $0.name }
+//        var dictionary: [String: Any] = [:]
+//        for property in properties {
+//            dictionary[property] = self.value(forKey: property)
+//        }
+//        return dictionary
+//    }
     
     
     func isRealmObjectValid() -> Bool {

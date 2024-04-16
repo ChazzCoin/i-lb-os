@@ -34,38 +34,6 @@
             endingLineNumber = "236"
             landmarkName = "body"
             landmarkType = "24">
-            <Locations>
-               <Location
-                  uuid = "2D362EAA-2D46-4398-AAE1-6F120123C3DA - a7ac310af56882ca"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Ludi_Boards.GenericNavWindowFloat.body.getter : some"
-                  moduleName = "Ludi Boards"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/ManagedViews/ManagedViewWindow.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "236"
-                  endingLineNumber = "236"
-                  offsetFromSymbolStart = "4468">
-               </Location>
-               <Location
-                  uuid = "2D362EAA-2D46-4398-AAE1-6F120123C3DA - af1f15782ed22f3e"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #5 (CoreGraphics.CGFloat) -&gt; () in Ludi_Boards.GenericNavWindowFloat.body.getter : some"
-                  moduleName = "Ludi Boards"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/ManagedViews/ManagedViewWindow.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "236"
-                  endingLineNumber = "236"
-                  offsetFromSymbolStart = "88">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -114,86 +82,6 @@
             endingLineNumber = "58"
             landmarkName = "start()"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "CF356229-C5D6-458D-AF8D-157A07BD44C9 - b350610a1145f340"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Ludi_Boards.ManagedViewService.start() -&gt; ()"
-                  moduleName = "Ludi Boards"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/Firebase/ManagedViewsService%20copy.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "58"
-                  endingLineNumber = "58"
-                  offsetFromSymbolStart = "168">
-               </Location>
-               <Location
-                  uuid = "CF356229-C5D6-458D-AF8D-157A07BD44C9 - 78bb18c3e0093718"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (__C.FIRDataSnapshot) -&gt; () in Ludi_Boards.ManagedViewService.start() -&gt; ()"
-                  moduleName = "Ludi Boards"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/Firebase/ManagedViewsService%20copy.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "59"
-                  endingLineNumber = "59"
-                  offsetFromSymbolStart = "48">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "B5613C0C-5345-4746-A978-E0DB1E8FDFF0"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Ludi Boards/ManagedViews/ManagedPopUpView.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "229"
-            endingLineNumber = "229"
-            landmarkName = "loadFromRealm()"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "B5613C0C-5345-4746-A978-E0DB1E8FDFF0 - 83d21e7e8f51c70"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Ludi_Boards.PopupMenuView.loadFromRealm() -&gt; ()"
-                  moduleName = "Ludi Boards"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/ManagedViews/ManagedPopUpView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "230"
-                  endingLineNumber = "230"
-                  offsetFromSymbolStart = "320">
-               </Location>
-               <Location
-                  uuid = "B5613C0C-5345-4746-A978-E0DB1E8FDFF0 - 83d21e7e8f51c51"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Ludi_Boards.PopupMenuView.loadFromRealm() -&gt; ()"
-                  moduleName = "Ludi Boards"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/ManagedViews/ManagedPopUpView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "229"
-                  endingLineNumber = "229"
-                  offsetFromSymbolStart = "292">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -210,38 +98,6 @@
             endingLineNumber = "18"
             landmarkName = "getFriendRequests(realmInstance:completion:)"
             landmarkType = "9">
-            <Locations>
-               <Location
-                  uuid = "EDDAF361-2779-4649-BB89-387C654CEA98 - 79b36ddb34bdcf14"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Ludi_Boards.getFriendRequests(realmInstance: RealmSwift.Realm, completion: (Swift.Optional&lt;RealmSwift.List&lt;Ludi_Boards.Request&gt;&gt;) -&gt; ()) -&gt; ()"
-                  moduleName = "Ludi Boards"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/Firebase/FirebaseSocial.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "18"
-                  endingLineNumber = "18"
-                  offsetFromSymbolStart = "320">
-               </Location>
-               <Location
-                  uuid = "EDDAF361-2779-4649-BB89-387C654CEA98 - 79b36ddb34bdcf14"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Ludi_Boards.getFriendRequests(realmInstance: RealmSwift.Realm, completion: (Swift.Optional&lt;RealmSwift.List&lt;Ludi_Boards.Request&gt;&gt;) -&gt; ()) -&gt; ()"
-                  moduleName = "Ludi Boards"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/Firebase/FirebaseSocial.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "18"
-                  endingLineNumber = "18"
-                  offsetFromSymbolStart = "348">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -258,53 +114,6 @@
             endingLineNumber = "213"
             landmarkName = "refreshFromFirebase(block:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "3801E630-2C51-4423-B7ED-F2DB19D05402 - 3d3fccf1700e1f61"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (__C.FIRDataSnapshot) -&gt; () in closure #1 (__C.FIRDatabaseReference) -&gt; () in Ludi_Boards.LiveStateObject.refreshFromFirebase(block: (__C.FIRDatabaseReference) -&gt; __C.FIRDatabaseReference) -&gt; ()"
-                  moduleName = "Ludi Boards"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/Realm/RealmState.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "209"
-                  endingLineNumber = "209"
-                  offsetFromSymbolStart = "212">
-               </Location>
-               <Location
-                  uuid = "3801E630-2C51-4423-B7ED-F2DB19D05402 - 3d3fccf1700e1f61"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (__C.FIRDataSnapshot) -&gt; () in closure #1 (__C.FIRDatabaseReference) -&gt; () in Ludi_Boards.LiveStateObject.refreshFromFirebase(block: (__C.FIRDatabaseReference) -&gt; __C.FIRDatabaseReference) -&gt; ()"
-                  moduleName = "Ludi Boards"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/Realm/RealmState.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "209"
-                  endingLineNumber = "209"
-                  offsetFromSymbolStart = "112">
-               </Location>
-               <Location
-                  uuid = "3801E630-2C51-4423-B7ED-F2DB19D05402 - 3d3fccf1700e1fe5"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (__C.FIRDataSnapshot) -&gt; () in closure #1 (__C.FIRDatabaseReference) -&gt; () in Ludi_Boards.LiveStateObject.refreshFromFirebase(block: (__C.FIRDatabaseReference) -&gt; __C.FIRDatabaseReference) -&gt; ()"
-                  moduleName = "Ludi Boards"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/Realm/RealmState.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "213"
-                  endingLineNumber = "213"
-                  offsetFromSymbolStart = "112">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -417,38 +226,6 @@
             endingLineNumber = "240"
             landmarkName = "startObserver(keepRunning:realm:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "8329F7C0-A057-47F0-89D8-47BF23D53F37 - 23e612c7d9805e7"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (RealmSwift.RealmCollectionChange&lt;RealmSwift.Results&lt;Ludi_Boards.UserToSession&gt;&gt;) -&gt; () in Ludi_Boards.RealmUserToSessionObserver.startObserver(keepRunning: Swift.Bool, realm: RealmSwift.Realm) -&gt; ()"
-                  moduleName = "Ludi Boards"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/DB/LiveData/Social/LiveSessions.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "240"
-                  endingLineNumber = "240"
-                  offsetFromSymbolStart = "2408">
-               </Location>
-               <Location
-                  uuid = "8329F7C0-A057-47F0-89D8-47BF23D53F37 - 23e612c7d9805e7"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (RealmSwift.RealmCollectionChange&lt;RealmSwift.Results&lt;Ludi_Boards.UserToSession&gt;&gt;) -&gt; () in Ludi_Boards.RealmUserToSessionObserver.startObserver(keepRunning: Swift.Bool, realm: RealmSwift.Realm) -&gt; ()"
-                  moduleName = "Ludi Boards"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/DB/LiveData/Social/LiveSessions.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "240"
-                  endingLineNumber = "240"
-                  offsetFromSymbolStart = "2448">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -465,38 +242,6 @@
             endingLineNumber = "230"
             landmarkName = "startObserver(keepRunning:realm:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "3CB47A64-33A7-42E8-8546-9763D5CDB526 - 23e612c7d980491"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (RealmSwift.RealmCollectionChange&lt;RealmSwift.Results&lt;Ludi_Boards.UserToSession&gt;&gt;) -&gt; () in Ludi_Boards.RealmUserToSessionObserver.startObserver(keepRunning: Swift.Bool, realm: RealmSwift.Realm) -&gt; ()"
-                  moduleName = "Ludi Boards"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/DB/LiveData/Social/LiveSessions.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "230"
-                  endingLineNumber = "230"
-                  offsetFromSymbolStart = "1604">
-               </Location>
-               <Location
-                  uuid = "3CB47A64-33A7-42E8-8546-9763D5CDB526 - 23e612c7d980491"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (RealmSwift.RealmCollectionChange&lt;RealmSwift.Results&lt;Ludi_Boards.UserToSession&gt;&gt;) -&gt; () in Ludi_Boards.RealmUserToSessionObserver.startObserver(keepRunning: Swift.Bool, realm: RealmSwift.Realm) -&gt; ()"
-                  moduleName = "Ludi Boards"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/DB/LiveData/Social/LiveSessions.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "230"
-                  endingLineNumber = "230"
-                  offsetFromSymbolStart = "1644">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -529,38 +274,6 @@
             endingLineNumber = "222"
             landmarkName = "startObserver(keepRunning:realm:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "DC10E586-436A-4581-8A21-B0AD879DDD14 - 23e612c7d980389"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (RealmSwift.RealmCollectionChange&lt;RealmSwift.Results&lt;Ludi_Boards.UserToSession&gt;&gt;) -&gt; () in Ludi_Boards.RealmUserToSessionObserver.startObserver(keepRunning: Swift.Bool, realm: RealmSwift.Realm) -&gt; ()"
-                  moduleName = "Ludi Boards"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/DB/LiveData/Social/LiveSessions.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "222"
-                  endingLineNumber = "222"
-                  offsetFromSymbolStart = "572">
-               </Location>
-               <Location
-                  uuid = "DC10E586-436A-4581-8A21-B0AD879DDD14 - 23e612c7d980389"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (RealmSwift.RealmCollectionChange&lt;RealmSwift.Results&lt;Ludi_Boards.UserToSession&gt;&gt;) -&gt; () in Ludi_Boards.RealmUserToSessionObserver.startObserver(keepRunning: Swift.Bool, realm: RealmSwift.Realm) -&gt; ()"
-                  moduleName = "Ludi Boards"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/DB/LiveData/Social/LiveSessions.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "222"
-                  endingLineNumber = "222"
-                  offsetFromSymbolStart = "612">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -577,38 +290,6 @@
             endingLineNumber = "233"
             landmarkName = "startObserver(keepRunning:realm:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "051684B7-B4C4-4760-9637-68572F19328F - 23e612c7d9804fc"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (RealmSwift.RealmCollectionChange&lt;RealmSwift.Results&lt;Ludi_Boards.UserToSession&gt;&gt;) -&gt; () in Ludi_Boards.RealmUserToSessionObserver.startObserver(keepRunning: Swift.Bool, realm: RealmSwift.Realm) -&gt; ()"
-                  moduleName = "Ludi Boards"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/DB/LiveData/Social/LiveSessions.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "233"
-                  endingLineNumber = "233"
-                  offsetFromSymbolStart = "1792">
-               </Location>
-               <Location
-                  uuid = "051684B7-B4C4-4760-9637-68572F19328F - 23e612c7d9804fc"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (RealmSwift.RealmCollectionChange&lt;RealmSwift.Results&lt;Ludi_Boards.UserToSession&gt;&gt;) -&gt; () in Ludi_Boards.RealmUserToSessionObserver.startObserver(keepRunning: Swift.Bool, realm: RealmSwift.Realm) -&gt; ()"
-                  moduleName = "Ludi Boards"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/DB/LiveData/Social/LiveSessions.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "233"
-                  endingLineNumber = "233"
-                  offsetFromSymbolStart = "1832">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -625,38 +306,6 @@
             endingLineNumber = "243"
             landmarkName = "startObserver(keepRunning:realm:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "ABD9D0B8-FBD6-44D3-98F9-01E9BB2DAACD - 23e612c7d980642"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (RealmSwift.RealmCollectionChange&lt;RealmSwift.Results&lt;Ludi_Boards.UserToSession&gt;&gt;) -&gt; () in Ludi_Boards.RealmUserToSessionObserver.startObserver(keepRunning: Swift.Bool, realm: RealmSwift.Realm) -&gt; ()"
-                  moduleName = "Ludi Boards"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/DB/LiveData/Social/LiveSessions.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "243"
-                  endingLineNumber = "243"
-                  offsetFromSymbolStart = "2900">
-               </Location>
-               <Location
-                  uuid = "ABD9D0B8-FBD6-44D3-98F9-01E9BB2DAACD - 23e612c7d980642"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (RealmSwift.RealmCollectionChange&lt;RealmSwift.Results&lt;Ludi_Boards.UserToSession&gt;&gt;) -&gt; () in Ludi_Boards.RealmUserToSessionObserver.startObserver(keepRunning: Swift.Bool, realm: RealmSwift.Realm) -&gt; ()"
-                  moduleName = "Ludi Boards"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/DB/LiveData/Social/LiveSessions.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "243"
-                  endingLineNumber = "243"
-                  offsetFromSymbolStart = "2940">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -673,38 +322,6 @@
             endingLineNumber = "101"
             landmarkName = "deleteItems(at:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "BB87D891-98C2-48C0-BDDB-1E89BECFADAC - 9a4fe9a64a5c1984"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #5 () -&gt; () in Ludi_Boards.SearchableRecordingsListView.body.getter : some"
-                  moduleName = "Ludi Boards"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/views/ListItems/SearchableRecordingsListView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "101"
-                  endingLineNumber = "101"
-                  offsetFromSymbolStart = "348">
-               </Location>
-               <Location
-                  uuid = "BB87D891-98C2-48C0-BDDB-1E89BECFADAC - de0d2950946546b3"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Ludi_Boards.SearchableRecordingsListView.deleteItems(at: Foundation.IndexSet) -&gt; ()"
-                  moduleName = "Ludi Boards"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/views/ListItems/SearchableRecordingsListView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "101"
-                  endingLineNumber = "101"
-                  offsetFromSymbolStart = "84">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -721,38 +338,6 @@
             endingLineNumber = "65"
             landmarkName = "body"
             landmarkType = "24">
-            <Locations>
-               <Location
-                  uuid = "3A186C6A-D0CB-42CB-B5DB-CD2F5799B8E1 - 519fc2fcfe5f8c6"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #2 (Swift.String) -&gt; () in Ludi_Boards.SearchableRecordingsListView.body.getter : some"
-                  moduleName = "Ludi Boards"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/views/ListItems/SearchableRecordingsListView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "66"
-                  endingLineNumber = "66"
-                  offsetFromSymbolStart = "380">
-               </Location>
-               <Location
-                  uuid = "3A186C6A-D0CB-42CB-B5DB-CD2F5799B8E1 - 519fc2fcfe5f8c6"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #2 (Swift.String) -&gt; () in Ludi_Boards.SearchableRecordingsListView.body.getter : some"
-                  moduleName = "Ludi Boards"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/views/ListItems/SearchableRecordingsListView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "66"
-                  endingLineNumber = "66"
-                  offsetFromSymbolStart = "428">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -769,38 +354,6 @@
             endingLineNumber = "64"
             landmarkName = "body"
             landmarkType = "24">
-            <Locations>
-               <Location
-                  uuid = "9E8B78DE-8798-4849-80DB-70721FB00FBD - 519fc2fcfe5f8e5"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #2 (Swift.String) -&gt; () in Ludi_Boards.SearchableRecordingsListView.body.getter : some"
-                  moduleName = "Ludi Boards"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/views/ListItems/SearchableRecordingsListView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "65"
-                  endingLineNumber = "65"
-                  offsetFromSymbolStart = "152">
-               </Location>
-               <Location
-                  uuid = "9E8B78DE-8798-4849-80DB-70721FB00FBD - 519fc2fcfe5f8e5"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #2 (Swift.String) -&gt; () in Ludi_Boards.SearchableRecordingsListView.body.getter : some"
-                  moduleName = "Ludi Boards"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/views/ListItems/SearchableRecordingsListView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "65"
-                  endingLineNumber = "65"
-                  offsetFromSymbolStart = "200">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -833,54 +386,6 @@
             endingLineNumber = "84"
             landmarkName = "objectType(path:)"
             landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "E7487215-B6CE-44CE-8CA4-B78A3E51E7B8"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Ludi Boards/CanvasEngine/BoardEngineView.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "374"
-            endingLineNumber = "374"
-            landmarkName = "handleBoardChange(temp:)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "E7487215-B6CE-44CE-8CA4-B78A3E51E7B8 - 179d1ba4b9925c5c"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Ludi_Boards.BoardEngine.handleBoardChange(temp: CoreEngine.ActivityChange) -&gt; ()"
-                  moduleName = "Ludi Boards"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/CanvasEngine/BoardEngineView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "373"
-                  endingLineNumber = "373"
-                  offsetFromSymbolStart = "192">
-               </Location>
-               <Location
-                  uuid = "E7487215-B6CE-44CE-8CA4-B78A3E51E7B8 - 179d1ba4b9925c7f"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Ludi_Boards.BoardEngine.handleBoardChange(temp: CoreEngine.ActivityChange) -&gt; ()"
-                  moduleName = "Ludi Boards"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/chazzromeo/ChazzCoin/Ludi%20Boards/Ludi%20Boards/CanvasEngine/BoardEngineView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "374"
-                  endingLineNumber = "374"
-                  offsetFromSymbolStart = "136">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

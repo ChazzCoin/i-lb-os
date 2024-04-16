@@ -23,6 +23,7 @@ public func emojiList() -> [String] {
 }
 
 // SwiftUI View for the Emoji Picker
+
 public struct EmojiPicker: View {
     public var onEmojiSelected: (EmojiProvider) -> Void
     

@@ -37,23 +37,26 @@ public class WindowController {
 
 public class NavStackMessage {
     public var navId: String = "master"
-    public var isOpen: NavStackState? = nil
-    public var sidebarIsOpen: NavStackState? = nil
+    public var navAction: WindowAction? = nil
+    public var sidebarAction: WindowAction? = nil
     public var size: NavStackSize? = nil
-    public var navTo: String? = nil
+    public var viewName: String? = nil
+    public var viewAction: WindowAction? = nil
     
     public init(
         navId: String = "master",
-        isOpen: NavStackState? = nil,
-        sidebarIsOpen: NavStackState? = nil,
+        navAction: WindowAction? = nil,
+        sidebarAction: WindowAction? = nil,
         size: NavStackSize? = nil,
-        navTo: String? = nil
+        viewName: String? = nil,
+        viewAction: WindowAction? = nil
     ) {
         self.navId = navId
-        self.isOpen = isOpen
-        self.sidebarIsOpen = sidebarIsOpen
+        self.navAction = navAction
+        self.sidebarAction = sidebarAction
         self.size = size
-        self.navTo = navTo
+        self.viewName = viewName
+        self.viewAction = viewAction
     }
 }
 

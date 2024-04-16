@@ -47,8 +47,8 @@ struct SignUpView: View {
     var body: some View {
         
         if self.isLoggedIn {
-//            ProfileView()
-//                .opacity(self.isLoggedIn ? 1.0 : 0.0)
+            CoreProfileView()
+                .opacity(self.isLoggedIn ? 1.0 : 0.0)
         } else {
             LoadingForm() { runLoading in
                 HStack {

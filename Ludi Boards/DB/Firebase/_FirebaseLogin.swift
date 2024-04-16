@@ -5,14 +5,14 @@
 //  Created by Charles Romeo on 11/27/23.
 //
 
-import Foundation
-import SwiftUI
-import RealmSwift
-import FirebaseAuth
-//import FirebaseFirestore
-import FirebaseDatabase
-//import FirebaseAnalytics
-import CoreEngine
+//import Foundation
+//import SwiftUI
+//import RealmSwift
+//import FirebaseAuth
+////import FirebaseFirestore
+//import FirebaseDatabase
+////import FirebaseAnalytics
+//import CoreEngine
 
 
 //func syncUserFromFirebaseDb(_ email: String, realmInstance: Realm=realm(), completion: @escaping (Bool) -> Void) {

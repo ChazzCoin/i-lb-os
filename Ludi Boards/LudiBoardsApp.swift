@@ -24,17 +24,17 @@ struct LudiBoardsApp: SwiftUI.App {
     
     var body: some Scene {
         WindowGroup {
-            let temp = CanvasEngine()
-            temp.onAppear() {
-                
-                delayThenMain(15, mainBlock: {
-                    if let img = ImageRenderer(content: temp).cgImage {
-                        let result = CoreFiles.saveImageToDocuments(image: UIImage(cgImage: img), withName: "temp.jpg")
-                        print("Image was saved: [\(result)]")
-                    }
-                })
-               
-            }
+            CanvasEngine()
+//            temp.onAppear() {
+//                
+//                delayThenMain(15, mainBlock: {
+//                    if let img = ImageRenderer(content: temp).cgImage {
+//                        let result = CoreFiles.saveImageToDocuments(image: UIImage(cgImage: img), withName: "temp.jpg")
+//                        print("Image was saved: [\(result)]")
+//                    }
+//                })
+//               
+//            }
             
             
         }

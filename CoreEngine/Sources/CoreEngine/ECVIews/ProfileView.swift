@@ -39,21 +39,21 @@ public struct CoreProfileView: View {
                     .padding(.top, 30)
                 
                 HStack {
-//                    Text(currentUser.object?.userName ?? "")
-//                        .font(.largeTitle)
-//                        .fontWeight(.bold)
+                    Text(UserTools.currentUserName ?? "")
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
                     
                     Text("Online")
                         .font(.subheadline)
                         .foregroundColor(.green)
                 }
                 
-//                Text(currentUser.object?.userId ?? "")
-//                    .font(.subheadline)
-//                    .fontWeight(.bold)
-//                Text(currentUser.object?.email ?? "")
-//                    .font(.subheadline)
-//                    .fontWeight(.bold)
+                Text(UserTools.currentUserId ?? "")
+                    .font(.subheadline)
+                    .fontWeight(.bold)
+                Text(UserTools.currentUserHandle ?? "")
+                    .font(.subheadline)
+                    .fontWeight(.bold)
                 
                 if UserTools.isLoggedIn {
                     Section(header: Text("Connection Status")) {
@@ -61,44 +61,20 @@ public struct CoreProfileView: View {
                     }
                 }
                 
-//                Section(header: Text("Friend Requests")) {
-//                    BuddyRequestListView()
-//                }
-//                
-//                Section(header: Text("Friends")) {
-//                    FriendsListView()
-//                }
-                
-//                SolButton(title: "Search Buddy", action: {
-//                    // Add buddy action
-//                    showNewPlanSheet = true
-//                }, isEnabled: showAddBuddyButton)
-//                
-//                SolConfirmButton(
-//                    title: "Sign Out",
-//                    message: "Are you sure you want to logout?",
-//                    action: {
-////                        runLoading()
-//                        UserTools.logout()
-//                    },
-//                    isEnabled: true)
+             
+                CoreConfirmButton(
+                    title: "Sign Out",
+                    message: "Are you sure you want to logout?",
+                    action: {
+                        UserTools.logout()
+                    },
+                    isEnabled: true)
                 
             }
             .padding(.bottom, 20)
         }
-        .refreshable {
-            loadUser()
-        }
-        .onAppear() {
-            loadUser()
-        }
-        .onDisappear() {
-//            currentUser.destroy()
-        }
+
         .navigationBarTitle("Profile", displayMode: .inline)
-        .sheet(isPresented: $showNewPlanSheet) {
-//            AddBuddyView(isPresented: $showNewPlanSheet, sessionId: .constant("none"))
-        }
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button("Edit") {

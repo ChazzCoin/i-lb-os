@@ -30,7 +30,7 @@ struct MvSettingsBar<Content: View>: View {
     //
     @State var activityId = ""
     @EnvironmentObject var BEO: BoardEngineObject
-    @StateObject var managedViews = ManagedViewListener()
+//    @StateObject var managedViews = ManagedViewListener()
     @State var managedViewNotificationToken: NotificationToken? = nil
     
     @State var viewId = ""
@@ -347,7 +347,7 @@ struct MvSettingsBar<Content: View>: View {
         if self.activityId != self.BEO.currentActivityId {
             self.activityId = self.BEO.currentActivityId
         }
-        managedViews.loadTools(activityId: self.activityId)
+//        managedViews.loadTools(activityId: self.activityId)
         observeFromRealm()
     }
     
