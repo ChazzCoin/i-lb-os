@@ -17,7 +17,9 @@ struct BoardEngine: View {
     @EnvironmentObject var BEO: BoardEngineObject
     @EnvironmentObject var managedWindowsObject: NavWindowController
     @StateObject var PMO = PopupMenuObject()
-    @StateObject var MVFactory = ManagedViewFactory()
+    @StateObject var MVFactory = ManagedViewTools()
+    
+    @ObservedObject public var MVTools: ManagedViewTools = ManagedViewTools()
     //
     @State var MVS: AllManagedViewsService? = nil
 //    @State var SPS: SessionPlanService? = nil
@@ -45,73 +47,76 @@ struct BoardEngine: View {
     @State private var showCreateActivitySheet = false
     
     var body: some View {
-         ZStack() {
-             
-//             managedWindowsObject.ForEachView().scaleEffect(10.0)'
-             
-             // Board Tools
-             if self.BEO.boardRefreshFlag {
-                 ForEach(self.BEO.basicTools) { item in
-                     if !item.isDeleted {
-                         
-                         ManagedViewFactory.build(type: item.toolType, subType: item.subToolType, sport: item.sport)
-                             .getView(viewId: item.id, activityId: item.boardId)
-                             .zIndex(20.0)
-                             .environmentObject(self.BEO)
-                         
-                         // Main Tool Management Functionality
-//                         ManagedViewToolFactory(toolType: item.toolType, viewId: item.id, activityId: item.boardId)
-//                             .zIndex(20.0)
-//                             .environmentObject(self.BEO)
-                         
+//        GlobalPositioningZStack(coordinateSpace: CoreNameSpace.board, width: self.BEO.boardWidth, height: self.BEO.boardHeight) { bGeo, bGps in
+        
+        GeometryReader { geo in
+            ZStack {
+                 
+                 // Board Tools
+                 if self.BEO.boardRefreshFlag {
+                     
+                     MVTools.Display()
+                     
+    //                 ForEach(self.BEO.basicTools) { item in
+    //                     if !item.isDeleted {
+    //
+    //                         ManagedViewTools.build(type: item.toolType, subType: item.subToolType, sport: item.sport)
+    //                             .getView(viewId: item.id, activityId: item.boardId)
+    //                             .zIndex(20.0)
+    //                             .environmentObject(self.BEO)
+    //
+    //                         // Main Tool Management Functionality
+    ////                         ManagedViewToolFactory(toolType: item.toolType, viewId: item.id, activityId: item.boardId)
+    ////                             .zIndex(20.0)
+    ////                             .environmentObject(self.BEO)
+    //
+    //                     }
+    //                 }
+                 }
+                 
+                 // Temporary line being drawn
+                 if self.BEO.isDraw {
+                     if drawingStartPoint != .zero {
+                         Path { path in
+                             path.move(to: drawingStartPoint)
+                             path.addLine(to: drawingEndPoint)
+                         }
+                         .stroke(Color.red, style: StrokeStyle(lineWidth: 10, dash: [1]))
                      }
                  }
-             }
-             
-             // Temporary line being drawn
-             if self.BEO.isDraw {
-                 if drawingStartPoint != .zero {
-                     Path { path in
-                         path.move(to: drawingStartPoint)
-                         path.addLine(to: drawingEndPoint)
-                     }
-                     .stroke(Color.red, style: StrokeStyle(lineWidth: 10, dash: [1]))
-                 }
-             }
-            
+                
+            }
+            .frame(width: self.BEO.boardWidth, height: self.BEO.boardHeight)
+            .background(
+                FieldOverlayView(width: self.BEO.canvasWidth, height: self.BEO.canvasHeight, background: {
+                    self.BEO.boardBgColor
+                }, overlay: {
+                    if let CurrentBoardBackground = self.BEO.boards.getAllBoards()[self.BEO.boardBgName] {
+                        CurrentBoardBackground()
+                            .zIndex(2.0)
+                            .environmentObject(self.BEO)
+                    }
+                })
+//                .position(x: self.BEO.boardStartPosX, y: self.BEO.boardStartPosY).zIndex(2.0)
+            )
+            .onDrop(of: [.text], delegate: self.BEO.dropDelegate!)
+            .simultaneousGesture( self.BEO.isDraw ?
+                DragGesture()
+                    .onChanged { value in
+                        if !self.BEO.isDraw {return}
+                        self.drawingStartPoint = value.startLocation
+                        self.drawingEndPoint = value.location
+                    }
+                    .onEnded { value in
+                        if !self.BEO.isDraw {return}
+                        self.drawingEndPoint = value.location
+                        saveLineData(start: value.startLocation, end: value.location)
+                    } : nil
+            )
         }
-        .frame(width: self.BEO.boardWidth, height: self.BEO.boardHeight)
-        .background(
-            FieldOverlayView(width: self.BEO.canvasWidth, height: self.BEO.canvasHeight, background: {
-                self.BEO.boardBgColor
-            }, overlay: {
-                if let CurrentBoardBackground = self.BEO.boards.getAllBoards()[self.BEO.boardBgName] {
-                    CurrentBoardBackground()
-                        .zIndex(2.0)
-                        .environmentObject(self.BEO)
-                }
-            })
-            .position(x: self.BEO.boardStartPosX, y: self.BEO.boardStartPosY).zIndex(2.0)
-        )
-        .onDrop(of: [.text], delegate: self.BEO.dropDelegate!)
-        .simultaneousGesture( self.BEO.isDraw ?
-            DragGesture()
-                .onChanged { value in
-                    if !self.BEO.isDraw {return}
-                    self.drawingStartPoint = value.startLocation
-                    self.drawingEndPoint = value.location
-                }
-                .onEnded { value in
-                    if !self.BEO.isDraw {return}
-                    self.drawingEndPoint = value.location
-                    saveLineData(start: value.startLocation, end: value.location)
-                } : nil
-        )
-//        .onChange(of: self.BEO.doSnapshot) { snap in
-//            if self.BEO.doSnapshot {
-//                takeSnapshot()
-//            }
-//        }
+        .border(.yellow)
+//        .offset(x: 7500, y: 7500)
+        // TODO: Switch to BroadcastTools
         .onChange(of: self.deviceState) { newScenePhase in
             switch newScenePhase {
                 case .active:
@@ -128,7 +133,7 @@ struct BoardEngine: View {
 //                    FirebaseRoomService.leaveRoom(roomId: self.BEO.currentActivityId)
             }
         }
-        .onChange(of: showCreateActivitySheet) { value in
+        .onChange(of: showCreateActivitySheet) {
             if !self.showCreateActivitySheet {
                 threeLoadActivityPlan()
             }
@@ -151,9 +156,10 @@ struct BoardEngine: View {
             
 //            SPS = SessionPlanService(realm: self.BEO.realmInstance)
 //            APS = ActivityPlanService(realm: self.BEO.realmInstance)
-            MVS = AllManagedViewsService(realm: self.BEO.realmInstance)
+//            MVS = AllManagedViewsService(realm: self.BEO.realmInstance)
             
             self.threeLoadActivityPlan()
+            self.MVTools.setNewBoardId(boardId: self.BEO.currentActivityId)
             
             onSessionIdChange()
             onToolCreated()
@@ -184,8 +190,9 @@ struct BoardEngine: View {
     func onToolCreated() {
         CodiChannel.TOOL_ON_CREATE.receive(on: RunLoop.main) { tool in
             if let temp = tool as? ManagedTool {
-                ManagedViewFactory(type: temp.type, subType: temp.subType, sport: temp.sport)
-                    .createNewTool(activityId: self.BEO.currentActivityId)
+                
+//                ManagedViewTools(type: temp.type, subType: temp.subType, sport: temp.sport)
+//                    .createNewTool(activityId: self.BEO.currentActivityId)
             }
             
             
@@ -240,7 +247,7 @@ struct BoardEngine: View {
 //                }
                 
             }
-            fourLoadManagedViewTools()
+//            fourLoadManagedViewTools()
             return
         }
         
@@ -252,49 +259,49 @@ struct BoardEngine: View {
     }
     
     // TODO: MOVE TO CENTRAL BOARD OBJECT
-    func fourLoadManagedViewTools() {
-        if self.BEO.currentActivityId.isEmpty { return }
-        // Realm
-        let umvs = self.BEO.realmInstance.findAllByField(ManagedView.self, field: "boardId", value: self.BEO.currentActivityId)
-        
-        self.BEO.realmInstance.executeWithRetry {
-            self.managedViewNotificationToken = umvs?.observe { (changes: RealmCollectionChange) in
-                switch changes {
-                    case .initial(let results):
-                        print("Realm Listener: initial")
-                    
-                        for i in results {
-                            if i.isInvalidated {continue}
-                            main {
-                                self.BEO.basicTools.safeAddManagedView(i)
-                            }
-                        }
-                    case .update(let results, let de, _, _):
-                        print("Realm Listener: update")
-                        
-                        for d in de {
-                            main {
-                                self.BEO.basicTools.remove(at: d)
-                            }
-                        }
-                        
-                        for i in results {
-                            if i.isInvalidated {continue}
-                            main {
-                                self.BEO.basicTools.safeAddManagedView(i)
-                            }
-                        }
-                    case .error(let error):
-                        print("Realm Listener: \(error)")
-                        self.managedViewNotificationToken?.invalidate()
-                        self.managedViewNotificationToken = nil
-                }
-            }
-        }
-        
-        fiveStartObservingManagedViews()
-        sixSavePlansToFirebase()
-    }
+//    func fourLoadManagedViewTools() {
+//        if self.BEO.currentActivityId.isEmpty { return }
+//        // Realm
+//        let umvs = self.BEO.realmInstance.findAllByField(ManagedView.self, field: "boardId", value: self.BEO.currentActivityId)
+//        
+//        self.BEO.realmInstance.executeWithRetry {
+//            self.managedViewNotificationToken = umvs?.observe { (changes: RealmCollectionChange) in
+//                switch changes {
+//                    case .initial(let results):
+//                        print("Realm Listener: initial")
+//                    
+//                        for i in results {
+//                            if i.isInvalidated {continue}
+//                            main {
+//                                self.BEO.basicTools.safeAddManagedView(i)
+//                            }
+//                        }
+//                    case .update(let results, let de, _, _):
+//                        print("Realm Listener: update")
+//                        
+//                        for d in de {
+//                            main {
+//                                self.BEO.basicTools.remove(at: d)
+//                            }
+//                        }
+//                        
+//                        for i in results {
+//                            if i.isInvalidated {continue}
+//                            main {
+//                                self.BEO.basicTools.safeAddManagedView(i)
+//                            }
+//                        }
+//                    case .error(let error):
+//                        print("Realm Listener: \(error)")
+//                        self.managedViewNotificationToken?.invalidate()
+//                        self.managedViewNotificationToken = nil
+//                }
+//            }
+//        }
+//        
+//        fiveStartObservingManagedViews()
+//        sixSavePlansToFirebase()
+//    }
     
     // TODO: MOVE TO CENTRAL BOARD OBJECT
     func fiveStartObservingManagedViews() {

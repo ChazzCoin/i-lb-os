@@ -94,13 +94,13 @@ class SingleManagedViewService: ObservableObject {
         reference.child(self.activityId).child(self.viewId).observe(.childRemoved, with: { snapshot in
            if let mv = self.realmInstance.findByField(ManagedView.self, value: self.viewId) {
                if self.isDeleted {return}
-               self.isDeleted = true
+               main { self.isDeleted = true }
                self.realmInstance.safeWrite { r in
                    mv.isDeleted = true
                }
            }
        })
-        isObserving = true
+        main { self.isObserving = true }
     }
     
     func observeFirebaseActivity(activityId: String) {
@@ -129,10 +129,9 @@ class SingleManagedViewService: ObservableObject {
         if shouldDenyWriteRequest() {
             return
         }
-
-        self.isWriting = true
+        main { self.isWriting = true }
         reference.child(mv.boardId).child(mv.id).setValue(mv.toDict()) { (error: Error?, ref: DatabaseReference) in
-            self.isWriting = false
+            main { self.isWriting = false }
             if let error = error { print("Error updating Firebase: \(error)") }
         }
     }
@@ -154,19 +153,21 @@ class SingleManagedViewService: ObservableObject {
         if let user = realmInstance.object(ofType: CoreUser.self, forPrimaryKey: CURRENT_USER_ID) {
             self.realmInstance.executeWithRetry {
                 self.nofityToken = user.observe { change in
-                    switch change {
-                        case .change(let obj, _):
-                            print("Obj: \(obj)")
-                            let temp = obj as! CoreUser
-                            
-                        case .error(let error):
-                            print("Error: \(error)")
-                            self.nofityToken?.invalidate()
-                            self.nofityToken = nil
-                        case .deleted:
-                            print("Object has been deleted.")
-                            self.nofityToken?.invalidate()
-                            self.nofityToken = nil
+                    main {
+                        switch change {
+                            case .change(let obj, _):
+                                print("Obj: \(obj)")
+                                let temp = obj as! CoreUser
+                                
+                            case .error(let error):
+                                print("Error: \(error)")
+                                self.nofityToken?.invalidate()
+                                self.nofityToken = nil
+                            case .deleted:
+                                print("Object has been deleted.")
+                                self.nofityToken?.invalidate()
+                                self.nofityToken = nil
+                        }
                     }
                 }
             }
@@ -178,21 +179,24 @@ class SingleManagedViewService: ObservableObject {
         if let mv = self.realmInstance.object(ofType: ManagedView.self, forPrimaryKey: self.viewId) {
             self.realmInstance.executeWithRetry {
                 self.managedViewNotificationToken = mv.observe { change in
-                    switch change {
-                        case .change(let obj, _):
-                            if let temp = obj as? ManagedView {
-                                if temp.id == self.viewId { onChange(temp) }
-                            }
-                        case .error(let error):
-                            print("Error: \(error)")
-                            self.managedViewNotificationToken?.invalidate()
-                            self.managedViewNotificationToken = nil
-                        case .deleted:
-                            print("Object has been deleted.")
-                            self.managedViewNotificationToken?.invalidate()
-                            self.managedViewNotificationToken = nil
-                            onDeleted()
+                    main {
+                        switch change {
+                            case .change(let obj, _):
+                                if let temp = obj as? ManagedView {
+                                    if temp.id == self.viewId { onChange(temp) }
+                                }
+                            case .error(let error):
+                                print("Error: \(error)")
+                                self.managedViewNotificationToken?.invalidate()
+                                self.managedViewNotificationToken = nil
+                            case .deleted:
+                                print("Object has been deleted.")
+                                self.managedViewNotificationToken?.invalidate()
+                                self.managedViewNotificationToken = nil
+                                onDeleted()
+                        }
                     }
+                    
                 }
             }
             

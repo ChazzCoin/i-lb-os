@@ -9,12 +9,12 @@ import Foundation
 import SwiftUI
 
 @propertyWrapper
-public struct AppStorageList {
+public struct AppStorageList: DynamicProperty {
     public var key: String
     public var defaultValue: [String]
     @AppStorage public var storedData: String
 
-    public init(wrappedValue: [String], key: String) {
+    public init(wrappedValue: [String] = [], _ key: String) {
         self.defaultValue = wrappedValue
         self.key = key
         _storedData = AppStorage(wrappedValue: "", key)

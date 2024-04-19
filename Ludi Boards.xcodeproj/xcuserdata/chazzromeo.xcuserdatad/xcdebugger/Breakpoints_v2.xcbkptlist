@@ -375,16 +375,64 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "919D3FAB-7AD8-4B4B-B520-9F9B88114192"
+            uuid = "D012AA80-3D7F-48E2-B711-0CF5EC58EB68"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "CoreEngine/Sources/CoreEngine/ECDatabase/ECFused/FusedCore/FusedPaths.swift"
+            filePath = "CoreEngine/Sources/CoreEngine/ECDatabase/ECFused/FusedCore/MasterQueue.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "84"
-            endingLineNumber = "84"
-            landmarkName = "objectType(path:)"
+            startingLineNumber = "86"
+            endingLineNumber = "86"
+            landmarkName = "WriteToQueue(queueType:safeQueue:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "C1040C7A-0340-43BE-9442-8AEFDD3A1E05"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CoreEngine/Sources/CoreEngine/ECDatabase/ECFused/FusedCore/MasterQueue.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "87"
+            endingLineNumber = "87"
+            landmarkName = "WriteToQueue(queueType:safeQueue:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "24778772-8D41-488F-86EB-2F5963E939A6"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CoreEngine/Sources/CoreEngine/ECVIews/Parents/GPS.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "81"
+            endingLineNumber = "81"
+            landmarkName = "init(coordinateSpace:width:height:@ViewBuilder:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "E2EFD7D0-31C6-4350-A92D-2ADB4F356810"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CoreEngine/Sources/CoreEngine/ECVIews/Parents/GPS.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "76"
+            endingLineNumber = "76"
+            landmarkName = "init(coordinateSpace:@ViewBuilder:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

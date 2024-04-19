@@ -19,15 +19,18 @@ public struct AppLifecycle: DynamicProperty {
     public var cancellables = Set<AnyCancellable>()
 
     // The notification to observe
-    public var notificationName: NSNotification.Name
+    public var broadcastEvent: BroadcastEvents
 
     // The wrappedValue is what the property wrapper exposes
     public var wrappedValue: Bool {
-        get { isActive }
-        set { 
+        get { 
+            print("ISACTIVE: \(isActive)")
+            onChange()
+            return isActive
+        }
+        set {
             isActive = newValue
             if newValue { onChange() }
-            
         }
     }
 
@@ -37,10 +40,10 @@ public struct AppLifecycle: DynamicProperty {
     }
 
     // Initialization with specific notification name
-    public init(_ notificationName: NSNotification.Name) {
-        self.notificationName = notificationName
+    public init(_ broadcastEventName: BroadcastEvents) {
+        self.broadcastEvent = broadcastEventName
         // Subscribe to specified notification
-        NotificationCenter.default.publisher(for: notificationName)
+        NotificationCenter.default.publisher(for: broadcastEventName.notificationName)
             .map { _ in true }
             .assign(to: \.isActive, on: self)
             .store(in: &cancellables)

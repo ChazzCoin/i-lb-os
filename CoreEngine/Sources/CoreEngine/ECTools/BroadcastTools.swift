@@ -16,6 +16,15 @@ public class BroadcastTools: ObservableObject {
     @Published public var ignoreRequest: Bool = false
     @Published public var cancellables = Set<AnyCancellable>()
     
+    // MARK: -> Lifecycle Aware Notification Observer
+    public static func addObserver(_ lifecycleOwner: any ObservableObject, triggerFunction: Selector, notification: Notification.Name) {
+        return NotificationCenter.default.addObserver(lifecycleOwner, selector: triggerFunction, name: notification, object: nil)
+    }
+    public static func addObserver(_ lifecycleOwner: any ObservableObject, triggerFunction: Selector, notification: String) {
+        return NotificationCenter.default.addObserver(lifecycleOwner, selector: triggerFunction, name: Notification.Name(notification), object: nil)
+    }
+    public static func removeObserver(_ lifecycleOwner: any ObservableObject) { NotificationCenter.default.removeObserver(lifecycleOwner) }
+    
     // MARK: -> System Channels
     public static func send(_ name: BroadcastEvents, value: Any? = nil) {
         NotificationCenter.default.post(name: name.notificationName, object: value)
@@ -60,6 +69,10 @@ public class BroadcastTools: ObservableObject {
     
     // Consider adding functionality to remove specific subscriptions if needed
     public func unsubscribeAll() { cancellables.removeAll() }
+    
+    public static func toggleViewVisibility(viewId: String, isVisible: Bool) {
+        NotificationCenter.default.post(name: Notification.Name(viewId), object: nil, userInfo: ["isVisible": isVisible])
+    }
 }
 
 public enum BroadcastEvents: String, CaseIterable {

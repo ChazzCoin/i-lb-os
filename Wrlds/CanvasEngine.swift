@@ -120,7 +120,9 @@ struct CanvasEngine: View {
             
         }
         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-        .background(Color.purple.opacity(0.5))
+//        .background(Color.purple.opacity(0.5))
+        .background(StarryNightAnimatedView())
+//        .background(DynamicGradientBackground())
         .gesture(self.BEO.gesturesAreLocked ? nil : dragAngleGestures.simultaneously(with: scaleGestures))
         .zIndex(0.0)
         .onAppear() {

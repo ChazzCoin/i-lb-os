@@ -11,6 +11,29 @@ import RealmSwift
 import Realm
 
 
+public extension CoreName {
+    
+    enum FusedPaths: String, CaseIterable {
+        case users = "users"
+        case rooms = "rooms"
+        case managedViews = "managedViews"
+        case chat = "chat"
+        case organizations = "organizations"
+        case teams = "teams"
+        case players = "players"
+        case notes = "notes"
+        case events = "events"
+        case sessionPlan = "sessionPlan"
+        case activityPlan = "activityPlan"
+        case userToSession = "userToSession"
+        case userToActivity = "userToActivity"
+        case userInRoom = "userInRoom"
+        case friendRequests = "friendRequests"
+    }
+    
+}
+
+
 public enum DatabasePaths: String, CaseIterable {
     case users = "users"
     case rooms = "rooms"
@@ -26,7 +49,6 @@ public enum DatabasePaths: String, CaseIterable {
     case userToSession = "userToSession"
     case userToActivity = "userToActivity"
     case userInRoom = "userInRoom"
-    case friends = "friends"
     case friendRequests = "friendRequests"
     
     // Function to map object type to DatabasePaths
@@ -56,8 +78,6 @@ public enum DatabasePaths: String, CaseIterable {
                 return .events
             case is UserToActivity.Type:
                 return .userToActivity
-            case is Friends.Type:
-                return .friends
             case is FriendRequest.Type:
                 return .friendRequests
             default:
@@ -94,8 +114,6 @@ public enum DatabasePaths: String, CaseIterable {
                 return UserToActivity.self
             case DatabasePaths.players.rawValue:
                 return PlayerRef.self
-            case DatabasePaths.friends.rawValue:
-                return Friends.self
             case DatabasePaths.friendRequests.rawValue:
                 return FriendRequest.self
             default:

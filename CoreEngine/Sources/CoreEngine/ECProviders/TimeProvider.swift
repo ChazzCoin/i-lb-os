@@ -59,6 +59,11 @@ public struct DateTimeTools {
         return formatter.string(from: date)
     }
     
+    public static func isDaytime() -> Bool {
+        let currentHour = Calendar.current.component(.hour, from: Date())
+        return currentHour >= 7 && currentHour < 16
+    }
+    
 }
 
 

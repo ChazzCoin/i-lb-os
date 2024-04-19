@@ -15,7 +15,7 @@ import SwiftUI
  */
 
 
-
+public class CoreTools { }
 
 public class CoreEngine {
     public static func checkEngineCore() -> String {

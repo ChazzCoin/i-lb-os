@@ -266,6 +266,7 @@ public extension Dictionary where Key == String, Value == Any {
     func toCoreObject<T: Object>(_ type: T.Type, realm: Realm) -> T? {
         var object: T?
         realm.safeWrite { _ in
+            print("adding new object of type: [\(type)]")
             object = realm.create(type, value: self, update: .all)
             realm.refresh()
         }

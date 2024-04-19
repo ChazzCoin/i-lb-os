@@ -54,19 +54,30 @@ public class FusedTools {
     
     // MASTER -> Realm & Firebase FusedSaved
     public static func fusedWriter(_ realm: Realm = newRealm(), action: @escaping (Realm) -> Object) {
-        realm.safeWrite { r in FusedTools.saveToFirebase(item: action(r)) }
+        realm.safeWrite { r in
+            FusedTools.saveToFirebase(item: action(r))
+        }
     }
-    public static func fusedCreator<O: Object>(_ obj: O.Type, _ realm: Realm = newRealm(), _ action: @escaping (Realm) -> O) {
+    public static func fusedWriter(_ realm: Realm = newRealm(), action: @escaping (Realm) -> Void) {
+        realm.safeWrite { r in
+            action(r)
+        }
+    }
+    public static func fusedCreator<O: Object>(_ obj: O.Type, _ realm: Realm = newRealm(), masterPass: Bool = false, _ action: @escaping (Realm) -> O) {
         realm.safeWrite { r in
             let item = action(r)
             r.create(O.self, value: item, update: .all)
-            FusedTools.saveToFirebase(item: item)
+            FusedTools.saveToFirebase(item: item, masterPass: masterPass)
         }
     }
     // Queries
     
     // MASTER -> Realm & Firebase FusedSearchSave
-    public static func findByField<T:Object>(_ obj: T.Type, value: String, field: String="id", realm: Realm=newRealm(), onReturn: @escaping (List<T>) -> Void={ _ in }) {
+    public static func findByField<T:Object>(_ obj: T.Type, value: String, field: String="id", realm: Realm=newRealm(), forceRefresh: Bool = false, onReturn: @escaping (List<T>) -> Void={ _ in }) {
+        if forceRefresh {
+            pullByFieldFromFirebase(obj, value: value, field: field, realm: realm, onReturn: onReturn)
+            return
+        }
         if let realmItems = realm.findAllByField(obj, field: field, value: value) {
             if !realmItems.isEmpty {
                 onReturn(realmItems.toRealmList())
@@ -90,16 +101,17 @@ public class FusedTools {
     }
     
     // Firebase Only + Caching
-    public static func saveToFirebase<T: Object>(item: T) {
-        if !UserTools.userIsVerifiedForFirebaseRequest() {
-            MasterFusedQueue.addToQueue(queueType: .update, item: item)
+    public static func saveToFirebase<T: Object>(item: T, masterPass: Bool = false) {
+        if !UserTools.userIsVerifiedForFirebaseRequest() && !masterPass {
+//            MasterFusedQueue.addToQueue(queueType: .update, item: item)
             return
         }
         guard let path = DatabasePaths.path(forObjectType: T.self) else {
-            MasterFusedQueue.addToQueue(queueType: .update, item: item)
+//            MasterFusedQueue.addToQueue(queueType: .update, item: item)
             return
         }
         if let id = item.getId() {
+            if id.isEmpty { return }
             DatabasePaths
                 .getReference(path: path)?
                 .ref.child(id)
@@ -120,6 +132,7 @@ public class FusedTools {
             return
         }
         if let id = item.getId() {
+            if id.isEmpty { return }
             DatabasePaths
                 .getReference(path: path)?
                 .ref.child(id)

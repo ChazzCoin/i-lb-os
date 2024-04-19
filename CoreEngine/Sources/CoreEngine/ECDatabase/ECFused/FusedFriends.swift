@@ -24,20 +24,20 @@ public class FusedCurrentUserFriends : ObservableObject {
     public init() {}
     
     public func addFriend(friendId: String) {
-        if let f = realmInstance.findByField(Friends.self, field: "userId", value: currentUserId) {
-            realmInstance.safeWrite { r in
-                f.friendIds.safeAddString(friendId)
-                FusedTools.saveToFirebase(item: f)
-            }
-        }
+//        if let f = realmInstance.findByField(Friends.self, field: "userId", value: currentUserId) {
+//            realmInstance.safeWrite { r in
+//                f.friendIds.safeAddString(friendId)
+//                FusedTools.saveToFirebase(item: f)
+//            }
+//        }
     }
     
     // Fused Firebase -> Realm
-    public func start() {
-        childAdded()
-        childChanged()
-        childRemoved()
-    }
+//    public func start() {
+//        childAdded()
+//        childChanged()
+//        childRemoved()
+//    }
     
     public func stop() {
         childAddedHandler = nil
@@ -45,28 +45,28 @@ public class FusedCurrentUserFriends : ObservableObject {
         childRemovedHandler = nil
     }
     
-    public func childAdded() {
-        childAddedHandler = ref
-            .queryEqual(toValue: currentUserId, childKey: "userId")
-            .observe(.childAdded, with: { snapshot in
-                let _ = snapshot.toCoreObject(Friends.self, realm: self.realmInstance)
-            })
-    }
-    
-    public func childChanged() {
-        childChangedHandler = ref
-            .queryEqual(toValue: currentUserId, childKey: "userId")
-            .observe(.childChanged, with: { snapshot in
-                let _ = snapshot.toCoreObject(Friends.self, realm: self.realmInstance)
-            })
-    }
-    
-    public func childRemoved() {
-        childRemovedHandler = ref
-            .queryEqual(toValue: currentUserId, childKey: "userId")
-            .observe(.childRemoved, with: { snapshot in
-                let _ = snapshot.deleteRealmObject(ofType: Friends.self)
-            })
-    }
+//    public func childAdded() {
+//        childAddedHandler = ref
+//            .queryEqual(toValue: currentUserId, childKey: "userId")
+//            .observe(.childAdded, with: { snapshot in
+//                let _ = snapshot.toCoreObject(Friends.self, realm: self.realmInstance)
+//            })
+//    }
+//    
+//    public func childChanged() {
+//        childChangedHandler = ref
+//            .queryEqual(toValue: currentUserId, childKey: "userId")
+//            .observe(.childChanged, with: { snapshot in
+//                let _ = snapshot.toCoreObject(Friends.self, realm: self.realmInstance)
+//            })
+//    }
+//    
+//    public func childRemoved() {
+//        childRemovedHandler = ref
+//            .queryEqual(toValue: currentUserId, childKey: "userId")
+//            .observe(.childRemoved, with: { snapshot in
+//                let _ = snapshot.deleteRealmObject(ofType: Friends.self)
+//            })
+//    }
     
 }

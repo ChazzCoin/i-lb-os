@@ -169,23 +169,23 @@ struct BoardEngine: View {
                      .background(Color.white)
 //                     .position()
              }
-             
-             NavStackFloatingWindow(id: "new", viewBuilder: {
-                 UserLoginSignupView()
-//                     .frame(width: 500, height: 500)
-//                     .scaleEffect(7.0)
-                     
-             })
-             .frame(width: 500, height: 500)
-             .scaleEffect(7.0)
+//             
+//             NavStackFloatingWindow(id: "new", viewBuilder: {
+//                 UserLoginSignupView()
+////                     .frame(width: 500, height: 500)
+////                     .scaleEffect(7.0)
+//                     
+//             })
+//             .frame(width: 500, height: 500)
+//             .scaleEffect(7.0)
 //             .position(CGPoint(x: 15000.0, y: -2000.0))
              
              
         }
         .frame(width: self.BEO.boardWidth, height: self.BEO.boardHeight)
-        .background(
-            UtbBgOne()
-        )
+//        .background(
+//            UtbBgOne()
+//        )
         .onDrop(of: [.text], isTargeted: nil) { providers in
             providers.first?.loadObject(ofClass: NSString.self) { (droppedString, error) in
                 

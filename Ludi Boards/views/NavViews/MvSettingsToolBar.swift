@@ -20,7 +20,7 @@ struct MvSettingsBar<Content: View>: View {
     
     private let soccerTools = SoccerToolProvider.allCases
     
-    @State var gps = GlobalPositioningSystem()
+    @State var gps = GlobalPositioningSystem(CoreNameSpace.local)
     
     var sWidth = UIScreen.main.bounds.width
     var sHeight = UIScreen.main.bounds.height

@@ -73,7 +73,6 @@ public class FusedDatabaseQueue: Object, ObjectKeyIdentifiable {
     @Persisted public var activityPlanQueue: List<ActivityPlan> = List()
     @Persisted public var userToSessionQueue: List<UserToSession> = List()
     @Persisted public var userToActivityQueue: List<UserToActivity> = List()
-    @Persisted public var friendsQueue: List<Friends> = List()
     @Persisted public var friendRequestsQueue: List<FriendRequest> = List()
     
 }

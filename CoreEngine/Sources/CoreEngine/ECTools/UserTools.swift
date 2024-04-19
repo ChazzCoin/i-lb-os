@@ -8,9 +8,85 @@
 import Foundation
 import FirebaseAuth
 import FirebaseDatabase
+import RealmSwift
 
 
-public class UserTools {
+public extension UserTools {
+    
+    // MARK: Social Tools
+    
+    static func sendFriendRequest(toUserId: String) {
+        if let user = UserTools.user {
+            FusedTools.fusedCreator(FriendRequest.self, masterPass: true) { r in
+                let newRequest = FriendRequest()
+                newRequest.toUserId = toUserId
+                newRequest.fromUserId = user.id
+                return newRequest
+            }
+        }
+    }
+    
+    static func pullFriendRequests() {
+        if let user = UserTools.user {
+            FusedTools.findByField(FriendRequest.self, value: user.id, field: "toUserId", forceRefresh: true)  { results in
+                for item in results {
+                    // MARK: Check for pending only.
+                    if item.status == FriendStatus.pending.rawValue {
+                        // MARK: Link to User
+                        realmWriter { r in
+                            user.linkedFriendRequests.safeAddReplace(item)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    static func pullFriends() {
+        // Get Friend Requests -> Link Friends
+        if let user = UserTools.user {
+            // MARK: Pull Sent Friend Requests
+            FusedTools.findByField(FriendRequest.self, value: user.id, field: "fromUserId", forceRefresh: true) { results in
+                for item in results {
+                    // MARK: Check for Accepted only.
+                    if item.status == FriendStatus.accepted.rawValue {
+                        // MARK: Pull Specific Friends
+                        FusedTools.findByField(CoreUser.self, value: item.toUserId) { foundUsers in
+                            // MARK: Link Friends to User.
+                            realmWriter() { r in
+                                let tempList = user.linkedFriends
+                                for u in foundUsers { tempList.append(u) }
+                                user.linkedFriends = tempList
+                            }
+                            print("Linking Friends Complete.")
+                        }
+                    }
+                }
+            }
+            // MARK: Pull Received Friend Requests
+            FusedTools.findByField(FriendRequest.self, value: user.id, field: "toUserId", forceRefresh: true)  { results in
+                for item in results {
+                    // MARK: Check for Accepted only.
+                    if item.status == FriendStatus.accepted.rawValue {
+                        // MARK: Pull Specific Friends
+                        FusedTools.findByField(CoreUser.self, value: item.fromUserId) { foundUsers in
+                            // MARK: Link Friends to User.
+                            realmWriter { r in
+                                let tempList = user.linkedFriends
+                                for u in foundUsers { tempList.append(u) }
+                                user.linkedFriends = tempList
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+}
+
+
+public class UserTools: UserToolsObservable {
     
     public static let isConnected: Bool = UserDefaults.standard.bool(forKey: "isConnected")
     public static func setIsConnected(_ id: Bool) { UserDefaults.standard.set(id, forKey: "setIsConnected") }
@@ -53,7 +129,16 @@ public class UserTools {
     
     public static var user : CoreUser? {
         print("UserId: \(String(describing: UserTools.currentUserId))")
-        return newRealm().findByField(CoreUser.self, value: UserTools.currentUserId)
+        if let realmUser = newRealm().findByField(CoreUser.self, value: UserTools.currentUserId) {
+            print("Realm User Available.")
+            return realmUser
+        }
+        if let fireUser = firebaseUser {
+            print("FireUser Only. Syncing Back up.")
+            saveUserToRealm(fireUser: fireUser)
+            return newRealm().findByField(CoreUser.self, value: UserTools.currentUserId)
+        }
+        return nil
     }
     
     public static let firebaseUser: FirebaseAuth.User? = Auth.auth().currentUser
@@ -173,7 +258,7 @@ public class UserTools {
         }
     }
     
-    public static func syncUserDetails() {
+    public static func syncUserDetailsFromFirebase() {
         if let cui = currentUserId {
             firebaseDatabase { ref in
                 ref.child(DatabasePaths.users.rawValue)
@@ -199,6 +284,7 @@ public class UserTools {
         newUser.email = fireUser.email ?? ""
         newRealm().safeWrite { r in
             r.create(CoreUser.self, value: newUser, update: .all)
+            r.refresh()
         }
         UserTools.saveUserToFirebase(user: newUser)
     }
@@ -246,7 +332,7 @@ public class UserTools {
                 })
             } else {
                 print("User Already Exist. Moving On.")
-                syncUserDetails()
+                syncUserDetailsFromFirebase()
             }
         })
     }

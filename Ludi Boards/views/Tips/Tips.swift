@@ -13,7 +13,7 @@ struct TipView: View {
     @State var tip: String
     @State private var isVisible = true
     let duration: TimeInterval = 5 // Duration in seconds
-    @State var gps = GlobalPositioningSystem()
+    @State var gps = GlobalPositioningSystem(CoreNameSpace.local)
     var body: some View {
         if isVisible {
             VStack {
@@ -41,7 +41,7 @@ struct TipViewLocked: View {
     @Binding var isVisible: Bool
     
     let duration: TimeInterval = 5 // Duration in seconds
-    @State var gps = GlobalPositioningSystem()
+    @State var gps = GlobalPositioningSystem(CoreNameSpace.local)
     var body: some View {
         if isVisible {
             VStack {

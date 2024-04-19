@@ -84,6 +84,7 @@ public class MasterFusedQueue {
         if let queue = realm.findByField(FusedDatabaseQueue.self, value: queueType.rawValue) {
             realm.safeWrite { r in
                 safeQueue(queue, r)
+                print("Successfully written to queue.")
             }
         }
     }
@@ -114,9 +115,8 @@ public class MasterFusedQueue {
                     q.userToSessionQueue.safeAddReplace(userToSessionItem)
                 case let userToActivityItem as UserToActivity:
                     q.userToActivityQueue.safeAddReplace(userToActivityItem)
-                case let friendsItem as Friends:
-                    q.friendsQueue.safeAddReplace(friendsItem)
                 case let friendRequestsItem as FriendRequest:
+                    print("Adding Friend Request to Queue.")
                     q.friendRequestsQueue.safeAddReplace(friendRequestsItem)
                 default: print("No Update Queue Available for this Object: \(type(of: item))")
             }
