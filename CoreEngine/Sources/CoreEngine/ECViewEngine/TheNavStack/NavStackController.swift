@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import Combine
+import RealmSwift
 
 /*
  
@@ -168,6 +169,9 @@ public class NavWindowController: ObservableObject {
     
     @Published public var masterResetNavWindow = false
       
+    @Published public var width = NavStackSize.full_menu_bar.width
+    @Published public var height = NavStackSize.full_menu_bar.height
+    
     @Published public var offset = CGSize.zero
     @Published public var position = CGPoint(x: 0, y: 0)
     @Published public var originOffPos = CGPoint(x: 0, y: 0)
@@ -175,18 +179,20 @@ public class NavWindowController: ObservableObject {
     @GestureState public var dragOffset = CGSize.zero
     @Published public var isDragging = false
     
+    public var realmInstance: Realm = newRealm()
     @Published public var cancellables = Set<AnyCancellable>()
     
     @Published public var navStackCount = 0
     
     @ViewBuilder
     public func getNavStackView() -> some View {
-        if self.masterResetNavWindow { EmptyView() }
         if self.mainState.main {
             NavStackWindow()
-//                .enableManagedViewBasic(viewId: "nav1", activityId: "sol")
+//                .enableDynaView(viewId: self.id)
                 .environmentObject(self)
-                .onAppear() { print("updating nav stack...") }
+                .onAppear() {
+                    print("updating nav stack...")
+                }
         }
     }
     
@@ -250,15 +256,32 @@ public class NavWindowController: ObservableObject {
             }
         }
         self.preLoadWithCoreViews()
+        self.loadDynaView()
+    }
+    
+    public func toggleSize() {
+        if navSize == NavStackSize.full_menu_bar {
+            self.isFloatable = false
+            setSize(gps: gps, NavStackSize.full)
+        } else if navSize == NavStackSize.full {
+            turnOnFloating(gps: gps)
+        } else {
+            turnOffFloating(gps: gps)
+        }
     }
     
     public func setSize(gps: GlobalPositioningSystem, _ navSize: NavStackSize) {
-        self.navSize = navSize
-        self.resetPosition(gps: gps)
-        offset = CGSize.zero
-        originOffPos = CGPoint(x: 0, y: 0)
-        offPos = CGPoint(x: 0, y: 0)
-        self.masterResetTheWindow()
+        mainAnimation {
+            self.navSize = navSize
+            self.width = navSize.width
+            self.height = navSize.height
+            self.resetPosition(gps: gps)
+            self.offset = CGSize.zero
+            self.originOffPos = CGPoint(x: 0, y: 0)
+            self.offPos = CGPoint(x: 0, y: 0)
+            self.masterResetTheWindow()
+            self.saveDynaView()
+        }
     }
     
     public func toggleFloating(gps: GlobalPositioningSystem) {
@@ -401,11 +424,61 @@ public class NavWindowController: ObservableObject {
     public static func linkTo<Content: View>(viewId: String, @ViewBuilder viewBuilder: @escaping () -> Content) -> NavigationLink<EmptyView, Content> {
         NavigationLink(destination: { viewBuilder() } ) { EmptyView() }
     }
-    // TODO: Make View Active by ID
-    // TODO: Get Active View
-    // TODO: Add ManagedViewWindow to pool with ID.
-    // TODO: Make sure to add view IDs to the backstack
-    // TODO: Create navTo() and goBack() functions
 
+    // MARK: DynaView
+    public func loadDynaView() {
+        if let managedView = realmInstance.object(ofType: ManagedView.self, forPrimaryKey: self.id) {
+            mainAnimation {
+                if managedView.toolType == NavStackSize.full.rawValue {
+                    self.navSize = NavStackSize.full
+                    self.width = NavStackSize.full.width
+                    self.height = NavStackSize.full.height
+                } else if managedView.toolType == NavStackSize.full_menu_bar.rawValue {
+                    self.navSize = NavStackSize.full_menu_bar
+                    self.width = NavStackSize.full_menu_bar.width
+                    self.height = NavStackSize.full_menu_bar.height
+                } else if managedView.toolType == NavStackSize.floatable_medium.rawValue {
+                    self.navSize = NavStackSize.floatable_medium
+                    self.width = NavStackSize.floatable_medium.width
+                    self.height = NavStackSize.floatable_medium.height
+                }
+                if managedView.isLocked {
+                    self.isFloatable = true
+                    self.navSize = NavStackSize.floatable_medium
+                    self.width = NavStackSize.floatable_medium.width
+                    self.height = NavStackSize.floatable_medium.height
+                }
+                self.position = CGPoint(x: managedView.startX, y: managedView.startY)
+                self.offPos = CGPoint(x: managedView.x, y: managedView.y)
+            }
+        }
+    }
+    
+    public func saveDynaView() {
+        guard let managedView = realmInstance.object(ofType: ManagedView.self, forPrimaryKey: self.id) else {
+            realmWriter { r in
+                let managedView = ManagedView()
+                managedView.id = self.id
+                managedView.toolType = self.navSize.rawValue
+                managedView.isLocked = self.isFloatable
+                managedView.x = self.offPos.x
+                managedView.y = self.offPos.y
+                r.create(ManagedView.self, value: managedView, update: .all)
+                r.refresh()
+            }
+            return
+        }
+        realmWriter { r in
+            managedView.toolType = self.navSize.rawValue
+            managedView.isLocked = self.isFloatable
+            managedView.width = Int(self.width)
+            managedView.height = Int(self.height)
+            managedView.x = self.offPos.x
+            managedView.y = self.offPos.y
+            managedView.startX = self.position.x
+            managedView.startY = self.position.y
+        }
+    }
+    
 }
 

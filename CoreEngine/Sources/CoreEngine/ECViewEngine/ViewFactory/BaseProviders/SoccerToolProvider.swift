@@ -13,6 +13,7 @@ import SwiftUI
 /*
     The Model Base Tool Provider!
  */
+@available(*, deprecated, renamed: "ViewEngine", message: "This has been replaced for ViewEngine.")
 public class SoccerToolProvider: ManagedToolProvider, CoreIcon, CoreTool {
     
     // Individual Tools
@@ -30,7 +31,7 @@ public class SoccerToolProvider: ManagedToolProvider, CoreIcon, CoreTool {
     public static let curvedLine: String = "curvedLine"
     public static let dottedLine: String = "dottedLine"
     
-    public let sport: String = CoreName.Genre.soccer.name
+    public let sport: String = VEngine.Genre.basic_tool.name
     public let type = ManagedViewTools.basic
     public var subType: String = ""
     init(subType: String) {

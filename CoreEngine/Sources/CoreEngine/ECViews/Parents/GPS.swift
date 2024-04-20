@@ -80,6 +80,9 @@ public struct GlobalPositioningZStack<Content: View>: View {
     public var body: some View {
         ZStack {
             content(gps)
+                .measure { g in
+                    
+                }
         }
         .coordinateSpace(name: gps.coordinateSpace)
         .frame(width: gps.effectiveSize.width, height: gps.effectiveSize.height)

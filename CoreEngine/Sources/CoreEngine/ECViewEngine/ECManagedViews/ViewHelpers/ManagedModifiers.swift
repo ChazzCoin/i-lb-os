@@ -15,4 +15,7 @@ extension View {
         self.modifier(enableManagedViewTool(viewId: viewId, activityId: activityId))
     }
     
+    func enableDynaView(viewId: String, activityId: String="") -> some View {
+        self.modifier(enableDynaNavStackModifier(viewId: viewId, activityId: activityId))
+    }
 }

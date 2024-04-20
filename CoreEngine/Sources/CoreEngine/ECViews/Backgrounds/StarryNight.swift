@@ -8,6 +8,7 @@
 
 import Foundation
 import SwiftUI
+import Combine
 
 public struct StarryNightSkyView: View {
     public var body: some View {
@@ -51,7 +52,7 @@ public struct StarryNightAnimatedView: View {
     public var body: some View {
         ZStack {
             // Background gradient
-            LinearGradient(gradient: Gradient(colors: [Color.black, Color.purple, Color.blue]),
+            LinearGradient(gradient: Gradient(colors: [Color.black, Color.purple.opacity(0.5), Color.blue.opacity(0.5)]),
                            startPoint: .top, endPoint: .bottom)
                 .ignoresSafeArea()
             

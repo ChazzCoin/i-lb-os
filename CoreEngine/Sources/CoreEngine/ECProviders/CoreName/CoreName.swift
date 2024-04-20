@@ -13,7 +13,7 @@ public typealias SChannel = CoreName.Channels
 public typealias SDateTime = CoreName.DateTime
 public typealias SViews = CoreName.Views
 public typealias SPanel = CoreName.Views.Panel
-public typealias SGenre = CoreName.Genre
+//public typealias SGenre = CoreName.Genre
 public typealias SStatus = CoreName.Status
 public typealias SState = CoreName.State
 public typealias SUser = CoreName.User
@@ -60,20 +60,20 @@ public class CoreName {
         public var name: String { rawValue }
     }
 
-    public enum Genre: String, CaseIterable {
-        case soccer = "soccer"
-        case football = "football"
-        case basketball = "basketball"
-        case baseball = "baseball"
-        case iceHockey = "iceHockey"
-        case golf = "golf"
-        case tennis = "tennis"
-        case billiards = "billiards"
-        case signupProfile = "signup_profile"
-        case chat = "chat"
-        case nav = "nav"
-        public var name: String { rawValue }
-    }
+//    public enum Genre: String, CaseIterable {
+//        case soccer = "soccer"
+//        case football = "football"
+//        case basketball = "basketball"
+//        case baseball = "baseball"
+//        case iceHockey = "iceHockey"
+//        case golf = "golf"
+//        case tennis = "tennis"
+//        case billiards = "billiards"
+//        case signupProfile = "signup_profile"
+//        case chat = "chat"
+//        case nav = "nav"
+//        public var name: String { rawValue }
+//    }
     
     public enum EventType: String, CaseIterable {
         case practice = "Practice"

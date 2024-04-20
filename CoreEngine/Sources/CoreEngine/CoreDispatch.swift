@@ -6,7 +6,7 @@
 //
 
 import Foundation
-
+import SwiftUI
 
 public extension DispatchQueue {
     
@@ -41,6 +41,7 @@ public class DQ {
 
 // Run on Main Thread Helper
 public func main(mainBlock: @escaping () -> Void) { DispatchQueue.main.async { mainBlock() } }
+public func mainAnimation(mainBlock: @escaping () -> Void) { DispatchQueue.main.async { withAnimation { mainBlock() } } }
 // Run on Background Thread Helper
 public func io(backgroundBlock: @escaping () -> Void) {
     DispatchQueue.global(qos: .background).async { backgroundBlock() }

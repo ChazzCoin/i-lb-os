@@ -146,13 +146,31 @@ struct CanvasEngine: View {
     
     @StateObject public var modelPanel = PanelModeController(title: "Testing Mode Panel", subTitle: "Looks to be good to me!")
     @State var testTrigger = true
+    @State var wrapIsVisible = true
     var body: some View {
         
 //        if !masterResetCanvas { EmptyView() }
         
         GlobalPositioningZStack(coordinateSpace: .global) { windowGPS in
-            
             GlobalPositioningReader(coordinateSpace: .global) { geo, gps in
+                
+                // Just a basic wrap.
+                Wrap {
+                    Text("A simple wrap for anyview.. it will form/wrap the size of its contents.")
+                }
+                // GPS
+                Wrap(.bottomCenter) {
+                    Text("Places this view in the bottom center of the screen.")
+                }
+                // Visible Toggle Binding
+                Wrap($wrapIsVisible) {
+                    Text("This is able to toggle the views visibility.")
+                }
+                // Do one or do all.
+                Wrap($testTrigger, .bottomCenter, padding: true) {
+                    Text("Or.. do all of it haha.")
+                }
+                
                 
                 MenuBarStatic(showIcons: $menuIsOpen, gps: gps){}
                 
@@ -171,22 +189,6 @@ struct CanvasEngine: View {
                     }
                     .environmentObject(self.BEO)
                 }
-                
-//                V.IsVisible($testTrigger) {
-//                    ToolBarPicker {
-//                        LineIconView(isBgColor: false)
-//                            .frame(width: 50, height: 50)
-//                            .onTapAnimation {
-//                                enableDrawing(shapeSubType: ShapeToolProvider.line_straight)
-//                            }
-//                        CurvedLineIconView()
-//                            .frame(width: 50, height: 50)
-//                            .onTapAnimation {
-//                                enableDrawing(shapeSubType: ShapeToolProvider.line_curved)
-//                            }
-//                    }
-//                    .environmentObject(self.BEO)
-//                }.position(using: gps, at: .bottomCenter, offsetY: 50)
     
                 navTools.getNavStackView()
                 self.modelPanel.Display(.center)
@@ -205,23 +207,19 @@ struct CanvasEngine: View {
             GlobalPositioningReader(coordinateSpace: .canvas, width: 20000, height: 20000) { cGeo, cGps in
 
                 // Board/Canvas Level
-                Wrap(.bottomRight) {
-                    BoardEngine()
-                        .zIndex(2.0)
-                        .environmentObject(self.BEO)
-                        .environmentObject(self.navTools)
-                        .background(.clear)
-                        .frame(width: cGeo.size.width, height: cGeo.size.height)
-                        .offset(x: self.BEO.canvasOffset.x + 15000, y: self.BEO.canvasOffset.y + 15000)
-                        .scaleEffect(self.BEO.canvasScale)
-                        .rotationEffect(Angle(degrees: self.BEO.canvasRotation))
-                }
-                
-                
+                BoardEngine()
+                    .zIndex(2.0)
+                    .environmentObject(self.BEO)
+                    .environmentObject(self.navTools)
+                    .background(.clear)
+                    .frame(width: cGeo.size.width, height: cGeo.size.height)
+                    .offset(x: self.BEO.canvasOffset.x, y: self.BEO.canvasOffset.y)
+                    .scaleEffect(self.BEO.canvasScale)
+                    .rotationEffect(Angle(degrees: self.BEO.canvasRotation))
 
             }
             .zIndex(0.0)
-            .background(Color.black.opacity(0.1))
+            .background(Color.black.opacity(0.0001))
             .gesture(self.BEO.gesturesAreLocked ? nil : dragAngleGestures.simultaneously(with: scaleGestures))
         }
         .background(StarryNightAnimatedView())
