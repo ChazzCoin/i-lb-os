@@ -83,7 +83,7 @@ struct MenuListView: View {
                     case .settings:
                         EmptyView()
                     case .addOrg:
-                        OrganizationDetailsView(orgId: "new")
+                        OrganizationDetailsView(orgId: "new", reset: .constant(false))
                     case .addTeam:
                         TeamDetailsView(teamId: "new")
 //                        TeamView(teamId: .constant("new"), isShowing: .constant(true))

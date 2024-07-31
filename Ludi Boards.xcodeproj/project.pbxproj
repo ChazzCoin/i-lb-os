@@ -79,6 +79,7 @@
 		FB9F1DD62B1532AB00FD9078 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9F1DD52B1532AB00FD9078 /* ImagePicker.swift */; };
 		FB9F1DD92B1533C400FD9078 /* _FirebaseLogin.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9F1DD82B1533C400FD9078 /* _FirebaseLogin.swift */; };
 		FBA20A2F2B166FCE00045D1C /* MVSettingsView_DEPRECATED.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBA20A2E2B166FCE00045D1C /* MVSettingsView_DEPRECATED.swift */; };
+		FBA7EB802C59F860004A097D /* Sheets.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBA7EB7F2C59F860004A097D /* Sheets.swift */; };
 		FBABDAC52B20376F00321A00 /* ConfirmationPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBABDAC42B20376F00321A00 /* ConfirmationPopup.swift */; };
 		FBABDAC72B20456700321A00 /* ToolBarSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBABDAC62B20456700321A00 /* ToolBarSettings.swift */; };
 		FBABDAC92B20469900321A00 /* ManagedViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBABDAC82B20469900321A00 /* ManagedViewManager.swift */; };
@@ -233,6 +234,7 @@
 		FB9F1DD52B1532AB00FD9078 /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		FB9F1DD82B1533C400FD9078 /* _FirebaseLogin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _FirebaseLogin.swift; sourceTree = "<group>"; };
 		FBA20A2E2B166FCE00045D1C /* MVSettingsView_DEPRECATED.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MVSettingsView_DEPRECATED.swift; sourceTree = "<group>"; };
+		FBA7EB7F2C59F860004A097D /* Sheets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sheets.swift; sourceTree = "<group>"; };
 		FBABDAC42B20376F00321A00 /* ConfirmationPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmationPopup.swift; sourceTree = "<group>"; };
 		FBABDAC62B20456700321A00 /* ToolBarSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolBarSettings.swift; sourceTree = "<group>"; };
 		FBABDAC82B20469900321A00 /* ManagedViewManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedViewManager.swift; sourceTree = "<group>"; };
@@ -520,6 +522,7 @@
 			isa = PBXGroup;
 			children = (
 				FB9F1DCF2B1528FC00FD9078 /* Extensions.swift */,
+				FBA7EB7F2C59F860004A097D /* Sheets.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -1097,6 +1100,7 @@
 				FB15DD2A2B07443600A21290 /* BoardEngineView.swift in Sources */,
 				FBFF5CF22BCE4D0E00149A31 /* CoreBuddyListView.swift in Sources */,
 				FB18F17E2B6ABDA200D89F8D /* PdfImaging.swift in Sources */,
+				FBA7EB802C59F860004A097D /* Sheets.swift in Sources */,
 				FB9F1DD22B1529E400FD9078 /* LoadingView.swift in Sources */,
 				FBABDAC72B20456700321A00 /* ToolBarSettings.swift in Sources */,
 				FBDE4F5D2B4E2345007FE880 /* _LiveRooms.swift in Sources */,

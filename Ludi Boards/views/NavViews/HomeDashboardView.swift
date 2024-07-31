@@ -11,7 +11,6 @@ import RealmSwift
 import CoreEngine
 
 struct HomeDashboardView: View {
-//    @State var userId: String = getFirebaseUserId() ?? "SOL"
     
     @Environment(\.colorScheme) var colorScheme
     @EnvironmentObject var BEO: BoardEngineObject
@@ -47,8 +46,10 @@ struct HomeDashboardView: View {
     @State private var showNewOrgSheet = false
     @State private var showNewTeamSheet = false
     @State private var showNewPlayerRefSheet = false
+    @State private var showNewEventSheet = false
     
     @State private var isLoggedIn = false
+    @State private var resetView = false
     
     @State private var isSidebarVisible = false
     var sidebarView: some View {
@@ -62,42 +63,65 @@ struct HomeDashboardView: View {
 
     var body: some View {
         // Main Content and Sidebar
-        ZStack {
-            
-            
+        
+        ZStackReset(reset: $resetView) {
             
             List {
-                OrganizationDashboardView(orgId: self.BEO.currentOrgId)
-                    .padding()
-                    .clearSectionBackground()
-                
-                
-                // Teams
-                if teams.isEmpty {
-                    Text("No Teams")
-                }
-                ForEach(teams, id: \.id) { item in
-                    
-                    NavigationLink(item.name, destination: TeamDetailsView(teamId: item.id))
-//                    Text(item.name)
-                        
+                // Organization
+                Section(header: Text("Organization")) {
+                    if self.BEO.currentOrgId != "" {
+                        OrganizationDashboardView(orgId: self.BEO.currentOrgId, showNewFlag: self.$showNewOrgSheet)
+                            .padding()
+                            .clearSectionBackground()
+                    } else {
+                        Text("Create Org")
+                    }
                 }
                 
-                // Players
-                if players.isEmpty {
-                    Text("No Members of SOL Academy")
-                }
-                ForEach(OrganizationManager().getAllUsersInOrganization(organizationId: BEO.currentOrgId), id: \.self) { item in
-                    Text(item.name)
+                Section(header: HStack {
+                    Text("Teams")
+                    SOLCON(icon: SolIcon.add, onTap: {
+                        self.showNewTeamSheet = true
+                    })
+                }) {
+                    if teams.isEmpty {
+                        NavigationLink(destination: TeamDetailsView(teamId: "new"), label: {Text("Create Team")})
+                    } else {
+                        ForEach(teams, id: \.id) { item in
+                            NavigationLink(item.name, destination: TeamDetailsView(teamId: item.id))
+                        }
+                    }
                 }
                 
-                // Events
-                if events.isEmpty {
-                    Text("No Events")
+                Section(header: HStack {
+                    Text("Players")
+                    SOLCON(icon: SolIcon.add, onTap: {
+                        self.showNewPlayerRefSheet = true
+                    })
+                }) {
+                    if players.isEmpty {
+                        Text("No Members of SOL Academy")
+                    } else {
+                        ForEach(OrganizationManager().getAllUsersInOrganization(organizationId: BEO.currentOrgId), id: \.self) { item in
+                            Text(item.name)
+                        }
+                    }
                 }
-                ForEach(events, id: \.id) { item in
-                    Text(item.name)
+               
+                Section(header: HStack {
+                    Text("Events")
+                    SOLCON(icon: SolIcon.add, onTap: {
+                        self.showNewEventSheet = true
+                    })
+                }) {
+                    if events.isEmpty {
+                        Text("No Events")
+                    }
+                    ForEach(events, id: \.id) { item in
+                        Text(item.name)
+                    }
                 }
+               
                 
                 // Activities
                 Section(header: Text("Activities")) {
@@ -105,8 +129,6 @@ struct HomeDashboardView: View {
                         .environmentObject(self.BEO)
 //                        .environmentObject(self.NavStack)
                 }.clearSectionBackground()
-                
-                
                 
             }
             .onTap {
@@ -131,11 +153,11 @@ struct HomeDashboardView: View {
             Image(systemName: "line.horizontal.3")
         })
         .onAppear() {
-//            self.NavStack.addToStack()
-            fetchAllSessionsFromFirebase()
-        }
-        .onDisappear() {
-//            self.NavStack.removeFromStack()
+            if let temp = realmInstance.objects(Organization.self).first {
+                self.BEO.currentOrgId = temp.id
+                self.resetView = true
+                self.resetView = false
+            }
         }
         .loading(isShowing: $isLoading)
 //        .sheet(isPresented: $showNewPlanSheet) {
@@ -146,22 +168,21 @@ struct HomeDashboardView: View {
 //        .sheet(isPresented: $showCurrentTeamSheet) {
 //            TeamView(teamId: $currentTeamId, isShowing: $showCurrentTeamSheet)
 //        }
+        .organizationDetailsSheet(isPresented: $showNewOrgSheet, orgId: "new", reset: $resetView)
 //        .sheet(isPresented: $showNewOrgSheet) {
-////            TeamView(teamId: .constant("new"), isShowing: $showNewTeamSheet)
+//            OrganizationDetailsView(orgId: "new", reset: $resetView)
 //        }
+        .teamSheet(isPresented: $showNewTeamSheet, teamId: .constant("new"))
 //        .sheet(isPresented: $showNewTeamSheet) {
 //            TeamView(teamId: .constant("new"), isShowing: $showNewTeamSheet)
 //        }
-//        .sheet(isPresented: $showNewPlayerRefSheet) {
-//            PlayerRefView(playerId: .constant("new"), isShowing: $showNewPlayerRefSheet)
-//        }
-        .refreshable {
-            fetchAllSessionsFromFirebase()
+        .sheet(isPresented: $showNewPlayerRefSheet) {
+            PlayerRefView(playerId: .constant("new"), isShowing: $showNewPlayerRefSheet)
         }
-    }
-    
-    func fetchAllSessionsFromFirebase() {
-//        FirebaseSessionPlanService.runFullFetchProcess(realm: self.realmInstance)
+        .refreshable {
+            self.resetView = true
+            self.resetView = false
+        }
     }
     
 }

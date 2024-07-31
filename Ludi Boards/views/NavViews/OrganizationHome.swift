@@ -12,6 +12,7 @@ import CoreEngine
 
 struct OrganizationDashboardView: View {
     var orgId: String
+    @Binding var showNewFlag: Bool
     @State var organization: Organization? = nil
     @State var isEmpty: Bool = false
 
@@ -32,6 +33,9 @@ struct OrganizationDashboardView: View {
                     Text("Create or Join an Organization.")
                         .padding(.bottom, 5)
                 }.padding()
+                    .onTapAnimation {
+                        self.showNewFlag = true
+                    }
             } else {
                 // Organization Logo or Placeholder
                 if let organization = organization, let url = URL(string: organization.logoUrl) {
@@ -71,7 +75,7 @@ struct OrganizationDashboardView: View {
             
             Spacer()
         }
-        .background(Color.white) // Consider using a custom color or .ultraThinMaterial for a frosted glass look
+//        .background(Color.white) // Consider using a custom color or .ultraThinMaterial for a frosted glass look
         .cornerRadius(15)
         .shadow(radius: 5)
         .navigationBarTitleDisplayMode(.inline)

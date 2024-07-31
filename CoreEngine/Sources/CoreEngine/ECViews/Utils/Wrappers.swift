@@ -25,7 +25,14 @@ public func VStackReader<Content: View>(@ViewBuilder viewBuilder: @escaping (Geo
         }
     }
 }
-
+@ViewBuilder
+public func ZStackReset<Content: View>(reset: Binding<Bool>, @ViewBuilder viewBuilder: @escaping () -> Content) -> some View {
+    if !reset.wrappedValue {
+        ZStack {
+            viewBuilder()
+        }
+    }
+}
 //@available(iOS 16.0, *)
 //public extension Layout {
 //    

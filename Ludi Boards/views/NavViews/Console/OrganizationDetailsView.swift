@@ -11,6 +11,7 @@ import CoreEngine
 struct OrganizationDetailsView: View {
     
     var orgId: String
+    @Binding var reset: Bool
     
     @State var sport: String = ""
     
@@ -71,13 +72,16 @@ struct OrganizationDetailsView: View {
                         icon: SolIcon.save,
                         onTap: {
                             save()
+                            self.reset = true
+                            self.reset = false
                         }
                     )
                     
                     SOLCON(
                         icon: SolIcon.delete,
                         onTap: {
-                            
+                            self.reset = true
+                            self.reset = false
                         }
                     )
                     
@@ -86,6 +90,8 @@ struct OrganizationDetailsView: View {
                         .foregroundColor(.blue)
                         .onTapAnimation {
                             isEditMode.toggle()
+                            self.reset = true
+                            self.reset = false
                         }
                     
                 }
@@ -108,6 +114,4 @@ struct OrganizationDetailsView: View {
     }
 }
 
-#Preview {
-    OrganizationDetailsView(orgId: "new")
-}
+
