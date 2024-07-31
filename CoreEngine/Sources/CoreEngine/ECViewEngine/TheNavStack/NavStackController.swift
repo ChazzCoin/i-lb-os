@@ -148,6 +148,7 @@ public extension NavWindowController {
 public class NavWindowController: ObservableObject {
     
     @Published public var id: String = "master"
+    @StateRealmObject public var dyna = ManagedView()
     
     @ObservedObject public var gps = GlobalPositioningSystem(CoreNameSpace.global)
     @ObservedObject public var broadcaster: BroadcastTools = BroadcastTools()
@@ -162,7 +163,7 @@ public class NavWindowController: ObservableObject {
     @Published public var sidebarState: NavStackState = .closed
     
     @Published public var isLocked = false
-    @Published public var isFloatable: Bool = false
+    @Published public var isFloatable: Bool = true
     
     @Published public var keyboardIsShowing = false
     @Published public var keyboardHeight = 0.0
@@ -203,7 +204,14 @@ public class NavWindowController: ObservableObject {
                 
                 if navIntake.navId.lowercased() != self.id { return }
                 print("NavStack Intake -> NAV TO: \(String(describing: navIntake.viewName))")
-                
+                if let nt = navIntake.viewName?.lowercased() {
+                    guard let _ = self.viewPool[nt.lowercased()] else {
+                        return
+                    }
+                } else {
+                    return
+                }
+               
                 if let io = navIntake.navAction {
                     switch io {
                         case .toggle:
@@ -429,6 +437,10 @@ public class NavWindowController: ObservableObject {
     public func loadDynaView() {
         if let managedView = realmInstance.object(ofType: ManagedView.self, forPrimaryKey: self.id) {
             mainAnimation {
+                self._dyna = StateRealmObject(wrappedValue: managedView)
+                self.masterResetTheWindow()
+            }
+            mainAnimation {
                 if managedView.toolType == NavStackSize.full.rawValue {
                     self.navSize = NavStackSize.full
                     self.width = NavStackSize.full.width
@@ -451,7 +463,7 @@ public class NavWindowController: ObservableObject {
                 self.position = CGPoint(x: managedView.startX, y: managedView.startY)
                 self.offPos = CGPoint(x: managedView.x, y: managedView.y)
             }
-        }
+        } 
     }
     
     public func saveDynaView() {

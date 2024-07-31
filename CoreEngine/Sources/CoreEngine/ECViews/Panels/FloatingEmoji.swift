@@ -40,7 +40,7 @@ public struct FloatingEmojiView: View {
                     .zIndex(20.0)
             }
         }
-        .frame(width: 400, height: 400)
+        .frame(width: 400, height: 1000)
         .background(Color.clear)
 //        .offset(x: gps.getCoordinate(for: .topLeft).x, y: gps.getCoordinate(for: .topLeft).y + 50)
         .onAppear() {
@@ -69,7 +69,7 @@ struct FloatingEmoji: View {
     @State var xCoord: Double
     var id: UUID
     @State var directionIsUp: Bool = false
-    let animationDuration: TimeInterval = 3
+    let animationDuration: TimeInterval = 5
 
     @State private var isFloating = false
     @State private var isFaded = false
@@ -78,7 +78,7 @@ struct FloatingEmoji: View {
         Text(emoji)
             .font(.system(size: 40))
             .opacity(isFaded ? 0 : 1)
-            .offset(x: xCoord, y: isFloating ? (directionIsUp ? -200 : 200) : 0) // Increased offset for a continuous upward movement
+            .offset(x: xCoord, y: isFloating ? (directionIsUp ? -500 : 500) : 0) // Increased offset for a continuous upward movement
             .animation(.easeInOut(duration: animationDuration), value: isFloating)
             .onAppear {
                 withAnimation {

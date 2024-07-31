@@ -61,14 +61,14 @@ public struct CoreProfileView: View {
                     }
                 }
                 
-             
                 CoreConfirmButton(
                     title: "Sign Out",
                     message: "Are you sure you want to logout?",
                     action: {
                         UserTools.logout()
                     },
-                    isEnabled: true)
+                    isEnabled: true
+                )
                 
             }
             .padding(.bottom, 20)
@@ -83,13 +83,7 @@ public struct CoreProfileView: View {
             }
         }
     }
-    
-    public func loadUser() {
-//        currentUser.start()
-//        FirebaseConnectionsService.refreshOnce()
-//       
-//        print("Current User: \(String(describing: currentUser))")
-    }
+
     
     public func profileInfoRow(title: String, value: String) -> some View {
         VStack(alignment: .leading) {
@@ -101,23 +95,3 @@ public struct CoreProfileView: View {
         }
     }
 }
-
-
-//struct ActionButtonStyle: ButtonStyle {
-//    func makeBody(configuration: Configuration) -> some View {
-//        configuration.label
-//            .frame(maxWidth: .infinity)
-//            .padding()
-//            .background(Color.blue)
-//            .foregroundColor(.white)
-//            .cornerRadius(10)
-//            .padding(.horizontal)
-//            .scaleEffect(configuration.isPressed ? 0.95 : 1)
-//    }
-//}
-
-//struct BuddyProfileView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        BuddyProfileView()
-//    }
-//}

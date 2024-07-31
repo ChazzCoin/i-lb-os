@@ -16,20 +16,24 @@ struct CanvasEngine: View {
     @AppLifecycle(.appDidEnterBackground) public var appDidEnterBackground: Bool
     @AppStorageDictionary("coordinates") public var coordinates: [String: Any]
     
+    @StateObject var navTools: NavWindowController = NavWindowController()
     @ObservedObject var UTO = UserToolsObservable()
     @ObservedObject var BEO = BoardEngineObject()
     @ObservedObject var DO = OrientationInfo()
     
+    @State var toolBarIsVisible: Bool = false
+    
+    @State var storeInMenuBar = Set<AnyCancellable>()
     @State var cancellables = Set<AnyCancellable>()
     @State var showMenuBar: Bool = true
-    @State var popupIsVisible: Bool = true
+    @State var popupIsVisible: Bool = false
     var maxScaleFactor: CGFloat = 1.0
     
     @State private var angle: Angle = .zero
     @State private var lastAngle: Angle = .zero
     
-    @State private var translation: CGPoint = .zero
-    @State private var lastOffset = CGPoint.zero
+    @State private var translation: CGPoint = CGPoint(x: 6000, y: 6000)
+    @State private var lastOffset = CGPoint(x: 6000, y: 6000)
     
     @State private var offsetTwo = CGSize.zero
     @State private var isDragging = false
@@ -40,8 +44,6 @@ struct CanvasEngine: View {
     // Initial size of your drawing canvas
     let initialWidth: CGFloat = 6000
     let initialHeight: CGFloat = 6000
-    
-    @StateObject var navTools: NavWindowController = NavWindowController()
     
     var dragAngleGestures: some Gesture {
         DragGesture()
@@ -154,44 +156,27 @@ struct CanvasEngine: View {
         GlobalPositioningZStack(coordinateSpace: .global) { windowGPS in
             GlobalPositioningReader(coordinateSpace: .global) { geo, gps in
                 
-                // Just a basic wrap.
-                Wrap {
-                    Text("A simple wrap for anyview.. it will form/wrap the size of its contents.")
-                }
-                // GPS
-                Wrap(.bottomCenter) {
-                    Text("Places this view in the bottom center of the screen.")
-                }
-                // Visible Toggle Binding
-                Wrap($wrapIsVisible) {
-                    Text("This is able to toggle the views visibility.")
-                }
-                // Do one or do all.
-                Wrap($testTrigger, .bottomCenter, padding: true) {
-                    Text("Or.. do all of it haha.")
-                }
                 
-                
+                Wrap($toolBarIsVisible, .bottomCenter, padding: true) {
+                    ToolListView().padding(.bottom, 25)
+                }
+                Wrap($popupIsVisible, .bottomCenter, padding: true) {
+                    BoardSettingsBar()
+                        .zIndex(2.0)
+                        .environmentObject(self.BEO)
+                }
                 MenuBarStatic(showIcons: $menuIsOpen, gps: gps){}
                 
-                Wrap($testTrigger, .bottomCenter, padding: true) {
-                    ToolBarPicker {
-                        LineIconView(isBgColor: false)
-                            .frame(width: 50, height: 50)
-                            .onTapAnimation {
-                                enableDrawing(shapeSubType: ShapeToolProvider.line_straight)
-                            }
-                        CurvedLineIconView()
-                            .frame(width: 50, height: 50)
-                            .onTapAnimation {
-                                enableDrawing(shapeSubType: ShapeToolProvider.line_curved)
-                            }
-                    }
-                    .environmentObject(self.BEO)
-                }
-    
                 navTools.getNavStackView()
-                self.modelPanel.Display(.center)
+                                
+
+//                DynaWrap(id: "dynaWrapFloatingButtons") {
+//                    FloatingProfileView(profileImageDiameter: 360, orbitRadius: 300)
+//                }
+//                FloatingSocialView()
+                
+            
+//                self.modelPanel.Display(.center)
                 
 //                TimedView($testTrigger, seconds: 10) {
 //                    NotificationPanel(message: self.$notificationMessage, icon: self.$notificationIcon)
@@ -205,7 +190,6 @@ struct CanvasEngine: View {
             }.zIndex(35.0)
             
             GlobalPositioningReader(coordinateSpace: .canvas, width: 20000, height: 20000) { cGeo, cGps in
-
                 // Board/Canvas Level
                 BoardEngine()
                     .zIndex(2.0)
@@ -216,7 +200,6 @@ struct CanvasEngine: View {
                     .offset(x: self.BEO.canvasOffset.x, y: self.BEO.canvasOffset.y)
                     .scaleEffect(self.BEO.canvasScale)
                     .rotationEffect(Angle(degrees: self.BEO.canvasRotation))
-
             }
             .zIndex(0.0)
             .background(Color.black.opacity(0.0001))
@@ -227,16 +210,26 @@ struct CanvasEngine: View {
             _appDidEnterBackground.onChange = {
                 print("YESSSS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
             }
-            delayThenMain(3, mainBlock: { self.testTrigger = false })
-            navTools.addView(
-                callerId: MenuBarProvider.boardCreate.tool.title,
-                mainContent: { HomeDashboardView().environmentObject(self.BEO) },
-                sideContent: { MenuListView(isShowing: .constant(true)).clearSectionBackground() }
-            )
-            navTools.navTo(viewId: MenuBarProvider.boardCreate.tool.title)
-            NavTools.openNavStack()
-//            BroadcastTools.toggleViewVisibility(viewId: SPanel.mode.name, isVisible: true)
+            addViewsToNavStack()
+//            NavTools.openNavStack()
+            
+            
+            BroadcastTools.listenForMenuBar(storeIn: &storeInMenuBar, onEvent: { id in
+                print("ID!!!!! \(id)")
+                switch id {
+                    case "toolbox":
+                        if popupIsVisible { popupIsVisible = false }
+                        self.toolBarIsVisible.toggle()
+                    case "board settings":
+                        if toolBarIsVisible { toolBarIsVisible = false }
+                        self.popupIsVisible.toggle()
+                    default: return
+                }
+            })
+
         }
+        
+        
         
         
         /*
@@ -386,23 +379,23 @@ struct CanvasEngine: View {
 //        .background(Color.white.opacity(0.001))
 //        .gesture(self.BEO.gesturesAreLocked ? nil : dragAngleGestures.simultaneously(with: scaleGestures))
         
-        .onChange(of: self.DO.orientation) {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                masterResetTheCanvas()
-            }
-        }
-        .onChange(of: self.BEO.toolBarIsShowing) {
-            if self.BEO.toolBarIsShowing {
-                self.BEO.toolSettingsIsShowing = false
-            }
-        }
-        .onChange(of: self.BEO.toolSettingsIsShowing) {
-            if self.BEO.toolSettingsIsShowing {
-                self.BEO.toolBarIsShowing = false
-            }
-        }
+//        .onChange(of: self.DO.orientation) {
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+//                masterResetTheCanvas()
+//            }
+//        }
+//        .onChange(of: self.BEO.toolBarIsShowing) {
+//            if self.BEO.toolBarIsShowing {
+//                self.BEO.toolSettingsIsShowing = false
+//            }
+//        }
+//        .onChange(of: self.BEO.toolSettingsIsShowing) {
+//            if self.BEO.toolSettingsIsShowing {
+//                self.BEO.toolBarIsShowing = false
+//            }
+//        }
         .onAppear() {
-            menuBarButtonListener()
+//            menuBarButtonListener()
             
 //                let newUser = CoreUser()
 //                newUser.userName = "john boi"
@@ -443,11 +436,7 @@ struct CanvasEngine: View {
 //                    mainContent: { CoreSignUpView() },
 //                    sideContent: { EmptyView() }
 //                )
-//            navTools.addView(
-//                callerId: MenuBarProvider.boardCreate.tool.title,
-//                mainContent: { HomeDashboardView().environmentObject(self.BEO) },
-//                sideContent: { MenuListView(isShowing: .constant(true)).clearSectionBackground() }
-//            )
+
 //                NavTools.openNavStack()
 //                delayThenMain(5, mainBlock: {
 //                    self.testTrigger = true
@@ -457,7 +446,22 @@ struct CanvasEngine: View {
         
     }
     
-
+    func addViewsToNavStack() {
+        
+        //
+        navTools.addView(
+            callerId: MenuBarProvider.home.tool.title,
+            mainContent: { HomeDashboardView().environmentObject(self.BEO) },
+            sideContent: { MenuListView(isShowing: .constant(true)).clearSectionBackground() }
+        )
+        // Profile
+        navTools.addView(
+            callerId: MenuBarProvider.profile.tool.title,
+            mainContent: { SignUpView() },
+            sideContent: { EmptyView() }
+        )
+        
+    }
     @MainActor
     private func exportPDF() {
         guard let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
@@ -563,9 +567,9 @@ struct CanvasEngine: View {
 //        })
 //    }
     func addSessionPlansWindow() {
-        let caller = MenuBarProvider.boardCreate.tool.title
+        let caller = MenuBarProvider.home.tool.title
         navTools.addView(window: VF.BuildManagedHolder(
-            callerId: MenuBarProvider.boardCreate.tool.title,
+            callerId: MenuBarProvider.home.tool.title,
             mainContent: { HomeDashboardView().environmentObject(self.BEO) },
             sideContent: { EmptyView() }
         ))

@@ -31,7 +31,7 @@ struct OrganizationDashboardView: View {
                     // Organization Description
                     Text("Create or Join an Organization.")
                         .padding(.bottom, 5)
-                }
+                }.padding()
             } else {
                 // Organization Logo or Placeholder
                 if let organization = organization, let url = URL(string: organization.logoUrl) {

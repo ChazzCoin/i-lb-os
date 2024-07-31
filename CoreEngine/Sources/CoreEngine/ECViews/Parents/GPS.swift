@@ -180,7 +180,10 @@ public class GlobalPositioningSystem: ObservableObject {
     public func resetPaddingToZero() {  self.safeAreaInsets = EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0) }
     public func setSafePadding(isOn: Bool) {
         if isOn == enablePadding { return }
-        self.enablePadding = isOn
+        main {
+            self.enablePadding = isOn
+        }
+        
         if self.enablePadding {
             BroadcastTools.addObserver(self, triggerFunction: #selector(updateScreenSizeAndInsets), notification: UIDevice.orientationDidChangeNotification)
         } else {

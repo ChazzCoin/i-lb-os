@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FB0C196C2C0FA6D30036B4A0 /* NewProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB0C196B2C0FA6D30036B4A0 /* NewProfileView.swift */; };
 		FB10AE052B0DC8E600295F4B /* Tips.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB10AE042B0DC8E600295F4B /* Tips.swift */; };
 		FB10AE0B2B0F162F00295F4B /* ActivityPlanThumbView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB10AE0A2B0F162F00295F4B /* ActivityPlanThumbView.swift */; };
 		FB10AE0D2B0F16B100295F4B /* ActivityPlanThumbList.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB10AE0C2B0F16B100295F4B /* ActivityPlanThumbList.swift */; };
@@ -129,6 +130,7 @@
 		FBF1A5F92B5E342B0088150C /* SolIconButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF1A5F82B5E342B0088150C /* SolIconButton.swift */; };
 		FBF1A5FC2B5F7BB70088150C /* Triangle.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF1A5FB2B5F7BB70088150C /* Triangle.swift */; };
 		FBF3902E2B2D78CF00C0508A /* TipProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF3902D2B2D78CF00C0508A /* TipProvider.swift */; };
+		FBF3A9A42BE167450088AAAC /* FloatingButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF3A9A32BE167450088AAAC /* FloatingButtons.swift */; };
 		FBF515A72BBB29840066EAA9 /* SportsPositions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF515A62BBB29840066EAA9 /* SportsPositions.swift */; };
 		FBF515AA2BBB5D8F0066EAA9 /* BaseDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF515A92BBB5D8F0066EAA9 /* BaseDetailsView.swift */; };
 		FBF515AC2BBB5F420066EAA9 /* OrganizationDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF515AB2BBB5F420066EAA9 /* OrganizationDetailsView.swift */; };
@@ -157,6 +159,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		FB0C196B2C0FA6D30036B4A0 /* NewProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewProfileView.swift; sourceTree = "<group>"; };
 		FB10AE042B0DC8E600295F4B /* Tips.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tips.swift; sourceTree = "<group>"; };
 		FB10AE0A2B0F162F00295F4B /* ActivityPlanThumbView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityPlanThumbView.swift; sourceTree = "<group>"; };
 		FB10AE0C2B0F16B100295F4B /* ActivityPlanThumbList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityPlanThumbList.swift; sourceTree = "<group>"; };
@@ -281,6 +284,7 @@
 		FBF1A5F82B5E342B0088150C /* SolIconButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolIconButton.swift; sourceTree = "<group>"; };
 		FBF1A5FB2B5F7BB70088150C /* Triangle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Triangle.swift; sourceTree = "<group>"; };
 		FBF3902D2B2D78CF00C0508A /* TipProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TipProvider.swift; sourceTree = "<group>"; };
+		FBF3A9A32BE167450088AAAC /* FloatingButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingButtons.swift; sourceTree = "<group>"; };
 		FBF515A62BBB29840066EAA9 /* SportsPositions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SportsPositions.swift; sourceTree = "<group>"; };
 		FBF515A92BBB5D8F0066EAA9 /* BaseDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseDetailsView.swift; sourceTree = "<group>"; };
 		FBF515AB2BBB5F420066EAA9 /* OrganizationDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrganizationDetailsView.swift; sourceTree = "<group>"; };
@@ -594,6 +598,7 @@
 				FBD9AFAD2AFF00BF005F8620 /* Preview Content */,
 				FBD9AFB72AFF0253005F8620 /* GridLines.swift */,
 				FB87BE082B734425003B880D /* Michael.swift */,
+				FB0C196B2C0FA6D30036B4A0 /* NewProfileView.swift */,
 			);
 			path = "Ludi Boards";
 			sourceTree = "<group>";
@@ -689,6 +694,7 @@
 				FB881A3B2B47CD4400C16198 /* UserView.swift */,
 				FBE3854F2B4B32950090901C /* _FriendsListView.swift */,
 				FB881A432B48C61400C16198 /* _BuddyRequestListView.swift */,
+				FBF3A9A32BE167450088AAAC /* FloatingButtons.swift */,
 			);
 			path = Social;
 			sourceTree = "<group>";
@@ -1013,6 +1019,7 @@
 				FBE385502B4B32950090901C /* _FriendsListView.swift in Sources */,
 				FB9F1DD92B1533C400FD9078 /* _FirebaseLogin.swift in Sources */,
 				FB18F1692B68718000D89F8D /* SearchableSessionListView.swift in Sources */,
+				FBF3A9A42BE167450088AAAC /* FloatingButtons.swift in Sources */,
 				FBDF0DC52B21811000FADE44 /* SharedSessionsView.swift in Sources */,
 				FBAE62AD2B295A8100E008D5 /* ManagedPopUpView.swift in Sources */,
 				FB18F13E2B6391B500D89F8D /* Square.swift in Sources */,
@@ -1046,6 +1053,7 @@
 				FB65D2C92B7D5E2E00564C37 /* SessionProviders.swift in Sources */,
 				FB18F1752B697E2800D89F8D /* DSideBarWindow.swift in Sources */,
 				FB3E02C12B0C9A6D00D8558C /* BuddyProfileView.swift in Sources */,
+				FB0C196C2C0FA6D30036B4A0 /* NewProfileView.swift in Sources */,
 				FB9EB6DE2BB6920F00FDD5DE /* RealmSOL.swift in Sources */,
 				FBD9AFB82AFF0253005F8620 /* GridLines.swift in Sources */,
 				FB18F15E2B6838B900D89F8D /* PlayerRefView.swift in Sources */,

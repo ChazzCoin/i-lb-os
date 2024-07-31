@@ -95,8 +95,8 @@ struct CanvasEngine: View {
         
         
         GlobalPositioningZStack { geo, gps in
-//            UserLoginSignupView()
-//                .position(gps.getCoordinate(for: .bottomCenter))
+            CoreSignUpView()
+                .position(gps.getCoordinate(for: .bottomCenter))
 //            MusicPlayerView()
 //                .frame(width: 500, height: 500)
 //                .background(Color.white)
@@ -132,7 +132,6 @@ struct CanvasEngine: View {
     }
     
 }
-
 
 
 

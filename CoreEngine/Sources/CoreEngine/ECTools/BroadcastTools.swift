@@ -67,6 +67,20 @@ public class BroadcastTools: ObservableObject {
             .store(in: &storeIn)
     }
     
+    public static func listenForMenuBar(storeIn: inout Set<AnyCancellable>, onEvent: @escaping (String) -> Void) {
+        var cancellables = Set<AnyCancellable>()
+        BroadcastTools().subscribeTo(.NavStackMessage, storeIn: &storeIn) { wc in
+            if let navIntake = wc as? NavStackMessage {
+                print("listenForMenuBar: \(String(describing: navIntake.viewName))")
+                if let nt = navIntake.viewName?.lowercased() {
+                    onEvent(nt)
+                } else {
+                    return
+                }
+            }
+        }
+    }
+    
     // Consider adding functionality to remove specific subscriptions if needed
     public func unsubscribeAll() { cancellables.removeAll() }
     

@@ -37,8 +37,8 @@ public struct MenuBarStatic: View {
         MenuBarProvider.toolbox,
         MenuBarProvider.boardSettings,
 //        MenuBarProvider.navHome,
-        MenuBarProvider.boardDetails,
-        MenuBarProvider.boardCreate,
+        MenuBarProvider.session,
+        MenuBarProvider.home,
         MenuBarProvider.profile
     ]
     
@@ -48,8 +48,8 @@ public struct MenuBarStatic: View {
         MenuBarProvider.toolbox,
         MenuBarProvider.boardSettings,
 //        MenuBarProvider.navHome,
-        MenuBarProvider.boardDetails,
-        MenuBarProvider.boardCreate,
+        MenuBarProvider.session,
+        MenuBarProvider.home,
         MenuBarProvider.chat,
         MenuBarProvider.profile
     ]

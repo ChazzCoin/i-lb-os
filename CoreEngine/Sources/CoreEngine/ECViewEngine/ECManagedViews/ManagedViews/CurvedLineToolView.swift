@@ -169,7 +169,6 @@ public struct CurvedLineDrawingManaged: View {
         
         MVO.updateRealmPos(start: CGPoint(x: MVO.lifeStartX, y: MVO.lifeStartY),
                        end: CGPoint(x: MVO.lifeEndX, y: MVO.lifeEndY))
-        MVO.saveSnapshotToHistoryInRealm()
     }
     
     // Drag gesture definition

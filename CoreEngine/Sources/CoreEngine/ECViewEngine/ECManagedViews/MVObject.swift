@@ -78,6 +78,8 @@ public class ManagedViewObject: ObservableObject {
     
     @Published public var lifeHeadIsEnabled = true
     @Published public var lifeCenterPoint = CGPoint.zero
+    @Published public var lifeX: CGFloat = 0.0
+    @Published public var lifeY: CGFloat = 0.0
     @Published public var lifeStartX: CGFloat = 0.0
     @Published public var lifeStartY: CGFloat = 0.0
     @Published public var lifeCenterX: CGFloat = 0.0
@@ -255,7 +257,7 @@ public class ManagedViewObject: ObservableObject {
             return
         }
         let nextCoordinate = coordinateStackBasic.removeFirst()
-        withAnimation { position = nextCoordinate }
+        mainAnimation { self.position = nextCoordinate }
         // Schedule the next animation after a delay
         DispatchQueue.main.asyncAfter(deadline: .now()) {
             if !self.coordinateStackBasic.isEmpty {
@@ -272,18 +274,20 @@ public class ManagedViewObject: ObservableObject {
         }
         
         let nextCoordinate = coordinateStack.removeFirst()
-        withAnimation {
-            position = nextCoordinate["position"] ?? position
-            lifeStartX = nextCoordinate["start"]?.x ?? lifeStartX
-            lifeStartY = nextCoordinate["start"]?.y ?? lifeStartY
-            lifeEndX = nextCoordinate["end"]?.x ?? lifeEndX
-            lifeEndY = nextCoordinate["end"]?.y ?? lifeEndY
-            lifeCenterPoint = nextCoordinate["center"] ?? lifeCenterPoint
-            lifeCenterX = lifeCenterPoint.x
-            lifeCenterY = lifeCenterPoint.y
-            if self.lifeToolType == ManagedViewTools.shape {
-                loadWidthAndHeight()
-                loadRotationOfLine()
+        mainAnimation {
+            self.position = nextCoordinate["position"] ?? self.position
+            self.lifeX = nextCoordinate["position"]?.x ?? self.lifeX
+            self.lifeY = nextCoordinate["position"]?.y ?? self.lifeY
+            self.lifeStartX = nextCoordinate["start"]?.x ?? self.lifeStartX
+            self.lifeStartY = nextCoordinate["start"]?.y ?? self.lifeStartY
+            self.lifeEndX = nextCoordinate["end"]?.x ?? self.lifeEndX
+            self.lifeEndY = nextCoordinate["end"]?.y ?? self.lifeEndY
+            self.lifeCenterPoint = nextCoordinate["center"] ?? self.lifeCenterPoint
+            self.lifeCenterX = self.lifeCenterPoint.x
+            self.lifeCenterY = self.lifeCenterPoint.y
+            if self.lifeToolType == "shape" {
+                self.loadWidthAndHeight()
+                self.loadRotationOfLine()
             }
             
         }
@@ -301,50 +305,50 @@ public class ManagedViewObject: ObservableObject {
         if isDisabledChecker() {return}
         if let umv = self.realmInstance.object(ofType: ManagedView.self, forPrimaryKey: self.lifeViewId) {
             // set attributes
-            print("Loading in ManagedView Tool.")
-            main {
-                self.lifeActivityId = umv.boardId
-                self.lifeToolType = umv.toolType
-                
-                self.lifeIsLocked = umv.isLocked
-                self.lifeLastUserId = umv.lastUserId
-                
-                self.position = CGPoint(x: umv.x, y: umv.y)
-                self.lifeStartX = umv.startX
-                self.lifeStartY = umv.startY
-                self.lifeCenterX = umv.centerX
-                self.lifeCenterY = umv.centerY
-                self.lifeEndX = umv.endX
-                self.lifeEndY = umv.endY
-                
-                self.lifeWidth = Double(umv.width)
-                self.lifeHeight = Double(umv.height)
-                self.lifeRotation = Angle(degrees: umv.rotation)
-                
-                self.lifeLineDash = Double(umv.lineDash)
-                self.lifeHeadIsEnabled = umv.headIsEnabled
-                
-                self.lifeColorRed = umv.colorRed
-                self.lifeColorGreen = umv.colorGreen
-                self.lifeColorBlue = umv.colorBlue
-                self.lifeColorAlpha = umv.colorAlpha
-                self.lifeColor = colorFromRGBA(red: self.lifeColorRed, green: self.lifeColorGreen, blue: self.lifeColorBlue, alpha: self.lifeColorAlpha)
-                
-                // Handle?
-                if self.lifeToolType == ManagedViewTools.shape {
-                    self.loadCenterPoint()
-                    self.loadWidthAndHeight()
-                    self.loadRotationOfLine()
-                }
-                // -> Handle?
-                if self.lifeToolType == ManagedViewTools.basic {
-                    self.minSizeCheck()
-                }
+            print("Pos: \(umv.x), \(umv.y).")
+            self.lifeActivityId = umv.boardId
+            self.lifeToolType = umv.toolType
+            
+            self.lifeIsLocked = umv.isLocked
+            self.lifeLastUserId = umv.lastUserId
+            
+            self.position = CGPoint(x: umv.x, y: umv.y)
+            self.lifeX = umv.x
+            self.lifeY = umv.y
+            self.lifeStartX = umv.startX
+            self.lifeStartY = umv.startY
+            self.lifeCenterX = umv.centerX
+            self.lifeCenterY = umv.centerY
+            self.lifeEndX = umv.endX
+            self.lifeEndY = umv.endY
+            
+            self.lifeWidth = Double(umv.width)
+            self.lifeHeight = Double(umv.height)
+            self.lifeRotation = Angle(degrees: umv.rotation)
+            
+            self.lifeLineDash = Double(umv.lineDash)
+            self.lifeHeadIsEnabled = umv.headIsEnabled
+            
+            self.lifeColorRed = umv.colorRed
+            self.lifeColorGreen = umv.colorGreen
+            self.lifeColorBlue = umv.colorBlue
+            self.lifeColorAlpha = umv.colorAlpha
+            self.lifeColor = colorFromRGBA(red: self.lifeColorRed, green: self.lifeColorGreen, blue: self.lifeColorBlue, alpha: self.lifeColorAlpha)
+            
+            // Handle?
+            if self.lifeToolType == "shape" {
+                self.loadCenterPoint()
+                self.loadWidthAndHeight()
+                self.loadRotationOfLine()
+            }
+            // -> Handle?
+            if self.lifeToolType == "general" || self.lifeToolType == "soccer" {
+                self.minSizeCheck()
             }
         } else {
             if self.hasBeenRetried { return }
             self.hasBeenRetried = true
-            ManagedViewTools.createNewTool(viewId: lifeViewId, activityId: lifeActivityId, toolType: lifeToolType, subToolType: lifeToolType, sport: "")
+            ManagedViewEngine.createNewTool(viewId: lifeViewId, activityId: lifeActivityId, toolType: lifeToolType, subToolType: lifeToolType, sport: "")
             delayThenMain(1, mainBlock: { self.loadFromRealm() })
         }
     }
@@ -373,7 +377,7 @@ public class ManagedViewObject: ObservableObject {
                         let startPosition = CGPoint(x: temp.startX, y: temp.startY)
                         let endPosition = CGPoint(x: temp.endX, y: temp.endY)
                         var centerPosition: CGPoint
-                        if self.lifeToolType == ManagedViewTools.shape && self.lifeSubToolType == ShapeToolProvider.line_curved {
+                        if self.lifeToolType == "shape" && self.lifeSubToolType == "line_curved" {
                              centerPosition = CGPoint(x: temp.centerX, y: temp.centerY)
                         } else {
                             centerPosition = getCenterOfLine(start: startPosition, end: endPosition)
@@ -456,30 +460,36 @@ public class ManagedViewObject: ObservableObject {
                 mv.headIsEnabled = self.lifeHeadIsEnabled
                 self.updateFirebase(mv: mv)
 //                self.saveSnapshotToHistoryInRealm()
+                r.refresh()
+                print("Updated Realm -> \(mv.x), \(mv.y)")
             }
         }
         
     }
     
-    public func updateRealmPos(x:Double?=nil, y:Double?=nil) {
-        DispatchQueue.global(qos: .background).async {
-            autoreleasepool {
-                do {
-                    let realm = try Realm()
-                    if let mv = realm.findByField(ManagedView.self, value: self.lifeViewId) {
-                        try realm.write {
-                            mv.x = x ?? self.position.x
-                            mv.y = y ?? self.position.y
-                            mv.lastUserId = self.currentUserId
-                        }
-                        self.updateFirebase(mv: mv)
-                    }
-                } catch {
-                    print("Realm error: \(error)")
-                }
-            }
-        }
-    }
+//    public func updateRealmPos(x:Double?=nil, y:Double?=nil) {
+//        DispatchQueue.global(qos: .background).async {
+//            autoreleasepool {
+//                do {
+//                    let realm = try Realm()
+//                    if let mv = realm.findByField(ManagedView.self, value: self.lifeViewId) {
+//                        try realm.write {
+//                            mv.x = x ?? self.position.x
+//                            mv.y = y ?? self.position.y
+//                            mv.startX = x ?? self.position.x
+//                            mv.startY = y ?? self.position.y
+//                            mv.lastUserId = self.currentUserId
+//                            realm.refresh()
+//                            print("Updated Realm with new POS! 1 -> \(mv.x), \(mv.y)")
+//                        }
+//                        self.updateFirebase(mv: mv)
+//                    }
+//                } catch {
+//                    print("Realm error: \(error)")
+//                }
+//            }
+//        }
+//    }
     public func updateRealmPos(start: CGPoint? = nil, end: CGPoint? = nil) {
         DispatchQueue.global(qos: .background).async {
             autoreleasepool {
@@ -487,6 +497,8 @@ public class ManagedViewObject: ObservableObject {
                     let realm = try Realm()
                     if let mv = realm.findByField(ManagedView.self, value: self.lifeViewId) {
                         try realm.write {
+                            mv.x = Double(start?.x ?? CGFloat(self.lifeX))
+                            mv.y = Double(start?.y ?? CGFloat(self.lifeY))
                             mv.startX = Double(start?.x ?? CGFloat(self.lifeStartX))
                             mv.startY = Double(start?.y ?? CGFloat(self.lifeStartY))
                             mv.centerX = Double(start?.x ?? CGFloat(self.lifeCenterX))
@@ -494,6 +506,8 @@ public class ManagedViewObject: ObservableObject {
                             mv.endX = Double(end?.x ?? CGFloat(self.lifeEndX))
                             mv.endY = Double(end?.y ?? CGFloat(self.lifeEndY))
                             mv.lastUserId = self.currentUserId
+                            realm.refresh()
+                            print("Updated Realm with new POS! 2 -> \(mv.x), \(mv.y)")
                         }
                         self.updateFirebase(mv: mv)
                     }
@@ -571,7 +585,7 @@ public class ManagedViewObject: ObservableObject {
         if shouldDenyFirebaseWriteRequest() { return }
         main {self.isWriting = true}
         if mv.boardId.isEmpty || mv.id.isEmpty { return }
-        reference.child(mv.boardId).child(mv.id).setValue(mv.toDict()) { (error: Error?, ref: DatabaseReference) in
+        reference.child(mv.id).setValue(mv.toDict()) { (error: Error?, ref: DatabaseReference) in
             main {self.isWriting = false}
             if let error = error { print("Error updating Firebase: \(error)") }
         }

@@ -65,7 +65,8 @@ public struct NavStackWindow: View {
             })
         .zIndex(40)
         .toolbar(removing: .sidebarToggle)
-        .frame(width: NAV.width, height: NAV.height)
+//        .frame(width: NAV.width, height: NAV.height)
+        .frame(width: CGFloat(NAV.dyna.width), height: CGFloat(NAV.dyna.height))
         .cornerRadius(15)
         .shadow(radius: 10)
         .animation(.easeInOut(duration: 0.10), value: self.NAV.mainState)
@@ -163,7 +164,7 @@ public struct NavStackWindow: View {
                     }
                 })
         }
-        .frame(width: NAV.width, height: NAV.height)
+        .frame(width: CGFloat(NAV.dyna.width), height: CGFloat(NAV.dyna.height))
         .cornerRadius(15)
         .shadow(radius: 10)
         .animation(.easeInOut(duration: 0.10), value: self.NAV.mainState)

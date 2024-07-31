@@ -14,7 +14,7 @@ struct ResizableBox: View {
     @State private var topRight = CGPoint(x: 200, y: 100)
     @State private var bottomLeft = CGPoint(x: 100, y: 200)
     @State private var bottomRight = CGPoint(x: 200, y: 200)
-    @State private var lineWidth = 2.0
+    @State private var lineWidth = 50.0
 
     var body: some View {
         ZStack {
@@ -36,7 +36,7 @@ struct ResizableBox: View {
 
     private func draggableCorner(at position: Binding<CGPoint>) -> some View {
         Circle()
-            .frame(width: 30, height: 30)
+            .frame(width: 200, height: 200)
             .foregroundColor(.blue)
             .position(position.wrappedValue)
             .gesture(DragGesture().onChanged { value in
@@ -45,7 +45,7 @@ struct ResizableBox: View {
     }
 }
 
-
+// MARK: FOUR POINT SHAPE....
 struct SquareShape: Shape {
     var topLeft: CGPoint
     var topRight: CGPoint

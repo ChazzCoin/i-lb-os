@@ -62,11 +62,15 @@ struct HomeDashboardView: View {
 
     var body: some View {
         // Main Content and Sidebar
-        ZStack(alignment: .leading) {
+        ZStack {
+            
+            
             
             List {
+                OrganizationDashboardView(orgId: self.BEO.currentOrgId)
+                    .padding()
+                    .clearSectionBackground()
                 
-//                OrganizationDashboardView(orgId: self.BEO.currentOrgId)
                 
                 // Teams
                 if teams.isEmpty {
@@ -80,12 +84,12 @@ struct HomeDashboardView: View {
                 }
                 
                 // Players
-//                if players.isEmpty {
-//                    Text("No Members of SOL Academy")
-//                }
-//                ForEach(OrganizationManager().getAllUsersInOrganization(organizationId: BEO.currentOrgId), id: \.self) { item in
-//                    Text(item.name)
-//                }
+                if players.isEmpty {
+                    Text("No Members of SOL Academy")
+                }
+                ForEach(OrganizationManager().getAllUsersInOrganization(organizationId: BEO.currentOrgId), id: \.self) { item in
+                    Text(item.name)
+                }
                 
                 // Events
                 if events.isEmpty {
@@ -96,11 +100,11 @@ struct HomeDashboardView: View {
                 }
                 
                 // Activities
-//                Section(header: Text("Activities")) {
-//                    SearchableActivityListView()
-//                        .environmentObject(self.BEO)
-////                        .environmentObject(self.NavStack)
-//                }.clearSectionBackground()
+                Section(header: Text("Activities")) {
+                    SearchableActivityListView()
+                        .environmentObject(self.BEO)
+//                        .environmentObject(self.NavStack)
+                }.clearSectionBackground()
                 
                 
                 

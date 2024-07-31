@@ -31,8 +31,8 @@ public class SoccerToolProvider: ManagedToolProvider, CoreIcon, CoreTool {
     public static let curvedLine: String = "curvedLine"
     public static let dottedLine: String = "dottedLine"
     
-    public let sport: String = VEngine.Genre.basic_tool.name
-    public let type = ManagedViewTools.basic
+    public let sport: String = "tool"
+    public let type = "soccer"
     public var subType: String = ""
     init(subType: String) {
         self.subType = subType

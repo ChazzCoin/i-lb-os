@@ -24,6 +24,12 @@ import Realm
 public class RealmInstance {
     static let instance: Realm = { return try! Realm() }()
 }
+
+public enum RealmError: Error {
+    case invalidThread
+}
+
+// MARK: Base Realm GETTER
 public func realm() -> Realm { return RealmInstance.instance }
 public func newRealm() -> Realm { return RealmInstance.instance }
 public func isRealmObjectValid(_ object: Object) -> Bool { return !object.isInvalidated }
@@ -48,6 +54,8 @@ public func getPrimaryKey<T: Object>(_ item: T, defaultValue:String="") -> Strin
     return defaultValue
 }
 
+
+// MARK: Base Realm Extentions
 public extension Realm {
     func findByField<T: Object>(_ type: T.Type, field: String = "id", value: String?) -> T? {
         guard let value = value else { return nil }
@@ -68,29 +76,6 @@ public extension Realm {
     func findAllNotByField<T: Object>(_ type: T.Type, field: String, value: Any) -> Results<T>? {
         return self.objects(type).filter("%K != %@", field, value)
     }
-}
-
-public extension Results {
-    
-    func toArray() -> [Element] {
-        return Array(self)
-    }
-    
-    func toRealmList<T: Object>() -> List<T> {
-        let list = List<T>()
-        realmWriter { r in
-            self.forEach { result in
-                // Ensure the result is of the expected type before adding it to the list
-                if let result = result as? T {
-                    list.append(result)
-                }
-            }
-        }
-        return list
-    }
-}
-
-public extension Realm {
     
     func executeWithRetry(maxRetries: Int = 3, operation: @escaping () -> Void) {
         func attempt(_ currentRetry: Int) {
@@ -166,11 +151,30 @@ public extension Realm {
             }
         }
     }
+}
 
+// MARK: Base Results Extentions
+public extension Results {
+    
+    func toArray() -> [Element] {
+        return Array(self)
+    }
+    
+    func toRealmList<T: Object>() -> List<T> {
+        let list = List<T>()
+        realmWriter { r in
+            self.forEach { result in
+                // Ensure the result is of the expected type before adding it to the list
+                if let result = result as? T {
+                    list.append(result)
+                }
+            }
+        }
+        return list
+    }
 }
-public enum RealmError: Error {
-    case invalidThread
-}
+
+// MARK: Base Object Extentions
 public extension Object {
     
     
@@ -199,15 +203,6 @@ public extension Object {
        }
        return dictionary
    }
-//    func toDict() -> [String: Any] {
-//        let properties = self.objectSchema.properties.map { $0.name }
-//        var dictionary: [String: Any] = [:]
-//        for property in properties {
-//            dictionary[property] = self.value(forKey: property)
-//        }
-//        return dictionary
-//    }
-    
     
     func isRealmObjectValid() -> Bool {
         return !self.isInvalidated
@@ -226,10 +221,23 @@ public extension Object {
         }
         return defaultValue
     }
-
-}
-
-public extension Object {
+    
+    func absorbProperties(from sourceModel: Object) {
+        let schema = sourceModel.objectSchema
+        for property in schema.properties {
+            guard let value = sourceModel.value(forKey: property.name) else {
+                self.setValue(nil, forKey: property.name)
+                continue
+            }
+            
+            switch property.type {
+            case .int, .string, .bool:
+                self.setValue(value, forKey: property.name)
+            default:
+                break
+            }
+        }
+    }
     
     func getId() -> String? {
         return self.value(forKey: "id") as? String
@@ -249,9 +257,10 @@ public extension Object {
             r.delete(self)
         }
     }
-    
+
 }
 
+// MARK: Base Realm/Dictionary/Parsing Extentions
 public extension Dictionary where Key == String, Value == Any {
     
     @available(*, deprecated, renamed: "toCoreObject", message: "Please stop using this.")

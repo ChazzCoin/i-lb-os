@@ -8,110 +8,223 @@
 import Foundation
 import SwiftUI
 
-// MARK: ViewEngine Base Level Protocols.
-public protocol VEConfig {
-    associatedtype C: View
-    static func configure(with genre: VEngine.Genre, in type: VEngine.Types, and subtype: String) -> C
-}
-public protocol VEGenreConfig: VEConfig {
-    var type: any VESubTypeConfig { get }
-}
-public protocol VETypeConfig {
-    var subtype: any VESubTypeConfig { get }
-}
-public protocol VESubTypeConfig: View {}
 
-
+public protocol ObservablePanel: ObservableObject {
+    init(title: String, subtitle: String)
+}
+public typealias ViewEngine = CoreName.ViewEngine
 public typealias VEngine = CoreName.ViewEngine
 
-public extension CoreName {
+public protocol ToolCategory: Identifiable, Hashable, CaseIterable where Self: RawRepresentable, Self.RawValue == String {
+    var genre: String { get }
+    var type: String { get }
+    var name: String { get }
+    var displayName: String { get }
+    func BuildIcon() -> AnyView
+    func Build(viewId: String, activityId: String) -> AnyView
+    func toArray() -> [any ToolCategory]
+}
+
+
+public struct ToolListView: View {
+    public init() {}
     
-    class ViewEngine {
-        
-        /*
-            .basic_tool = simple icons inside an image.
-            .shape_tool = Shape Views built by Path()
-            .premium_tool = ..TO BE DEVELOPED..
-             .canvas_view = NavStackController() -> to be modified for social canvas use.
-             .social_view = ..TO BE DEVELOPED.. -> Child Views to put into NavStack or Generic DynaView.
-             .nav_stack = NavStackController()
-            
-            .basic -> .soccer -> .player_jersey
-         
-            1. Sports Icons
-            2. Morphable Shapes (Lines, Triangles, Squares...)
-            3.
-         */
-        
-        public enum Genre: String, CaseIterable {
-            case basic_tool = "basic_tool"
-            case shape_tool = "shape"
-            case premium_tool = "premium_tool"
-            case canvas_view = "canvas"
-            case social_view = "social_view"
-            case nav_stack = "nav_stack"
-            public var name: String { rawValue }
-            
-            public class Routes {
-                public static let basic_tools = Types.Routes.self
+    public var body: some View {
+        ScrollView(.vertical) {
+            LazyVStack {
+                ToolList(title: "Smart Shapes", forEachContent: {
+                    ForEach(ViewEngine.Tool.ShapeTool.allCases, id: \.self) { tool in
+                        ToolListItem(tool: tool)
+                    }
+                })
+                ToolList(title: "General", forEachContent: {
+                    ForEach(ViewEngine.Tool.GeneralTool.allCases, id: \.self) { tool in
+                        ToolListItem(tool: tool)
+                    }
+                })
+                ToolList(title: "Soccer", forEachContent: {
+                    ForEach(ViewEngine.Tool.SoccerTool.allCases, id: \.self) { tool in
+                        ToolListItem(tool: tool)
+                    }
+                })
             }
         }
-        
-        public enum Types: String, CaseIterable {
-            case soccer = "soccer"
-            case football = "football"
-            case basketball = "basketball"
-            case baseball = "baseball"
-            case iceHockey = "iceHockey"
-            case golf = "golf"
-            case tennis = "tennis"
-            case billiards = "billiards"
-            case signupProfile = "signup_profile"
-            case chat = "chat"
-            public var name: String { rawValue }
-            
-            public class Routes {
-                public static let soccer = BasicSubTypes.Soccer.self
-            }
+        .frame(minWidth: UIScreen.main.bounds.width * 0.90, minHeight: 200)
+        .solBackground()
+    }
+}
+@ViewBuilder
+public func ToolListItem(tool: any ToolCategory) -> some View {
+    VStack {
+        tool.BuildIcon()
+        Text(tool.displayName).font(.system(size: 8))
+    }
+    .onTapAnimation {
+        print("On Tap! \(tool.name)")
+        FusedTools.fusedCreator(ManagedView.self) { r in
+            let newTool = ManagedView()
+            newTool.toolType = tool.type
+            newTool.subToolType = tool.name
+            newTool.sport = tool.genre
+            newTool.boardId = "SOL"
+            return newTool
         }
-        
-        public class BasicSubTypes {
-            
-            public enum Soccer: String, CaseIterable {
-                case dummy = "tools_soccer_dummy"
-                case jersey = "tools_soccer_jersey"
-                case steps = "tools_soccer_steps"
-                case walking = "tools_soccer_walking"
-                case running = "tools_soccer_running"
-                case goal = "tools_soccer_goal"
-                case flagPole = "tools_soccer_flag"
-                case tallCone = "tools_soccer_tall_cone"
-                case shortCone = "tools_soccer_mat" // Check if this is correct as it seems like it should be shortCone
-                case ladder = "tools_soccer_ladder"
-                case soccerBall = "tools_soccer_soccer_ball"
-                case curvedLine = "tools_soccer_curved_line"
-                case dottedLine = "tools_soccer_dotted_line"
-                public var name: String { rawValue }
-            }
-            
-            // -> this is the icon name for the basic tool.
-            enum SubTypeTemplate: String, CaseIterable {
-                case jersey = "icon_name_goes_here"
-                public var name: String { rawValue }
-            }
+    }
+}
+@ViewBuilder
+public func ToolList<V:View>(title: String, @ViewBuilder forEachContent: () -> V) -> some View {
+    LazyVStack {
+        HStack {
+            Text(title)
+            Spacer().padding()
         }
+        .padding(.leading)
+        BorderedView(color: .AIMYellow) {
+            ScrollView(.horizontal) {
+                LazyHStack {
+                    forEachContent()
+                }
+            }.frame(minHeight: 50)
+        }
+        .padding(.leading)
+        .padding(.trailing)
+    }
+}
+
+@available(*, deprecated, renamed: "ToolList", message: "Deprecated for ToolList")
+public struct ToolPicker<Content: View>: View {
+    public let content: Content
+    @AppStorage("toolBarIsShowing") public var toolBarIsShowing: Bool = false
+    @Environment(\.colorScheme) public var colorScheme
+    public init(@ViewBuilder content: () -> Content) {
+        self.content = content()
+    }
+    
+    public let soccerTools = SoccerToolProvider.allCases
+    
+    @State public var gps = GlobalPositioningSystem(CoreNameSpace.local)
+    
+    public var sWidth = UIScreen.main.bounds.width
+    public var sHeight = UIScreen.main.bounds.height
+
+    public var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack {
+                
+                Image(systemName: "xmark")
+                    .resizable()
+                    .frame(width: 15, height: 15)
+                    .foregroundColor(getForegroundColor(colorScheme))
+                    .padding()
+                    .onTapAnimation {
+                        self.toolBarIsShowing = false
+                    }
+                
+                
+                BorderedView(color: .red) {
+                    content
+                }
+                
+                BorderedView(color: .AIMYellow) {
+                    ForEach(soccerTools, id: \.self) { tool in
+                        ToolButtonIcon(icon: SoccerToolProvider(subType: tool))
+                    }
+                }
+                
+            }.padding()
+        }
+        .frame(width: Double(sWidth).bound(to: 200...sWidth) - 150, height: 75)
+        .solBackground()
         
     }
     
 }
 
 
-public struct BasicToolView: View {
-    
-    public var subType: String
-    
+
+
+
+
+public struct LineIconView: View {
+    public init(isBgColor: Bool) {
+        self.isBgColor = isBgColor
+    }
+    @State public var isBgColor: Bool
+    @Environment(\.colorScheme) public var colorScheme
     public var body: some View {
-        Image(subType)
-            .resizable()
+        GeometryReader { geometry in
+            Path { path in
+                let width = geometry.size.width
+                let height = geometry.size.height
+
+                // Starting point of the line
+                let startPoint = CGPoint(x: width * 0.1, y: height * 0.5)
+
+                // End point of the line
+                let endPoint = CGPoint(x: width * 0.9, y: height * 0.5)
+
+                path.move(to: startPoint)
+                path.addLine(to: endPoint)
+            }
+            .stroke(isBgColor ? getBackgroundColor(colorScheme) : getForegroundColor(colorScheme), lineWidth: 2)
+        }
+        .rotationEffect(Angle(degrees: 45))
+        .aspectRatio(1, contentMode: .fit)
+    }
+}
+
+public struct DottedLineIconView: View {
+    
+    public init() {}
+    @Environment(\.colorScheme) public var colorScheme
+
+    public var body: some View {
+        GeometryReader { geometry in
+            Path { path in
+                let width = geometry.size.width
+                let height = geometry.size.height
+
+                // Starting and end points of the line
+                let startPoint = CGPoint(x: width * 0.1, y: height * 0.5)
+                let endPoint = CGPoint(x: width * 0.9, y: height * 0.5)
+
+                path.move(to: startPoint)
+                path.addLine(to: endPoint)
+            }
+            .stroke(getForegroundColor(colorScheme), style: StrokeStyle(lineWidth: 2, dash: [5]))
+        }
+        .rotationEffect(Angle(degrees: 45))
+        .aspectRatio(1, contentMode: .fit)
+    }
+
+}
+
+
+public struct CurvedLineIconView: View {
+    public init() {}
+    @Environment(\.colorScheme) public var colorScheme
+
+    public var body: some View {
+        GeometryReader { geometry in
+            Path { path in
+                let width = geometry.size.width
+                let height = geometry.size.height
+
+                // Starting point of the line
+                let startPoint = CGPoint(x: width * 0.1, y: height * 0.9)
+
+                // Control points for curve
+                let control1 = CGPoint(x: width * 0.3, y: height * 0.1)
+                let control2 = CGPoint(x: width * 0.7, y: height * 0.1)
+
+                // End point of the line
+                let endPoint = CGPoint(x: width * 0.9, y: height * 0.9)
+
+                path.move(to: startPoint)
+                path.addCurve(to: endPoint, control1: control1, control2: control2)
+            }
+            .stroke(getForegroundColor(colorScheme), lineWidth: 2)
+        }
+        .aspectRatio(1, contentMode: .fit)
     }
 }

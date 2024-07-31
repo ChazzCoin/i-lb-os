@@ -7,21 +7,8 @@
 
 import Foundation
 import SwiftUI
+import CoreEngine
 
-//struct Triangle: Shape {
-//    func path(in rect: CGRect) -> Path {
-//        var path = Path()
-//        // Start at the bottom-left corner
-//        path.move(to: CGPoint(x: rect.minX, y: rect.maxY))
-//        // Draw line to the top-center
-//        path.addLine(to: CGPoint(x: rect.midX, y: rect.minY))
-//        // Draw line to the bottom-right
-//        path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
-//        // Draw line to close the path (back to bottom-left)
-//        path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
-//        return path
-//    }
-//}
 
 struct ResizableTriangle: View {
     @State private var point1 = CGPoint(x: 150, y: 100)
@@ -31,18 +18,19 @@ struct ResizableTriangle: View {
     var body: some View {
         ZStack {
             CustomTriangleShape(point1: point1, point2: point2, point3: point3)
-                .stroke(lineWidth: 2)
+                .stroke(lineWidth: 50)
                 .fill(Color.green.opacity(0.3))
             
-            draggableCorner(at: $point1)
-            draggableCorner(at: $point2)
-            draggableCorner(at: $point3)
+            DragAnchor(at: $point1)
+            DragAnchor(at: $point2)
+            DragAnchor(at: $point3)
+
         }
     }
 
     private func draggableCorner(at position: Binding<CGPoint>) -> some View {
         Circle()
-            .frame(width: 30, height: 30)
+            .frame(width: 200, height: 200)
             .foregroundColor(.green)
             .position(position.wrappedValue)
             .gesture(DragGesture().onChanged { value in

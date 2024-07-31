@@ -94,32 +94,28 @@ public class CoreFiles {
            }
        }
     
-//    public static func saveImageToDocuments(image: UIImage, withName filename: String) -> Bool {
-//        // Obtain the path to the documents directory
-//        guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
-//            print("Failed to access documents directory")
-//            return false
-//        }
-//        
-//        // Create a file path for the image
-//        let fileURL = documentsDirectory.appendingPathComponent(filename)
-//        
-//        // Convert the UIImage to JPEG data
-//        guard let imageData = image.jpegData(compressionQuality: 1.0) else {
-//            print("Failed to convert UIImage to JPEG")
-//            return false
-//        }
-//        
-//        // Write the data to the documents directory
-//        do {
-//            try imageData.write(to: fileURL)
-//            print("Image saved successfully to documents directory at: \(fileURL)")
-//            return true
-//        } catch {
-//            print("Error saving image: \(error)")
-//            return false
-//        }
-//    }
+    public static func saveDataTo(_ data: Data, in directory: FileManager.SearchPathDirectory, withFileName fileName: String) -> URL? {
+        // Get the document directory URL
+        guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+            print("Failed to get the documents directory")
+            return nil
+        }
+
+        // Create the file URL
+        let fileURL = documentsDirectory.appendingPathComponent("\(fileName)")
+
+        // Write the PDF data to the file
+        do {
+            try data.write(to: fileURL, options: .atomic)
+            print("File saved: \(fileURL.path)")
+            return fileURL
+        } catch {
+            print("Error saving File: \(error)")
+            return nil
+        }
+    }
+    
+
 }
 
 

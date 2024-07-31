@@ -18,6 +18,7 @@ class BoardEngineObject : ObservableObject {
     @ObservedResults(ActivityPlan.self) var allActivityPlans
     @ObservedResults(ManagedView.self) var allTools
     @ObservedResults(ManagedViewAction.self) var allToolActions
+    
     var currentToolActionIndex: Int?
     var sortedFilteredActions: Results<ManagedViewAction>?
 
@@ -101,7 +102,7 @@ class BoardEngineObject : ObservableObject {
     // Canvas Settings
     @Published var canvasWidth: CGFloat = 8000.0
     @Published var canvasHeight: CGFloat = 8000.0
-    @Published var canvasOffset = CGPoint.zero
+    @Published var canvasOffset = CGPoint(x: 6000, y: 6000)
     @Published var canvasScale: CGFloat = 0.1
     @Published var canvasRotation: CGFloat = 0.0
     @GestureState var gestureScale: CGFloat = 1.0

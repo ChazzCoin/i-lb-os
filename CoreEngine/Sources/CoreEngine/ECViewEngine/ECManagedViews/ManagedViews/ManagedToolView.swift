@@ -12,6 +12,23 @@ import RealmSwift
 import Combine
 
 
+@ViewBuilder
+public func EmptyText(text:String="") -> some View { Text(text) }
+@ViewBuilder
+public func EmptyIcon(systemName: String = "exclamationmark.triangle.fill", imageName:String?=nil) -> some View {
+    if let imgName = imageName { Image(imgName).resizable() } else { Image(systemName: systemName).resizable() }
+}
+
+public struct BasicToolView: View {
+    
+    public var subType: String
+    
+    public var body: some View {
+        Image(subType)
+            .resizable()
+    }
+}
+
 // Tool Bar Picker Icon View
 public struct ManagedViewBasicToolIcon: View {
     public let toolType: String
@@ -51,6 +68,23 @@ public struct ManagedViewBasicTool: View {
     }
 }
 
+public struct ManagedViewTool<C: View>: View {
+    @ViewBuilder public var content: () -> C
+    public let viewId: String
+    public let activityId: String
+    
+    public init(viewId: String, activityId: String="", @ViewBuilder contentIn: @escaping () -> C) {
+        self.viewId = viewId
+        self.activityId = activityId
+        self.content = contentIn
+    }
+
+    public var body: some View {
+        content()
+            .enableManagedViewBasic(viewId: viewId, activityId: activityId)
+    }
+}
+
 public struct enableManagedViewTool : ViewModifier {
     
     @State public var viewId: String
@@ -85,6 +119,8 @@ public struct enableManagedViewTool : ViewModifier {
         })
         .onAppear {
             print("OnAppear: BasicTool.")
+            print("Loading Tool: \(viewId), \(activityId)")
+//            print("Loading Pos: \(MVO.lifeStartX), \(MVO.lifeStartY)")
             self.MVO.initializeWithViewId(viewId: viewId)
         }
     }
@@ -103,8 +139,7 @@ public struct enableManagedViewTool : ViewModifier {
                     let translation = drag.translation
                     MVO.position = CGPoint(x: MVO.originalPosition.x + translation.width,
                                            y: MVO.originalPosition.y + translation.height)
-                    MVO.updateRealmPos(x: MVO.originalPosition.x + translation.width,
-                                                  y: MVO.originalPosition.y + translation.height)
+                    MVO.updateRealmPos()
                 }
             }
             .onEnded { drag in
@@ -117,7 +152,7 @@ public struct enableManagedViewTool : ViewModifier {
                         x: MVO.originalPosition.x + translation.width,
                         y: MVO.originalPosition.y + translation.height
                     )
-                    self.MVO.updateRealm()
+                    MVO.updateRealmPos()
                     self.MVO.useOriginal = true
                 }
             }

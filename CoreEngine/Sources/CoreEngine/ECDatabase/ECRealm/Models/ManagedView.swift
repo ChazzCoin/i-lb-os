@@ -82,7 +82,7 @@ public class ManagedViewAction: Object, ObjectKeyIdentifiable {
 }
 
 public extension ManagedView {
-    public func absorbRecordingAction(from managedView: RecordingAction, saveRealm: Realm) {
+    func absorbRecordingAction(from managedView: RecordingAction, saveRealm: Realm) {
         saveRealm.safeWrite { _ in
             self.toolType = managedView.toolType
             self.toolColor = managedView.toolColor

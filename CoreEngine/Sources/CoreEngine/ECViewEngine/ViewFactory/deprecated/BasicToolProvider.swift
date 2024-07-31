@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-// Child (SubType)
+@available(*, deprecated, renamed: "ViewEngine", message: "ViewEngine Config Builder")
 public class BasicToolProvider : ManagedToolProvider {
         
     public var type: String = "basic"
