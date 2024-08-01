@@ -422,11 +422,7 @@
 				FBE2C6232B1B2E01004C0116 /* HomeDashboardView.swift */,
 				FB3E02B22B0C6B5100D8558C /* SessionPlanView.swift */,
 				FB3E02B42B0C6B6000D8558C /* ActivityPlanBindingView.swift */,
-				FB18F1762B6988E100D89F8D /* ActivityPlanSingleView.swift */,
-				FBBDD01C2B6CA8A20009844B /* MvSettingsToolBar.swift */,
-				FBBDD0212B6E186E0009844B /* BoardSettingsToolBar.swift */,
 				FBBAD3BD2B1FBF58004A4332 /* NavPad.swift */,
-				FBABDAC62B20456700321A00 /* ToolBarSettings.swift */,
 				FB9F1DD32B15307E00FD9078 /* _UserSignUp.swift */,
 				FB9EB6DB2BB682AF00FDD5DE /* OrganizationHome.swift */,
 				FB18F1862B6B10CE00D89F8D /* RecordingView.swift */,
@@ -469,6 +465,8 @@
 		FB5094242B05820B000AEA96 /* views */ = {
 			isa = PBXGroup;
 			children = (
+				FBE54B7D2C5C157000C165DF /* Sheets */,
+				FBE54B7C2C5C155500C165DF /* Windows */,
 				FB3E02CC2B0D45F000D8558C /* NavViews */,
 				FB18F1622B6842C600D89F8D /* Core */,
 				FBBDD0162B6C486B0009844B /* Modifiers */,
@@ -700,6 +698,24 @@
 				FBF3A9A32BE167450088AAAC /* FloatingButtons.swift */,
 			);
 			path = Social;
+			sourceTree = "<group>";
+		};
+		FBE54B7C2C5C155500C165DF /* Windows */ = {
+			isa = PBXGroup;
+			children = (
+				FBBDD01C2B6CA8A20009844B /* MvSettingsToolBar.swift */,
+				FBABDAC62B20456700321A00 /* ToolBarSettings.swift */,
+				FBBDD0212B6E186E0009844B /* BoardSettingsToolBar.swift */,
+			);
+			path = Windows;
+			sourceTree = "<group>";
+		};
+		FBE54B7D2C5C157000C165DF /* Sheets */ = {
+			isa = PBXGroup;
+			children = (
+				FB18F1762B6988E100D89F8D /* ActivityPlanSingleView.swift */,
+			);
+			path = Sheets;
 			sourceTree = "<group>";
 		};
 		FBEBEF902B494DA600B8BA32 /* DB */ = {

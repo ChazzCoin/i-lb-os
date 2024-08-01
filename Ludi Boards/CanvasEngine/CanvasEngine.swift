@@ -21,12 +21,13 @@ struct CanvasEngine: View {
     @ObservedObject var BEO = BoardEngineObject()
     @ObservedObject var DO = OrientationInfo()
     
-    @State var toolBarIsVisible: Bool = false
+    @State var showMenuBar: Bool = true
+    @State var toolBarPickerWindowIsVisible: Bool = false
+    @State var boardSettingsWindowIsVisible: Bool = false
+    @State var mvSettingsWindowIsVisible: Bool = false
     
     @State var storeInMenuBar = Set<AnyCancellable>()
     @State var cancellables = Set<AnyCancellable>()
-    @State var showMenuBar: Bool = true
-    @State var popupIsVisible: Bool = false
     var maxScaleFactor: CGFloat = 1.0
     
     @State private var angle: Angle = .zero
@@ -154,18 +155,26 @@ struct CanvasEngine: View {
         GlobalPositioningZStack(coordinateSpace: .global) { windowGPS in
             GlobalPositioningReader(coordinateSpace: .global) { geo, gps in
                 
-                if toolBarIsVisible {
+                if toolBarPickerWindowIsVisible {
                     ToolListView()
                         .position(using: gps, at: .bottomCenter, offsetY: 100)
                         
                 }
-                if popupIsVisible {
+                if boardSettingsWindowIsVisible {
                     BoardSettingsBar()
                         .zIndex(2.0)
                         .environmentObject(self.BEO)
                         .position(using: gps, at: .bottomCenter, offsetY: 100)
                         
                 }
+                
+                if mvSettingsWindowIsVisible {
+                    MvSettingsBar {}
+                        .zIndex(2.0)
+                        .position(using: gps, at: .bottomCenter, offsetY: 100)
+                        .environmentObject(self.BEO)
+                }
+                
                 // Left Hand Menu Bar
                 MenuBarStatic(showIcons: $menuIsOpen, gps: gps){}
                 // Navigation Window
@@ -211,19 +220,52 @@ struct CanvasEngine: View {
             }
             addViewsToNavStack()
 
-            BroadcastTools.listenForMenuBar(storeIn: &storeInMenuBar, onEvent: { id in
+            BroadcastTools.listenForWindowCalls(storeIn: &storeInMenuBar, onEvent: { id, action in
                 print("ID!!!!! \(id)")
                 switch id {
                     case "toolbox":
-                        if popupIsVisible { popupIsVisible = false }
-                        self.toolBarIsVisible.toggle()
+                        if action == WindowAction.open {
+                            closeAllWindows()
+                            self.toolBarPickerWindowIsVisible = true
+                        }
+                        else if action == WindowAction.close {
+                            closeAllWindows()
+                        }
+                        else if action == WindowAction.toggle {
+                            self.toolBarPickerWindowIsVisible.toggle()
+                        }
                     case "board settings":
-                        if toolBarIsVisible { toolBarIsVisible = false }
-                        self.popupIsVisible.toggle()
+                        if action == WindowAction.open {
+                            closeAllWindows()
+                            self.boardSettingsWindowIsVisible = true
+                        }
+                        else if action == WindowAction.close {
+                            closeAllWindows()
+                        }
+                        else if action == WindowAction.toggle {
+                            self.boardSettingsWindowIsVisible.toggle()
+                        }
+                    case "mvsettings":
+                        if action == WindowAction.open {
+                            closeAllWindows()
+                            self.mvSettingsWindowIsVisible = true
+                        }
+                        else if action == WindowAction.close {
+                            closeAllWindows()
+                        }
+                        else if action == WindowAction.toggle {
+                            self.mvSettingsWindowIsVisible.toggle()
+                        }
                     default: return
                 }
             })
         }
+    }
+    
+    func closeAllWindows() {
+        boardSettingsWindowIsVisible = false
+        toolBarPickerWindowIsVisible = false
+        mvSettingsWindowIsVisible = false
     }
     
     func addViewsToNavStack() {

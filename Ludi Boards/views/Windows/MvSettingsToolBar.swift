@@ -29,6 +29,7 @@ struct MvSettingsBar<Content: View>: View {
     
     //
     @State var activityId = ""
+    @AppStorage("selectedManagedViewId") var selectedManagedViewId: String = ""
     @EnvironmentObject var BEO: BoardEngineObject
 //    @StateObject var managedViews = ManagedViewListener()
     @State var managedViewNotificationToken: NotificationToken? = nil
@@ -78,6 +79,7 @@ struct MvSettingsBar<Content: View>: View {
                         .foregroundColor(getForegroundColor(colorScheme))
                         .padding()
                         .onTapAnimation {
+                            self.selectedManagedViewId = ""
                             closeWindow()
                         }
                     Spacer()

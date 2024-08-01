@@ -69,6 +69,7 @@ public class ManagedViewObject: ObservableObject {
     @AppStorage("toolBarCurrentViewId") public var toolBarCurrentViewId: String = ""
     @AppStorage("toolSettingsIsShowing") public var toolSettingsIsShowing: Bool = false
     @AppStorage("ignoreUpdates") public var ignoreUpdates: Bool = false
+    @AppStorage("selectedManagedViewId") public var selectedManagedViewId: String = ""
     
     @Published public var isDisabled = false
     @Published public var isDeleted = false
@@ -80,12 +81,12 @@ public class ManagedViewObject: ObservableObject {
     @Published public var lifeCenterPoint = CGPoint.zero
     @Published public var lifeX: CGFloat = 0.0
     @Published public var lifeY: CGFloat = 0.0
-    @Published public var lifeStartX: CGFloat = 0.0
-    @Published public var lifeStartY: CGFloat = 0.0
-    @Published public var lifeCenterX: CGFloat = 0.0
-    @Published public var lifeCenterY: CGFloat = 0.0
-    @Published public var lifeEndX: CGFloat = 0.0
-    @Published public var lifeEndY: CGFloat = 0.0
+    @Published public var lifeStartX: CGFloat = 100.0
+    @Published public var lifeStartY: CGFloat = 100.0
+    @Published public var lifeCenterX: CGFloat = 200.0
+    @Published public var lifeCenterY: CGFloat = 200.0
+    @Published public var lifeEndX: CGFloat = 300.0
+    @Published public var lifeEndY: CGFloat = 300.0
     
     @Published public var lifeLineLength = 0.0
     @Published public var lifeWidthTouch = 300.0
@@ -166,8 +167,12 @@ public class ManagedViewObject: ObservableObject {
         if popUpIsVisible {
             self.toolBarCurrentViewId = self.lifeViewId
             self.toolSettingsIsShowing = true
+            self.selectedManagedViewId = self.lifeViewId
+            BroadcastTools.send(.NavStackMessage, value: NavStackMessage(viewName: "mvSettings", viewAction: WindowAction.open))
         } else {
             self.toolSettingsIsShowing = false
+            self.selectedManagedViewId = ""
+            BroadcastTools.send(.NavStackMessage, value: NavStackMessage(viewName: "mvSettings", viewAction: WindowAction.close))
         }
     }
     
@@ -427,15 +432,15 @@ public class ManagedViewObject: ObservableObject {
     }
     
     // Update
-    public func updateRealm(start: CGPoint? = nil, end: CGPoint? = nil, x:Double=0.0, y:Double=0.0) {
+    public func updateRealm(start: CGPoint? = nil, end: CGPoint? = nil, x:Double?=nil, y:Double?=nil) {
         if self.isDisabledChecker() {return}
         if self.isDeletedChecker() {return}
         if let mv = self.realmInstance.findByField(ManagedView.self, value: self.lifeViewId) {
             self.realmInstance.safeWrite { r in
                 
                 // Modify the object
-                mv.x = x
-                mv.y = y
+                mv.x = x ?? self.lifeX
+                mv.y = y ?? self.lifeY
                 
                 mv.startX = Double(start?.x ?? CGFloat(self.lifeStartX))
                 mv.startY = Double(start?.y ?? CGFloat(self.lifeStartY))

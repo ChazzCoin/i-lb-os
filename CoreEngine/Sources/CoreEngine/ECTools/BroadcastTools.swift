@@ -67,13 +67,12 @@ public class BroadcastTools: ObservableObject {
             .store(in: &storeIn)
     }
     
-    public static func listenForMenuBar(storeIn: inout Set<AnyCancellable>, onEvent: @escaping (String) -> Void) {
-        var cancellables = Set<AnyCancellable>()
+    public static func listenForWindowCalls(storeIn: inout Set<AnyCancellable>, onEvent: @escaping (String, WindowAction) -> Void) {
         BroadcastTools().subscribeTo(.NavStackMessage, storeIn: &storeIn) { wc in
             if let navIntake = wc as? NavStackMessage {
                 print("listenForMenuBar: \(String(describing: navIntake.viewName))")
                 if let nt = navIntake.viewName?.lowercased() {
-                    onEvent(nt)
+                    onEvent(nt, navIntake.viewAction ?? WindowAction.toggle)
                 } else {
                     return
                 }

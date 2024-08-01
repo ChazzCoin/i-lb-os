@@ -28,17 +28,18 @@ public struct DraggableCornerModifier: ViewModifier {
 }
 
 @ViewBuilder
-public func DragAnchor(at position: Binding<CGPoint>, width: Double = 200, height: Double = 200) -> some View {
+public func DragAnchor(at position: Binding<CGPoint>, width: Double = 100, height: Double = 100, onChanged: @escaping () -> Void = {}) -> some View {
     Circle()
         .frame(width: width, height: height)
         .foregroundColor(.green)
         .position(position.wrappedValue)
         .gesture(DragGesture().onChanged { value in
             position.wrappedValue = value.location
+            onChanged()
         })
 }
 @ViewBuilder
-public func DragAnchor(x: Binding<CGFloat>, y: Binding<CGFloat>, width: Double = 200, height: Double = 200) -> some View {
+public func DragAnchor(x: Binding<CGFloat>, y: Binding<CGFloat>, width: Double = 100, height: Double = 100, onChanged: @escaping () -> Void = {}) -> some View {
     Circle()
         .frame(width: width, height: height)
         .foregroundColor(.green)
@@ -46,6 +47,7 @@ public func DragAnchor(x: Binding<CGFloat>, y: Binding<CGFloat>, width: Double =
         .gesture(DragGesture().onChanged { value in
             x.wrappedValue = value.location.x
             y.wrappedValue = value.location.y
+            onChanged()
         })
 }
 //@ViewBuilder

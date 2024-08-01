@@ -78,9 +78,6 @@ struct BoardEngine: View {
                     } : nil
             )
         }
-//        .onChange(of: currentActivityId) {
-//            threeLoadActivityPlan()
-//        }
         .onChange(of: showCreateActivitySheet) {
             if !self.showCreateActivitySheet {
                 threeLoadActivityPlan()
@@ -158,50 +155,7 @@ struct BoardEngine: View {
 //        showCreateActivitySheet = true
     }
     
-    func createHistoricalSnapShotAtStart(tool: ManagedView) {
-        let toolHistory = ManagedViewAction()
-        toolHistory.absorb(from: tool)
-        toolHistory.isStart = true
-        BEO.realmInstance.safeWrite { r in
-            r.create(ManagedViewAction.self, value: toolHistory, update: .all)
-        }
-    }
-    
-    // TODO: MOVE TO CENTRAL BOARD OBJECT
-    func sixSavePlansToFirebase() {
-        if !self.BEO.isLoggedIn { return }
-        if self.currentActivityId == "SOL" || self.currentActivityId.isEmpty {return}
-        if let activityPlan = self.BEO.realmInstance.findByField(ActivityPlan.self, field: "id", value: self.currentActivityId) {
-            if activityPlan.id == "SOL" {return}
-//            activityPlan.fireSave(id: activityPlan.id)
-        }
-    }
-    
-    func takeSnapshot() {
-        
-        self.captureAsImage(with: self.BEO) { capturedImage in
-            if let image = capturedImage {
-                // Do something with the image (e.g., save it to the photo library)
-                UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
-            }
-        }
-        
-    }
 
-    func handleBoardChange(temp: ActivityChange) {
-        
-        // TODO: ONLY WORRY ABOUT ACTIVITY CHANGES!
-        
-        self.BEO.runCanvasLoading()
-        
-        if let newAID = temp.activityId {
-            if self.currentActivityId != newAID && !newAID.isEmpty {
-                self.BEO.changeActivity(activityId: newAID)
-            }
-        }
-        
-        self.threeLoadActivityPlan()
-    }
     
     func createSolaOrg() {
         if let _ = self.BEO.realmInstance.findByField(Organization.self, field: "name", value: "SOL Academy") {

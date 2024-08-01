@@ -39,11 +39,24 @@ public struct ShapeToolManaged: View {
             .stroke(MVO.lifeColor, style: StrokeStyle(lineWidth: MVO.lifeWidth, dash: [MVO.lifeLineDash]))
             .opacity(!MVO.isDisabledChecker() && !MVO.isDeletedChecker() ? 1 : 0.0)
             .gesture(fullLineDragGesture())
+            .simultaneousGesture(doubleTapGesture())
             
-            DragAnchor(x: $MVO.lifeX, y: $MVO.lifeY, width: MVO.lifeWidth * 2, height: MVO.lifeWidth * 2)
-            DragAnchor(x: $MVO.lifeStartX, y: $MVO.lifeStartY, width: MVO.lifeWidth * 2, height: MVO.lifeWidth * 2)
-            if isQuad || isTriple { DragAnchor(x: $MVO.lifeCenterX, y: $MVO.lifeCenterY, width: MVO.lifeWidth * 2, height: MVO.lifeWidth * 2) }
-            if isQuad { DragAnchor(x: $MVO.lifeEndX, y: $MVO.lifeEndY, width: MVO.lifeWidth * 2, height: MVO.lifeWidth * 2) }
+            DragAnchor(x: $MVO.lifeX, y: $MVO.lifeY, width: MVO.lifeWidth * 2, height: MVO.lifeWidth * 2) {
+                MVO.updateRealm()
+            }.simultaneousGesture(doubleTapGesture())
+            DragAnchor(x: $MVO.lifeStartX, y: $MVO.lifeStartY, width: MVO.lifeWidth * 2, height: MVO.lifeWidth * 2) {
+                MVO.updateRealm()
+            }.simultaneousGesture(doubleTapGesture())
+            if isQuad || isTriple {
+                DragAnchor(x: $MVO.lifeCenterX, y: $MVO.lifeCenterY, width: MVO.lifeWidth * 2, height: MVO.lifeWidth * 2) {
+                    MVO.updateRealm()
+                }.simultaneousGesture(doubleTapGesture())
+            }
+            if isQuad { 
+                DragAnchor(x: $MVO.lifeEndX, y: $MVO.lifeEndY, width: MVO.lifeWidth * 2, height: MVO.lifeWidth * 2) {
+                    MVO.updateRealm()
+                }.simultaneousGesture(doubleTapGesture())
+            }
         }
         .onChange(of: self.MVO.toolBarCurrentViewId, perform: { _ in
             if self.MVO.toolBarCurrentViewId != self.viewId { self.MVO.popUpIsVisible = false
