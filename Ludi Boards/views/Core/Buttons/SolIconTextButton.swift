@@ -69,6 +69,7 @@ struct SOLCON: View {
     var isConfirmEnabled: Bool
     var onTap: () -> Void
     
+    var showTitle: Bool = true
     @State var icon: SolIcon = SolIcon.save
     @State var fontColor: Color? = nil
     @State var width = 50.0
@@ -84,7 +85,15 @@ struct SOLCON: View {
         self.isConfirmEnabled = isConfirmEnabled
         self.onTap = onTap
     }
-    
+    init(icon: SolIcon, isConfirmEnabled: Bool = true, showTitle: Bool = true, onTap: @escaping () -> Void) {
+        self.title = icon.title
+        self.systemName = icon.icon
+        self.alertTitle = icon.title
+        self.alertMessage = icon.confirmMessage
+        self.isConfirmEnabled = isConfirmEnabled
+        self.onTap = onTap
+        self.showTitle = showTitle
+    }
     init(icon: SolIcon, title: String, isConfirmEnabled: Bool = true, onTap: @escaping () -> Void) {
         self.title = title
         self.systemName = icon.icon
@@ -111,7 +120,9 @@ struct SOLCON: View {
                     onTap()
                 }
             }
-            MenuBarText(title, color: getTextColorOnBackground(colorScheme))
+            if showTitle {
+                MenuBarText(title, color: getTextColorOnBackground(colorScheme))
+            }
         }
         .alert(self.alertTitle, isPresented: $alertIsShowing) {
             Button("Cancel", role: .cancel) {

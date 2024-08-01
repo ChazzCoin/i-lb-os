@@ -122,7 +122,8 @@ public struct LineDrawingManaged: View {
                     MVO.lifeEndX = self.MVO.originalLifeEnd.x + translation.width
                     MVO.lifeEndY = self.MVO.originalLifeEnd.y + translation.height
                     self.MVO.isDragging = false
-                    self.MVO.updateRealm()
+                    MVO.updateRealmPos(start: CGPoint(x: MVO.lifeStartX, y: MVO.lifeStartY),
+                                end: CGPoint(x: MVO.lifeEndX, y: MVO.lifeEndY))
                     self.MVO.useOriginal = true
                 }
             }
@@ -148,8 +149,8 @@ public struct LineDrawingManaged: View {
                 if self.MVO.lifeIsLocked || !MVO.anchorsAreVisible { return }
                 self.MVO.isDragging = false
                 self.MVO.ignoreUpdates = false
-                self.MVO.updateRealm()
-//                self.useOriginal = true
+                MVO.updateRealmPos(start: CGPoint(x: MVO.lifeStartX, y: MVO.lifeStartY),
+                            end: CGPoint(x: MVO.lifeEndX, y: MVO.lifeEndY))
             }
             
     }

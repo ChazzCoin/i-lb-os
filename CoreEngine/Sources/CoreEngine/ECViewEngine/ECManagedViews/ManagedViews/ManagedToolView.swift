@@ -139,7 +139,7 @@ public struct enableManagedViewTool : ViewModifier {
                     let translation = drag.translation
                     MVO.position = CGPoint(x: MVO.originalPosition.x + translation.width,
                                            y: MVO.originalPosition.y + translation.height)
-                    MVO.updateRealmPos()
+                    MVO.updateRealmPos(start: MVO.position, end: MVO.position)
                 }
             }
             .onEnded { drag in
@@ -152,7 +152,7 @@ public struct enableManagedViewTool : ViewModifier {
                         x: MVO.originalPosition.x + translation.width,
                         y: MVO.originalPosition.y + translation.height
                     )
-                    MVO.updateRealmPos()
+                    MVO.updateRealmPos(start: MVO.position, end: MVO.position)
                     self.MVO.useOriginal = true
                 }
             }

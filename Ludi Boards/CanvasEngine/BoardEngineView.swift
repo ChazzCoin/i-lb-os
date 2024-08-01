@@ -13,24 +13,28 @@ import FirebaseDatabase
 import CoreEngine
 
 struct BoardEngine: View {
+    
     @Environment(\.scenePhase) var deviceState
     @EnvironmentObject var BEO: BoardEngineObject
     @EnvironmentObject var managedWindowsObject: NavWindowController
     @StateObject var PMO = PopupMenuObject()
     @ObservedObject public var MVEngine: ManagedViewEngine = ManagedViewEngine()
 
+    @AppStorage("currentActivityId") var currentActivityId: String = ""
+    
     @State var cancellables = Set<AnyCancellable>()
 
     @State private var drawingStartPoint: CGPoint = .zero
     @State private var drawingEndPoint: CGPoint = .zero
     @State private var showCreateActivitySheet = false
+    @State private var resetTools = false
     
     var body: some View {
         GeometryReader { geo in
             ZStack {
                  
                  // Board Tools
-                MVEngine.Display()
+                MVEngine.Display(reset: self.$resetTools)
                  
 //                ResizableTriangle()
 //                ShapeToolManaged(viewId: "quad1", activityId: "SOL", isQuad: true)
@@ -74,6 +78,9 @@ struct BoardEngine: View {
                     } : nil
             )
         }
+        .onChange(of: currentActivityId) {
+            threeLoadActivityPlan()
+        }
         .onChange(of: showCreateActivitySheet) {
             if !self.showCreateActivitySheet {
                 threeLoadActivityPlan()
@@ -85,17 +92,17 @@ struct BoardEngine: View {
         .onAppear {
            
             print("BoardEngineView onAppear")
-            self.BEO.currentActivityId = "SOL"
+            if self.BEO.currentActivityId == "" {
+                self.BEO.currentActivityId = "SOL"
+                // Create Activity
+                createNewActivityPlan()
+            }
             
             self.threeLoadActivityPlan()
-//            self.MVTools.setNewBoardId(boardId: self.BEO.currentActivityId)
             onSessionIdChange()
             onToolCreated()
             onToolDeleted()
             
-            // todo: TESTING ONLY
-            createSolaOrg()
-            createSolaTeam()
         }
     }
     
@@ -117,27 +124,10 @@ struct BoardEngine: View {
     @MainActor
     func onToolCreated() {
         CodiChannel.TOOL_ON_CREATE.receive(on: RunLoop.main) { tool in
-            if let temp = tool as? ManagedTool {
-                
-//                ManagedViewTools(type: temp.type, subType: temp.subType, sport: temp.sport)
-//                    .createNewTool(activityId: self.BEO.currentActivityId)
+            if let _ = tool as? ManagedTool {
+                self.resetTools = true
+                self.resetTools = false
             }
-        
-//            let newTool = ManagedView()
-//            newTool.toolType = tool as! String
-//            newTool.subToolType = ""
-//            newTool.sport = ""
-//            newTool.boardId = self.BEO.currentActivityId
-//            newTool.x = 0.0
-//            newTool.y = 0.0
-//            self.BEO.realmInstance.safeWrite { r in
-//                r.create(ManagedView.self, value: newTool, update: .all)
-//            }
-//            createHistoricalSnapShotAtStart(tool: newTool)
-//            if userIsVerifiedToProceed() {
-//                newTool.fireSave(parentId: self.BEO.currentActivityId, id: newTool.id)
-//            }
-            
         }.store(in: &cancellables)
     }
     
@@ -145,9 +135,9 @@ struct BoardEngine: View {
         self.BEO.resetTools()
         
         // LOAD SINGLE ACTIVITY
-        if !self.BEO.currentActivityId.isEmpty {
+        if !self.currentActivityId.isEmpty {
                        
-            if let act = self.BEO.realmInstance.findByField(ActivityPlan.self, field: "id", value: self.BEO.currentActivityId) {
+            if let act = self.BEO.realmInstance.findByField(ActivityPlan.self, field: "id", value: self.currentActivityId) {
                 
                 self.BEO.changeActivity(activityId: act.id)
                 self.BEO.setColor(red: act.backgroundRed, green: act.backgroundGreen, blue: act.backgroundBlue, alpha: act.backgroundAlpha)
@@ -162,10 +152,8 @@ struct BoardEngine: View {
         }
         
         createNewActivityPlan()
-
         threeLoadActivityPlan()
 //        showCreateActivitySheet = true
-
     }
     
     func createHistoricalSnapShotAtStart(tool: ManagedView) {
@@ -180,8 +168,8 @@ struct BoardEngine: View {
     // TODO: MOVE TO CENTRAL BOARD OBJECT
     func sixSavePlansToFirebase() {
         if !self.BEO.isLoggedIn { return }
-        if self.BEO.currentActivityId == "SOL" || self.BEO.currentActivityId.isEmpty {return}
-        if let activityPlan = self.BEO.realmInstance.findByField(ActivityPlan.self, field: "id", value: self.BEO.currentActivityId) {
+        if self.currentActivityId == "SOL" || self.currentActivityId.isEmpty {return}
+        if let activityPlan = self.BEO.realmInstance.findByField(ActivityPlan.self, field: "id", value: self.currentActivityId) {
             if activityPlan.id == "SOL" {return}
 //            activityPlan.fireSave(id: activityPlan.id)
         }
@@ -203,10 +191,9 @@ struct BoardEngine: View {
         // TODO: ONLY WORRY ABOUT ACTIVITY CHANGES!
         
         self.BEO.runCanvasLoading()
-
         
         if let newAID = temp.activityId {
-            if self.BEO.currentActivityId != newAID && !newAID.isEmpty {
+            if self.currentActivityId != newAID && !newAID.isEmpty {
                 self.BEO.changeActivity(activityId: newAID)
             }
         }
@@ -260,6 +247,7 @@ struct BoardEngine: View {
         }
         
         let newActivity = ActivityPlan()
+        self.currentActivityId = newActivity.id
         self.BEO.changeActivity(activityId: newActivity.id)
         
         newActivity.title = "Auto Generated Activity"
@@ -289,7 +277,7 @@ struct BoardEngine: View {
     private func saveLineData(start: CGPoint, end: CGPoint) {
         FusedTools.fusedCreator(ManagedView.self)  { r in
             let line = ManagedView()
-            line.boardId = self.BEO.currentActivityId
+            line.boardId = self.currentActivityId
             line.lastUserId = UserTools.currentUserId ?? ""
             line.startX = Double(start.x)
             line.startY = Double(start.y)

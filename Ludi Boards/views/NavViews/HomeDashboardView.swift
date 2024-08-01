@@ -14,7 +14,6 @@ struct HomeDashboardView: View {
     
     @Environment(\.colorScheme) var colorScheme
     @EnvironmentObject var BEO: BoardEngineObject
-    @EnvironmentObject var NavStack: NavStackWindowObservable
   
     @ObservedResults(PlayerRef.self) var players
     @ObservedResults(Team.self) var teams
@@ -47,6 +46,7 @@ struct HomeDashboardView: View {
     @State private var showNewTeamSheet = false
     @State private var showNewPlayerRefSheet = false
     @State private var showNewEventSheet = false
+    @State private var showNewActivitySheet = false
     
     @State private var isLoggedIn = false
     @State private var resetView = false
@@ -80,7 +80,8 @@ struct HomeDashboardView: View {
                 
                 Section(header: HStack {
                     Text("Teams")
-                    SOLCON(icon: SolIcon.add, onTap: {
+                    Spacer()
+                    SOLCON(icon: SolIcon.add, isConfirmEnabled: false, showTitle: false, onTap: {
                         self.showNewTeamSheet = true
                     })
                 }) {
@@ -95,7 +96,8 @@ struct HomeDashboardView: View {
                 
                 Section(header: HStack {
                     Text("Players")
-                    SOLCON(icon: SolIcon.add, onTap: {
+                    Spacer()
+                    SOLCON(icon: SolIcon.add, isConfirmEnabled: false, showTitle: false, onTap: {
                         self.showNewPlayerRefSheet = true
                     })
                 }) {
@@ -110,7 +112,8 @@ struct HomeDashboardView: View {
                
                 Section(header: HStack {
                     Text("Events")
-                    SOLCON(icon: SolIcon.add, onTap: {
+                    Spacer()
+                    SOLCON(icon: SolIcon.add, isConfirmEnabled: false, showTitle: false, onTap: {
                         self.showNewEventSheet = true
                     })
                 }) {
@@ -124,10 +127,16 @@ struct HomeDashboardView: View {
                
                 
                 // Activities
-                Section(header: Text("Activities")) {
+                Section(header: HStack {
+                    Text("Activities")
+                    Spacer()
+                    SOLCON(icon: SolIcon.add, isConfirmEnabled: false, showTitle: false, onTap: {
+                        self.showNewActivitySheet = true
+                    })
+                }) {
                     SearchableActivityListView()
                         .environmentObject(self.BEO)
-//                        .environmentObject(self.NavStack)
+
                 }.clearSectionBackground()
                 
             }
@@ -160,22 +169,9 @@ struct HomeDashboardView: View {
             }
         }
         .loading(isShowing: $isLoading)
-//        .sheet(isPresented: $showNewPlanSheet) {
-//            SessionPlanView(sessionId: "new", isShowing: $showNewPlanSheet, isMasterWindow: false)
-//                .environmentObject(self.BEO)
-//                .environmentObject(self.NavStack)
-//        }
-//        .sheet(isPresented: $showCurrentTeamSheet) {
-//            TeamView(teamId: $currentTeamId, isShowing: $showCurrentTeamSheet)
-//        }
         .organizationDetailsSheet(isPresented: $showNewOrgSheet, orgId: "new", reset: $resetView)
-//        .sheet(isPresented: $showNewOrgSheet) {
-//            OrganizationDetailsView(orgId: "new", reset: $resetView)
-//        }
         .teamSheet(isPresented: $showNewTeamSheet, teamId: .constant("new"))
-//        .sheet(isPresented: $showNewTeamSheet) {
-//            TeamView(teamId: .constant("new"), isShowing: $showNewTeamSheet)
-//        }
+        .activityPlanSheet(isPresented: $showNewActivitySheet, activityId: "SOL", BEO: BEO)
         .sheet(isPresented: $showNewPlayerRefSheet) {
             PlayerRefView(playerId: .constant("new"), isShowing: $showNewPlayerRefSheet)
         }

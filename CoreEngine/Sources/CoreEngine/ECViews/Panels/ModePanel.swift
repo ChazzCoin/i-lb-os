@@ -181,15 +181,18 @@ public struct ModePanel: View {
                             }
                         }
                 } else {
-                    Circle()
-                        .fill(Color.red)
-                        .frame(width: 15, height: 15)
-                        .opacity(isFlashing ? 1 : 0)
-                        .onAppear {
-                            withAnimation(Animation.easeInOut(duration: 0.5).repeatForever(autoreverses: true)) {
-                                isFlashing.toggle()
+                    if isFlashing {
+                        Circle()
+                            .fill(Color.red)
+                            .frame(width: 15, height: 15)
+                            .opacity(isFlashing ? 1 : 0)
+                            .onAppear {
+                                withAnimation(Animation.easeInOut(duration: 0.5).repeatForever(autoreverses: true)) {
+                                    isFlashing.toggle()
+                                }
                             }
-                        }
+                    }
+                    
                 }
                 
             }

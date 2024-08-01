@@ -154,15 +154,17 @@ struct CanvasEngine: View {
         GlobalPositioningZStack(coordinateSpace: .global) { windowGPS in
             GlobalPositioningReader(coordinateSpace: .global) { geo, gps in
                 
-                // Tool Bar Picker
-                Wrap($toolBarIsVisible, .bottomCenter, padding: true) {
-                    ToolListView().padding(.bottom, 25)
+                if toolBarIsVisible {
+                    ToolListView()
+                        .position(using: gps, at: .bottomCenter, offsetY: 100)
+                        
                 }
-                // Board Settings
-                Wrap($popupIsVisible, .bottomCenter, padding: true) {
+                if popupIsVisible {
                     BoardSettingsBar()
                         .zIndex(2.0)
                         .environmentObject(self.BEO)
+                        .position(using: gps, at: .bottomCenter, offsetY: 100)
+                        
                 }
                 // Left Hand Menu Bar
                 MenuBarStatic(showIcons: $menuIsOpen, gps: gps){}
@@ -181,9 +183,8 @@ struct CanvasEngine: View {
 //                        .position(using: gps, at: .topCenter, offsetX: 0, offsetY: 75)
 //                }
                 
-//                ModePanel(title: "Playing in Progress...", subTitle: "Playback Mode.", showButton: true) {
-//                    self.BEO.stopAnimationRecording()
-//                }.position(using: gps, at: .topRight, offsetX: 150, offsetY: 150)
+                ModePanel(title: "Your Current Activity", subTitle: self.BEO.currentActivityId, showButton: false, isFlashing: true)
+                    .position(using: gps, at: .topRight, offsetX: 200, offsetY: 50)
                 
             }.zIndex(35.0)
             

@@ -28,10 +28,12 @@ public class ManagedViewEngine: ObservableObject {
     }
 
     @ViewBuilder
-    public func Display() -> some View {
-        ForEach(boardManagedViews) { item in
-            if !item.isDeleted {
-                ViewEngine.GenreBuilder(for: item.sport, in: item.toolType, as: item.subToolType, viewId: item.id, activityId: item.boardId)
+    public func Display(reset: Binding<Bool> = .constant(false)) -> some View {
+        if !reset.wrappedValue {
+            ForEach(boardManagedViews) { item in
+                if !item.isDeleted {
+                    ViewEngine.GenreBuilder(for: item.sport, in: item.toolType, as: item.subToolType, viewId: item.id, activityId: item.boardId)
+                }
             }
         }
     }

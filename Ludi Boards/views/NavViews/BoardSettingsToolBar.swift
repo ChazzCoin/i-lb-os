@@ -24,6 +24,7 @@ struct BoardSettingsBar: View {
     var borderWidth: CGFloat = 2
     
     @EnvironmentObject var BEO: BoardEngineObject
+    @AppStorage("currentActivityId") var currentActivityId: String = ""
 //    @StateObject var managedViews = ManagedViewListener()
     @State var managedViewNotificationToken: NotificationToken? = nil
 
@@ -218,15 +219,15 @@ struct BoardSettingsBar: View {
                     MenuBarText("Boards", color: getFontColor(colorScheme))
                 }
                 
-                if self.showBoardPicker {
-                    BoardListPicker(initialSelected: self.isCurrentPlan ? self.BEO.boardBgName : self.backgroundView, viewBuilder: self.BEO.boards.getAllMinis()) { v in
-                        fieldName = v
-                        self.BEO.setBoardBgView(boardName: v)
-                        saveToRealm()
-                    }
-                    .frame(width: 400)
-                    .padding(.bottom, UIScreen.main.bounds.height/2)
-                }
+//                if self.showBoardPicker {
+//                    BoardListPicker(initialSelected: self.isCurrentPlan ? self.BEO.boardBgName : self.backgroundView, viewBuilder: self.BEO.boards.getAllMinis()) { v in
+//                        fieldName = v
+//                        self.BEO.setBoardBgView(boardName: v)
+//                        saveToRealm()
+//                    }
+//                    .frame(width: 400)
+//                    .padding(.bottom, UIScreen.main.bounds.height/2)
+//                }
                 
                 
                 
@@ -395,7 +396,7 @@ struct BoardSettingsBar: View {
         }
         .frame(width: Double(sWidth).bound(to: 200...sWidth) - 150, height: 150)
         .solBackground()
-        .onChange(of: self.BEO.toolBarCurrentViewId, perform: { value in
+        .onChange(of: self.currentActivityId, perform: { value in
             loadFromRealm()
         })
         .alert(self.alertRecordAnimationTitle, isPresented: $alertRecordAnimation) {
@@ -413,6 +414,15 @@ struct BoardSettingsBar: View {
         } message: {
             Text(self.alertRecordAnimationMessage)
         }
+        .sheet(isPresented: self.$showBoardPicker, content: {
+            BoardListPicker(initialSelected: self.isCurrentPlan ? self.BEO.boardBgName : self.backgroundView, viewBuilder: self.BEO.boards.getAllMinis()) { v in
+                fieldName = v
+                self.BEO.setBoardBgView(boardName: v)
+                saveToRealm()
+            }
+//            .frame(width: 400)
+//            .padding(.bottom, UIScreen.main.bounds.height/2)
+        })
         .sheet(isPresented: self.$showRecordingsSheet, content: {
             RecordingListView(isShowing: self.$showRecordingsSheet)
                 .environmentObject(self.BEO)
@@ -467,7 +477,7 @@ struct BoardSettingsBar: View {
     // Realm / Firebase
     func loadFromRealm() {
         
-        if let activityPlan = self.BEO.realmInstance.findByField(ActivityPlan.self, value: self.BEO.currentActivityId) {
+        if let activityPlan = self.BEO.realmInstance.findByField(ActivityPlan.self, value: self.currentActivityId) {
             // set attributes
             self.lineStroke = activityPlan.backgroundLineStroke
             self.lineOpacity = activityPlan.backgroundLineAlpha

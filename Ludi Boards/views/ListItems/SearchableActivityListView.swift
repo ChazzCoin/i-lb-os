@@ -28,32 +28,28 @@ struct SearchableActivityListView: View {
     @ObservedResults(ActivityPlan.self) var allItems
     @State private var searchText = ""
     @State private var filteredItems: [ActivityPlan] = []
-    
+    @State private var showSheet: Bool = false
+    @State private var currentAP: ActivityPlan? = nil
     private var columns: [GridItem] = Array(repeating: .init(.flexible()), count: 2)
     
     var body: some View {
         VStack {
             SearchBar(text: $searchText, placeholder: "Search Activities")
                 .padding(.top)
-//            SearchBarView(text: $searchText, textColor: Color.black, placeholder: "Search Activities")
-//                .padding(.top)
-//            
             ScrollView {
-                LazyVGrid(columns: columns, spacing: 20) {
+                LazyVGrid(columns: columns, alignment: HorizontalAlignment.leading, spacing: 5) {
                     ForEach(filteredItems) { item in
-                        NavigationLink(
-                            destination: 
-                                ActivityPlanSingleView(inComingAP: .constant(item), sessionId: .constant(item.sessionId), isShowing: .constant(true))
-                                    .environmentObject(self.BEO)
-                                    .environmentObject(self.NavStack)
-                        ){
-                            SolListItem(title: item.title, subTitle: item.subTitle, isShared: false)
-                        }
+                        SolListItem(title: item.title, subTitle: item.subTitle, isShared: false)
+                            .onTapAnimation {
+                                self.currentAP = item
+                                self.showSheet = true
+                            }
                     }
                 }
                 .listStyle(GroupedListStyle())
             }
         }
+        .activityPlanSheet(isPresented: $showSheet, activityId: currentAP?.id ?? "SOL", BEO: BEO)
         .onAppear {
             self.filteredItems = self.allItems.toArray()
             self.filterItems()

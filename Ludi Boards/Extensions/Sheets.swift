@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import CoreEngine
 
 // Custom Sheet Modifier
 struct SheetModifier<SheetContent: View>: ViewModifier {
@@ -55,8 +56,27 @@ struct PlayerRefSheetModifier: ViewModifier {
             }
     }
 }
+
+struct ActivitySheetModifier: ViewModifier {
+    @Binding var isPresented: Bool
+    var activityId: String
+    @ObservedObject var BEO: BoardEngineObject
+
+    func body(content: Content) -> some View {
+        content
+            .sheet(isPresented: $isPresented) {
+                ActivityPlanSingleView(activityId: activityId)
+                    .environmentObject(self.BEO)
+            }
+    }
+}
+
 // Extension for easy usage
 extension View {
+    
+    func activityPlanSheet(isPresented: Binding<Bool>, activityId: String, BEO: BoardEngineObject) -> some View {
+        self.modifier(ActivitySheetModifier(isPresented: isPresented, activityId: activityId, BEO: BEO))
+    }
     
     func organizationDetailsSheet(isPresented: Binding<Bool>, orgId: String, reset: Binding<Bool>) -> some View {
         self.modifier(OrganizationDetailsSheetModifier(isPresented: isPresented, reset: reset, orgId: orgId))

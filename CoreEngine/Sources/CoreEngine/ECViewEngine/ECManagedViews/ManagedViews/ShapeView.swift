@@ -105,7 +105,7 @@ public struct ShapeToolManaged: View {
                     MVO.lifeEndX = self.MVO.originalLifeEnd.x + translation.width
                     MVO.lifeEndY = self.MVO.originalLifeEnd.y + translation.height
                     self.MVO.isDragging = false
-                    self.MVO.updateRealm()
+                    self.MVO.updateRealmPos()
                     self.MVO.useOriginal = true
                 }
             }
@@ -124,15 +124,13 @@ public struct ShapeToolManaged: View {
                     self.MVO.lifeEndX = value.location.x
                     self.MVO.lifeEndY = value.location.y
                 }
-                MVO.updateRealmPos(start: CGPoint(x: MVO.lifeStartX, y: MVO.lifeStartY),
-                            end: CGPoint(x: MVO.lifeEndX, y: MVO.lifeEndY))
+                MVO.updateRealm()
             }
             .onEnded { _ in
                 if self.MVO.lifeIsLocked || !MVO.anchorsAreVisible { return }
                 self.MVO.isDragging = false
                 self.MVO.ignoreUpdates = false
                 self.MVO.updateRealm()
-//                self.useOriginal = true
             }
             
     }

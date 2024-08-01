@@ -27,6 +27,9 @@ public protocol ToolCategory: Identifiable, Hashable, CaseIterable where Self: R
 
 
 public struct ToolListView: View {
+    
+    @AppStorage("currentActivityId") var currentActivityId: String = "SOL"
+    
     public init() {}
     
     public var body: some View {
@@ -34,17 +37,17 @@ public struct ToolListView: View {
             LazyVStack {
                 ToolList(title: "Smart Shapes", forEachContent: {
                     ForEach(ViewEngine.Tool.ShapeTool.allCases, id: \.self) { tool in
-                        ToolListItem(tool: tool)
+                        ToolListItem(currentActivityId, tool: tool)
                     }
                 })
                 ToolList(title: "General", forEachContent: {
                     ForEach(ViewEngine.Tool.GeneralTool.allCases, id: \.self) { tool in
-                        ToolListItem(tool: tool)
+                        ToolListItem(currentActivityId, tool: tool)
                     }
                 })
                 ToolList(title: "Soccer", forEachContent: {
                     ForEach(ViewEngine.Tool.SoccerTool.allCases, id: \.self) { tool in
-                        ToolListItem(tool: tool)
+                        ToolListItem(currentActivityId, tool: tool)
                     }
                 })
             }
@@ -54,21 +57,24 @@ public struct ToolListView: View {
     }
 }
 @ViewBuilder
-public func ToolListItem(tool: any ToolCategory) -> some View {
+public func ToolListItem(_ activityId: String, tool: any ToolCategory) -> some View {
     VStack {
         tool.BuildIcon()
         Text(tool.displayName).font(.system(size: 8))
     }
     .onTapAnimation {
         print("On Tap! \(tool.name)")
+        var tempId = ""
         FusedTools.fusedCreator(ManagedView.self) { r in
             let newTool = ManagedView()
             newTool.toolType = tool.type
             newTool.subToolType = tool.name
             newTool.sport = tool.genre
-            newTool.boardId = "SOL"
+            newTool.boardId = activityId
+            tempId = newTool.id
             return newTool
         }
+        CodiChannel.TOOL_ON_CREATE.send(value: tempId)
     }
 }
 @ViewBuilder
