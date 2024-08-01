@@ -78,9 +78,9 @@ struct BoardEngine: View {
                     } : nil
             )
         }
-        .onChange(of: currentActivityId) {
-            threeLoadActivityPlan()
-        }
+//        .onChange(of: currentActivityId) {
+//            threeLoadActivityPlan()
+//        }
         .onChange(of: showCreateActivitySheet) {
             if !self.showCreateActivitySheet {
                 threeLoadActivityPlan()
@@ -109,8 +109,9 @@ struct BoardEngine: View {
     @MainActor
     func onSessionIdChange() {
         CodiChannel.SESSION_ON_ID_CHANGE.receive(on: RunLoop.main) { sc in
-            let temp = sc as! ActivityChange
-            handleBoardChange(temp: temp)
+            let temp = sc as! String
+            self.currentActivityId = temp
+            threeLoadActivityPlan()
         }.store(in: &cancellables)
     }
     
@@ -133,7 +134,8 @@ struct BoardEngine: View {
     
     func threeLoadActivityPlan() {
         self.BEO.resetTools()
-        
+        self.resetTools = true
+        self.resetTools = false
         // LOAD SINGLE ACTIVITY
         if !self.currentActivityId.isEmpty {
                        

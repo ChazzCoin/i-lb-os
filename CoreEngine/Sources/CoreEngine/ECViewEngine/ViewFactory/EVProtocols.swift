@@ -28,7 +28,7 @@ public protocol ToolCategory: Identifiable, Hashable, CaseIterable where Self: R
 
 public struct ToolListView: View {
     
-    @AppStorage("currentActivityId") var currentActivityId: String = "SOL"
+    @AppStorage("currentActivityId") var currentActivityId: String = ""
     
     public init() {}
     

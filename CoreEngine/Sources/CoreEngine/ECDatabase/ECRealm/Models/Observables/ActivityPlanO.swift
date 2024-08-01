@@ -123,6 +123,7 @@ public class ActivityPlanObject: ObservableObject {
     public func makeCurrentActivity() {
         if isCurrentActivity() { return }
         self.currentActivityId = self.id
+        CodiChannel.SESSION_ON_ID_CHANGE.send(value: self.id)
     }
     
     // Function to load an existing ActivityPlan by ID

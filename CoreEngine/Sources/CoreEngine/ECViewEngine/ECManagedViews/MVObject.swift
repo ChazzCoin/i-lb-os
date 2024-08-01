@@ -153,8 +153,8 @@ public class ManagedViewObject: ObservableObject {
     @MainActor
     public func receiveOnSessionChange() {
         CodiChannel.SESSION_ON_ID_CHANGE.receive(on: RunLoop.main) { sc in
-            let temp = sc as! ActivityChange
-            if self.lifeActivityId == temp.activityId {
+            let temp = sc as! String
+            if self.lifeActivityId == temp {
                 self.isDisabled = false
             } else {
                 self.isDisabled = true
