@@ -36,3 +36,33 @@ public struct TextLabel: View {
         }
     }
 }
+
+
+// Master VIEW MODE
+public struct NumberLabel: View {
+    @State public var title: String
+    @State public var value: Int
+    
+    public init(_ title: String, number: Int) {
+        self.title = title
+        self.value = number
+    }
+    
+    public var body: some View {
+        HStack(alignment: .center, spacing: 8) {
+            Text(title)
+                .font(.headline)
+                .foregroundColor(.blue)
+                .padding(.trailing)
+            Spacer()
+            Text("\(value)")
+                .font(.headline)
+                .foregroundColor(.black)
+        }
+        .onAppear() {
+            if value == 0 {
+                self.value = 0 // Or use another default value if desired
+            }
+        }
+    }
+}

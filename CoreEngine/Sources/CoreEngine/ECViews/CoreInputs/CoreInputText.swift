@@ -30,6 +30,28 @@ public struct CoreInputText : View {
     }
 }
 
+
+// MASTER -> Toggle-able.
+public struct CoreInputNumber: View {
+    @State public var label: String = ""
+    @Binding public var number: Int
+    @Binding public var isEdit: Bool
+
+    public init(label: String, number: Binding<Int>, isEdit: Binding<Bool>) {
+        self.label = label
+        self._number = number
+        self._isEdit = isEdit
+    }
+
+    public var body: some View {
+        if !isEdit {
+            NumberLabel(label, number: number)
+        } else {
+            CoreNumberField(label, number: $number)
+        }
+    }
+}
+
 // Edit Mode.
 public struct CoreTextField: View {
     @Binding var text: String
@@ -90,6 +112,69 @@ public struct CoreTextField: View {
     }
 }
 
+
+public struct CoreNumberField: View {
+    @Binding var number: Int
+    var onChange: (Int) -> Void
+    var placeholder: String = ""
+    @Binding var isEditable: Bool // Bind an external state for edit/view mode.
+    @Environment(\.colorScheme) var colorScheme
+
+    public init(_ placeholder: String, number: Binding<Int>, isEditable: Binding<Bool>, onChange: @escaping (Int) -> Void = { _ in }) {
+        self._number = number
+        self._isEditable = isEditable
+        self.placeholder = placeholder
+        self.onChange = onChange
+    }
+
+    public init(_ placeholder: String, number: Binding<Int>, onChange: @escaping (Int) -> Void = { _ in }) {
+        self._number = number
+        self._isEditable = .constant(true) // Initialize with constant true for default edit mode.
+        self.placeholder = placeholder
+        self.onChange = onChange
+    }
+
+    public var body: some View {
+        ZStack(alignment: .leading) {
+            TextField("", value: $number, formatter: NumberFormatter(), onEditingChanged: { isEditing in
+                if !isEditing {
+                    onChange(number) // Call onChange when editing ends
+                }
+            })
+            .keyboardType(.numberPad)
+            .font(.headline)
+            .padding()
+            .background(Color.gray.opacity(0.2))
+            .cornerRadius(10)
+            .overlay(
+                HStack {
+                    Spacer()
+                    if isEditable {
+                        Image(systemName: "multiply.circle.fill")
+                            .foregroundColor(.gray)
+                            .padding(.trailing, 15)
+                            .onTapGesture {
+                                self.number = 0
+                            }.zIndex(10.0)
+                    }
+                }
+            )
+            .transition(.scale)
+            .animation(.easeInOut, value: number)
+            
+            if number == 0 {
+                Text(placeholder)
+                    .foregroundColor(.gray)
+                    .padding(.leading, 15)
+                    .transition(.move(edge: .leading))
+            }
+        }
+    }
+}
+
+
+
+
 public struct SolNumberField: View {
     @Binding var number: Double
     var placeholder: String
@@ -146,3 +231,4 @@ public struct SolNumberField: View {
         }
     }
 }
+

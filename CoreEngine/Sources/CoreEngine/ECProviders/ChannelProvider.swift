@@ -166,6 +166,7 @@ public enum CodiChannel {
     case message
     case broadcast
     case NavStackMessage
+    case Canvas
     case SESSION_ON_ID_CHANGE
     case ACTIVITY_ON_ID_CHANGE
     case MENU_TOGGLER
@@ -199,6 +200,8 @@ public enum CodiChannel {
                 return BroadcastChannel.shared.subject
             case .NavStackMessage:
                 return NavStackToggleChannel.shared.subject
+            case .Canvas:
+                return CanvasChannel.shared.subject
             case .SESSION_ON_ID_CHANGE:
                 return SessionOnIdChangeChannel.shared.subject
             case .ACTIVITY_ON_ID_CHANGE:
@@ -244,7 +247,10 @@ public enum CodiChannel {
         subject.receive(on: scheduler).sink(receiveValue: callback)
     }
 }
-
+public class CanvasChannel {
+    static let shared = CanvasChannel()
+    let subject = PassthroughSubject<Any, Never>()
+}
 public class NavStackToggleChannel {
     static let shared = NavStackToggleChannel()
     let subject = PassthroughSubject<Any, Never>()

@@ -53,3 +53,8 @@ public enum WindowLevel: String, CaseIterable {
     case sidebar = "canvas"
     case fullscreen = "fullscreen"
 }
+
+public enum CanvasAction: String, CaseIterable {
+    case refresh = "refresh"
+    case closeWindows = "close_windows"
+}

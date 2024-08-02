@@ -80,6 +80,14 @@ public class BroadcastTools: ObservableObject {
         }
     }
     
+    public static func listenForCanvasCalls(storeIn: inout Set<AnyCancellable>, onEvent: @escaping (CanvasAction) -> Void) {
+        BroadcastTools().subscribeTo(.Canvas, storeIn: &storeIn) { wc in
+            if let cAction = wc as? CanvasAction {
+                onEvent(cAction)
+            }
+        }
+    }
+    
     // Consider adding functionality to remove specific subscriptions if needed
     public func unsubscribeAll() { cancellables.removeAll() }
     

@@ -12,60 +12,26 @@ import CoreEngine
 
 struct TeamDetailsView: View {
     
-    var teamId: String
+    @State var teamId: String
+    
+    @StateObject var team: TeamObject = TeamObject()
     
     @ObservedResults(PlayerRef.self) var players
     var roster: Results<PlayerRef> {
-        return self.players.filter("teamId == %@", self.teamId)
+        return self.players.filter("teamId == %@", self.team.id)
     }
     
     @State var sport: String = ""
     
-    @State private var teamName: String = ""
-    @State private var coachName: String = ""
-    @State private var sportType: String = ""
-    @State private var logoUrl: String? = nil
-    @State private var foundedYear: String = "2020"
-    @State private var homeCity: String = ""
-    @State private var stadiumName: String = ""
-    
-    @State private var coach: String = ""
-    @State private var manager: String = ""
-    @State private var league: String = ""
-    @State private var achievements: [String] = [] // Converted from List<String>
-    @State private var officialWebsite: String? = nil
-    @State private var socialMediaLinks: [String] = [] // Converted from List<String>
-
-    @State var realmInstance = newRealm()
     @State var columns: [GridItem] = Array(repeating: .init(.flexible()), count: 2)
     @State var isEditMode: Bool = true
     
+    // Function to handle saving the team data
     func save() {
-        if teamId == "new" {
-            new()
-        } else {
-            update()
-        }
-    }
-    func update() {
-        if let team = realmInstance.findByField(Team.self, value: teamId) {
-            realmInstance.safeWrite { r in
-                team.name = teamName
-                
-            }
-        }
-    }
-    func new() {
-        let newTeam = Team()
-        newTeam.name = teamName
-       
-        realmInstance.safeWrite { r in
-            r.create(Team.self, value: newTeam)
-        }
+        team.saveToRealm()
     }
     
     var body: some View {
-        
         BaseDetailsView(
             navTitle: "Team",
             headerBuilder: {
@@ -80,7 +46,8 @@ struct TeamDetailsView: View {
                     SOLCON(
                         icon: SolIcon.delete,
                         onTap: {
-                            
+                            team.isDeleted = true
+                            save()
                         }
                     )
                     
@@ -97,18 +64,18 @@ struct TeamDetailsView: View {
             bodyBuilder: {
                 Section("Team Details") {
                     PickerSport(selection: $sport, isEdit: $isEditMode)
-                    CoreInputText(label: "Team Name", text: $teamName, isEdit: $isEditMode)
-                    CoreInputText(label: "Coach Name", text: $coachName, isEdit: $isEditMode)
-                    CoreInputText(label: "Location", text: $homeCity, isEdit: $isEditMode)
-                    CoreInputText(label: "League", text: $league, isEdit: $isEditMode)
-                    PickerYear(selection: $foundedYear, isEdit: $isEditMode)
+                    CoreInputText(label: "Team Name", text: $team.name, isEdit: $isEditMode)
+                    CoreInputText(label: "Coach Name", text: $team.coachName, isEdit: $isEditMode)
+                    CoreInputText(label: "Location", text: $team.homeCity, isEdit: $isEditMode)
+                    CoreInputText(label: "League", text: $team.league, isEdit: $isEditMode)
+                    PickerYear(selection: $team.foundedYear, isEdit: $isEditMode)
                     
                 }
                 
             },
             footerBuilder: {
                 Section("Team Roster") {
-                    SolPlayerRefFreePicker(teamId: "new", isEnabled: $isEditMode)
+                    SolPlayerRefFreePicker(teamId: team.id, isEnabled: $isEditMode)
                     HeaderText("Roster", color: .black)
                         .font(.headline)
                         .padding(.top)
@@ -119,25 +86,21 @@ struct TeamDetailsView: View {
                                     
                                 }
                         }
-//                        .onDelete(perform: deletePlayer)
                     }
                 }
             }).onAppear() {
-                if teamId == "new" {
-                    return
-                }
-                if let team = newRealm().findByField(Team.self, value: teamId) {
-                    sport = team.sportType
-                    teamName = team.name
-                    coachName = team.coachName
+                if teamId != "new" {
+                    team.loadTeam(byId: teamId)
                     isEditMode = false
-                    return
+                } else {
+                    isEditMode = true
                 }
+                sport = team.sportType
             }
-        
     }
 }
 
 #Preview {
     TeamDetailsView(teamId: "new")
 }
+

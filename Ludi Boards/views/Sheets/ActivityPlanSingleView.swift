@@ -30,9 +30,11 @@ struct ActivityPlanSingleView: View {
     @State private var colorOpacity = 1.0
     @State var showShareSheet = false
     @State var cancellables = Set<AnyCancellable>()
-    @State var isExpandedMore: Bool = false
+    @State var isExpandedMore: Bool = true
     @State var isExpandedBoard: Bool = false
-
+    
+    @State var isEditMode: Bool = false
+    
     func resetView() {
         refreshView = true
         refreshView = false
@@ -65,31 +67,37 @@ struct ActivityPlanSingleView: View {
                         
                     }
                 ).isEnabled(isEnabled: self.APO.sessionId != "SOL-LIVE-DEMO" && self.APO.sessionId != "SOL" && self.APO.id != "new")
+                
+                Spacer()
+                Text(isEditMode ? "Done" : "Edit")
+                    .foregroundColor(.blue)
+                    .onTapAnimation {
+                        isEditMode.toggle()
+                    }
             }
             
             Section(header: Text(self.APO.title)) {
-                CoreTextField("Title", text: self.$APO.title)
-                AdaptiveStack {
-                    PickerTimeDuration(selection: self.$APO.duration, isEdit: .constant(true))
-//                    PickerIntensity(selection: self.$APO.intensity, isEdit: .constant(true))
-                }
+                CoreInputText(label: "Title", text: self.$APO.title, isEdit: $isEditMode)
+                CoreInputText(label: "Sub-Title", text: self.$APO.subTitle, isEdit: $isEditMode)
             }
             DisclosureGroup("More Attributes and Settings", isExpanded: $isExpandedMore) {
                 
+                PickerTimeDuration(selection: self.$APO.duration, isEdit: $isEditMode)
+                
                 AdaptiveStack {
-                    PickerAgeLevel(selection: self.$APO.ageLevel, isEdit: .constant(true))
-                    PickerNumberOfPlayers(selection: self.$APO.numOfPlayers, isEdit: .constant(true))
+                    PickerAgeLevel(selection: self.$APO.ageLevel, isEdit: $isEditMode)
+                    PickerNumberOfPlayers(selection: self.$APO.numOfPlayers, isEdit: $isEditMode)
                 }
                 
                 AdaptiveStack {
-                    PickerGroupCount(selection: self.$APO.numOfGroups, isEdit: .constant(true))
-                    PickerNumPerGroup(selection: self.$APO.numPerGroup, isEdit: .constant(true))
+                    PickerGroupCount(selection: self.$APO.numOfGroups, isEdit: $isEditMode)
+                    PickerNumPerGroup(selection: self.$APO.numPerGroup, isEdit: $isEditMode)
                 }
 
                 AdaptiveStack {
-                    InputTextMultiLine("Description", text: self.$APO.objectiveDetails, color: .black, isEdit: .constant(true))
+                    InputTextMultiLine("Description", text: self.$APO.objectiveDetails, color: .black, isEdit: $isEditMode)
                         .frame(minHeight: 125)
-                    InputTextMultiLine("Objective", text: self.$APO.activityDetails, color: .black, isEdit: .constant(true))
+                    InputTextMultiLine("Objective", text: self.$APO.activityDetails, color: .black, isEdit: $isEditMode)
                         .frame(minHeight: 125)
                 }
                 .padding(.bottom)
@@ -263,6 +271,9 @@ struct ActivityPlanSingleView: View {
         }
         .background(getBackgroundColor(colorScheme))
         .onAppear() {
+            if self.activityId == "new" {
+                self.isEditMode = true
+            }
             self.APO.loadActivityPlan(byId: self.activityId)
         }
     }

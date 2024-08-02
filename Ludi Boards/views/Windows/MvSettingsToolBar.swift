@@ -72,6 +72,7 @@ struct MvSettingsBar<Content: View>: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack {
                 
+                // -> Window Function
                 VStack {
                     Image(systemName: "xmark")
                         .resizable()
@@ -88,6 +89,7 @@ struct MvSettingsBar<Content: View>: View {
                 
                 Spacer().frame(width: 24)
                 
+                // -> ALL TOOLS
                 SolIconConfirmButton(
                     systemName: "trash",
                     title: "Delete Tool",
@@ -122,6 +124,7 @@ struct MvSettingsBar<Content: View>: View {
                     .frame(width: 1, height: 50)
                     .padding()
                 Spacer().frame(width: 12)
+                
                 
                 VStack {
                     
@@ -162,172 +165,165 @@ struct MvSettingsBar<Content: View>: View {
                     
                 }
                 
-                if !isLineTool {
-                    Spacer().frame(width: 12)
-                    Rectangle()
-                        .fill(getForegroundColor(colorScheme))
-                        .frame(width: 1, height: 50)
-                        .padding()
-                    Spacer().frame(width: 12)
-                    
-                    VStack {
-                        
-                        HStack {
-                            Image(systemName: "arrow.clockwise")
-                                .resizable()
-                                .frame(width: 25, height: 25)
-                                .foregroundColor(getForegroundColor(colorScheme))
-                            BodyText("\(viewRotation)", color: getFontColor(colorScheme))
-                        }
-                        
-                        HStack {
-                            Image(systemName: "rotate.left")
-                                .resizable()
-                                .frame(width: 10, height: 10)
-                                .foregroundColor(.white)
-                                .padding()
-                                .background(Circle().fill(Color.secondaryBackground.opacity(0.75)))
-                                .font(.title)
-                                .onTapAnimation {
-                                    print("rotate left")
-                                    rotateView(by: -22.5)
-                                    saveToRealm()
-                                }
-                            Image(systemName: "rotate.right")
-                                .resizable()
-                                .frame(width: 10, height: 10)
-                                .foregroundColor(.white)
-                                .padding()
-                                .background(Circle().fill(Color.secondaryBackground.opacity(0.75)))
-                                .font(.title)
-                                .onTapAnimation {
-                                    print("rotate right")
-                                    rotateView(by: 22.5)
-                                    saveToRealm()
-                                }
-                        }
-                        
-                    }
-                }
+                // -> Basic Tools Only
+                Spacer().frame(width: 12)
+                Rectangle()
+                    .fill(getForegroundColor(colorScheme))
+                    .frame(width: 1, height: 50)
+                    .padding()
+                Spacer().frame(width: 12)
                 
-                if isLineTool {
-                    
-                    Spacer().frame(width: 12)
-                    Rectangle()
-                        .fill(getForegroundColor(colorScheme))
-                        .frame(width: 1, height: 50)
-                        .padding()
-                    Spacer().frame(width: 12)
+                VStack {
                     
                     HStack {
-                        VStack {
-                            if lineDashIsEnabled {
-                                DottedLineIconView()
-                                    .frame(width: 25, height: 25)
-                            } else {
-                                LineIconView(isBgColor: false)
-                                    .frame(width: 25, height: 25)
-                            }
-                            
-                            Toggle("", isOn: $lineDashIsEnabled)
-                                .onChange(of: lineDashIsEnabled, perform: { _ in
-                                    if !lineDashIsEnabled {
-                                        lineDash = 1.0
-                                    } else {
-                                        lineDash = 50.0
-                                    }
-                                    saveToRealm()
-                                })
-                        }
-                        
-                        if lineDashIsEnabled {
-                            VStack {
-                                Image(systemName: "plus")
-                                    .resizable()
-                                    .frame(width: 10, height: 10)
-                                    .foregroundColor(.white)
-                                    .padding()
-                                    .background(Circle().fill(Color.secondaryBackground.opacity(0.75)))
-                                    .font(.title)
-                                    .onTapAnimation {
-                                        print("more line dash")
-                                        lineDash = (lineDash + 2.0).bounded(byMin: 1, andMax: 100)
-                                        saveToRealm()
-                                    }
-                                Image(systemName: "minus")
-                                    .resizable()
-                                    .frame(width: 10, height: 10)
-                                    .foregroundColor(.white)
-                                    .padding()
-                                    .background(Circle().fill(Color.secondaryBackground.opacity(0.75)))
-                                    .font(.title)
-                                    .onTapAnimation {
-                                        print("less line dash")
-                                        lineDash = (lineDash - 2.0).bounded(byMin: 1, andMax: 100)
-                                        saveToRealm()
-                                    }
-                            }
-                        }
-                        
-                    }
-                }
-                
-                if isLineTool {
-                    Spacer().frame(width: 12)
-                    Rectangle()
-                        .fill(getForegroundColor(colorScheme))
-                        .frame(width: 1, height: 50)
-                        .padding()
-                    Spacer().frame(width: 12)
-                    
-                    VStack {
-                        Image(systemName: headIsEnabled ? "arrowtriangle.up" : "multiply")
+                        Image(systemName: "arrow.clockwise")
                             .resizable()
                             .frame(width: 25, height: 25)
-                            .foregroundColor(headIsEnabled ? .red : getForegroundColor(colorScheme))
-                        Toggle("", isOn: $headIsEnabled)
-                            .onChange(of: headIsEnabled, perform: { _ in
+                            .foregroundColor(getForegroundColor(colorScheme))
+                        BodyText("\(viewRotation)", color: getFontColor(colorScheme))
+                    }
+                    
+                    HStack {
+                        Image(systemName: "rotate.left")
+                            .resizable()
+                            .frame(width: 10, height: 10)
+                            .foregroundColor(.white)
+                            .padding()
+                            .background(Circle().fill(Color.secondaryBackground.opacity(0.75)))
+                            .font(.title)
+                            .onTapAnimation {
+                                print("rotate left")
+                                rotateView(by: -22.5)
+                                saveToRealm()
+                            }
+                        Image(systemName: "rotate.right")
+                            .resizable()
+                            .frame(width: 10, height: 10)
+                            .foregroundColor(.white)
+                            .padding()
+                            .background(Circle().fill(Color.secondaryBackground.opacity(0.75)))
+                            .font(.title)
+                            .onTapAnimation {
+                                print("rotate right")
+                                rotateView(by: 22.5)
+                                saveToRealm()
+                            }
+                    }
+                    
+                }
+                
+                // -> Line Tool Only
+                Spacer().frame(width: 12)
+                Rectangle()
+                    .fill(getForegroundColor(colorScheme))
+                    .frame(width: 1, height: 50)
+                    .padding()
+                Spacer().frame(width: 12)
+                
+                HStack {
+                    VStack {
+                        if lineDashIsEnabled {
+                            DottedLineIconView()
+                                .frame(width: 25, height: 25)
+                        } else {
+                            LineIconView(isBgColor: false)
+                                .frame(width: 25, height: 25)
+                        }
+                        
+                        Toggle("", isOn: $lineDashIsEnabled)
+                            .onChange(of: lineDashIsEnabled, perform: { _ in
+                                if !lineDashIsEnabled {
+                                    lineDash = 1.0
+                                } else {
+                                    lineDash = 50.0
+                                }
                                 saveToRealm()
                             })
                     }
-                }
-                
-                if isLineTool {
                     
-                    Spacer().frame(width: 12)
-                    Rectangle()
-                        .fill(getForegroundColor(colorScheme))
-                        .frame(width: 1, height: 50)
-                        .padding()
-                    Spacer().frame(width: 12)
-                    
-                    VStack {
-                        SolIconButton(
-                            systemName: "paintpalette",
-                            width: 40.0,
-                            height: 40.0,
-                            onTap: {
-                                self.showColorPicker = !self.showColorPicker
-                            }
-                        )
-                        BodyText("Color", color: getFontColor(colorScheme))
-                    }
-                    
-                    if self.showColorPicker {
-                        ColorListPickerView() { color in
-                            print("Color Picker Tapper")
-                            viewColor = color
-                            saveToRealm()
+                    if lineDashIsEnabled {
+                        VStack {
+                            Image(systemName: "plus")
+                                .resizable()
+                                .frame(width: 10, height: 10)
+                                .foregroundColor(.white)
+                                .padding()
+                                .background(Circle().fill(Color.secondaryBackground.opacity(0.75)))
+                                .font(.title)
+                                .onTapAnimation {
+                                    print("more line dash")
+                                    lineDash = (lineDash + 2.0).bounded(byMin: 1, andMax: 100)
+                                    saveToRealm()
+                                }
+                            Image(systemName: "minus")
+                                .resizable()
+                                .frame(width: 10, height: 10)
+                                .foregroundColor(.white)
+                                .padding()
+                                .background(Circle().fill(Color.secondaryBackground.opacity(0.75)))
+                                .font(.title)
+                                .onTapAnimation {
+                                    print("less line dash")
+                                    lineDash = (lineDash - 2.0).bounded(byMin: 1, andMax: 100)
+                                    saveToRealm()
+                                }
                         }
-                        .frame(width: 100)
-//                        .offset(x: 0.0, y: -(UIScreen.main.bounds.height/2))
-                        .padding(.bottom, UIScreen.main.bounds.height/2)
                     }
                     
-                    Spacer().frame(width: 24)
                 }
                 
-            }.padding()
+                Spacer().frame(width: 12)
+                Rectangle()
+                    .fill(getForegroundColor(colorScheme))
+                    .frame(width: 1, height: 50)
+                    .padding()
+                Spacer().frame(width: 12)
+                
+                VStack {
+                    Image(systemName: headIsEnabled ? "arrowtriangle.up" : "multiply")
+                        .resizable()
+                        .frame(width: 25, height: 25)
+                        .foregroundColor(headIsEnabled ? .red : getForegroundColor(colorScheme))
+                    Toggle("", isOn: $headIsEnabled)
+                        .onChange(of: headIsEnabled, perform: { _ in
+                            saveToRealm()
+                        })
+                }
+                
+                Spacer().frame(width: 12)
+                Rectangle()
+                    .fill(getForegroundColor(colorScheme))
+                    .frame(width: 1, height: 50)
+                    .padding()
+                Spacer().frame(width: 12)
+                
+                VStack {
+                    SolIconButton(
+                        systemName: "paintpalette",
+                        width: 40.0,
+                        height: 40.0,
+                        onTap: {
+                            self.showColorPicker = !self.showColorPicker
+                        }
+                    )
+                    BodyText("Color", color: getFontColor(colorScheme))
+                }
+                
+                if self.showColorPicker {
+                    ColorListPickerView() { color in
+                        print("Color Picker Tapper")
+                        viewColor = color
+                        saveToRealm()
+                    }
+                    .frame(width: 100)
+//                        .offset(x: 0.0, y: -(UIScreen.main.bounds.height/2))
+                    .padding(.bottom, UIScreen.main.bounds.height/2)
+                }
+                
+                Spacer().frame(width: 24)
+            }
+                    
+                    
         }
         .frame(width: Double(sWidth).bound(to: 200...sWidth) - 150, height: 150)
         .solBackground()
@@ -343,6 +339,7 @@ struct MvSettingsBar<Content: View>: View {
     
     func closeWindow() {
         self.BEO.toolSettingsIsShowing = false
+        BroadcastTools.send(.NavStackMessage, value: NavStackMessage(viewName: "mvsettings", viewAction: WindowAction.close))
     }
     
     func startRestartSession() {
@@ -423,9 +420,7 @@ struct MvSettingsBar<Content: View>: View {
         if let temp = self.BEO.realmInstance.findByField(ManagedView.self, value: self.BEO.toolBarCurrentViewId) {
             self.BEO.realmInstance.safeWrite { r in
                 temp.isDeleted = true
-                firebaseDatabase { db in
-                    db.child(self.activityId).child(self.viewId).setValue(temp.toDict())
-                }
+                BroadcastTools.send(.Canvas, value: CanvasAction.refresh)
             }
         }
     }

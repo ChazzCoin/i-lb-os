@@ -163,7 +163,7 @@ public class NavWindowController: ObservableObject {
     @Published public var sidebarState: NavStackState = .closed
     
     @Published public var isLocked = false
-    @Published public var isFloatable: Bool = true
+    @Published public var isFloatable: Bool = false
     
     @Published public var keyboardIsShowing = false
     @Published public var keyboardHeight = 0.0
@@ -454,12 +454,12 @@ public class NavWindowController: ObservableObject {
                     self.width = NavStackSize.floatable_medium.width
                     self.height = NavStackSize.floatable_medium.height
                 }
-                if managedView.isLocked {
-                    self.isFloatable = true
-                    self.navSize = NavStackSize.floatable_medium
-                    self.width = NavStackSize.floatable_medium.width
-                    self.height = NavStackSize.floatable_medium.height
-                }
+//                if managedView.isLocked {
+//                    self.isFloatable = true
+//                    self.navSize = NavStackSize.floatable_medium
+//                    self.width = NavStackSize.floatable_medium.width
+//                    self.height = NavStackSize.floatable_medium.height
+//                }
                 self.position = CGPoint(x: managedView.startX, y: managedView.startY)
                 self.offPos = CGPoint(x: managedView.x, y: managedView.y)
             }

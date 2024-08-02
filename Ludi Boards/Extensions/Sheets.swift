@@ -40,7 +40,7 @@ struct TeamSheetModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .sheet(isPresented: $isPresented) {
-                TeamView(teamId: $teamId, isShowing: $isPresented)
+                TeamDetailsView(teamId: teamId)
             }
     }
 }
@@ -52,7 +52,7 @@ struct PlayerRefSheetModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .sheet(isPresented: $isPresented) {
-                PlayerRefView(playerId: $playerId, isShowing: $isPresented)
+                PlayerDetailsView(playerId: playerId)
             }
     }
 }

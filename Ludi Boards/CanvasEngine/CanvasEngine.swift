@@ -28,6 +28,7 @@ struct CanvasEngine: View {
     
     @State var storeInMenuBar = Set<AnyCancellable>()
     @State var cancellables = Set<AnyCancellable>()
+    @State var canvasCancellables = Set<AnyCancellable>()
     var maxScaleFactor: CGFloat = 1.0
     
     @State private var angle: Angle = .zero
@@ -155,9 +156,15 @@ struct CanvasEngine: View {
         GlobalPositioningZStack(coordinateSpace: .global) { windowGPS in
             GlobalPositioningReader(coordinateSpace: .global) { geo, gps in
                 
+                /*
+                    1. Canvas Management
+                    2. Canvas Global Windows
+                    3. Board Management
+                 */
+                
                 if toolBarPickerWindowIsVisible {
                     ToolListView()
-                        .position(using: gps, at: .bottomCenter, offsetY: 100)
+                        .position(using: gps, at: .bottomCenter, offsetY: 150)
                         
                 }
                 if boardSettingsWindowIsVisible {
@@ -192,22 +199,24 @@ struct CanvasEngine: View {
 //                        .position(using: gps, at: .topCenter, offsetX: 0, offsetY: 75)
 //                }
                 
-                ModePanel(title: "Your Current Activity", subTitle: self.BEO.currentActivityId, showButton: false, isFlashing: true)
-                    .position(using: gps, at: .topRight, offsetX: 200, offsetY: 50)
+//                ModePanel(title: "Your Current Activity", subTitle: self.BEO.currentActivityId, showButton: false, isFlashing: true)
+//                    .position(using: gps, at: .topRight, offsetX: 200, offsetY: 50)
                 
             }.zIndex(35.0)
             
             GlobalPositioningReader(coordinateSpace: .canvas, width: 20000, height: 20000) { cGeo, cGps in
                 // Board/Canvas Level
-                BoardEngine()
-                    .zIndex(2.0)
-                    .environmentObject(self.BEO)
-                    .environmentObject(self.navTools)
-                    .background(.clear)
-                    .frame(width: cGeo.size.width, height: cGeo.size.height)
-                    .offset(x: self.BEO.canvasOffset.x, y: self.BEO.canvasOffset.y)
-                    .scaleEffect(self.BEO.canvasScale)
-                    .rotationEffect(Angle(degrees: self.BEO.canvasRotation))
+                if !masterResetCanvas {
+                    BoardEngine()
+                        .zIndex(2.0)
+                        .environmentObject(self.BEO)
+                        .environmentObject(self.navTools)
+                        .background(.clear)
+                        .frame(width: cGeo.size.width, height: cGeo.size.height)
+                        .offset(x: self.BEO.canvasOffset.x, y: self.BEO.canvasOffset.y)
+                        .scaleEffect(self.BEO.canvasScale)
+                        .rotationEffect(Angle(degrees: self.BEO.canvasRotation))
+                }
             }
             .zIndex(0.0)
             .background(Color.black.opacity(0.0001))
@@ -219,7 +228,14 @@ struct CanvasEngine: View {
                 print("YESSSS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
             }
             addViewsToNavStack()
-
+            BroadcastTools.listenForCanvasCalls(storeIn: &canvasCancellables, onEvent: { action in
+                if action == CanvasAction.refresh {
+                    self.masterResetTheCanvas()
+                }
+                else if action == CanvasAction.closeWindows {
+                    closeAllWindows()
+                }
+            })
             BroadcastTools.listenForWindowCalls(storeIn: &storeInMenuBar, onEvent: { id, action in
                 print("ID!!!!! \(id)")
                 switch id {

@@ -37,7 +37,7 @@
 		FB2AA1072B74352A00BD631C /* SolToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB2AA1062B74352A00BD631C /* SolToggle.swift */; };
 		FB3A28392BC48AE700D38D3E /* CoreEngine in Frameworks */ = {isa = PBXBuildFile; productRef = FB3A28382BC48AE700D38D3E /* CoreEngine */; };
 		FB3E02B32B0C6B5100D8558C /* SessionPlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02B22B0C6B5100D8558C /* SessionPlanView.swift */; };
-		FB3E02B52B0C6B6000D8558C /* ActivityPlanBindingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02B42B0C6B6000D8558C /* ActivityPlanBindingView.swift */; };
+		FB3E02B52B0C6B6000D8558C /* _ActivityPlanBindingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02B42B0C6B6000D8558C /* _ActivityPlanBindingView.swift */; };
 		FB3E02BD2B0C90E600D8558C /* _RoomUserList.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02BC2B0C90E600D8558C /* _RoomUserList.swift */; };
 		FB3E02BF2B0C948A00D8558C /* AddBuddyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02BE2B0C948A00D8558C /* AddBuddyView.swift */; };
 		FB3E02C12B0C9A6D00D8558C /* BuddyProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02C02B0C9A6D00D8558C /* BuddyProfileView.swift */; };
@@ -189,7 +189,7 @@
 		FB2AA1022B74137800BD631C /* SolIconTextButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolIconTextButton.swift; sourceTree = "<group>"; };
 		FB2AA1062B74352A00BD631C /* SolToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolToggle.swift; sourceTree = "<group>"; };
 		FB3E02B22B0C6B5100D8558C /* SessionPlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionPlanView.swift; sourceTree = "<group>"; };
-		FB3E02B42B0C6B6000D8558C /* ActivityPlanBindingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityPlanBindingView.swift; sourceTree = "<group>"; };
+		FB3E02B42B0C6B6000D8558C /* _ActivityPlanBindingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _ActivityPlanBindingView.swift; sourceTree = "<group>"; };
 		FB3E02BC2B0C90E600D8558C /* _RoomUserList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _RoomUserList.swift; sourceTree = "<group>"; };
 		FB3E02BE2B0C948A00D8558C /* AddBuddyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddBuddyView.swift; sourceTree = "<group>"; };
 		FB3E02C02B0C9A6D00D8558C /* BuddyProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuddyProfileView.swift; sourceTree = "<group>"; };
@@ -421,7 +421,7 @@
 				FBF515A82BBB5CF20066EAA9 /* Console */,
 				FBE2C6232B1B2E01004C0116 /* HomeDashboardView.swift */,
 				FB3E02B22B0C6B5100D8558C /* SessionPlanView.swift */,
-				FB3E02B42B0C6B6000D8558C /* ActivityPlanBindingView.swift */,
+				FB3E02B42B0C6B6000D8558C /* _ActivityPlanBindingView.swift */,
 				FBBAD3BD2B1FBF58004A4332 /* NavPad.swift */,
 				FB9F1DD32B15307E00FD9078 /* _UserSignUp.swift */,
 				FB9EB6DB2BB682AF00FDD5DE /* OrganizationHome.swift */,
@@ -714,6 +714,10 @@
 			isa = PBXGroup;
 			children = (
 				FB18F1762B6988E100D89F8D /* ActivityPlanSingleView.swift */,
+				FB18F15B2B68369400D89F8D /* TeamView.swift */,
+				FB18F15D2B6838B900D89F8D /* PlayerRefView.swift */,
+				FBF515AF2BBB64F90066EAA9 /* PlayerDetailsView.swift */,
+				FBF515AD2BBB64D10066EAA9 /* TeamDetailsView.swift */,
 			);
 			path = Sheets;
 			sourceTree = "<group>";
@@ -774,13 +778,9 @@
 		FBF515A82BBB5CF20066EAA9 /* Console */ = {
 			isa = PBXGroup;
 			children = (
-				FB18F15B2B68369400D89F8D /* TeamView.swift */,
-				FB18F15D2B6838B900D89F8D /* PlayerRefView.swift */,
 				FBF515A92BBB5D8F0066EAA9 /* BaseDetailsView.swift */,
 				FBF515AB2BBB5F420066EAA9 /* OrganizationDetailsView.swift */,
-				FBF515AF2BBB64F90066EAA9 /* PlayerDetailsView.swift */,
 				FBF515B62BBCE4560066EAA9 /* ActivityDetailsView.swift */,
-				FBF515AD2BBB64D10066EAA9 /* TeamDetailsView.swift */,
 			);
 			path = Console;
 			sourceTree = "<group>";
@@ -1061,7 +1061,7 @@
 				FBDF0DC72B224D2600FADE44 /* ActivityPlanService.swift in Sources */,
 				FBBAD3BC2B1F8ECC004A4332 /* Timer.swift in Sources */,
 				FB48409C2B1EBE8B0003377A /* StopWatch.swift in Sources */,
-				FB3E02B52B0C6B6000D8558C /* ActivityPlanBindingView.swift in Sources */,
+				FB3E02B52B0C6B6000D8558C /* _ActivityPlanBindingView.swift in Sources */,
 				FBDE4F572B4CF883007FE880 /* _LogoutObserver.swift in Sources */,
 				FBE2C6222B1B1490004C0116 /* _ManagedViewListViewModel.swift in Sources */,
 				FBC2FC6C2B59C4A400D1AB77 /* DStack.swift in Sources */,

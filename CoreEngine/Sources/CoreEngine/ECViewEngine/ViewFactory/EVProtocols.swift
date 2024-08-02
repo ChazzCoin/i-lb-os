@@ -35,6 +35,19 @@ public struct ToolListView: View {
     public var body: some View {
         ScrollView(.vertical) {
             LazyVStack {
+                HStack {
+                    Image(systemName: "xmark")
+                        .resizable()
+                        .frame(width: 15, height: 15)
+    //                    .foregroundColor(getForegroundColor(colorScheme))
+                        .padding()
+                        .padding(.top)
+                        .padding(.leading)
+                        .onTapAnimation {
+                            BroadcastTools.send(.NavStackMessage, value: NavStackMessage(viewName: "toolbox", viewAction: WindowAction.close))
+                        }
+                    Spacer()
+                }.frame(height: 50)
                 ToolList(title: "Smart Shapes", forEachContent: {
                     ForEach(ViewEngine.Tool.ShapeTool.allCases, id: \.self) { tool in
                         ToolListItem(currentActivityId, tool: tool)
@@ -50,9 +63,10 @@ public struct ToolListView: View {
                         ToolListItem(currentActivityId, tool: tool)
                     }
                 })
+                Spacer()
             }
         }
-        .frame(minWidth: UIScreen.main.bounds.width * 0.90, minHeight: 200)
+        .frame(maxWidth: UIScreen.main.bounds.width * 0.90, maxHeight: 300)
         .solBackground()
     }
 }

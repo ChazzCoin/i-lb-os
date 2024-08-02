@@ -433,7 +433,10 @@ struct BoardSettingsBar: View {
     }
 
     
-    func closeWindow() { self.BEO.boardSettingsIsShowing = false }
+    func closeWindow() { 
+        self.BEO.boardSettingsIsShowing = false
+        BroadcastTools.send(.NavStackMessage, value: NavStackMessage(viewName: "board settings", viewAction: WindowAction.close))
+    }
     
     // Function to rotate the view by a certain angle
     private func rotateView(by degrees: Double) {

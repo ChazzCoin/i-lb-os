@@ -41,6 +41,7 @@ struct HomeDashboardView: View {
     @State private var showNewPlanSheet = false
     
     @State private var currentTeamId = ""
+    @State private var currentPlayerId = ""
     @State private var showCurrentTeamSheet = false
     @State private var showNewOrgSheet = false
     @State private var showNewTeamSheet = false
@@ -82,15 +83,16 @@ struct HomeDashboardView: View {
                     Text("Teams")
                     Spacer()
                     SOLCON(icon: SolIcon.add, isConfirmEnabled: false, showTitle: false, onTap: {
+                        self.currentTeamId = "new"
                         self.showNewTeamSheet = true
                     })
                 }) {
-                    if teams.isEmpty {
-                        NavigationLink(destination: TeamDetailsView(teamId: "new"), label: {Text("Create Team")})
-                    } else {
-                        ForEach(teams, id: \.id) { item in
-                            NavigationLink(item.name, destination: TeamDetailsView(teamId: item.id))
-                        }
+                    ForEach(teams, id: \.id) { item in
+                        Text(item.name)
+                            .onTapAnimation {
+                                self.currentTeamId = item.id
+                                self.showNewTeamSheet = true
+                            }
                     }
                 }
                 
@@ -98,14 +100,19 @@ struct HomeDashboardView: View {
                     Text("Players")
                     Spacer()
                     SOLCON(icon: SolIcon.add, isConfirmEnabled: false, showTitle: false, onTap: {
+                        self.currentPlayerId = "new"
                         self.showNewPlayerRefSheet = true
                     })
                 }) {
                     if players.isEmpty {
                         Text("No Members of SOL Academy")
                     } else {
-                        ForEach(OrganizationManager().getAllUsersInOrganization(organizationId: BEO.currentOrgId), id: \.self) { item in
+                        ForEach(players, id: \.self) { item in
                             Text(item.name)
+                                .onTapAnimation {
+                                    self.currentPlayerId = item.id
+                                    self.showNewPlayerRefSheet = true
+                                }
                         }
                     }
                 }
@@ -150,6 +157,7 @@ struct HomeDashboardView: View {
 
             if isSidebarVisible {
                 MenuListView(isShowing: $isSidebarVisible)
+                    .offset(x: -350.0, y: 0.0)
             }
             
         }
@@ -170,7 +178,8 @@ struct HomeDashboardView: View {
         }
         .loading(isShowing: $isLoading)
         .organizationDetailsSheet(isPresented: $showNewOrgSheet, orgId: "new", reset: $resetView)
-        .teamSheet(isPresented: $showNewTeamSheet, teamId: .constant("new"))
+        .teamSheet(isPresented: $showNewTeamSheet, teamId: .constant(self.currentTeamId))
+        .playerRefSheet(isPresented: $showNewPlayerRefSheet, playerId: .constant(self.currentPlayerId))
         .activityPlanSheet(isPresented: $showNewActivitySheet, activityId: "SOL", BEO: BEO)
         .sheet(isPresented: $showNewPlayerRefSheet) {
             PlayerRefView(playerId: .constant("new"), isShowing: $showNewPlayerRefSheet)
