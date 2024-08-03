@@ -127,6 +127,7 @@
 		FBE2C6242B1B2E01004C0116 /* HomeDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C6232B1B2E01004C0116 /* HomeDashboardView.swift */; };
 		FBE2C6262B1BD7BA004C0116 /* TipBoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C6252B1BD7BA004C0116 /* TipBoxView.swift */; };
 		FBE385502B4B32950090901C /* _FriendsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE3854F2B4B32950090901C /* _FriendsListView.swift */; };
+		FBE54B7F2C5DED4100C165DF /* ToolToPlayerRef.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE54B7E2C5DED4100C165DF /* ToolToPlayerRef.swift */; };
 		FBEBEF962B49506800B8BA32 /* _LiveChat.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBEBEF952B49506800B8BA32 /* _LiveChat.swift */; };
 		FBF1A5F92B5E342B0088150C /* SolIconButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF1A5F82B5E342B0088150C /* SolIconButton.swift */; };
 		FBF1A5FC2B5F7BB70088150C /* Triangle.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF1A5FB2B5F7BB70088150C /* Triangle.swift */; };
@@ -139,7 +140,7 @@
 		FBF515B02BBB64F90066EAA9 /* PlayerDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF515AF2BBB64F90066EAA9 /* PlayerDetailsView.swift */; };
 		FBF515B22BBB8DE90066EAA9 /* Assigners.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF515B12BBB8DE90066EAA9 /* Assigners.swift */; };
 		FBF515B42BBCE2320066EAA9 /* TrainingEquipment.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF515B32BBCE2320066EAA9 /* TrainingEquipment.swift */; };
-		FBF515B72BBCE4560066EAA9 /* ActivityDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF515B62BBCE4560066EAA9 /* ActivityDetailsView.swift */; };
+		FBF515B72BBCE4560066EAA9 /* _ActivityDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF515B62BBCE4560066EAA9 /* _ActivityDetailsView.swift */; };
 		FBF515B92BBD03FF0066EAA9 /* BoardEngineObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF515B82BBD03FF0066EAA9 /* BoardEngineObject.swift */; };
 		FBF515BC2BBDF6070066EAA9 /* OrganizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF515BB2BBDF6070066EAA9 /* OrganizationManager.swift */; };
 		FBF515BE2BBDF7560066EAA9 /* TeamManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF515BD2BBDF7560066EAA9 /* TeamManager.swift */; };
@@ -282,6 +283,7 @@
 		FBE2C6232B1B2E01004C0116 /* HomeDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeDashboardView.swift; sourceTree = "<group>"; };
 		FBE2C6252B1BD7BA004C0116 /* TipBoxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TipBoxView.swift; sourceTree = "<group>"; };
 		FBE3854F2B4B32950090901C /* _FriendsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _FriendsListView.swift; sourceTree = "<group>"; };
+		FBE54B7E2C5DED4100C165DF /* ToolToPlayerRef.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolToPlayerRef.swift; sourceTree = "<group>"; };
 		FBEBEF952B49506800B8BA32 /* _LiveChat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _LiveChat.swift; sourceTree = "<group>"; };
 		FBF1A5F82B5E342B0088150C /* SolIconButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolIconButton.swift; sourceTree = "<group>"; };
 		FBF1A5FB2B5F7BB70088150C /* Triangle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Triangle.swift; sourceTree = "<group>"; };
@@ -294,7 +296,7 @@
 		FBF515AF2BBB64F90066EAA9 /* PlayerDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerDetailsView.swift; sourceTree = "<group>"; };
 		FBF515B12BBB8DE90066EAA9 /* Assigners.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Assigners.swift; sourceTree = "<group>"; };
 		FBF515B32BBCE2320066EAA9 /* TrainingEquipment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingEquipment.swift; sourceTree = "<group>"; };
-		FBF515B62BBCE4560066EAA9 /* ActivityDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityDetailsView.swift; sourceTree = "<group>"; };
+		FBF515B62BBCE4560066EAA9 /* _ActivityDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _ActivityDetailsView.swift; sourceTree = "<group>"; };
 		FBF515B82BBD03FF0066EAA9 /* BoardEngineObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardEngineObject.swift; sourceTree = "<group>"; };
 		FBF515BB2BBDF6070066EAA9 /* OrganizationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrganizationManager.swift; sourceTree = "<group>"; };
 		FBF515BD2BBDF7560066EAA9 /* TeamManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamManager.swift; sourceTree = "<group>"; };
@@ -713,6 +715,7 @@
 		FBE54B7D2C5C157000C165DF /* Sheets */ = {
 			isa = PBXGroup;
 			children = (
+				FBE54B802C5E0C1F00C165DF /* Connections */,
 				FB18F1762B6988E100D89F8D /* ActivityPlanSingleView.swift */,
 				FB18F15B2B68369400D89F8D /* TeamView.swift */,
 				FB18F15D2B6838B900D89F8D /* PlayerRefView.swift */,
@@ -720,6 +723,14 @@
 				FBF515AD2BBB64D10066EAA9 /* TeamDetailsView.swift */,
 			);
 			path = Sheets;
+			sourceTree = "<group>";
+		};
+		FBE54B802C5E0C1F00C165DF /* Connections */ = {
+			isa = PBXGroup;
+			children = (
+				FBE54B7E2C5DED4100C165DF /* ToolToPlayerRef.swift */,
+			);
+			path = Connections;
 			sourceTree = "<group>";
 		};
 		FBEBEF902B494DA600B8BA32 /* DB */ = {
@@ -780,7 +791,7 @@
 			children = (
 				FBF515A92BBB5D8F0066EAA9 /* BaseDetailsView.swift */,
 				FBF515AB2BBB5F420066EAA9 /* OrganizationDetailsView.swift */,
-				FBF515B62BBCE4560066EAA9 /* ActivityDetailsView.swift */,
+				FBF515B62BBCE4560066EAA9 /* _ActivityDetailsView.swift */,
 			);
 			path = Console;
 			sourceTree = "<group>";
@@ -1027,7 +1038,7 @@
 				FB18F1732B68CE6400D89F8D /* SearchableActivityListView.swift in Sources */,
 				FBF515BE2BBDF7560066EAA9 /* TeamManager.swift in Sources */,
 				FB18F17B2B69A26400D89F8D /* SearchablePlayerRefListView.swift in Sources */,
-				FBF515B72BBCE4560066EAA9 /* ActivityDetailsView.swift in Sources */,
+				FBF515B72BBCE4560066EAA9 /* _ActivityDetailsView.swift in Sources */,
 				FB18F1792B69A0DC00D89F8D /* SearchableTeamListView.swift in Sources */,
 				FB58E8822B030F1D00FD9E2E /* RealmFind.swift in Sources */,
 				FB65D2CB2B7DC16300564C37 /* SolPickers.swift in Sources */,
@@ -1111,6 +1122,7 @@
 				FBF515C02BBDF7610066EAA9 /* ActivityManager.swift in Sources */,
 				FB48409A2B1EBC940003377A /* Sports.swift in Sources */,
 				FB10AE0D2B0F16B100295F4B /* ActivityPlanThumbList.swift in Sources */,
+				FBE54B7F2C5DED4100C165DF /* ToolToPlayerRef.swift in Sources */,
 				FBF1A5F92B5E342B0088150C /* SolIconButton.swift in Sources */,
 				FB18F1832B6AE54200D89F8D /* SearchableRecordingsListView.swift in Sources */,
 				FB15DD2A2B07443600A21290 /* BoardEngineView.swift in Sources */,

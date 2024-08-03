@@ -38,6 +38,7 @@ struct HomeDashboardView: View {
     let realmInstance: Realm = newRealm()
     
     @State private var isLoading: Bool = false
+    @State private var showMoreFlag = false
     @State private var showNewPlanSheet = false
     
     @State private var currentTeamId = ""
@@ -79,59 +80,60 @@ struct HomeDashboardView: View {
                     }
                 }
                 
-                Section(header: HStack {
-                    Text("Teams")
-                    Spacer()
-                    SOLCON(icon: SolIcon.add, isConfirmEnabled: false, showTitle: false, onTap: {
-                        self.currentTeamId = "new"
-                        self.showNewTeamSheet = true
-                    })
-                }) {
-                    ForEach(teams, id: \.id) { item in
-                        Text(item.name)
-                            .onTapAnimation {
-                                self.currentTeamId = item.id
-                                self.showNewTeamSheet = true
-                            }
-                    }
-                }
-                
-                Section(header: HStack {
-                    Text("Players")
-                    Spacer()
-                    SOLCON(icon: SolIcon.add, isConfirmEnabled: false, showTitle: false, onTap: {
-                        self.currentPlayerId = "new"
-                        self.showNewPlayerRefSheet = true
-                    })
-                }) {
-                    if players.isEmpty {
-                        Text("No Members of SOL Academy")
-                    } else {
-                        ForEach(players, id: \.self) { item in
+                DisclosureGroup("Teams, Players & More. . .", isExpanded: $showMoreFlag, content: {
+                    Section(header: HStack {
+                        Text("Teams")
+                        Spacer()
+                        SOLCON(icon: SolIcon.add, isConfirmEnabled: false, showTitle: false, onTap: {
+                            self.currentTeamId = "new"
+                            self.showNewTeamSheet = true
+                        })
+                    }) {
+                        ForEach(teams, id: \.id) { item in
                             Text(item.name)
                                 .onTapAnimation {
-                                    self.currentPlayerId = item.id
-                                    self.showNewPlayerRefSheet = true
+                                    self.currentTeamId = item.id
+                                    self.showNewTeamSheet = true
                                 }
                         }
                     }
-                }
-               
-                Section(header: HStack {
-                    Text("Events")
-                    Spacer()
-                    SOLCON(icon: SolIcon.add, isConfirmEnabled: false, showTitle: false, onTap: {
-                        self.showNewEventSheet = true
-                    })
-                }) {
-                    if events.isEmpty {
-                        Text("No Events")
+                    
+                    Section(header: HStack {
+                        Text("Players")
+                        Spacer()
+                        SOLCON(icon: SolIcon.add, isConfirmEnabled: false, showTitle: false, onTap: {
+                            self.currentPlayerId = "new"
+                            self.showNewPlayerRefSheet = true
+                        })
+                    }) {
+                        if players.isEmpty {
+                            Text("No Members of SOL Academy")
+                        } else {
+                            ForEach(players, id: \.self) { item in
+                                Text(item.name)
+                                    .onTapAnimation {
+                                        self.currentPlayerId = item.id
+                                        self.showNewPlayerRefSheet = true
+                                    }
+                            }
+                        }
                     }
-                    ForEach(events, id: \.id) { item in
-                        Text(item.name)
+                   
+                    Section(header: HStack {
+                        Text("Events")
+                        Spacer()
+                        SOLCON(icon: SolIcon.add, isConfirmEnabled: false, showTitle: false, onTap: {
+                            self.showNewEventSheet = true
+                        })
+                    }) {
+                        if events.isEmpty {
+                            Text("No Events")
+                        }
+                        ForEach(events, id: \.id) { item in
+                            Text(item.name)
+                        }
                     }
-                }
-               
+                })
                 
                 // Activities
                 Section(header: HStack {

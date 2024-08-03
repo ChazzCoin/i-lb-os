@@ -57,6 +57,20 @@ public func getPrimaryKey<T: Object>(_ item: T, defaultValue:String="") -> Strin
 
 // MARK: Base Realm Extentions
 public extension Realm {
+    
+    func objects<T: Object, String>(_ type: T.Type, in ids: [String]) -> Results<T> where String: _Persistable {
+        return objects(type).filter("id IN %@", ids)
+    }
+    func objects<T: Object, String>(_ type: T.Type, notIn ids: [String]) -> Results<T> where String: _Persistable {
+        return objects(type).filter("NOT id IN %@", ids)
+    }
+    func findInListOfIds<T: Object>(_ type: T.Type, in ids: [String]) -> Results<T> {
+        return objects(type).filter("id IN %@", ids)
+    }
+    func findNotInListOfIds<T: Object>(_ type: T.Type, in ids: [String]) -> Results<T> {
+        return objects(type).filter("NOT id IN %@", ids)
+    }
+    
     func findByField<T: Object>(_ type: T.Type, field: String = "id", value: String?) -> T? {
         guard let value = value else { return nil }
         return objects(type).filter("\(field) == %@", value).first

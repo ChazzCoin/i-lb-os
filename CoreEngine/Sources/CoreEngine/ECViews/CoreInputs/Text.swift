@@ -13,9 +13,9 @@ public func HeaderText(_ content: String, color:Color = .white) -> some View {
         .font(.system(size: 24, weight: .bold))
         .foregroundColor(color)
         .shadow(color: .gray, radius: 2, x: 0, y: 2)
-        .mask(
-            LinearGradient(gradient: Gradient(colors: [Color.blue, Color.purple]), startPoint: .top, endPoint: .bottom)
-        )
+//        .mask(
+//            LinearGradient(gradient: Gradient(colors: [Color.blue, Color.purple]), startPoint: .top, endPoint: .bottom)
+//        )
 }
 
 

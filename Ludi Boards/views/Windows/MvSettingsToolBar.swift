@@ -21,6 +21,7 @@ struct MvSettingsBar<Content: View>: View {
     private let soccerTools = SoccerToolProvider.allCases
     
     @State var gps = GlobalPositioningSystem(CoreNameSpace.local)
+    @StateObject var tool = ManagedViewO()
     
     var sWidth = UIScreen.main.bounds.width
     var sHeight = UIScreen.main.bounds.height
@@ -59,6 +60,7 @@ struct MvSettingsBar<Content: View>: View {
     @State var cancellables = Set<AnyCancellable>()
     
     @State var attachedPlayerIsOn: Bool = false
+    @State var showAttachPlayers: Bool = false
     @State var hasPlayerRef: Bool = false
     @State var addPlayerName = ""
     @State var addPlayerId = "new"
@@ -97,6 +99,24 @@ struct MvSettingsBar<Content: View>: View {
                     onTap: {
                         deleteFromRealm()
                         self.closeWindow()
+                    }
+                )
+                
+                SolIconConfirmButton(
+                    systemName: "add",
+                    title: "Duplicatee Tool",
+                    message: "Are you sure you want to duplicate this tool?",
+                    onTap: {
+                        duplicateTool()
+                    }
+                )
+                
+                SolIconConfirmButton(
+                    systemName: "add",
+                    title: "Attach Player",
+                    message: "Attach A Player?",
+                    onTap: {
+                        showAttachPlayers = true
                     }
                 )
                 
@@ -166,168 +186,183 @@ struct MvSettingsBar<Content: View>: View {
                 }
                 
                 // -> Basic Tools Only
-                Spacer().frame(width: 12)
-                Rectangle()
-                    .fill(getForegroundColor(colorScheme))
-                    .frame(width: 1, height: 50)
-                    .padding()
-                Spacer().frame(width: 12)
-                
-                VStack {
+                if self.tool.isGeneral {
+                    Spacer().frame(width: 12)
+                    Rectangle()
+                        .fill(getForegroundColor(colorScheme))
+                        .frame(width: 1, height: 50)
+                        .padding()
+                    Spacer().frame(width: 12)
                     
-                    HStack {
-                        Image(systemName: "arrow.clockwise")
-                            .resizable()
-                            .frame(width: 25, height: 25)
-                            .foregroundColor(getForegroundColor(colorScheme))
-                        BodyText("\(viewRotation)", color: getFontColor(colorScheme))
-                    }
-                    
-                    HStack {
-                        Image(systemName: "rotate.left")
-                            .resizable()
-                            .frame(width: 10, height: 10)
-                            .foregroundColor(.white)
-                            .padding()
-                            .background(Circle().fill(Color.secondaryBackground.opacity(0.75)))
-                            .font(.title)
-                            .onTapAnimation {
-                                print("rotate left")
-                                rotateView(by: -22.5)
-                                saveToRealm()
-                            }
-                        Image(systemName: "rotate.right")
-                            .resizable()
-                            .frame(width: 10, height: 10)
-                            .foregroundColor(.white)
-                            .padding()
-                            .background(Circle().fill(Color.secondaryBackground.opacity(0.75)))
-                            .font(.title)
-                            .onTapAnimation {
-                                print("rotate right")
-                                rotateView(by: 22.5)
-                                saveToRealm()
-                            }
-                    }
-                    
-                }
-                
-                // -> Line Tool Only
-                Spacer().frame(width: 12)
-                Rectangle()
-                    .fill(getForegroundColor(colorScheme))
-                    .frame(width: 1, height: 50)
-                    .padding()
-                Spacer().frame(width: 12)
-                
-                HStack {
                     VStack {
-                        if lineDashIsEnabled {
-                            DottedLineIconView()
+                        
+                        HStack {
+                            Image(systemName: "arrow.clockwise")
+                                .resizable()
                                 .frame(width: 25, height: 25)
-                        } else {
-                            LineIconView(isBgColor: false)
-                                .frame(width: 25, height: 25)
+                                .foregroundColor(getForegroundColor(colorScheme))
+                            BodyText("\(viewRotation)", color: getFontColor(colorScheme))
                         }
                         
-                        Toggle("", isOn: $lineDashIsEnabled)
-                            .onChange(of: lineDashIsEnabled, perform: { _ in
-                                if !lineDashIsEnabled {
-                                    lineDash = 1.0
-                                } else {
-                                    lineDash = 50.0
+                        HStack {
+                            Image(systemName: "rotate.left")
+                                .resizable()
+                                .frame(width: 10, height: 10)
+                                .foregroundColor(.white)
+                                .padding()
+                                .background(Circle().fill(Color.secondaryBackground.opacity(0.75)))
+                                .font(.title)
+                                .onTapAnimation {
+                                    print("rotate left")
+                                    rotateView(by: -22.5)
+                                    saveToRealm()
                                 }
+                            Image(systemName: "rotate.right")
+                                .resizable()
+                                .frame(width: 10, height: 10)
+                                .foregroundColor(.white)
+                                .padding()
+                                .background(Circle().fill(Color.secondaryBackground.opacity(0.75)))
+                                .font(.title)
+                                .onTapAnimation {
+                                    print("rotate right")
+                                    rotateView(by: 22.5)
+                                    saveToRealm()
+                                }
+                        }
+                        
+                    }
+                }
+                
+                
+                // -> Line Tool Only
+                
+                if tool.isLineStraight {
+                    
+                    Spacer().frame(width: 12)
+                    Rectangle()
+                        .fill(getForegroundColor(colorScheme))
+                        .frame(width: 1, height: 50)
+                        .padding()
+                    Spacer().frame(width: 12)
+                    
+                    VStack {
+                        Image(systemName: headIsEnabled ? "arrowtriangle.up" : "multiply")
+                            .resizable()
+                            .frame(width: 25, height: 25)
+                            .foregroundColor(headIsEnabled ? .red : getForegroundColor(colorScheme))
+                        Toggle("", isOn: $headIsEnabled)
+                            .onChange(of: headIsEnabled, perform: { _ in
                                 saveToRealm()
                             })
                     }
                     
-                    if lineDashIsEnabled {
+                }
+                
+                if tool.isLinedShape {
+                    Spacer().frame(width: 12)
+                    Rectangle()
+                        .fill(getForegroundColor(colorScheme))
+                        .frame(width: 1, height: 50)
+                        .padding()
+                    Spacer().frame(width: 12)
+                    
+                    HStack {
                         VStack {
-                            Image(systemName: "plus")
-                                .resizable()
-                                .frame(width: 10, height: 10)
-                                .foregroundColor(.white)
-                                .padding()
-                                .background(Circle().fill(Color.secondaryBackground.opacity(0.75)))
-                                .font(.title)
-                                .onTapAnimation {
-                                    print("more line dash")
-                                    lineDash = (lineDash + 2.0).bounded(byMin: 1, andMax: 100)
+                            if lineDashIsEnabled {
+                                DottedLineIconView()
+                                    .frame(width: 25, height: 25)
+                            } else {
+                                LineIconView(isBgColor: false)
+                                    .frame(width: 25, height: 25)
+                            }
+                            
+                            Toggle("", isOn: $lineDashIsEnabled)
+                                .onChange(of: lineDashIsEnabled, perform: { _ in
+                                    if !lineDashIsEnabled {
+                                        lineDash = 1.0
+                                    } else {
+                                        lineDash = 50.0
+                                    }
                                     saveToRealm()
-                                }
-                            Image(systemName: "minus")
-                                .resizable()
-                                .frame(width: 10, height: 10)
-                                .foregroundColor(.white)
-                                .padding()
-                                .background(Circle().fill(Color.secondaryBackground.opacity(0.75)))
-                                .font(.title)
-                                .onTapAnimation {
-                                    print("less line dash")
-                                    lineDash = (lineDash - 2.0).bounded(byMin: 1, andMax: 100)
-                                    saveToRealm()
-                                }
+                                })
                         }
+                        
+                        if lineDashIsEnabled {
+                            VStack {
+                                Image(systemName: "plus")
+                                    .resizable()
+                                    .frame(width: 10, height: 10)
+                                    .foregroundColor(.white)
+                                    .padding()
+                                    .background(Circle().fill(Color.secondaryBackground.opacity(0.75)))
+                                    .font(.title)
+                                    .onTapAnimation {
+                                        print("more line dash")
+                                        lineDash = (lineDash + 2.0).bounded(byMin: 1, andMax: 100)
+                                        saveToRealm()
+                                    }
+                                Image(systemName: "minus")
+                                    .resizable()
+                                    .frame(width: 10, height: 10)
+                                    .foregroundColor(.white)
+                                    .padding()
+                                    .background(Circle().fill(Color.secondaryBackground.opacity(0.75)))
+                                    .font(.title)
+                                    .onTapAnimation {
+                                        print("less line dash")
+                                        lineDash = (lineDash - 2.0).bounded(byMin: 1, andMax: 100)
+                                        saveToRealm()
+                                    }
+                            }
+                        }
+                        
                     }
                     
-                }
-                
-                Spacer().frame(width: 12)
-                Rectangle()
-                    .fill(getForegroundColor(colorScheme))
-                    .frame(width: 1, height: 50)
-                    .padding()
-                Spacer().frame(width: 12)
-                
-                VStack {
-                    Image(systemName: headIsEnabled ? "arrowtriangle.up" : "multiply")
-                        .resizable()
-                        .frame(width: 25, height: 25)
-                        .foregroundColor(headIsEnabled ? .red : getForegroundColor(colorScheme))
-                    Toggle("", isOn: $headIsEnabled)
-                        .onChange(of: headIsEnabled, perform: { _ in
-                            saveToRealm()
-                        })
-                }
-                
-                Spacer().frame(width: 12)
-                Rectangle()
-                    .fill(getForegroundColor(colorScheme))
-                    .frame(width: 1, height: 50)
-                    .padding()
-                Spacer().frame(width: 12)
-                
-                VStack {
-                    SolIconButton(
-                        systemName: "paintpalette",
-                        width: 40.0,
-                        height: 40.0,
-                        onTap: {
-                            self.showColorPicker = !self.showColorPicker
-                        }
-                    )
-                    BodyText("Color", color: getFontColor(colorScheme))
-                }
-                
-                if self.showColorPicker {
-                    ColorListPickerView() { color in
-                        print("Color Picker Tapper")
-                        viewColor = color
-                        saveToRealm()
+                    Spacer().frame(width: 12)
+                    Rectangle()
+                        .fill(getForegroundColor(colorScheme))
+                        .frame(width: 1, height: 50)
+                        .padding()
+                    Spacer().frame(width: 12)
+                    
+                    
+                    
+                    VStack {
+                        SolIconButton(
+                            systemName: "paintpalette",
+                            width: 40.0,
+                            height: 40.0,
+                            onTap: {
+                                self.showColorPicker = !self.showColorPicker
+                            }
+                        )
+                        BodyText("Color", color: getFontColor(colorScheme))
                     }
-                    .frame(width: 100)
-//                        .offset(x: 0.0, y: -(UIScreen.main.bounds.height/2))
-                    .padding(.bottom, UIScreen.main.bounds.height/2)
+                    
+                    if self.showColorPicker {
+                        ColorListPickerView() { color in
+                            print("Color Picker Tapper")
+                            viewColor = color
+                            saveToRealm()
+                        }
+                        .frame(width: 100)
+    //                        .offset(x: 0.0, y: -(UIScreen.main.bounds.height/2))
+                        .padding(.bottom, UIScreen.main.bounds.height/2)
+                    }
+                    
+                    Spacer().frame(width: 24)
                 }
-                
-                Spacer().frame(width: 24)
             }
                     
-                    
+        }
+        .sheet(isPresented: $showAttachPlayers) {
+            ToolToPlayerRefView(toolId: self.$viewId)
         }
         .frame(width: Double(sWidth).bound(to: 200...sWidth) - 150, height: 150)
         .solBackground()
         .onChange(of: self.BEO.toolBarCurrentViewId, perform: { value in
+            self.viewId = self.BEO.toolBarCurrentViewId
             loadFromRealm()
         })
         .onAppear() {
@@ -425,11 +460,37 @@ struct MvSettingsBar<Content: View>: View {
         }
     }
     
+    func duplicateTool() {
+        if let temp = self.BEO.realmInstance.findByField(ManagedView.self, value: self.BEO.toolBarCurrentViewId) {
+            self.BEO.realmInstance.safeWrite { r in
+                let copied = ManagedView()
+                copied.absorbProperties(from: temp)
+                copied.id = UUID().uuidString
+                copied.x = temp.x - 300.0
+                copied.y = temp.y - 300.0
+                copied.startX = temp.startX - 300.0
+                copied.startY = temp.startY - 300.0
+                copied.endX = temp.endX - 300.0
+                copied.endY = temp.endY - 300.0
+                copied.centerX = temp.centerX - 300.0
+                copied.centerY = temp.centerY - 300.0
+                copied.colorRed = temp.colorRed
+                copied.colorBlue = temp.colorBlue
+                copied.colorGreen = temp.colorGreen
+                copied.colorAlpha = temp.colorAlpha
+                copied.lineDash = temp.lineDash
+                r.create(ManagedView.self, value: copied, update: .all)
+            }
+            BroadcastTools.send(.Canvas, value: CanvasAction.refresh)
+        }
+    }
+    
     // Realm / Firebase
     func loadFromRealm() {
-        
+        self.tool.loadManagedView(byId: self.BEO.toolBarCurrentViewId)
         if let umv = self.BEO.realmInstance.findByField(ManagedView.self, value: self.BEO.toolBarCurrentViewId) {
             // set attributes
+            self.viewId = umv.id
             activityId = umv.boardId
             isLocked = umv.isLocked
             toolType = umv.toolType
@@ -439,7 +500,6 @@ struct MvSettingsBar<Content: View>: View {
             lineDash = CGFloat(umv.lineDash)
             lineDashIsEnabled = lineDash == 1 ? false : true
             viewColor = colorFromRGBA(red: umv.colorRed, green: umv.colorGreen, blue: umv.colorBlue, alpha: umv.colorAlpha)
-                        
         }
     }
     

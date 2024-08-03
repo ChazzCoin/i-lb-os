@@ -15,10 +15,11 @@ struct TeamDetailsView: View {
     @State var teamId: String
     
     @StateObject var team: TeamObject = TeamObject()
+    let PTManager: PlayerTeamManager = PlayerTeamManager()
     
     @ObservedResults(PlayerRef.self) var players
-    var roster: Results<PlayerRef> {
-        return self.players.filter("teamId == %@", self.team.id)
+    var roster: Results<PlayerRefToTeam> {
+        return PTManager.findPlayersByTeamId(teamId: self.teamId)
     }
     
     @State var sport: String = ""
@@ -57,7 +58,6 @@ struct TeamDetailsView: View {
                         .onTapAnimation {
                             isEditMode.toggle()
                         }
-                    
                 }
                 
             },
@@ -83,7 +83,9 @@ struct TeamDetailsView: View {
                         ForEach(roster) { player in
                             PlayerRefItemView(playerId: .constant(player.id))
                                 .onTapAnimation {
-                                    
+                                    TeamManager().removeUserFromTeam(userId: player.id, teamId: team.id, completion: { _ in
+                                        print("Removed Player from Team.")
+                                    })
                                 }
                         }
                     }
