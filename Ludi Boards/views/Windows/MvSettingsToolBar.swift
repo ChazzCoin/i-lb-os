@@ -42,9 +42,6 @@ struct MvSettingsBar<Content: View>: View {
     @State var isLocked = false
     @State var headIsEnabled: Bool = true
     @State var viewSize: CGFloat = 50
-    @State var viewRotation: Double = 0
-    @State var viewColor: Color = .black
-    @State var lineDash: CGFloat = 1
     @State var lineDashIsEnabled: Bool = false
     
     var isLineTool: Bool { return toolType == "LINE" || toolType == "CURVED-LINE" }
@@ -87,6 +84,7 @@ struct MvSettingsBar<Content: View>: View {
                         }
                     Spacer()
                 }
+                .padding(.leading)
                 .frame(width: 20)
                 
                 Spacer().frame(width: 24)
@@ -128,13 +126,13 @@ struct MvSettingsBar<Content: View>: View {
                 Spacer().frame(width: 12)
                 
                 VStack {
-                    Image(systemName: isLocked ? "lock" : "lock.open")
+                    Image(systemName: tool.isLocked ? "lock" : "lock.open")
                         .resizable()
                         .frame(width: 25, height: 25)
-                        .foregroundColor(isLocked ? .red : getForegroundColor(colorScheme))
-                    Toggle("", isOn: $isLocked)
-                        .onChange(of: isLocked, perform: { _ in
-                            saveToRealm()
+                        .foregroundColor(tool.isLocked ? .red : getForegroundColor(colorScheme))
+                    Toggle("", isOn: $tool.isLocked)
+                        .onChange(of: tool.isLocked, perform: { _ in
+                            tool.saveToRealm()
                         })
                 }
                 
@@ -153,7 +151,7 @@ struct MvSettingsBar<Content: View>: View {
                             .resizable()
                             .frame(width: 25, height: 25)
                             .foregroundColor(getForegroundColor(colorScheme))
-                        BodyText("\(viewSize)", color: getFontColor(colorScheme))
+                        BodyText("\(tool.width)", color: getFontColor(colorScheme))
                     }
                     
                     HStack {
@@ -166,8 +164,19 @@ struct MvSettingsBar<Content: View>: View {
                             .font(.title)
                             .onTapAnimation {
                                 print("make view smaller")
-                                viewSize = (viewSize - 10).bounded(byMin: 50, andMax: 400)
-                                saveToRealm()
+                                
+                                if tool.isCircle {
+                                    if let umv = self.BEO.realmInstance.findByField(ManagedView.self, value: self.BEO.toolBarCurrentViewId) {
+                                        self.BEO.realmInstance.safeWrite { r in
+                                            umv.width = Int(CGFloat(umv.width - 10).bounded(byMin: 50, andMax: 400))
+                                        }
+                                    }
+                                } else {
+                                    viewSize = (viewSize - 10).bounded(byMin: 50, andMax: 400)
+                                    tool.width = Int(viewSize)
+                                    tool.height = Int(viewSize)
+                                    tool.saveToRealm()
+                                }
                             }
                         Image(systemName: "plus")
                             .resizable()
@@ -178,8 +187,18 @@ struct MvSettingsBar<Content: View>: View {
                             .font(.title)
                             .onTapAnimation {
                                 print("make view bigger")
-                                viewSize = (viewSize + 10).bounded(byMin: 50, andMax: 400)
-                                saveToRealm()
+                                if tool.isCircle {
+                                    if let umv = self.BEO.realmInstance.findByField(ManagedView.self, value: self.BEO.toolBarCurrentViewId) {
+                                        self.BEO.realmInstance.safeWrite { r in
+                                            umv.width = Int(CGFloat(umv.width + 10).bounded(byMin: 50, andMax: 400))
+                                        }
+                                    }
+                                } else {
+                                    viewSize = (viewSize + 10).bounded(byMin: 50, andMax: 400)
+                                    tool.width = Int(viewSize)
+                                    tool.height = Int(viewSize)
+                                    tool.saveToRealm()
+                                }
                             }
                     }
                     
@@ -201,7 +220,7 @@ struct MvSettingsBar<Content: View>: View {
                                 .resizable()
                                 .frame(width: 25, height: 25)
                                 .foregroundColor(getForegroundColor(colorScheme))
-                            BodyText("\(viewRotation)", color: getFontColor(colorScheme))
+                            BodyText("\(tool.rotation)", color: getFontColor(colorScheme))
                         }
                         
                         HStack {
@@ -215,7 +234,7 @@ struct MvSettingsBar<Content: View>: View {
                                 .onTapAnimation {
                                     print("rotate left")
                                     rotateView(by: -22.5)
-                                    saveToRealm()
+                                    tool.saveToRealm()
                                 }
                             Image(systemName: "rotate.right")
                                 .resizable()
@@ -227,7 +246,7 @@ struct MvSettingsBar<Content: View>: View {
                                 .onTapAnimation {
                                     print("rotate right")
                                     rotateView(by: 22.5)
-                                    saveToRealm()
+                                    tool.saveToRealm()
                                 }
                         }
                         
@@ -247,19 +266,19 @@ struct MvSettingsBar<Content: View>: View {
                     Spacer().frame(width: 12)
                     
                     VStack {
-                        Image(systemName: headIsEnabled ? "arrowtriangle.up" : "multiply")
+                        Image(systemName: tool.headIsEnabled ? "arrowtriangle.up" : "multiply")
                             .resizable()
                             .frame(width: 25, height: 25)
-                            .foregroundColor(headIsEnabled ? .red : getForegroundColor(colorScheme))
-                        Toggle("", isOn: $headIsEnabled)
-                            .onChange(of: headIsEnabled, perform: { _ in
-                                saveToRealm()
+                            .foregroundColor(tool.headIsEnabled ? .red : getForegroundColor(colorScheme))
+                        Toggle("", isOn: $tool.headIsEnabled)
+                            .onChange(of: tool.headIsEnabled, perform: { _ in
+                                tool.saveToRealm()
                             })
                     }
                     
                 }
                 
-                if tool.isLinedShape {
+                if tool.isLinedShape || tool.isCircle {
                     Spacer().frame(width: 12)
                     Rectangle()
                         .fill(getForegroundColor(colorScheme))
@@ -280,11 +299,11 @@ struct MvSettingsBar<Content: View>: View {
                             Toggle("", isOn: $lineDashIsEnabled)
                                 .onChange(of: lineDashIsEnabled, perform: { _ in
                                     if !lineDashIsEnabled {
-                                        lineDash = 1.0
+                                        tool.lineDash = 1
                                     } else {
-                                        lineDash = 50.0
+                                        tool.lineDash = 50
                                     }
-                                    saveToRealm()
+                                    tool.saveToRealm()
                                 })
                         }
                         
@@ -299,8 +318,9 @@ struct MvSettingsBar<Content: View>: View {
                                     .font(.title)
                                     .onTapAnimation {
                                         print("more line dash")
-                                        lineDash = (lineDash + 2.0).bounded(byMin: 1, andMax: 100)
-                                        saveToRealm()
+                                        
+                                        tool.lineDash = (tool.lineDash + 2).bound(minValue: 1, maxValue: 100)
+                                        tool.saveToRealm()
                                     }
                                 Image(systemName: "minus")
                                     .resizable()
@@ -311,8 +331,8 @@ struct MvSettingsBar<Content: View>: View {
                                     .font(.title)
                                     .onTapAnimation {
                                         print("less line dash")
-                                        lineDash = (lineDash - 2.0).bounded(byMin: 1, andMax: 100)
-                                        saveToRealm()
+                                        tool.lineDash = (tool.lineDash - 2).bound(minValue: 1, maxValue: 100)
+                                        tool.saveToRealm()
                                     }
                             }
                         }
@@ -343,8 +363,16 @@ struct MvSettingsBar<Content: View>: View {
                     if self.showColorPicker {
                         ColorListPickerView() { color in
                             print("Color Picker Tapper")
-                            viewColor = color
-                            saveToRealm()
+                            let red = color.toRGBA()?.red ?? 255
+                            let green = color.toRGBA()?.green ?? 255
+                            let blue = color.toRGBA()?.blue ?? 255
+                            let opacity = color.toRGBA()?.alpha ?? 255
+                            tool.colorRed = red
+                            tool.colorBlue = blue
+                            tool.colorGreen = green
+                            tool.colorAlpha = opacity
+                            tool.saveToRealm()
+                            
                         }
                         .frame(width: 100)
     //                        .offset(x: 0.0, y: -(UIScreen.main.bounds.height/2))
@@ -387,12 +415,12 @@ struct MvSettingsBar<Content: View>: View {
     
     // Function to rotate the view by a certain angle
     private func rotateView(by degrees: Double) {
-        let newAngle = viewRotation + degrees
+        let newAngle = tool.rotation + degrees
 
         // Adjust the angle to be within the range 0-360
-        viewRotation = newAngle.truncatingRemainder(dividingBy: 360)
-        if viewRotation < 0 {
-            viewRotation += 360
+        tool.rotation = newAngle.truncatingRemainder(dividingBy: 360)
+        if tool.rotation < 0 {
+            tool.rotation += 360
         }
     }
     
@@ -405,13 +433,13 @@ struct MvSettingsBar<Content: View>: View {
                     switch change {
                         case .change(let obj, _):
                             let temp = obj as! ManagedView
-                            if temp.id != self.viewId {return}
+                            if temp.id != self.tool.id {return}
                             DispatchQueue.main.async {
-                                if temp.id != self.viewId {return}
-                                if self.activityId != temp.boardId {self.activityId = temp.boardId}
-                                if self.viewSize != Double(temp.width) {self.viewSize = Double(temp.width)}
-                                if self.viewRotation != temp.rotation { self.viewRotation = temp.rotation}
-                                if self.isLocked != temp.isLocked { self.isLocked = temp.isLocked}
+                                if temp.id != self.tool.id {return}
+                                if self.tool.boardId != temp.boardId {self.tool.boardId = temp.boardId}
+                                if self.tool.width != temp.width {self.tool.width = temp.width}
+                                if self.tool.rotation != temp.rotation { self.tool.rotation = temp.rotation}
+                                if self.tool.isLocked != temp.isLocked { self.tool.isLocked = temp.isLocked}
     //                            self.lifeLastUserId = temp.lastUserId
                             }
                             case .error(let error):
@@ -433,24 +461,31 @@ struct MvSettingsBar<Content: View>: View {
     }
     
     func saveToRealm() {
-        if let umv = self.BEO.realmInstance.findByField(ManagedView.self, value: self.BEO.toolBarCurrentViewId) {
+        tool.saveToRealm()
+//        if let umv = self.BEO.realmInstance.findByField(ManagedView.self, value: self.BEO.toolBarCurrentViewId) {
+//            self.BEO.realmInstance.safeWrite { r in
+//                umv.isLocked = isLocked
+//                umv.width = Int(viewSize)
+//                umv.height = Int(viewSize)
+//                umv.rotation = viewRotation
+//                umv.headIsEnabled = headIsEnabled
+//                umv.lineDash = Int(lineDash)
+//                if let lc = viewColor.toRGBA() {
+//                    umv.colorRed = lc.red
+//                    umv.colorGreen = lc.green
+//                    umv.colorBlue = lc.blue
+//                    umv.colorAlpha = lc.alpha
+//                }
+//            }
+//        }
+    }
+    func updateRealm(update: @escaping (ManagedView) -> Void) {
+        if let temp = self.BEO.realmInstance.findByField(ManagedView.self, value: self.BEO.toolBarCurrentViewId) {
             self.BEO.realmInstance.safeWrite { r in
-                umv.isLocked = isLocked
-                umv.width = Int(viewSize)
-                umv.height = Int(viewSize)
-                umv.rotation = viewRotation
-                umv.headIsEnabled = headIsEnabled
-                umv.lineDash = Int(lineDash)
-                if let lc = viewColor.toRGBA() {
-                    umv.colorRed = lc.red
-                    umv.colorGreen = lc.green
-                    umv.colorBlue = lc.blue
-                    umv.colorAlpha = lc.alpha
-                }
+                update(temp)
             }
         }
     }
-    
     func deleteFromRealm() {
         if let temp = self.BEO.realmInstance.findByField(ManagedView.self, value: self.BEO.toolBarCurrentViewId) {
             self.BEO.realmInstance.safeWrite { r in
@@ -488,19 +523,19 @@ struct MvSettingsBar<Content: View>: View {
     // Realm / Firebase
     func loadFromRealm() {
         self.tool.loadManagedView(byId: self.BEO.toolBarCurrentViewId)
-        if let umv = self.BEO.realmInstance.findByField(ManagedView.self, value: self.BEO.toolBarCurrentViewId) {
-            // set attributes
-            self.viewId = umv.id
-            activityId = umv.boardId
-            isLocked = umv.isLocked
-            toolType = umv.toolType
-            viewSize = Double(umv.width)
-            viewRotation = umv.rotation
-            headIsEnabled = umv.headIsEnabled
-            lineDash = CGFloat(umv.lineDash)
-            lineDashIsEnabled = lineDash == 1 ? false : true
-            viewColor = colorFromRGBA(red: umv.colorRed, green: umv.colorGreen, blue: umv.colorBlue, alpha: umv.colorAlpha)
-        }
+//        if let umv = self.BEO.realmInstance.findByField(ManagedView.self, value: self.BEO.toolBarCurrentViewId) {
+//            // set attributes
+//            self.viewId = umv.id
+//            activityId = umv.boardId
+//            isLocked = umv.isLocked
+//            toolType = umv.toolType
+//            viewSize = Double(umv.width)
+//            viewRotation = umv.rotation
+//            headIsEnabled = umv.headIsEnabled
+//            lineDash = CGFloat(umv.lineDash)
+//            lineDashIsEnabled = lineDash == 1 ? false : true
+//            viewColor = colorFromRGBA(red: umv.colorRed, green: umv.colorGreen, blue: umv.colorBlue, alpha: umv.colorAlpha)
+//        }
     }
     
     

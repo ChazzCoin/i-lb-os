@@ -34,30 +34,30 @@ public struct ShapeToolManaged: View {
                 if isQuad || isTriple { path.addLine(to: CGPoint(x: MVO.lifeCenterX, y: MVO.lifeCenterY)) }
                 if isQuad { path.addLine(to: CGPoint(x: MVO.lifeEndX, y: MVO.lifeEndY)) }
                 path.closeSubpath()
-
             }
             .stroke(MVO.lifeColor, style: StrokeStyle(lineWidth: MVO.lifeWidth, dash: [MVO.lifeLineDash]))
             .opacity(!MVO.isDisabledChecker() && !MVO.isDeletedChecker() ? 1 : 0.0)
             .gesture(fullLineDragGesture())
             .simultaneousGesture(doubleTapGesture())
             
-            DragAnchor(x: $MVO.lifeX, y: $MVO.lifeY, width: MVO.lifeWidth * 2, height: MVO.lifeWidth * 2) {
+            DragAnchor(isShowing: $MVO.anchorsAreVisible, x: $MVO.lifeX, y: $MVO.lifeY, width: MVO.lifeWidth * 2, height: MVO.lifeWidth * 2) {
                 MVO.updateRealm()
             }.simultaneousGesture(doubleTapGesture())
-            DragAnchor(x: $MVO.lifeStartX, y: $MVO.lifeStartY, width: MVO.lifeWidth * 2, height: MVO.lifeWidth * 2) {
+            DragAnchor(isShowing: $MVO.anchorsAreVisible, x: $MVO.lifeStartX, y: $MVO.lifeStartY, width: MVO.lifeWidth * 2, height: MVO.lifeWidth * 2) {
                 MVO.updateRealm()
             }.simultaneousGesture(doubleTapGesture())
             if isQuad || isTriple {
-                DragAnchor(x: $MVO.lifeCenterX, y: $MVO.lifeCenterY, width: MVO.lifeWidth * 2, height: MVO.lifeWidth * 2) {
+                DragAnchor(isShowing: $MVO.anchorsAreVisible, x: $MVO.lifeCenterX, y: $MVO.lifeCenterY, width: MVO.lifeWidth * 2, height: MVO.lifeWidth * 2) {
                     MVO.updateRealm()
                 }.simultaneousGesture(doubleTapGesture())
             }
             if isQuad { 
-                DragAnchor(x: $MVO.lifeEndX, y: $MVO.lifeEndY, width: MVO.lifeWidth * 2, height: MVO.lifeWidth * 2) {
+                DragAnchor(isShowing: $MVO.anchorsAreVisible, x: $MVO.lifeEndX, y: $MVO.lifeEndY, width: MVO.lifeWidth * 2, height: MVO.lifeWidth * 2) {
                     MVO.updateRealm()
                 }.simultaneousGesture(doubleTapGesture())
             }
         }
+        .simultaneousGesture(longPressGesture())
         .onChange(of: self.MVO.toolBarCurrentViewId, perform: { _ in
             if self.MVO.toolBarCurrentViewId != self.viewId { self.MVO.popUpIsVisible = false
                 self.MVO.anchorsAreVisible = false
@@ -68,6 +68,9 @@ public struct ShapeToolManaged: View {
                 self.MVO.popUpIsVisible = false
                 self.MVO.anchorsAreVisible = false
             }
+        })
+        .alertConfirm(isPresented: $MVO.showDeleteAlert, title: "Delete?", message: "Delete Tools?", action: {
+            MVO.deleteTool()
         })
         .onAppear() {
             print("OnAppear: LineTool.")
@@ -166,7 +169,7 @@ public struct ShapeToolManaged: View {
     
     public func longPressGesture() -> some Gesture {
         LongPressGesture(minimumDuration: 0.4).onEnded { _ in
-            MVO.anchorsAreVisible = !MVO.anchorsAreVisible
+            MVO.showDeleteAlert = true
        }
     }
     

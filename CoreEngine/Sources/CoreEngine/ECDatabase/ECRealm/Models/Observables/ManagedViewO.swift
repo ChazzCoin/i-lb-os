@@ -64,13 +64,13 @@ public class ManagedViewO: ObservableObject {
     }
 
     public var isLineStraight: Bool {
-        return subToolType == ViewEngine.Tool.ShapeTool.line_straight.displayName
+        return subToolType == ViewEngine.Tool.ShapeTool.line_straight.name
     }
     public var isLineCurved: Bool {
-        return subToolType == ViewEngine.Tool.ShapeTool.line_curved.displayName
+        return subToolType == ViewEngine.Tool.ShapeTool.line_curved.name
     }
     public var isCircle: Bool {
-        return subToolType == ViewEngine.Tool.ShapeTool.circle.displayName
+        return subToolType == ViewEngine.Tool.ShapeTool.circle.name
     }
     
     // Default initializer for creating a new ManagedView

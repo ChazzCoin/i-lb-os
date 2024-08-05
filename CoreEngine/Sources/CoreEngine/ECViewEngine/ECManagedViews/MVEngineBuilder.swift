@@ -151,7 +151,7 @@ public extension CoreName {
                         case .line_straight: AnyView(LineDrawingManaged(viewId: viewId, activityId: activityId))
                         case .line_dotted: AnyView(LineDrawingManaged(viewId: viewId, activityId: activityId))
                         case .line_curved: AnyView(CurvedLineDrawingManaged(viewId: viewId, activityId: activityId))
-                        case .circle: AnyView(ShapeToolManaged(viewId: viewId, activityId: activityId))
+                        case .circle: AnyView(CircleShapeManagedView(viewId: viewId, activityId: activityId))
                         case .square: AnyView(ShapeToolManaged(viewId: viewId, activityId: activityId, isQuad: true))
                         case .triangle: AnyView(ShapeToolManaged(viewId: viewId, activityId: activityId, isTriple: true))
                     }
@@ -161,7 +161,7 @@ public extension CoreName {
                         case ShapeTool.line_straight.name: AnyView(LineDrawingManaged(viewId: viewId, activityId: activityId))
                         case ShapeTool.line_dotted.name: AnyView(LineDrawingManaged(viewId: viewId, activityId: activityId))
                         case ShapeTool.line_curved.name: AnyView(CurvedLineDrawingManaged(viewId: viewId, activityId: activityId))
-                        case ShapeTool.circle.name: AnyView(ShapeToolManaged(viewId: viewId, activityId: activityId))
+                        case ShapeTool.circle.name: AnyView(CircleShapeManagedView(viewId: viewId, activityId: activityId))
                         case ShapeTool.square.name: AnyView(ShapeToolManaged(viewId: viewId, activityId: activityId, isQuad: true))
                         case ShapeTool.triangle.name: AnyView(ShapeToolManaged(viewId: viewId, activityId: activityId, isTriple: true))
                         default: AnyView(EmptyText())

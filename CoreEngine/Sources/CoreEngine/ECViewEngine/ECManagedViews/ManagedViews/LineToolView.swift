@@ -20,6 +20,7 @@ public struct LineDrawingManaged: View {
     }
     
     @StateObject public var MVO: ManagedViewObject = ManagedViewObject()
+    @State var cancel: Set<AnyCancellable> = Set<AnyCancellable>()
     
     public var body: some View {
         Path { path in
@@ -36,7 +37,7 @@ public struct LineDrawingManaged: View {
                 .rotationEffect(Angle(degrees: MVO.calculateAngle(startX: MVO.lifeStartX, startY: MVO.lifeStartY, endX: MVO.lifeEndX, endY: MVO.lifeEndY)))
                 .position(x: MVO.lifeEndX, y: MVO.lifeEndY)
                 .gesture(singleAnchorDragGesture(isStart: false))
-                .simultaneousGesture(doubleTapGesture())
+//                .simultaneousGesture(doubleTapGesture())
                 .simultaneousGesture(longPressGesture())
         )
         .overlay(
@@ -46,7 +47,7 @@ public struct LineDrawingManaged: View {
                 .opacity(MVO.anchorsAreVisible ? 1 : 0) // Invisible
                 .position(x: MVO.lifeStartX, y: MVO.lifeStartY)
                 .gesture(singleAnchorDragGesture(isStart: true))
-                .simultaneousGesture(doubleTapGesture())
+//                .simultaneousGesture(doubleTapGesture())
                 .simultaneousGesture(longPressGesture())
         )
         .overlay(
@@ -56,7 +57,7 @@ public struct LineDrawingManaged: View {
                 .opacity(MVO.anchorsAreVisible && !MVO.lifeHeadIsEnabled  ? 1 : 0) // Invisible
                 .position(x: MVO.lifeEndX, y: MVO.lifeEndY)
                 .gesture(singleAnchorDragGesture(isStart: false))
-                .simultaneousGesture(doubleTapGesture())
+//                .simultaneousGesture(doubleTapGesture())
                 .simultaneousGesture(longPressGesture())
         )
         .overlay(
@@ -67,10 +68,11 @@ public struct LineDrawingManaged: View {
                 .opacity(1)
                 .position(x: MVO.lifeCenterPoint.x.isFinite ? MVO.lifeCenterPoint.x : 0, y: MVO.lifeCenterPoint.y.isFinite ? MVO.lifeCenterPoint.y : 0)
                 .gesture(fullLineDragGesture())
-                .simultaneousGesture(doubleTapGesture())
+                .gesture(doubleTapGesture())
                 .simultaneousGesture(longPressGesture())
         )
         .gesture(fullLineDragGesture())
+        .simultaneousGesture(longPressGesture())
         .onChange(of: self.MVO.toolBarCurrentViewId, perform: { _ in
             if self.MVO.toolBarCurrentViewId != self.viewId { self.MVO.popUpIsVisible = false
                 self.MVO.anchorsAreVisible = false
@@ -82,10 +84,38 @@ public struct LineDrawingManaged: View {
                 self.MVO.anchorsAreVisible = false
             }
         })
+        .alertConfirm(isPresented: $MVO.showDeleteAlert, title: "Delete?", message: "Delete Tools?", action: {
+            MVO.deleteTool()
+        })
         .onAppear() {
             print("OnAppear: LineTool.")
             MVO.initializeWithViewId(viewId: self.viewId)
         }
+    }
+    
+    func stopListeningForSettings() {
+        cancel = Set<AnyCancellable>()
+    }
+    
+    @MainActor
+    func listenForSettings() {
+        BroadcastTools.listenForWindowCalls(storeIn: &cancel, onEvent: { id, action in
+            print("ID!!!!! \(id)")
+            if id != "mvsettings" { return }
+            if action == WindowAction.open {
+                if MVO.anchorsAreVisible {
+                    MVO.anchorsAreVisible = false
+                }
+            }
+            else if action == WindowAction.close {
+                if MVO.anchorsAreVisible {
+                    MVO.anchorsAreVisible = false
+                }
+            }
+            else if action == WindowAction.toggle {
+                return
+            }
+        })
     }
     
     // Gestures
@@ -165,15 +195,22 @@ public struct LineDrawingManaged: View {
     public func doubleTapGesture() -> some Gesture {
         TapGesture(count: 2).onEnded({ _ in
             print("Tapped double")
-            MVO.popUpIsVisible = !MVO.popUpIsVisible
             MVO.anchorsAreVisible = !MVO.anchorsAreVisible
             MVO.toggleMenuWindow()
+            delayThenMain(1, mainBlock: {
+                if MVO.anchorsAreVisible {
+                    listenForSettings()
+                } else {
+                    stopListeningForSettings()
+                }
+            })
+            
          })
     }
     
     public func longPressGesture() -> some Gesture {
         LongPressGesture(minimumDuration: 0.4).onEnded { _ in
-            MVO.anchorsAreVisible = !MVO.anchorsAreVisible
+            MVO.showDeleteAlert = true
        }
     }
     

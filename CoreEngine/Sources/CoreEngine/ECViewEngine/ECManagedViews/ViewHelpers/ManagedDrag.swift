@@ -50,6 +50,31 @@ public func DragAnchor(x: Binding<CGFloat>, y: Binding<CGFloat>, width: Double =
             onChanged()
         })
 }
+@ViewBuilder
+public func DragAnchor(at position: Binding<CGPoint>, isShowing: Binding<Bool>,  width: Double = 100, height: Double = 100, onChanged: @escaping () -> Void = {}) -> some View {
+    Circle()
+        .frame(width: width, height: height)
+        .foregroundColor(.black)
+        .opacity(isShowing.wrappedValue ? 1 : 0)
+        .position(position.wrappedValue)
+        .gesture(DragGesture().onChanged { value in
+            position.wrappedValue = value.location
+            onChanged()
+        })
+}
+@ViewBuilder
+public func DragAnchor(isShowing: Binding<Bool>, x: Binding<CGFloat>, y: Binding<CGFloat>, width: Double = 100, height: Double = 100, onChanged: @escaping () -> Void = {}) -> some View {
+    Circle()
+        .frame(width: width, height: height)
+        .foregroundColor(.black)
+        .opacity(isShowing.wrappedValue ? 1 : 0)
+        .position(x: x.wrappedValue, y: y.wrappedValue)
+        .gesture(DragGesture().onChanged { value in
+            x.wrappedValue = value.location.x
+            y.wrappedValue = value.location.y
+            onChanged()
+        })
+}
 //@ViewBuilder
 //public func DragAnchor(x: Binding<Double>, y: Binding<Double>) -> some View {
 //    Circle()

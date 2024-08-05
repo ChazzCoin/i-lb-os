@@ -35,9 +35,6 @@ struct BoardEngine: View {
                  
                  // Board Tools
                 MVEngine.Display(reset: self.$resetTools)
-                 
-//                ResizableTriangle()
-//                ShapeToolManaged(viewId: "quad1", activityId: "SOL", isQuad: true)
                 
                  // Temporary line being drawn
                  if self.BEO.isDraw {
@@ -53,15 +50,14 @@ struct BoardEngine: View {
             }
             .frame(width: self.BEO.boardWidth, height: self.BEO.boardHeight)
             .background(
-                FieldOverlayView(width: self.BEO.canvasWidth, height: self.BEO.canvasHeight, background: {
-                    self.BEO.boardBgColor
-                }, overlay: {
-                    if let CurrentBoardBackground = self.BEO.boards.getAllBoards()[self.BEO.boardBgName] {
-                        CurrentBoardBackground()
-                            .zIndex(2.0)
-                            .environmentObject(self.BEO)
-                    }
-                })
+                FieldOverlayView(width: self.BEO.canvasWidth, height: self.BEO.canvasHeight, background: {self.BEO.boardBgColor},
+                    overlay: {
+                        if let CurrentBoardBackground = self.BEO.boards.getAllBoards()[self.BEO.boardBgName] {
+                            CurrentBoardBackground()
+                                .zIndex(2.0)
+                                .environmentObject(self.BEO)
+                        }
+                    })
             )
             .onDrop(of: [.text], delegate: self.BEO.dropDelegate!)
             .simultaneousGesture( self.BEO.isDraw ?
@@ -153,47 +149,6 @@ struct BoardEngine: View {
         createNewActivityPlan()
         threeLoadActivityPlan()
 //        showCreateActivitySheet = true
-    }
-    
-
-    
-    func createSolaOrg() {
-        if let _ = self.BEO.realmInstance.findByField(Organization.self, field: "name", value: "SOL Academy") {
-            return
-        }
-        let newOrg = Organization()
-        newOrg.name = "SOL Academy"
-        newOrg.descriptionText = "Private Training Academy for the Selected."
-        newOrg.founded = "2024"
-        newOrg.location = "Birmingham, AL"
-        newOrg.memberCount = 2
-        FusedTools.fusedCreator(Organization.self) { _ in
-            return newOrg
-        }
-        
-        OrganizationManager(realm: self.BEO.realmInstance).addUserToOrganization(userId: self.BEO.currentUserId, organizationId: newOrg.id) {
-            print("Failed to Create Connection to Organization.")
-        }
-    }
-    
-    func createSolaTeam() {
-        if let _ = self.BEO.realmInstance.findByField(Team.self, field: "name", value: "SOLA") {
-            return
-        }
-        let newTeam = Team()
-        newTeam.name = "SOLA"
-        newTeam.coachName = "Selim T."
-        newTeam.sportType = "Soccer"
-        newTeam.foundedYear = "2024"
-        newTeam.homeCity = "Birmingham, AL"
-        newTeam.league = "Private Training"
-        newTeam.manager = "Charles Romeo"
-        FusedTools.fusedCreator(Team.self) { _ in
-            return newTeam
-        }
-        TeamManager().addUserToTeam(userId: self.BEO.currentUserId, teamId: newTeam.id) { e in
-            print("Failed to Create Connection to Team.")
-        }
     }
     
     func createNewActivityPlan() {

@@ -71,6 +71,7 @@ public class ManagedViewObject: ObservableObject {
     @AppStorage("ignoreUpdates") public var ignoreUpdates: Bool = false
     @AppStorage("selectedManagedViewId") public var selectedManagedViewId: String = ""
     
+    @Published public var showDeleteAlert = false
     @Published public var isDisabled = false
     @Published public var isDeleted = false
     @Published public var lifeIsLocked = false
@@ -121,6 +122,7 @@ public class ManagedViewObject: ObservableObject {
     @Published public var objectNotificationToken: NotificationToken? = nil
     @Published public var managedViewNotificationToken: NotificationToken? = nil
     @Published public var cancellables = Set<AnyCancellable>()
+    @Published public var cancel = Set<AnyCancellable>()
     
     @Published public var coordinateStackBasic: [CGPoint] = []
     @Published public var coordinateStack: [[String:CGPoint]] = []
@@ -164,7 +166,7 @@ public class ManagedViewObject: ObservableObject {
     }
     
     public func toggleMenuWindow() {
-        if popUpIsVisible {
+        if anchorsAreVisible {
             self.toolBarCurrentViewId = self.lifeViewId
             self.toolSettingsIsShowing = true
             self.selectedManagedViewId = self.lifeViewId
@@ -174,6 +176,33 @@ public class ManagedViewObject: ObservableObject {
             self.selectedManagedViewId = ""
             BroadcastTools.send(.NavStackMessage, value: NavStackMessage(viewName: "mvSettings", viewAction: WindowAction.close))
         }
+    }
+    
+    @MainActor
+    func listenForSettings() {
+        BroadcastTools.listenForWindowCalls(storeIn: &cancel, onEvent: { id, action in
+            print("ID!!!!! \(id)")
+            if id != "mvsettings" { return }
+            if action == WindowAction.open {
+                if self.anchorsAreVisible {
+                    self.anchorsAreVisible = false
+                }
+            }
+            else if action == WindowAction.close {
+                if self.anchorsAreVisible {
+                    self.anchorsAreVisible = false
+                }
+            }
+            else if action == WindowAction.toggle {
+                return
+            }
+        })
+    }
+    
+    public func deleteTool() {
+        isDeleted = true
+        isDisabled = true
+        updateRealm()
     }
     
     // Functions
@@ -316,6 +345,7 @@ public class ManagedViewObject: ObservableObject {
             
             self.lifeIsLocked = umv.isLocked
             self.lifeLastUserId = umv.lastUserId
+            self.isDeleted = umv.isDeleted
             
             self.position = CGPoint(x: umv.x, y: umv.y)
             self.lifeX = umv.x
@@ -456,6 +486,7 @@ public class ManagedViewObject: ObservableObject {
                     mv.colorAlpha = lc.alpha
                 }
                 mv.isLocked = self.isDragging ? true : self.lifeIsLocked
+                mv.isDeleted = self.isDeleted
                 mv.toolType = self.lifeToolType
                 mv.width = Int(self.lifeWidth)
                 mv.height = Int(self.lifeHeight)

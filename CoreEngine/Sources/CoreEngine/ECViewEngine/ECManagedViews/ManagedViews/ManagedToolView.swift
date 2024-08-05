@@ -117,6 +117,9 @@ public struct enableManagedViewTool : ViewModifier {
         .onChange(of: self.MVO.toolSettingsIsShowing, perform: { _ in
             if !self.MVO.toolSettingsIsShowing { MVO.popUpIsVisible = false }
         })
+        .alertConfirm(isPresented: $MVO.showDeleteAlert, title: "Delete?", message: "Delete Tools?", action: {
+            MVO.deleteTool()
+        })
         .onAppear {
             print("OnAppear: BasicTool.")
             print("Loading Tool: \(viewId), \(activityId)")
@@ -158,12 +161,18 @@ public struct enableManagedViewTool : ViewModifier {
             }
             .simultaneously(with: TapGesture(count: 2)
                 .onEnded { _ in
-                    print("Tapped")
+                    print("Tapped Twice")
                     MVO.popUpIsVisible = !MVO.popUpIsVisible
+                    MVO.anchorsAreVisible = !MVO.anchorsAreVisible
                     self.MVO.toggleMenuWindow()
-                    if MVO.popUpIsVisible {
-//                        self.sendToolAttributes()
-                    }
+                   
+                }
+            )
+            .simultaneously(with: LongPressGesture(minimumDuration: 0.4)
+                .onEnded { _ in
+                    print("Long Press")
+                    MVO.showDeleteAlert = true
+                   
                 }
             )
         
