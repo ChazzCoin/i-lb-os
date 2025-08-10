@@ -23,24 +23,24 @@ public struct FloatingSocialView: View {
     public var doorClosedIcon: String = "door.closed"
     // Icons for the buttons - including one for the toggle
     public let buttonIcons = [
-        "",
-        "heart.fill",
-        "message.fill",
-        "bell.fill",
-        ViewEngine.Tool.GeneralTool.airplane.name,
-        ViewEngine.Tool.GeneralTool.camera.name
+        ViewEngine.Tool.GeneralTool.moon.name,
+        ViewEngine.Tool.GeneralTool.heart.name,
+        ViewEngine.Tool.GeneralTool.message.name,
+        ViewEngine.Tool.GeneralTool.cube.name,
+        ViewEngine.Tool.GeneralTool.cloudMoon.name,
+        ViewEngine.Tool.GeneralTool.pencil.name
     ]
 
     public var body: some View {
         ZStack {
             
-            ChatView()
-                .frame(width: 220 * scale, height: 220 * scale)
-                .clipShape(RoundedRectangle(cornerRadius: 20))
-                .shadow(radius: 10)
-                .offset(x: 0, y: 0)
-                .scaleEffect(isExpanded ? 1 : 0.1) // Scales down when not expanded
-                .animation(Animation.spring(response: 0.5, dampingFraction: 0.6, blendDuration: 0), value: isExpanded)
+//            RoomWindow(selectedFeature: <#T##Binding<FusedRoomFeature>#>)
+//                .frame(width: 220 * scale, height: 220 * scale)
+//                .clipShape(RoundedRectangle(cornerRadius: 20))
+//                .shadow(radius: 10)
+//                .offset(x: 0, y: 0)
+//                .scaleEffect(isExpanded ? 1 : 0.1) // Scales down when not expanded
+//                .animation(Animation.spring(response: 0.5, dampingFraction: 0.6, blendDuration: 0), value: isExpanded)
             FloatingEmojiView()
                 .frame(width: 300 * scale)
                 .clipShape(RoundedRectangle(cornerRadius: 20))
@@ -51,7 +51,7 @@ public struct FloatingSocialView: View {
             
             ForEach(0..<buttonIcons.count) { i in
                 
-                Image(systemName: "door.closed")
+                Image(systemName: buttonIcons[i])
                     .resizable()
                     .frame(width: 20 * scale, height: 20 * scale)
                     .foregroundColor(i == 0 ? (isExpanded ? .red : .green) : .yellow)

@@ -14,6 +14,8 @@ public struct CoreProfileView: View {
     
     public init() {}
     
+    @StateObject public var USER = UserToolsObservable()
+    
     @State public var realmInstance = realm()
     
     @ObservedResults(CoreUser.self) public var allUsers
@@ -38,22 +40,45 @@ public struct CoreProfileView: View {
                     .frame(width: 120, height: 120)
                     .padding(.top, 30)
                 
-                HStack {
-                    Text(UserTools.currentUserName ?? "")
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
+                VStack {
                     
-                    Text("Online")
-                        .font(.subheadline)
-                        .foregroundColor(.green)
+                    Text("User Name")
+                        .font(.caption)
+                        .fontWeight(.bold)
+                        .padding(.trailing)
+                    HStack {
+                        Text(UserTools.currentUserName ?? "not set")
+                            .font(.largeTitle)
+                            .fontWeight(.bold)
+                        
+                        Text("Online")
+                            .font(.subheadline)
+                            .foregroundColor(.green)
+                    }
+                    
                 }
                 
-                Text(UserTools.currentUserId ?? "")
-                    .font(.subheadline)
-                    .fontWeight(.bold)
-                Text(UserTools.currentUserHandle ?? "")
-                    .font(.subheadline)
-                    .fontWeight(.bold)
+                
+                VStack {
+                    Text("User ID")
+                        .font(.caption)
+                        .fontWeight(.bold)
+                        .padding(.trailing)
+                    Text(UserTools.currentUserId ?? "not set")
+                        .font(.subheadline)
+                        .fontWeight(.bold)
+                }
+                
+                VStack {
+                    Text("User Handle")
+                        .font(.caption)
+                        .fontWeight(.bold)
+                        .padding(.trailing)
+                    Text(UserTools.currentUserHandle ?? "not set")
+                        .font(.subheadline)
+                        .fontWeight(.bold)
+                }
+
                 
                 if UserTools.isLoggedIn {
                     Section(header: Text("Connection Status")) {

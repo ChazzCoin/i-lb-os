@@ -33,16 +33,4 @@ func firebaseDatabase(collection: String, block: @escaping (DatabaseReference) -
     block(reference)
 }
 
-extension DatabaseReference {
-    
-    func get(onSnapshot: @escaping (DataSnapshot) -> Void) {
-        self.observeSingleEvent(of: .value) { snapshot, _ in
-            onSnapshot(snapshot)
-        }
-    }
-    
-    func save(obj: Object) {
-        self.setValue(obj.toDict())
-    }
-    
-}
+

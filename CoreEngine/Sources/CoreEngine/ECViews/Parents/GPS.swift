@@ -14,21 +14,79 @@ public extension View {
     func position(using gps: GlobalPositioningSystem, at area: ScreenArea, with geo: GeometryProxy?, safePadding: Bool = false) -> some View {
         guard let g = geo else {
             let coordinate = gps.getCoordinate(for: area)
-            return self.position(x: coordinate.x, y: coordinate.y)//.animation(.easeInOut, value: coordinate)
+            return self.position(x: coordinate.x, y: coordinate.y).animation(.easeInOut, value: coordinate)
         }
         let coordinate = gps.getGlobalCoordinate(for: area, geo: g, safePadding: safePadding)
-        return self.position(x: coordinate.x, y: coordinate.y)//.animation(.easeInOut, value: coordinate)
+        return self.position(x: coordinate.x, y: coordinate.y).animation(.easeInOut, value: coordinate)
+    }
+    
+    func position(using gps: GlobalPositioningSystem, at area: ScreenArea, with geo: GeometryProxy?, offsetX: CGFloat = 0, offsetY: CGFloat = 0) -> some View {
+        guard let g = geo else {
+            let coordinate = gps.getCoordinate(for: area)
+            return self.position(x: coordinate.x, y: coordinate.y).animation(.easeInOut, value: coordinate)
+        }
+        let coordinate = gps.getGlobalCoordinate(for: area, childWidth: offsetX, childHeight: offsetY)
+        return self.position(x: coordinate.x, y: coordinate.y).animation(.easeInOut, value: coordinate)
+    }
+    
+    func toggleFromTop(_ isAtStart: Binding<Bool>, using gps: GlobalPositioningSystem, viewHeight: Double, offsetX: CGFloat = 0, offsetY: CGFloat = 0) -> some View {
+        var coordinate = CGPoint(x: 0.0, y: 0.0)
+        if !isAtStart.wrappedValue {
+            coordinate = gps.getCoordinate(for: .topCenter, offsetX: offsetX, offsetY: offsetY - (viewHeight / 2))
+        } else {
+            coordinate = gps.getCoordinate(for: .topCenter, offsetX: offsetX, offsetY: offsetY + (viewHeight / 2))
+        }
+        return self.position(x: coordinate.x, y: coordinate.y).animation(.easeInOut, value: coordinate)
+    }
+    
+    func toggleFromRight(_ isAtStart: Binding<Bool>, using gps: GlobalPositioningSystem, viewWidth: Double, offsetX: CGFloat = 0, offsetY: CGFloat = 0) -> some View {
+        var coordinate = CGPoint(x: 0.0, y: 0.0)
+        if !isAtStart.wrappedValue {
+            coordinate = gps.getCoordinate(for: .centerRight, offsetX: offsetX - (viewWidth / 2), offsetY: offsetY)
+        } else {
+            coordinate = gps.getCoordinate(for: .centerRight, offsetX: offsetX + (viewWidth / 2), offsetY: offsetY)
+        }
+        return self.position(x: coordinate.x, y: coordinate.y).animation(.easeInOut, value: coordinate)
+    }
+    
+    func toggleFromBelow(_ state: Binding<String>, using gps: GlobalPositioningSystem, viewHeight: Binding<Double>, offsetX: CGFloat = 0, offsetY: CGFloat = 0) -> some View {
+        var coordinate = CGPoint(x: 0.0, y: 0.0)
+        if state.wrappedValue == "full" {
+            coordinate = gps.getCoordinate(for: .bottomCenter, offsetX: offsetX, offsetY: ((viewHeight.wrappedValue / 2) - 24))
+        }
+        else if state.wrappedValue == "hide" {
+            coordinate = gps.getCoordinate(for: .bottomCenter, offsetX: offsetX, offsetY: offsetY - (viewHeight.wrappedValue / 2))
+        }
+        else {
+            coordinate = gps.getCoordinate(for: .bottomCenter, offsetX: offsetX, offsetY: ((viewHeight.wrappedValue) / 2))
+        }
+        return self.position(x: coordinate.x, y: coordinate.y).animation(.easeInOut, value: coordinate)
+    }
+    
+    func toggleFromBelow(_ isAtStart: Binding<Bool>, using gps: GlobalPositioningSystem, viewHeight: Double, offsetX: CGFloat = 0, offsetY: CGFloat = 0) -> some View {
+        var coordinate = CGPoint(x: 0.0, y: 0.0)
+        if !isAtStart.wrappedValue {
+            coordinate = gps.getCoordinate(for: .bottomCenter, offsetX: offsetX, offsetY: offsetY - (viewHeight / 2))
+        } else {
+            coordinate = gps.getCoordinate(for: .bottomCenter, offsetX: offsetX, offsetY: (viewHeight / 2))
+        }
+        return self.position(x: coordinate.x, y: coordinate.y).animation(.easeInOut, value: coordinate)
     }
     
     func position(using gps: GlobalPositioningSystem, at area: ScreenArea, offsetX: CGFloat = 0, offsetY: CGFloat = 0) -> some View {
         let coordinate = gps.getCoordinate(for: area, offsetX: offsetX, offsetY: offsetY)
         return self.position(x: coordinate.x, y: coordinate.y).animation(.easeInOut, value: coordinate)
     }
+    
+    func startingPosition(using gps: GlobalPositioningSystem, at area: ScreenArea, viewHeight: Double, offsetX: CGFloat = 0, offsetY: CGFloat = 0) -> some View {
+        let coordinate = gps.getCoordinate(for: area, offsetX: offsetX, offsetY: offsetY - viewHeight)
+        return self.position(x: coordinate.x, y: coordinate.y)
+    }
 
     // Method to set the offset of the view based on a specified ScreenArea
     func offset(using gps: GlobalPositioningSystem, for area: ScreenArea) -> some View {
         let offsetSize = gps.getOffset(for: area)
-        return self.offset(x: offsetSize.width, y: offsetSize.height)
+        return self.offset(x: offsetSize.width, y: offsetSize.height).animation(.easeInOut, value: CGSize(width: offsetSize.width, height: offsetSize.height))
     }
     
     func moveTo(using gps: GlobalPositioningSystem, from startArea: ScreenArea, to endArea: ScreenArea, offsetX: CGFloat = 0, offsetY: CGFloat = 0, animation: Animation = .spring()) -> some View {
@@ -61,8 +119,8 @@ public enum CoreNameSpace: String, CaseIterable {
 }
 
 public struct GlobalPositioningZStack<Content: View>: View {
-    let content: (GlobalPositioningSystem) -> Content
-    @State var gps: GlobalPositioningSystem
+    public let content: (GlobalPositioningSystem) -> Content
+    @State public var gps: GlobalPositioningSystem
 
     public init(coordinateSpace: String, @ViewBuilder content: @escaping (GlobalPositioningSystem) -> Content) {
         self.content = content
@@ -92,8 +150,8 @@ public struct GlobalPositioningZStack<Content: View>: View {
 }
 
 public struct GlobalPositioningReader<Content: View>: View {
-    let content: (GeometryProxy, GlobalPositioningSystem) -> Content
-    @State var gps: GlobalPositioningSystem
+    public let content: (GeometryProxy, GlobalPositioningSystem) -> Content
+    @State public var gps: GlobalPositioningSystem
 
     public init(coordinateSpace: String, @ViewBuilder content: @escaping (GeometryProxy, GlobalPositioningSystem) -> Content) {
         self.content = content

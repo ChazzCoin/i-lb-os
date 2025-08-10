@@ -15,7 +15,7 @@ public struct DynamicGradientBackground: View {
     @State public var endColor = Color.purple
 
     // Define the animation duration
-    public let animationDuration: TimeInterval = 10
+    public let animationDuration: TimeInterval = 60
 
     // This function changes the gradient colors
     public func changeGradientColors() {

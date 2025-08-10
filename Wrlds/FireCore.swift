@@ -36,6 +36,7 @@ enum DatabasePaths: String {
     case timer = "timer"
     case userToSession = "userToSession"
     case userToActivity = "userToActivity"
+    case binauralSounds = "binauralSounds"
 }
 
 //func coreFirebaseUser() -> FirebaseAuth.User? {

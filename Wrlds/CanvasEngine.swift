@@ -12,9 +12,10 @@ import Combine
 import CoreEngine
 
 struct CanvasEngine: View {
-    
+    @EnvironmentObject public var USER: UserToolsObservable
+    @StateObject public var fusedRoom = FusedRoom()
     @StateObject var BEO = BoardEngineObject()
-
+    @StateObject var navTools: NavWindowController = NavWindowController()
     @State var cancellables = Set<AnyCancellable>()
     @State var showMenuBar: Bool = true
     @State var popupIsVisible: Bool = true
@@ -89,45 +90,130 @@ struct CanvasEngine: View {
                 self.lastAngle += value // Update the last angle on gesture end
             }
     }
-    
+    @State var menuIsOpen: Bool = false
     
     var body: some View {
+        GlobalPositioningZStack(coordinateSpace: CoreNameSpace.local) { windowGPS in
+            
+            GlobalPositioningReader(coordinateSpace: CoreNameSpace.global) { geo, gps in
+                
+                // Left Hand Menu Bar
+                MenuBarStatic(showIcons: $menuIsOpen, gps: gps){}
+                // Navigation Window
+                navTools.getNavStackView()
+                    
+//                FloatingFusedRoomManagerView()
+//                DynaWrap(id: "dynaWrapFloatingButtons") {
+//                    FloatingProfileView(profileImageDiameter: 360, orbitRadius: 300)
+//                }
+//                FloatingSocialView()
+                
+//                self.modelPanel.Display(.center)
+                
+//                TimedView($testTrigger, seconds: 10) {
+//                    NotificationPanel(message: self.$notificationMessage, icon: self.$notificationIcon)
+//                        .position(using: gps, at: .topCenter, offsetX: 0, offsetY: 75)
+//                }
+                
+//                ModePanel(title: "Your Current Activity", subTitle: self.BEO.currentActivityId, showButton: false, isFlashing: true)
+//                    .position(using: gps, at: .topRight, offsetX: 200, offsetY: 50)
+                
+            }.zIndex(35.0)
+            
+            GlobalPositioningReader(coordinateSpace: CoreNameSpace.canvas, width: 20000, height: 20000) { cGeo, cGps in
+                // Board/Canvas Level
+                BoardEngine()
+                    .zIndex(2.0)
+                    .environmentObject(self.BEO)
+                    .frame(width: 20000, height: 20000)
+                    .offset(x: self.BEO.canvasOffset.x, y: self.BEO.canvasOffset.y)
+                    .scaleEffect(self.BEO.canvasScale)
+                    .rotationEffect(Angle(degrees: self.BEO.canvasRotation))
+                    .zIndex(1.0)
+            }
+            .zIndex(0.0)
+            .background(DynamicGradientBackground())
+            .gesture(self.BEO.gesturesAreLocked ? nil : dragAngleGestures.simultaneously(with: scaleGestures))
+        }
+        .onAppear() {
+            if self.USER.currentUserId.isEmpty {
+                print("Setting New User ID")
+                self.USER.currentUserId = generateRandomUserId()
+            }
+            navTools.addView(
+                callerId: MenuBarProvider.home.tool.title,
+                mainContent: { RoomChatView(fusedRoom: fusedRoom).environmentObject(self.BEO) },
+                sideContent: { EmptyView() }
+            )
+            navTools.addView(
+                callerId: MenuBarProvider.info.tool.title,
+                mainContent: { BinauralSoundView().environmentObject(self.USER) },
+                sideContent: { EmptyView() }
+            )
+        }
         
-        
-        GlobalPositioningZStack { geo, gps in
-            CoreSignUpView()
-                .position(gps.getCoordinate(for: .bottomCenter))
+//        GlobalPositioningZStack { geo, gps in
+            
+//            BinauralSoundView()
+                
+            
+//            CoreSignUpView()
+//                .position(gps.getCoordinate(for: .bottomCenter))
 //            MusicPlayerView()
 //                .frame(width: 500, height: 500)
 //                .background(Color.white)
 //                .position(gps.getCoordinate(for: .center))
-            
-        }
-        .zIndex(3.0)
+//            FloatingSocialView()
+//            FloatingFusedRoomManagerView()
+//            navTools.getNavStackView()
+//        }
+//        .zIndex(3.0)
         
-        ZStack() {
-            // Board/Canvas Level
-            ZStack() {
-                BoardEngine()
-                    .zIndex(2.0)
-                    .environmentObject(self.BEO)
-            }
-            .frame(width: 20000, height: 20000)
-            .offset(x: self.BEO.canvasOffset.x, y: self.BEO.canvasOffset.y)
-            .scaleEffect(self.BEO.canvasScale)
-            .rotationEffect(Angle(degrees: self.BEO.canvasRotation))
-            .zIndex(1.0)
-            
-        }
-        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-//        .background(Color.purple.opacity(0.5))
-        .background(StarryNightAnimatedView())
+//        ZStack() {
+//            // Board/Canvas Level
+//            ZStack() {
+//                
+//                
+//                
+//                BoardEngine()
+//                    .zIndex(2.0)
+//                    .environmentObject(self.BEO)
+//                
+//            }
+//            .frame(width: 20000, height: 20000)
+//            .offset(x: self.BEO.canvasOffset.x, y: self.BEO.canvasOffset.y)
+//            .scaleEffect(self.BEO.canvasScale)
+//            .rotationEffect(Angle(degrees: self.BEO.canvasRotation))
+//            .zIndex(1.0)
+//            
+//        }
+//        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+////        .background(Color.purple.opacity(0.5))
+////        .background(StarryNightAnimatedView())
 //        .background(DynamicGradientBackground())
-        .gesture(self.BEO.gesturesAreLocked ? nil : dragAngleGestures.simultaneously(with: scaleGestures))
-        .zIndex(0.0)
-        .onAppear() {
-            
-        }
+////        .background(DrawGridLines())
+////        .background(DynamicGradientBackground())
+//        .gesture(self.BEO.gesturesAreLocked ? nil : dragAngleGestures.simultaneously(with: scaleGestures))
+//        .zIndex(0.0)
+//        .onAppear() {
+//            //
+//            navTools.addView(
+//                callerId: MenuBarProvider.activity.tool.title,
+//                mainContent: { RoomChatView(fusedRoom: fusedRoom).environmentObject(self.BEO) },
+//                sideContent: { EmptyView() }
+//            )
+//            // Profile
+////            navTools.addView(
+////                callerId: MenuBarProvider.profile.tool.title,
+////                mainContent: { CoreSignUpView() },
+////                sideContent: { EmptyView() }
+////            )
+//            
+//           
+////            navTools.mainState = .open
+//            
+////            navTools.navTo(viewId: MenuBarProvider.activity.tool.title)
+//        }
         
     }
     

@@ -103,7 +103,7 @@ public class MasterFusedQueue {
                     q.organizationsQueue.safeAddReplace(organizationItem)
                 case let teamItem as Team:
                     q.teamsQueue.safeAddReplace(teamItem)
-                case let chatItem as Chat:
+                case let chatItem as ChatMessage:
                     q.chatQueue.safeAddReplace(chatItem)
                 case let eventItem as CoreEvent:
                     q.eventsQueue.safeAddReplace(eventItem)

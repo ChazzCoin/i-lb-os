@@ -16,7 +16,7 @@ import CoreEngine
 struct LiveChat: DynamicProperty {
     @ObservedObject var observer: RealmChatObserver
     @ObservedObject var firebaseObserver = FirebaseChatObserver()
-    @State var objects: Results<Chat>? = nil
+    @State var objects: Results<ChatMessage>? = nil
     @State var sharedIds: [String] = []
     @State var realmInstance: Realm
     @State var filterSharedOnly = false
@@ -46,15 +46,15 @@ struct LiveChat: DynamicProperty {
         self.objects = nil
     }
 
-    var wrappedValue: Results<Chat>? {
+    var wrappedValue: Results<ChatMessage>? {
         get {
             return self.objects
         }
         set { objects = newValue }
     }
     
-    var projectedValue: Binding<[Chat]> {
-        Binding<[Chat]>(
+    var projectedValue: Binding<[ChatMessage]> {
+        Binding<[ChatMessage]>(
             get: {
                 return self.objects?.toArray() ?? []
             },
@@ -62,7 +62,7 @@ struct LiveChat: DynamicProperty {
         )
     }
     
-    func toArray() -> [Chat?] {
+    func toArray() -> [ChatMessage?] {
         if let obj = objects {
             return Array(obj)
         }
@@ -99,13 +99,13 @@ struct LiveChat: DynamicProperty {
 
 @available(*, deprecated, renamed: "ObservedResults", message: "Replaced with Observed Results")
 class RealmChatObserver: ObservableObject {
-    @Published var objects: Results<Chat>? = nil
-    @Published var watchedObjects: Results<Chat>? = nil
+    @Published var objects: Results<ChatMessage>? = nil
+    @Published var watchedObjects: Results<ChatMessage>? = nil
     @Published var notificationToken: NotificationToken? = nil
 
     func startObserver(chatId: String, realm: Realm) {
 //        if !userIsVerifiedToProceed() { return }
-        self.objects = realm.objects(Chat.self).filter("chatId == %@", chatId)
+        self.objects = realm.objects(ChatMessage.self).filter("chatId == %@", chatId)
         
         self.objects?.realm?.executeWithRetry {
             self.notificationToken = self.objects?.observe { [weak self] (changes: RealmCollectionChange) in
@@ -166,7 +166,7 @@ class FirebaseChatObserver: ObservableObject {
 //        if !userIsVerifiedToProceed() { return }
         guard !isObserving else { return }
         firebaseSubscription = self.reference.child(chatId).observe(.value, with: { snapshot in
-            let _ = snapshot.toCoreObjects(Chat.self, realm: realmInstance)
+            let _ = snapshot.toCoreObjects(ChatMessage.self, realm: realmInstance)
         })
         isObserving = true
     }

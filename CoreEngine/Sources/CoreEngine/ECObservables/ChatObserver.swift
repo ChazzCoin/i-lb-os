@@ -18,8 +18,8 @@ public class ChatObserver: ObservableObject {
     
     public init() {}
     
-    @ObservedResults(Chat.self) public var allMessages
-    public var roomMessages: Results<Chat> {
+    @ObservedResults(ChatMessage.self) public var allMessages
+    public var roomMessages: Results<ChatMessage> {
         return allMessages
             .filter("chatId == %@", chatId)
             .sorted(byKeyPath: "timestamp", ascending: true)
@@ -30,7 +30,7 @@ public class ChatObserver: ObservableObject {
         stop()
         self.chatId = chatId
         firebaseSubscription = self.chatRef.child(chatId).fireObserveChildAdded { snapshot in
-            if let results = snapshot.toCoreObjects(Chat.self, realm: self.realmInstance) {
+            if let results = snapshot.toCoreObjects(ChatMessage.self, realm: self.realmInstance) {
                 print("New Chat Messages: \(results)")
             }
         }

@@ -25,11 +25,14 @@ public struct BorderedView<Content: View>: View {
     public var body: some View {
         HStack {
             content
+                .padding(.all, 16)
         }
         .overlay(
             RoundedRectangle(cornerRadius: 8) // Adjust corner radius as needed
                 .stroke(borderColor, lineWidth: borderWidth)
+                
         )
+        
     }
 }
 

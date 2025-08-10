@@ -157,10 +157,21 @@ struct BoardEngine: View {
     var body: some View {
          ZStack() {
              
-             Text("under the bunk radio")
-                 .font(.system(size: 1000))
-                 .frame(maxWidth: .infinity)
-                 .position(CGPoint(x: 15000.0, y: -5000.0))
+//             FloatingSocialView()
+             
+//             FloatingFusedRoomManagerView()
+             
+//             DynaWrap(id: "new") {
+//                 BinauralSoundView().deviceFullSize()
+//             }
+             
+//             .scaleEffect(7.0)
+//             .position(CGPoint(x: 15000.0, y: -5000.0))
+//             
+//             Text("Welcome to the Awakening")
+//                 .font(.system(size: 1000))
+//                 .frame(maxWidth: .infinity)
+//                 .position(CGPoint(x: 15000.0, y: -5000.0))
              
              if self.BEO.boardRefreshFlag {
                  MusicPlayerView()
@@ -183,9 +194,9 @@ struct BoardEngine: View {
              
         }
         .frame(width: self.BEO.boardWidth, height: self.BEO.boardHeight)
-//        .background(
-//            UtbBgOne()
-//        )
+        .background(
+            DrawGridLines()
+        )
         .onDrop(of: [.text], isTargeted: nil) { providers in
             providers.first?.loadObject(ofClass: NSString.self) { (droppedString, error) in
                 

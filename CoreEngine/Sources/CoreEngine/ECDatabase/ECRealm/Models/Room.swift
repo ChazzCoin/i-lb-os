@@ -12,6 +12,7 @@ public class UserInRoom: Object, ObjectKeyIdentifiable {
     @Persisted(primaryKey: true) public var id: String = UUID().uuidString
     @Persisted public var roomId: String = "null"
     @Persisted public var guestId: String = "null"
+    @Persisted public var guestName: String = "null"
     @Persisted public var role: String = UserRole.temp.name
     @Persisted public var auth: String = UserAuth.visitor.name
     @Persisted public var status: String = RoomStatus.out_of_room.name
@@ -36,4 +37,13 @@ public class Room: Object, ObjectKeyIdentifiable {
     @Persisted public var isOpen: Bool = false
     @Persisted public var isLocal: Bool = true
     @Persisted public var isDeleted: Bool = false
+}
+
+public class RoomMessage: Object, ObjectKeyIdentifiable {
+    @Persisted(primaryKey: true) public var id: String
+    @Persisted public var roomId: String
+    @Persisted public var senderId: String
+    @Persisted public var senderName: String
+    @Persisted public var text: String
+    @Persisted public var timestamp: TimeInterval
 }

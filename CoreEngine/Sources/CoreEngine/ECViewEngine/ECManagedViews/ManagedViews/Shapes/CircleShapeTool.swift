@@ -19,7 +19,7 @@ public struct CircleShapeManagedView: View {
         self.activityId = activityId
     }
     
-    @StateObject public var MVO: ManagedViewObject = ManagedViewObject()
+    @StateObject public var MVO: ManagedViewO = ManagedViewO(ViewEngine.Tool.ShapeTool.circle)
     @State var cancel: Set<AnyCancellable> = Set<AnyCancellable>()
     @State public var showDeleteAlert: Bool = false
     // Parameters to control sensitivity and damping
@@ -29,54 +29,56 @@ public struct CircleShapeManagedView: View {
         
         ZStack {
             Circle()
-                .stroke(MVO.lifeColor, style: StrokeStyle(lineWidth: self.MVO.lifeWidth, dash: [MVO.lifeLineDash]))
-                .frame(width: MVO.lifeHeight, height: MVO.lifeHeight)
-                .position(MVO.position)
+                .stroke(colorFromRGBA(red: MVO.colorRed, green: MVO.colorGreen, blue: MVO.colorBlue, alpha: MVO.colorAlpha), style: StrokeStyle(lineWidth: Double(self.MVO.width), dash: [Double(MVO.lineDash)]))
+                .frame(width: MVO.radius, height: MVO.radius)
+                .position(x: MVO.x, y: MVO.y)
                 .gesture(gestureDragBasicTool())
                 .simultaneousGesture(doubleTapGesture())
             
             Circle()
                 .fill(Color.AIMYellow)
-                .frame(width: (MVO.lifeHeight / 2).bound(to: 25...500), height: (MVO.lifeHeight / 2).bound(to: 50...200))
-                .position(x: MVO.position.x, y: MVO.position.y - MVO.lifeHeight / 2)
+                .frame(width: (MVO.radius / 2).bound(to: 25...500), height: (MVO.radius / 2).bound(to: 50...200))
+                .position(x: MVO.x, y: MVO.y - MVO.radius / 2)
                 .gesture(anchorDragGesture(isTopAnchor: true))
                 .opacity(MVO.anchorsAreVisible ? 1 : 0)
             
             Circle()
-            .fill(Color.AIMYellow)
-            .frame(width: (MVO.lifeHeight / 2).bound(to: 25...500), height: (MVO.lifeHeight / 2).bound(to: 50...200))
-            .position(x: MVO.position.x, y: MVO.position.y + MVO.lifeHeight / 2)
-            .gesture(anchorDragGesture(isTopAnchor: false))
-            .opacity(MVO.anchorsAreVisible ? 1 : 0)
+                .fill(Color.AIMYellow)
+                .frame(width: (MVO.radius / 2).bound(to: 25...500), height: (MVO.radius / 2).bound(to: 50...200))
+                .position(x: MVO.x, y: MVO.y + MVO.radius / 2)
+                .gesture(anchorDragGesture(isTopAnchor: false))
+                .opacity(MVO.anchorsAreVisible ? 1 : 0)
         }
         .simultaneousGesture(longPressGesture())
         .alertConfirm(isPresented: $MVO.showDeleteAlert, title: "Delete?", message: "Delete Tools?", action: {
-            MVO.deleteTool()
+            MVO.softDeleteFromRealm()
         })
         .onAppear() {
             print("OnAppear: CircleTool.")
-            MVO.initializeWithViewId(viewId: self.viewId)
+            MVO.loadManagedView(byId: self.MVO.id)
         }
         
     }
     
-    func stopListeningForSettings() {
+    public func stopListeningForSettings() {
         cancel = Set<AnyCancellable>()
     }
     
     @MainActor
-    func listenForSettings() {
+    public func listenForSettings() {
         BroadcastTools.listenForWindowCalls(storeIn: &cancel, onEvent: { id, action in
             print("ID!!!!! \(id)")
             if id != "mvsettings" { return }
             if action == WindowAction.open {
                 if MVO.anchorsAreVisible {
                     MVO.anchorsAreVisible = false
+                    MVO.popUpIsVisible = false
                 }
             }
             else if action == WindowAction.close {
                 if MVO.anchorsAreVisible {
                     MVO.anchorsAreVisible = false
+                    MVO.popUpIsVisible = false
                 }
             }
             else if action == WindowAction.toggle {
@@ -91,43 +93,36 @@ public struct CircleShapeManagedView: View {
             .onChanged { drag in
                 main {
                     self.MVO.ignoreUpdates = true
-                    if MVO.lifeIsLocked { return }
+                    if MVO.isLocked { return }
                     MVO.isDragging = true
                     if MVO.useOriginal {
-                        self.MVO.originalPosition = MVO.position
+                        self.MVO.oXY = MVO.position
                         self.MVO.useOriginal = false
                     }
                     let translation = drag.translation
-                    MVO.position = CGPoint(x: MVO.originalPosition.x + translation.width,
-                                           y: MVO.originalPosition.y + translation.height)
-                    MVO.updateRealmPos(start: MVO.position, end: MVO.position)
+                    MVO.position = CGPoint(x: MVO.oXY.x + translation.width,
+                                           y: MVO.oXY.y + translation.height)
+                    MVO.x = MVO.position.x
+                    MVO.y = MVO.position.y
+                    MVO.saveToRealm()
                 }
             }
             .onEnded { drag in
                 main {
                     self.MVO.ignoreUpdates = false
-                    if MVO.lifeIsLocked { return }
+                    if MVO.isLocked { return }
                     MVO.isDragging = false
                     let translation = drag.translation
                     MVO.position = CGPoint(
-                        x: MVO.originalPosition.x + translation.width,
-                        y: MVO.originalPosition.y + translation.height
+                        x: MVO.oXY.x + translation.width,
+                        y: MVO.oXY.y + translation.height
                     )
-                    MVO.updateRealmPos(start: MVO.position, end: MVO.position)
+                    MVO.x = MVO.position.x
+                    MVO.y = MVO.position.y
+                    MVO.saveToRealm()
                     self.MVO.useOriginal = true
                 }
             }
-//            .simultaneously(with: TapGesture(count: 2)
-//                .onEnded { _ in
-//                    print("Tapped")
-//                    MVO.popUpIsVisible = !MVO.popUpIsVisible
-//                    self.MVO.toggleMenuWindow()
-//                    if MVO.popUpIsVisible {
-////                        self.sendToolAttributes()
-//                    }
-//                }
-//            )
-        
     }
     
 
@@ -138,31 +133,31 @@ public struct CircleShapeManagedView: View {
 
         return DragGesture()
             .onChanged { value in
-                guard !self.MVO.lifeIsLocked, MVO.anchorsAreVisible else { return }
+                guard !self.MVO.isLocked, MVO.anchorsAreVisible else { return }
                 self.MVO.isDragging = true
                 self.MVO.ignoreUpdates = true
 
                 // Calculate the change in the circle's radius based on drag with sensitivity
                 let change = value.translation.height * sensitivity
-                let newWidth = MVO.lifeHeight + (isTopAnchor ? -change : change)
+                let newWidth = MVO.radius + (isTopAnchor ? -change : change)
                 
                 // Apply damping to smooth the resizing
-                let smoothedWidth = (MVO.lifeHeight * (1 - damping)) + (newWidth * damping)
+                let smoothedWidth = (MVO.radius * (1 - damping)) + (newWidth * damping)
 
                 // Set minimum and maximum size for the circle
                 let minSize: CGFloat = 100
                 let maxSize: CGFloat = 10000
 
                 // Update the circle's width only if within bounds
-                self.MVO.lifeHeight = min(max(smoothedWidth, minSize), maxSize)
+                self.MVO.radius = min(max(smoothedWidth, minSize), maxSize)
                 
-                MVO.updateRealm()
+                MVO.saveToRealm()
             }
             .onEnded { _ in
-                guard !self.MVO.lifeIsLocked, MVO.anchorsAreVisible else { return }
+                guard !self.MVO.isLocked, MVO.anchorsAreVisible else { return }
                 self.MVO.isDragging = false
                 self.MVO.ignoreUpdates = false
-                MVO.updateRealm()
+//                MVO.updateRealm()
             }
     }
 

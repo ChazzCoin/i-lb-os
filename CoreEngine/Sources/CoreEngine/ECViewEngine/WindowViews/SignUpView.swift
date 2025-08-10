@@ -166,11 +166,13 @@ public struct CoreSignUpView: View {
                             title: "Sign Up",
                             action: {
                                 runLoading()
-                                UserTools.signUp(email: emailLogin, password: passLogin,
+                                UserTools.signUp(email: email, password: password, username: username,
                                     onError: { error in
+                                        print("Sign-Up Failed")
                                         print(error)
                                     },
                                     onComplete: { fireUser in
+                                        print("Sign-Up Success")
                                         print(fireUser)
                                     })
                             }, isEnabled: isFormValid
@@ -180,7 +182,7 @@ public struct CoreSignUpView: View {
                     
                         // LOGIN !!
                         
-                        Text("Welcome to SOL")
+                        Text("Welcome to the World Within")
                             .font(.largeTitle)
                             .fontWeight(.bold)
                             .foregroundColor(Color.primary)

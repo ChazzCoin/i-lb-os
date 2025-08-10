@@ -11,36 +11,58 @@ import SwiftUI
 import Combine
 import CoreEngine
 
-struct CanvasEngine: View {
+
+class CanvasEngineControl: ObservableObject {
     
-    @AppLifecycle(.appDidEnterBackground) public var appDidEnterBackground: Bool
+    @AppStorage("showMenuBar") var showMenuBar: Bool = true
+    @AppStorage("toolBarPickerWindowIsVisible") var toolBarPickerWindowIsVisible: Bool = false
+    @AppStorage("boardSettingsWindowIsVisible") var boardSettingsWindowIsVisible: Bool = false
+    @AppStorage("mvSettingsWindowIsVisible") var mvSettingsWindowIsVisible: Bool = false
+    
+    @AppLifecycle(.appDidEnterBackground) var appDidEnterBackground: Bool
+    @AppStorage("gesturesAreLocked") var gesturesAreLocked: Bool = false
+    @AppStorageCGFloat("canvasWidth") var canvasWidth: CGFloat = 8000.0
+    @AppStorageCGFloat("canvasHeight") var canvasHeight: CGFloat = 8000.0
+    @AppStorageCGPoint("canvasOffset") var canvasOffset = CGPoint(x: 6000, y: 6000)
+    @AppStorageCGFloat("canvasScale") var canvasScale: CGFloat = 0.1
+    @AppStorageCGFloat("canvasRotation") var canvasRotation: CGFloat = 0.0
+    @GestureState var gestureScale: CGFloat = 1.0
+    @AppStorageCGFloat("lastScaleValue") var lastScaleValue: CGFloat = 1.0
+    @AppStorageAngle("angle") var angle: Angle = .zero
+    @AppStorageAngle("lastAngle") var lastAngle: Angle = .zero
+    
+    @AppStorageCGPoint("dropPosition") var dropPosition = CGPoint.zero
     @AppStorageDictionary("coordinates") public var coordinates: [String: Any]
     
+    @AppStorageCGPoint("translation") var translation: CGPoint = CGPoint(x: 6000, y: 6000)
+    @AppStorageCGPoint("lastOffset") var lastOffset = CGPoint(x: 6000, y: 6000)
+    @AppStorage("isDragging") var isDragging: Bool = false
+    @AppStorageCGPoint("position") var position = CGPoint(x: 0, y: 0)
+    
+    @AppStorage("masterResetCanvas") var masterResetCanvas: Bool = false
+    func masterResetTheCanvas() {
+        self.masterResetCanvas = true
+        self.masterResetCanvas = false
+    }
+    
+}
+
+struct CanvasEngine: View {
+    
+    @StateObject var CanvasControl = CanvasEngineControl()
+    
+    @AppLifecycle(.appDidEnterBackground) public var appDidEnterBackground: Bool
     @StateObject var navTools: NavWindowController = NavWindowController()
     @ObservedObject var UTO = UserToolsObservable()
     @ObservedObject var BEO = BoardEngineObject()
     @ObservedObject var DO = OrientationInfo()
-    
-    @State var showMenuBar: Bool = true
-    @State var toolBarPickerWindowIsVisible: Bool = false
-    @State var boardSettingsWindowIsVisible: Bool = false
-    @State var mvSettingsWindowIsVisible: Bool = false
-    
+
     @State var storeInMenuBar = Set<AnyCancellable>()
     @State var cancellables = Set<AnyCancellable>()
     @State var canvasCancellables = Set<AnyCancellable>()
     var maxScaleFactor: CGFloat = 1.0
     
-    @State private var angle: Angle = .zero
-    @State private var lastAngle: Angle = .zero
-    
-    @State private var translation: CGPoint = CGPoint(x: 6000, y: 6000)
-    @State private var lastOffset = CGPoint(x: 6000, y: 6000)
-    
     @State private var offsetTwo = CGSize.zero
-    @State private var isDragging = false
-//    @State private var toolBarIsEnabled = true
-    @State private var position = CGPoint(x: 0, y: 0) // Initial position
     @GestureState private var dragOffset = CGSize.zero
     
     // Initial size of your drawing canvas
@@ -50,28 +72,28 @@ struct CanvasEngine: View {
     var dragAngleGestures: some Gesture {
         DragGesture()
             .onChanged { gesture in
-                if self.BEO.gesturesAreLocked { return }
+                if self.CanvasControl.gesturesAreLocked { return }
 
                 // Simplify calculations and potentially invert them
                 let translation = gesture.translation
-                let cosAngle = cos(Angle(degrees: self.BEO.canvasRotation).radians)
-                let sinAngle = sin(Angle(degrees: self.BEO.canvasRotation).radians)
+                let cosAngle = cos(Angle(degrees: self.CanvasControl.canvasRotation).radians)
+                let sinAngle = sin(Angle(degrees: self.CanvasControl.canvasRotation).radians)
 
                 // Invert the translation adjustments
                 let adjustedX = cosAngle * translation.width + sinAngle * translation.height
                 let adjustedY = -sinAngle * translation.width + cosAngle * translation.height
                 let rotationAdjustedTranslation = CGPoint(x: adjustedX, y: adjustedY)
 
-                let offsetX = self.lastOffset.x + (rotationAdjustedTranslation.x / self.BEO.canvasScale)
-                let offsetY = self.lastOffset.y + (rotationAdjustedTranslation.y / self.BEO.canvasScale)
-                self.BEO.canvasOffset = CGPoint(x: offsetX, y: offsetY)
+                let offsetX = self.CanvasControl.lastOffset.x + (rotationAdjustedTranslation.x / self.CanvasControl.canvasScale)
+                let offsetY = self.CanvasControl.lastOffset.y + (rotationAdjustedTranslation.y / self.CanvasControl.canvasScale)
+                self.CanvasControl.canvasOffset = CGPoint(x: offsetX, y: offsetY)
             }
             .onEnded { _ in
-                if self.BEO.gesturesAreLocked { return }
-                self.lastOffset = self.BEO.canvasOffset
+                if self.CanvasControl.gesturesAreLocked { return }
+                self.CanvasControl.lastOffset = self.CanvasControl.canvasOffset
             }
             .updating($dragOffset) { value, state, _ in
-                if self.BEO.gesturesAreLocked { return }
+                if self.CanvasControl.gesturesAreLocked { return }
                 state = value.translation
             }
     }
@@ -79,25 +101,25 @@ struct CanvasEngine: View {
     var scaleGestures: some Gesture {
         MagnificationGesture()
             .onChanged { value in
-                if self.BEO.gesturesAreLocked { return }
+                if self.CanvasControl.gesturesAreLocked { return }
                 let delta = value / self.BEO.lastScaleValue
-                self.BEO.canvasScale *= delta
-                self.BEO.lastScaleValue = value
+                self.CanvasControl.canvasScale *= delta
+                self.CanvasControl.lastScaleValue = value
             }
             .onEnded { value in
-                if self.BEO.gesturesAreLocked { return }
-                self.BEO.lastScaleValue = 1.0
+                if self.CanvasControl.gesturesAreLocked { return }
+                self.CanvasControl.lastScaleValue = 1.0
             }
     }
     
     var rotationGestures: some Gesture {
         RotationGesture()
             .onChanged { value in
-                let scaledAngle = (value - self.lastAngle) * 0.5
-                self.angle = self.lastAngle + scaledAngle
+                let scaledAngle = (value - self.CanvasControl.lastAngle) * 0.5
+                self.CanvasControl.angle = self.CanvasControl.lastAngle + scaledAngle
             }
             .onEnded { value in
-                self.lastAngle += value // Update the last angle on gesture end
+                self.CanvasControl.lastAngle += value // Update the last angle on gesture end
             }
     }
     
@@ -113,16 +135,16 @@ struct CanvasEngine: View {
     func enableDrawing(shapeSubType:String=ShapeToolProvider.line_straight) {
         self.BEO.isDraw = true
         self.BEO.shapeSubType = shapeSubType
-        self.BEO.gesturesAreLocked = true
-        self.BEO.toolBarIsShowing = false
-        self.showMenuBar = false
+        self.CanvasControl.gesturesAreLocked = true
+//        self.toolBarIsShowing = false
+        self.CanvasControl.showMenuBar = false
     }
     
     func disableDrawing() {
         self.BEO.isDraw = false
-        self.BEO.gesturesAreLocked = false
-        self.BEO.toolBarIsShowing = true
-        self.showMenuBar = true
+        self.CanvasControl.gesturesAreLocked = false
+//        self.BEO.toolBarIsShowing = true
+        self.CanvasControl.showMenuBar = true
     }
     
     @State var showRecordingsSheet = false
@@ -142,18 +164,20 @@ struct CanvasEngine: View {
         return "Are you sure you want to \(self.BEO.isRecording ? "Stop" : "Start") recording?"
     }
     
-    @State var masterResetCanvas = false
-    func masterResetTheCanvas() {
-        self.masterResetCanvas = true
-        self.masterResetCanvas = false
-    }
+    
     
     @StateObject public var modelPanel = PanelModeController(title: "Testing Mode Panel", subTitle: "Looks to be good to me!")
     @State var testTrigger = true
     @State var wrapIsVisible = true
+    
+    
+    @State var CanvasMenuHeightFull: Double = UIScreen.main.bounds.height
+    @State var CanvasMenuHeightHalf: Double = UIScreen.main.bounds.height / 2
+    
     var body: some View {
         
         GlobalPositioningZStack(coordinateSpace: .global) { windowGPS in
+            
             GlobalPositioningReader(coordinateSpace: .global) { geo, gps in
                 
                 /*
@@ -162,25 +186,15 @@ struct CanvasEngine: View {
                     3. Board Management
                  */
                 
-                if toolBarPickerWindowIsVisible {
-                    ToolListView()
-                        .position(using: gps, at: .bottomCenter, offsetY: 150)
-                        
-                }
-                if boardSettingsWindowIsVisible {
-                    BoardSettingsBar()
-                        .zIndex(2.0)
-                        .environmentObject(self.BEO)
-                        .position(using: gps, at: .bottomCenter, offsetY: 100)
-                        
-                }
+                CanvasMenuView(onTapTop: { CanvasControl.toolBarPickerWindowIsVisible.toggle() })
+                    .environmentObject(gps)
+                    .environmentObject(self.BEO)
                 
-                if mvSettingsWindowIsVisible {
-                    MvSettingsBar {}
-                        .zIndex(2.0)
-                        .position(using: gps, at: .bottomCenter, offsetY: 100)
-                        .environmentObject(self.BEO)
-                }
+                MvSettingsBar {}
+                    .zIndex(2.0)
+                    .toggleFromBelow($CanvasControl.boardSettingsWindowIsVisible, using: gps, viewHeight: 165)
+                    .environmentObject(self.BEO)
+                    
                 
                 // Left Hand Menu Bar
                 MenuBarStatic(showIcons: $menuIsOpen, gps: gps){}
@@ -206,7 +220,7 @@ struct CanvasEngine: View {
             
             GlobalPositioningReader(coordinateSpace: .canvas, width: 20000, height: 20000) { cGeo, cGps in
                 // Board/Canvas Level
-                if !masterResetCanvas {
+                if !CanvasControl.masterResetCanvas {
                     BoardEngine()
                         .zIndex(2.0)
                         .environmentObject(self.BEO)
@@ -230,7 +244,7 @@ struct CanvasEngine: View {
             addViewsToNavStack()
             BroadcastTools.listenForCanvasCalls(storeIn: &canvasCancellables, onEvent: { action in
                 if action == CanvasAction.refresh {
-                    self.masterResetTheCanvas()
+                    self.CanvasControl.masterResetTheCanvas()
                 }
                 else if action == CanvasAction.closeWindows {
                     closeAllWindows()
@@ -242,35 +256,35 @@ struct CanvasEngine: View {
                     case "toolbox":
                         if action == WindowAction.open {
                             closeAllWindows()
-                            self.toolBarPickerWindowIsVisible = true
+                            self.CanvasControl.toolBarPickerWindowIsVisible = true
                         }
                         else if action == WindowAction.close {
                             closeAllWindows()
                         }
                         else if action == WindowAction.toggle {
-                            self.toolBarPickerWindowIsVisible.toggle()
+                            self.CanvasControl.toolBarPickerWindowIsVisible.toggle()
                         }
                     case "board settings":
                         if action == WindowAction.open {
                             closeAllWindows()
-                            self.boardSettingsWindowIsVisible = true
+                            self.CanvasControl.boardSettingsWindowIsVisible = true
                         }
                         else if action == WindowAction.close {
                             closeAllWindows()
                         }
                         else if action == WindowAction.toggle {
-                            self.boardSettingsWindowIsVisible.toggle()
+                            self.CanvasControl.boardSettingsWindowIsVisible.toggle()
                         }
                     case "mvsettings":
                         if action == WindowAction.open {
                             closeAllWindows()
-                            self.mvSettingsWindowIsVisible = true
+                            self.CanvasControl.mvSettingsWindowIsVisible = true
                         }
                         else if action == WindowAction.close {
                             closeAllWindows()
                         }
                         else if action == WindowAction.toggle {
-                            self.mvSettingsWindowIsVisible.toggle()
+                            self.CanvasControl.mvSettingsWindowIsVisible.toggle()
                         }
                     default: return
                 }
@@ -279,9 +293,9 @@ struct CanvasEngine: View {
     }
     
     func closeAllWindows() {
-        boardSettingsWindowIsVisible = false
-        toolBarPickerWindowIsVisible = false
-        mvSettingsWindowIsVisible = false
+        CanvasControl.boardSettingsWindowIsVisible = false
+        CanvasControl.toolBarPickerWindowIsVisible = false
+        CanvasControl.mvSettingsWindowIsVisible = false
     }
     
     func addViewsToNavStack() {
@@ -324,7 +338,7 @@ struct CanvasEngine: View {
             print("Received on MENU_TOGGLER channel: \(controller)")
             let temp = controller as! WindowController
             switch MenuBarProvider.parseByTitle(title: temp.windowId) {
-                case .menuBar: return self.showMenuBar = !self.showMenuBar
+            case .menuBar: return self.CanvasControl.showMenuBar = !self.CanvasControl.showMenuBar
                 case .info: return self.BEO.showTipViewStatic = !self.BEO.showTipViewStatic
                 case .toolbox: return self.BEO.toolBarIsShowing = !self.BEO.toolBarIsShowing
                 case .boardSettings: return self.BEO.boardSettingsIsShowing = !self.BEO.boardSettingsIsShowing
@@ -340,43 +354,7 @@ struct CanvasEngine: View {
             self.BEO.gesturesAreLocked = true
         }
     }
-    
-    func addWindowsToNavManager() {
-//        addSessionPlanWindow()
-//        addSessionPlansWindow()
-//        addChatWindow()
-//        addProfileWindow()
-//        addMvSettingsWindow()
-    }
-    
-//    func handleNavPad() {
-//        let caller = MenuBarProvider.navHome.tool.title
-//        navTools.addNewViewToPool(viewId: caller, viewBuilder: { NavPadView().environmentObject(self.BEO) })
-//    }
-//    func addChatWindow() {
-//        let caller = MenuBarProvider.chat.tool.title
-//        navTools.addNewViewToPool(viewId: caller, viewBuilder: {
-//            NavStackWindow(id: caller, isFloatable: true, contentBuilder: {
-//                ChatView().environmentObject(self.BEO)
-//            })
-//        })
-//    }
-//    func addProfileWindow() {
-//        let caller = MenuBarProvider.profile.tool.title
-//        navTools.addNewViewToPool(viewId: caller, viewBuilder: {
-//            NavStackWindow(id: caller, contentBuilder: {
-//                SignUpView().environmentObject(self.BEO)
-//            })
-//        })
-//    }
-//    func addSessionPlanWindow() {
-//        let caller = MenuBarProvider.boardDetails.tool.title
-//        navTools.addNewViewToPool(viewId: caller, viewBuilder: {
-//            AnyView(NavStackWindow(id: caller, contentBuilder: {
-//                SessionPlanView(sessionId: "SOL", isShowing: .constant(true), isMasterWindow: true).environmentObject(self.BEO)
-//            }))
-//        })
-//    }
+
     func addSessionPlansWindow() {
         let caller = MenuBarProvider.home.tool.title
         navTools.addView(window: VF.BuildManagedHolder(
@@ -385,16 +363,8 @@ struct CanvasEngine: View {
             sideContent: { EmptyView() }
         ))
 //        navTools.addNewNavStackToPool(viewId: caller, viewBuilder: { HomeDashboardView().environmentObject(self.BEO) })
-        
     }
-    func addMvSettingsWindow() {
-//        let caller = "mv_settings"
-//        managedWindowsObject.addNewViewToPool(viewId: caller, viewBuilder: {
-//            AnyView(NavStackFloatingWindow(id: caller, viewBuilder: {
-//                SettingsView(onDelete: {}).environmentObject(self.BEO)
-//            }))
-//        })
-    }
+
 }
 
 
@@ -562,3 +532,183 @@ ZStack {
 //                self.BEO.toolBarIsShowing = false
 //            }
 //        }
+
+
+struct DraggableView: View {
+    // State variables to control the position of the view
+    @State private var position: CGPoint = CGPoint(x: UIScreen.main.bounds.width * 0.92, y: UIScreen.main.bounds.height * 0.5)
+    @State private var lastDragValue: CGFloat = 0
+
+    // Constants for open and closed positions
+    let closedOffset: CGFloat = UIScreen.main.bounds.height + 500
+    let openOffset: CGFloat = UIScreen.main.bounds.height * 0.5
+
+    var body: some View {
+        GeometryReader { geometry in
+            VStack {
+                Spacer() // Fills the empty space
+                RoundedRectangle(cornerRadius: 16)
+//                    .fill(Color.blue)
+                    .frame(width: UIScreen.main.bounds.width * 0.95, height: UIScreen.main.bounds.height) // Covers 50% of the screen
+                    .solBackground()
+                    .position(x: position.x + 100, y: position.y + 500)
+                    .gesture(
+                        DragGesture()
+                            .onChanged { value in
+                                // Update the view's position based on drag amount
+                                mainAnimation {
+                                    self.position.y = self.lastDragValue + value.translation.height
+                                }
+                            }
+                            .onEnded { _ in
+                                // Snap to open or closed state
+                                if self.position.y <= (self.closedOffset + self.openOffset) / 2 {
+                                    self.position.y = self.openOffset
+                                } else {
+                                    self.position.y = self.closedOffset
+                                }
+                                self.lastDragValue = self.position.y
+                            }
+                    )
+            }
+            
+//            .frame(width: UIScreen.main.bounds.width * 0.9, height: geometry.size.height * 0.5) // Covers 50% of the screen
+        }
+        .edgesIgnoringSafeArea(.all) // Allows the view to extend into the safe area
+    }
+}
+
+
+// MARK: - Modifier for Draggable and Positionable View
+struct DraggablePositionableModifier: ViewModifier {
+    @State private var position: CGPoint = .zero
+    @State private var lastDragValue: CGSize = .zero
+
+    let gps: GlobalPositioningSystem
+    let area: ScreenArea
+    let offsetX: CGFloat
+    let offsetY: CGFloat
+    let safePadding: Bool
+
+    // Locking Positions
+    let topY: CGFloat
+    let bottomY: CGFloat
+
+    func body(content: Content) -> some View {
+        GeometryReader { geo in
+            content
+                .position(using: gps, at: area, offsetX: offsetX, offsetY: offsetY)
+                .offset(x: position.x, y: position.y)
+                .gesture(
+                    DragGesture()
+                        .onChanged { value in
+                            // Update the view's position based on drag amount
+                            self.position.y = self.lastDragValue.height + value.translation.height
+
+                            // Ensure the position stays within the locked range
+                            if self.position.y < self.topY {
+                                self.position.y = self.topY
+                            } else if self.position.y > self.bottomY {
+                                self.position.y = self.bottomY
+                            }
+                        }
+                        .onEnded { _ in
+                            // Snap to the nearest locked position
+                            if abs(self.position.y - self.topY) < abs(self.position.y - self.bottomY) {
+                                self.position.y = self.topY
+                            } else {
+                                self.position.y = self.bottomY
+                            }
+                            self.lastDragValue = CGSize(width: self.position.x, height: self.position.y)
+                        }
+                )
+        }
+        .onAppear {
+            // Initialize the starting position to the bottom position
+            self.position = CGPoint(x: 0, y: bottomY)
+            self.lastDragValue = CGSize(width: 0, height: bottomY)
+        }
+    }
+}
+
+// MARK: - Extension for Position and Drag Modifier
+extension View {
+    func draggablePositionable(
+        using gps: GlobalPositioningSystem,
+        at area: ScreenArea,
+        offsetX: CGFloat = 0,
+        offsetY: CGFloat = 0,
+        safePadding: Bool = true,
+        topY: CGFloat = UIScreen.main.bounds.height * 0.5, // Default open position
+        bottomY: CGFloat = UIScreen.main.bounds.height - 50 // Default closed position just above bottom
+    ) -> some View {
+        self.modifier(DraggablePositionableModifier(gps: gps, area: area, offsetX: offsetX, offsetY: offsetY, safePadding: safePadding, topY: topY, bottomY: bottomY))
+    }
+}
+
+// MARK: - Example Usage
+struct ContentVieweeee: View {
+    var body: some View {
+        GlobalPositioningReader(coordinateSpace: .global) { geo, gps in
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color.blue)
+                .frame(width: UIScreen.main.bounds.width * 0.95, height: UIScreen.main.bounds.height * 0.5)
+                .draggablePositionable(using: gps, at: .bottomCenter, offsetX: 35, offsetY: 150, topY: UIScreen.main.bounds.height * 0.5, bottomY: UIScreen.main.bounds.height - 100)
+        }
+    }
+}
+
+
+// MARK: - Draggable View Modifier
+struct DraggableViewModifier: ViewModifier {
+    @State private var position: CGPoint = .zero
+    @State private var lastDragValue: CGSize = .zero
+
+    let openPosition: CGPoint
+    let closedPosition: CGPoint
+
+    func body(content: Content) -> some View {
+        GeometryReader { geo in
+            content
+                .offset(x: position.x, y: position.y)
+                .gesture(
+                    DragGesture()
+                        .onChanged { value in
+                            // Update the view's position based on drag amount
+                            self.position.y = self.lastDragValue.height + value.translation.height
+
+                            // Ensure the position stays within the locked range
+                            if self.position.y < openPosition.y {
+                                self.position.y = openPosition.y
+                            } else if self.position.y > closedPosition.y {
+                                self.position.y = closedPosition.y
+                            }
+                        }
+                        .onEnded { _ in
+                            // Snap to the nearest locked position
+                            if abs(self.position.y - openPosition.y) < abs(self.position.y - closedPosition.y) {
+                                self.position.y = openPosition.y
+                            } else {
+                                self.position.y = closedPosition.y
+                            }
+                            self.lastDragValue = CGSize(width: self.position.x, height: self.position.y)
+                        }
+                )
+        }
+        .onAppear {
+            // Initialize the starting position to the closed position
+            self.position = CGPoint(x: 0, y: closedPosition.y)
+            self.lastDragValue = CGSize(width: 0, height: closedPosition.y)
+        }
+    }
+}
+
+// MARK: - Extension for Draggable Modifier
+extension View {
+    func draggable(
+        from openPosition: CGPoint,
+        to closedPosition: CGPoint
+    ) -> some View {
+        self.modifier(DraggableViewModifier(openPosition: openPosition, closedPosition: closedPosition))
+    }
+}

@@ -74,23 +74,6 @@ struct BoardSettingsBar: View {
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack {
-                Spacer()
-                VStack {
-                    Image(systemName: "xmark")
-                        .resizable()
-                        .frame(width: 15, height: 15)
-                        .foregroundColor(getForegroundColor(colorScheme))
-                        .padding()
-                        .padding(.top)
-                        .padding(.leading)
-                        .onTapAnimation {
-                            closeWindow()
-                        }
-                    Spacer()
-                }
-                .frame(width: 20)
-                
-                Spacer().frame(width: 24)
                 
                 VStack {
                     SolIconButton(
@@ -395,7 +378,8 @@ struct BoardSettingsBar: View {
             }.padding()
         }
         .frame(width: Double(sWidth).bound(to: 200...sWidth) - 150, height: 150)
-        .solBackground()
+        .background(Color.clear)
+//        .solBackground()
         .onChange(of: self.currentActivityId, perform: { value in
             loadFromRealm()
         })

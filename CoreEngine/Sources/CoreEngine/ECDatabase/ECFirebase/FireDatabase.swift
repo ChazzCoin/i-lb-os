@@ -20,6 +20,16 @@ public func FireReference(dbPath: DatabasePaths) -> DatabaseReference {
 
 public extension DatabaseReference {
     
+    func get(onSnapshot: @escaping (DataSnapshot) -> Void) {
+        self.observeSingleEvent(of: .value) { snapshot, _ in
+            onSnapshot(snapshot)
+        }
+    }
+    
+    func save(obj: Object) {
+        self.setValue(obj.toDict())
+    }
+    
     func fireObserveValue(completion: @escaping (DataSnapshot) -> Void) -> DatabaseHandle {
         return self.observe(.value, with: { snapshot in
             completion(snapshot)

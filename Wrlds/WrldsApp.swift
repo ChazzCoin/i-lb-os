@@ -21,6 +21,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
 @main
 struct WrldsApp: SwiftUI.App {
+    @StateObject var USER: UserToolsObservable = UserToolsObservable()
     @StateObject private var viewModel = ARViewModel()
     init() {
         let realmConfiguration = Realm.Configuration(deleteRealmIfMigrationNeeded: true)
@@ -43,9 +44,9 @@ struct WrldsApp: SwiftUI.App {
 //                    .background(.blue)
 //                    .position(using: gps, at: .bottomCenter)
 //                })
-            CanvasEngine().onAppear() {
-                
-            }
+            CanvasEngine()
+                .environmentObject(self.USER)
+            
         }
     }
 }

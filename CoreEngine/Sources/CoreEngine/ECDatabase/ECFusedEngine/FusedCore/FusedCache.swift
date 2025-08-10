@@ -67,7 +67,7 @@ public class FusedDatabaseQueue: Object, ObjectKeyIdentifiable {
     @Persisted public var playersQueue: List<PlayerRef> = List()
     @Persisted public var organizationsQueue: List<Organization> = List()
     @Persisted public var teamsQueue: List<Team> = List()
-    @Persisted public var chatQueue: List<Chat> = List()
+    @Persisted public var chatQueue: List<ChatMessage> = List()
     @Persisted public var eventsQueue: List<CoreEvent> = List()
     @Persisted public var sessionPlanQueue: List<SessionPlan> = List()
     @Persisted public var activityPlanQueue: List<ActivityPlan> = List()

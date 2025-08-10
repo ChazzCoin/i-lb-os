@@ -37,6 +37,7 @@ public extension CoreName {
 public enum DatabasePaths: String, CaseIterable {
     case users = "users"
     case rooms = "rooms"
+    case messages = "messages"
     case managedViews = "managedViews"
     case chat = "chat"
     case organizations = "organizations"
@@ -62,8 +63,10 @@ public enum DatabasePaths: String, CaseIterable {
                 return .managedViews
             case is UserToSession.Type:
                 return .userToSession
-            case is Chat.Type:
+            case is ChatMessage.Type:
                 return .chat
+            case is ChatMessage.Type:
+                return .messages
             case is CoreUser.Type:
                 return .users
             case is Room.Type:
@@ -109,7 +112,7 @@ public enum DatabasePaths: String, CaseIterable {
             case DatabasePaths.events.rawValue:
                 return CoreEvent.self
             case DatabasePaths.chat.rawValue:
-                return Chat.self
+                return ChatMessage.self
             case DatabasePaths.userToActivity.rawValue:
                 return UserToActivity.self
             case DatabasePaths.players.rawValue:

@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 import RealmSwift
-
+import Combine
 // ViewModel for ManagedView
 public class ManagedViewO: ObservableObject {
     // Observable properties for each attribute
@@ -30,6 +30,7 @@ public class ManagedViewO: ObservableObject {
     @Published public var endY: Double
     @Published public var width: Int
     @Published public var height: Int
+    @Published public var radius: Double
     @Published public var rotation: Double
     @Published public var lineDash: Int
     @Published public var translationX: Double
@@ -37,6 +38,7 @@ public class ManagedViewO: ObservableObject {
     @Published public var lastUserId: String
     @Published public var isLocked: Bool
     @Published public var isDeleted: Bool
+    @Published public var isNew: Bool
     @Published public var headIsEnabled: Bool
     
     @Published public var colorRed: Double
@@ -44,6 +46,16 @@ public class ManagedViewO: ObservableObject {
     @Published public var colorBlue: Double
     @Published public var colorAlpha: Double
 
+    @Published public var position: CGPoint
+    @Published public var showDeleteAlert: Bool = false
+    @Published public var ignoreUpdates: Bool = false
+    @Published public var anchorsAreVisible: Bool = false
+    @Published public var popUpIsVisible: Bool = false
+    @Published public var useOriginal: Bool = false
+    @Published public var isDragging: Bool = false
+    
+    @Published public var oXY: CGPoint = CGPoint(x: 0.0, y: 0.0)
+    @Published public var cancel = Set<AnyCancellable>()
     // Realm instance
     public var realm: Realm
     
@@ -72,9 +84,29 @@ public class ManagedViewO: ObservableObject {
     public var isCircle: Bool {
         return subToolType == ViewEngine.Tool.ShapeTool.circle.name
     }
+    public var isSquare: Bool {
+        return subToolType == ViewEngine.Tool.ShapeTool.square.name
+    }
+    public var isTriangle: Bool {
+        return subToolType == ViewEngine.Tool.ShapeTool.triangle.name
+    }
+    public func toToolType() -> any ToolCategory {
+        if isLineStraight { return ViewEngine.Tool.ShapeTool.line_straight }
+        if isLineCurved { return ViewEngine.Tool.ShapeTool.line_curved }
+        if isCircle { return ViewEngine.Tool.ShapeTool.circle }
+        if isSquare { return ViewEngine.Tool.ShapeTool.square }
+        if isTriangle { return ViewEngine.Tool.ShapeTool.triangle }
+        if let gen = ViewEngine.Tool.GeneralTool(rawValue: self.subToolType) {
+            return gen
+        }
+        if let temp = ViewEngine.Tool.SoccerTool(rawValue: self.subToolType) {
+            return temp
+        }
+        return ViewEngine.Tool.ShapeTool.line_straight
+    }
     
     // Default initializer for creating a new ManagedView
-    public init() {
+    public init(_ toolType: any ToolCategory = ViewEngine.Tool.ShapeTool.circle) {
         self.realm = try! Realm()
 
         // Initialize properties with default values
@@ -83,9 +115,9 @@ public class ManagedViewO: ObservableObject {
         self.boardId = ""
         self.sport = "tool"
         self.toolType = "shape"
-        self.subToolType = "square"
-        self.toolColor = "TOOLCOLOR.BLACK.name"
-        self.toolSize = "TOOLSIZE.MEDIUM.name"
+        self.subToolType = toolType.name
+        self.toolColor = ""
+        self.toolSize = ""
         self.x = 0.0
         self.y = 0.0
         self.startX = 100.0
@@ -96,6 +128,7 @@ public class ManagedViewO: ObservableObject {
         self.endY = 300.0
         self.width = 100
         self.height = 100
+        self.radius = 1000.0
         self.rotation = 0.0
         self.lineDash = 5
         self.translationX = 0.0
@@ -103,12 +136,55 @@ public class ManagedViewO: ObservableObject {
         self.lastUserId = "me"
         self.isLocked = false
         self.isDeleted = false
+        self.isNew = true
         self.headIsEnabled = true
         
         self.colorRed = 48.0
         self.colorGreen = 128.0
         self.colorBlue = 20.0
         self.colorAlpha = 0.75
+        
+        self.position = CGPoint(x: 0.0, y: 0.0)
+        setupByToolType(toolType)
+    }
+    
+    public func setupByToolType(_ toolType: any ToolCategory) {
+        switch toolType {
+            case ViewEngine.Tool.ShapeTool.line_straight:
+                self.startX = 0.0
+                self.startY = 0.0
+                self.endX = 500.0
+                self.endY = 0.0
+            case ViewEngine.Tool.ShapeTool.line_curved:
+                self.startX = 0.0
+                self.startY = 0.0
+                self.endX = 500.0
+                self.endY = 0.0
+            case ViewEngine.Tool.ShapeTool.square:
+                self.x = 0.0
+                self.y = 0.0
+                self.centerX = 500.0
+                self.centerY = -500.0
+                self.startX = 500.0
+                self.startY = 0.0
+                self.endX = 0.0
+                self.endY = -500.0
+            case ViewEngine.Tool.ShapeTool.triangle:
+                self.x = 250.0
+                self.y = 0.0
+                self.startX = 500.0
+                self.startY = -500.0
+                self.centerX = 0.0
+                self.centerY = -500.0
+            case ViewEngine.Tool.ShapeTool.circle:
+                self.radius = 1000.0
+                self.width = 200
+                self.x = 500.0
+                self.y = 0.0
+                self.position = CGPoint(x: 500.0, y: 0.0)
+            default:
+                return
+        }
     }
 
     // Function to load an existing ManagedView by ID
@@ -133,6 +209,7 @@ public class ManagedViewO: ObservableObject {
             self.endY = managedView.endY
             self.width = managedView.width
             self.height = managedView.height
+            self.radius = managedView.radius
             self.rotation = managedView.rotation
             self.lineDash = managedView.lineDash
             self.translationX = managedView.translationX
@@ -145,6 +222,10 @@ public class ManagedViewO: ObservableObject {
             self.colorGreen = managedView.colorGreen
             self.colorBlue = managedView.colorBlue
             self.colorAlpha = managedView.colorAlpha
+            self.isNew = managedView.isNew
+            if self.isNew {
+                setupByToolType(toToolType())
+            }
         } else {
             print("ManagedView with ID \(managedViewId) not found.")
         }
@@ -174,6 +255,7 @@ public class ManagedViewO: ObservableObject {
                     existingManagedView.endY = self.endY
                     existingManagedView.width = self.width
                     existingManagedView.height = self.height
+                    existingManagedView.radius = self.radius
                     existingManagedView.rotation = self.rotation
                     existingManagedView.lineDash = self.lineDash
                     existingManagedView.translationX = self.translationX
@@ -186,6 +268,7 @@ public class ManagedViewO: ObservableObject {
                     existingManagedView.colorGreen = self.colorGreen
                     existingManagedView.colorBlue = self.colorBlue
                     existingManagedView.colorAlpha = self.colorAlpha
+                    existingManagedView.isNew = self.isNew
                 } else {
                     // Create a new object if not found
                     let newManagedView = ManagedView()
@@ -207,6 +290,7 @@ public class ManagedViewO: ObservableObject {
                     newManagedView.endY = self.endY
                     newManagedView.width = self.width
                     newManagedView.height = self.height
+                    newManagedView.radius = self.radius
                     newManagedView.rotation = self.rotation
                     newManagedView.lineDash = self.lineDash
                     newManagedView.translationX = self.translationX
@@ -219,6 +303,7 @@ public class ManagedViewO: ObservableObject {
                     newManagedView.colorGreen = self.colorGreen
                     newManagedView.colorBlue = self.colorBlue
                     newManagedView.colorAlpha = self.colorAlpha
+                    newManagedView.isNew = self.isNew
 
                     realm.add(newManagedView)
                 }
@@ -227,5 +312,68 @@ public class ManagedViewO: ObservableObject {
             print("Failed to save ManagedView: \(error.localizedDescription)")
         }
     }
+    // Function to save changes back to Realm
+    public func softDeleteFromRealm() {
+        do {
+            try realm.write {
+                // Check if object exists
+                if let existingManagedView = realm.object(ofType: ManagedView.self, forPrimaryKey: self.id) {
+                    // Update existing object
+                    existingManagedView.isDeleted = true
+                    existingManagedView.isLocked = true
+                }
+            }
+        } catch let error {
+            print("Failed to save ManagedView: \(error.localizedDescription)")
+        }
+    }
+    // Function to save changes back to Realm
+    public func hardDeleteFromRealm() {
+        do {
+            try realm.write {
+                // Check if object exists
+                if let existingManagedView = realm.object(ofType: ManagedView.self, forPrimaryKey: self.id) {
+                    realm.delete(existingManagedView)
+                }
+            }
+        } catch let error {
+            print("Failed to save ManagedView: \(error.localizedDescription)")
+        }
+    }
     
+    public func toggleMenuWindow() {
+        if anchorsAreVisible {
+//            self.toolBarCurrentViewId = self.lifeViewId
+//            self.toolSettingsIsShowing = true
+//            self.selectedManagedViewId = self.lifeViewId
+            BroadcastTools.send(.NavStackMessage, value: NavStackMessage(viewName: "mvSettings", viewAction: WindowAction.open))
+        } else {
+//            self.toolSettingsIsShowing = false
+//            self.selectedManagedViewId = ""
+            BroadcastTools.send(.NavStackMessage, value: NavStackMessage(viewName: "mvSettings", viewAction: WindowAction.close))
+        }
+    }
+    
+    @MainActor
+    func listenForSettings() {
+        BroadcastTools.listenForWindowCalls(storeIn: &cancel, onEvent: { id, action in
+            print("ID!!!!! \(id)")
+            if id != "mvsettings" { return }
+            if action == WindowAction.open {
+                if self.anchorsAreVisible {
+                    self.anchorsAreVisible = false
+                    self.popUpIsVisible = false
+                }
+            }
+            else if action == WindowAction.close {
+                if self.anchorsAreVisible {
+                    self.anchorsAreVisible = false
+                    self.popUpIsVisible = false
+                }
+            }
+            else if action == WindowAction.toggle {
+                return
+            }
+        })
+    }
 }

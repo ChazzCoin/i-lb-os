@@ -26,6 +26,11 @@ public class CoreFirebaseStorage {
         meta.contentType = "image/jpeg" // PNG: image/png
         return meta
     }
+    public static func pdfMetadata(title: String) -> StorageMetadata {
+        let meta = StorageMetadata()
+        meta.contentType = "application/pdf" // PNG: image/png
+        return meta
+    }
     public static func videosMetadata(title: String) -> StorageMetadata {
         let meta = StorageMetadata()
         meta.contentType = "video/mp4"
@@ -38,6 +43,16 @@ public class CoreFirebaseStorage {
             CoreFirebaseStorage.uploadFile(storage: CoreFirebaseStorage.songs(title: title), data: data, meta: meta, onSuccess: { downloadUrl in
                     onSuccess(downloadUrl)
                     CoreFirebaseStorage.saveMedia(title: title, artist: artist, downloadURL: downloadUrl)
+            })
+        })
+    }
+    
+    public static func uploadDocument(title: String, author: String, fileUrl: URL, onSuccess: @escaping (String) -> Void) {
+        CoreFiles.getDataFromFile(title: title, fileURL: fileUrl, withData: { data in
+            let meta = CoreFirebaseStorage.pdfMetadata(title: title)
+            CoreFirebaseStorage.uploadFile(storage: CoreFirebaseStorage.documents(title: title), data: data, meta: meta, onSuccess: { downloadUrl in
+                    onSuccess(downloadUrl)
+                    CoreFirebaseStorage.saveMedia(title: title, artist: author, downloadURL: downloadUrl)
             })
         })
     }
@@ -62,7 +77,7 @@ public class CoreFirebaseStorage {
         }
     }
     
-    public static func saveMedia(title: String, artist: String, downloadURL: String) {
+public static func saveMedia(title: String, artist: String, downloadURL: String) {
         // Create a new Song object
         let newSong = Media()
         newSong.title = title // Example title

@@ -104,8 +104,6 @@ public struct CurvedLineDrawingManaged: View {
             .simultaneousGesture(longPressGesture())
         )
         .gesture(fullCurvedLineDragGesture())
-//        .simultaneousGesture(doubleTapForSettingsAndAnchors())
-//        .simultaneousGesture(longPressGesture())
         .onChange(of: self.MVO.toolBarCurrentViewId, perform: { _ in
             if self.MVO.toolBarCurrentViewId != self.viewId {
                 MVO.popUpIsVisible = false
@@ -117,6 +115,9 @@ public struct CurvedLineDrawingManaged: View {
                 MVO.popUpIsVisible = false
                 MVO.anchorsAreVisible = false
             }
+        })
+        .alertConfirm(isPresented: $MVO.showDeleteAlert, title: "Delete?", message: "Delete Tools?", action: {
+            MVO.deleteTool()
         })
         .onAppear() {
             print("OnAppear: CurvedLineTool.")
@@ -167,23 +168,7 @@ public struct CurvedLineDrawingManaged: View {
         MVO.lifeEndX = endPoint.x
         MVO.lifeEndY = endPoint.y
         
-        MVO.updateRealmPos(start: CGPoint(x: MVO.lifeStartX, y: MVO.lifeStartY),
-                       end: CGPoint(x: MVO.lifeEndX, y: MVO.lifeEndY))
-    }
-    
-    // Drag gesture definition
-    public func doubleTapForSettingsAndAnchors() -> some Gesture {
-        TapGesture(count: 2).onEnded({ _ in
-            print("Tapped double")
-            MVO.anchorsAreVisible = !MVO.anchorsAreVisible
-            MVO.popUpIsVisible = !MVO.popUpIsVisible
-            if MVO.popUpIsVisible {
-                self.MVO.toolBarCurrentViewId = self.viewId
-                self.MVO.toolSettingsIsShowing = true
-            } else {
-                self.MVO.toolSettingsIsShowing = false
-            }
-        })
+        MVO.updateRealm()
     }
     
     public func dragCurvedCenterAnchor() -> some Gesture {
@@ -229,8 +214,7 @@ public struct CurvedLineDrawingManaged: View {
                     }
                     MVO.loadWidthAndHeight()
                     MVO.loadRotationOfLine()
-                    MVO.updateRealmPos(start: CGPoint(x: MVO.lifeStartX, y: MVO.lifeStartY),
-                                       end: CGPoint(x: MVO.lifeEndX, y: MVO.lifeEndY))
+                    MVO.updateRealm()
                 }
             }
             .onEnded { _ in
@@ -238,9 +222,8 @@ public struct CurvedLineDrawingManaged: View {
                     if MVO.lifeIsLocked || !MVO.anchorsAreVisible {return}
                     MVO.isDragging = false
                     self.MVO.ignoreUpdates = false
-                    MVO.updateRealmPos(start: CGPoint(x: MVO.lifeStartX, y: MVO.lifeStartY),
-                                       end: CGPoint(x: MVO.lifeEndX, y: MVO.lifeEndY))
-                    MVO.saveSnapshotToHistoryInRealm()
+                    MVO.updateRealm()
+//                    MVO.saveSnapshotToHistoryInRealm()
                 }
             }
     }
@@ -252,20 +235,27 @@ public struct CurvedLineDrawingManaged: View {
          })
     }
     
-    public func doubleTapGesture() -> some Gesture {
+    public func doubleTapForSettingsAndAnchors() -> some Gesture {
         TapGesture(count: 2).onEnded({ _ in
             print("Tapped double")
-//            toggleMenuSettings()
+            MVO.popUpIsVisible = !MVO.popUpIsVisible
+            MVO.anchorsAreVisible = !MVO.anchorsAreVisible
+            self.MVO.toggleMenuWindow()
+            delayThenMain(1, mainBlock: {
+                if MVO.anchorsAreVisible {
+                    MVO.listenForSettings()
+                } else {
+                    MVO.cancel = Set<AnyCancellable>()
+                }
+            })
          })
     }
     
     public func longPressGesture() -> some Gesture {
         LongPressGesture(minimumDuration: 0.4).onEnded { _ in
-            MVO.anchorsAreVisible = !MVO.anchorsAreVisible
+            MVO.showDeleteAlert = true
        }
     }
-    
-
     
 }
 

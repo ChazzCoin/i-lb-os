@@ -74,7 +74,7 @@ public struct ShapeToolManaged: View {
         })
         .onAppear() {
             print("OnAppear: LineTool.")
-            MVO.initializeWithViewId(viewId: self.viewId)
+            MVO.initializeWithViewId(viewId: self.viewId, toolType: !isQuad ? .triangle : .square)
         }
     }
     
@@ -164,6 +164,13 @@ public struct ShapeToolManaged: View {
             MVO.popUpIsVisible = !MVO.popUpIsVisible
             MVO.anchorsAreVisible = !MVO.anchorsAreVisible
             MVO.toggleMenuWindow()
+            delayThenMain(1, mainBlock: {
+                if MVO.anchorsAreVisible {
+                    MVO.listenForSettings()
+                } else {
+                    MVO.cancel = Set<AnyCancellable>()
+                }
+            })
          })
     }
     

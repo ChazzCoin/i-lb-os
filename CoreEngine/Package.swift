@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "CoreEngine",
     platforms: [
-        .iOS(.v15), // Set minimum platform to iOS 13
+        .iOS(.v16), // Set minimum platform to iOS 13
 //        .visionOS(.v1)
         // include other platforms if needed
     ],

@@ -9,6 +9,8 @@ import Foundation
 import SwiftUI
 
 public struct DayToNight: View {
+    
+    public init() {}
     @State public var gradientColors = [Color.blue, Color.orange]
     @State public var sunPosition = UnitPoint(x: 0.1, y: 0.3)
     @State public var showStars = false

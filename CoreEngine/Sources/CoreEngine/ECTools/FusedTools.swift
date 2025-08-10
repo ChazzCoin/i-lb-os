@@ -58,7 +58,7 @@ public class FusedTools {
             FusedTools.saveToFirebase(item: action(r))
         }
     }
-    public static func fusedWriter(_ realm: Realm = newRealm(), action: @escaping (Realm) -> Void) {
+    public static func realmWriter(_ realm: Realm = newRealm(), action: @escaping (Realm) -> Void) {
         realm.safeWrite { r in
             action(r)
         }

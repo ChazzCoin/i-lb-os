@@ -20,7 +20,37 @@ public struct Hold<Content: View>: Identifiable {
     
     public func view() -> () -> Content { return viewHolder }
 }
+public struct GeoWrap<C: View>: View {
+    @ViewBuilder public let viewHolder: () -> C
+    @State public var width: Double = 0.0
+    @State public var height: Double = 0.0
+    @Binding public var masterReset: Bool
 
+    public init(_ resetView: Binding<Bool>, @ViewBuilder _ viewHolder: @escaping () -> C) {
+        self._masterReset = resetView
+        self.viewHolder = viewHolder
+    }
+    
+    public init(@ViewBuilder _ viewHolder: @escaping () -> C) {
+        self._masterReset = .constant(false)
+        self.viewHolder = viewHolder
+    }
+    
+    public var body: some View {
+        if self.masterReset { EmptyView() }
+        ZStack {
+            viewHolder()
+                .measure { geo in
+                    print("GeoWrap: \(geo.size)")
+                    self.width = geo.size.width
+                    self.height = geo.size.height
+                    self.masterReset.toggle()
+                    self.masterReset.toggle()
+                }
+        }
+        .frame(width: self.width, height: self.height)
+    }
+}
 
 public struct WrapLite<C: View>: View {
     @ViewBuilder public let viewHolder: () -> C

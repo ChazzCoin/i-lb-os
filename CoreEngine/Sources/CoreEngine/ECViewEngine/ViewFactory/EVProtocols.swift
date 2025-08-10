@@ -8,7 +8,6 @@
 import Foundation
 import SwiftUI
 
-
 public protocol ObservablePanel: ObservableObject {
     init(title: String, subtitle: String)
 }
@@ -29,8 +28,10 @@ public protocol ToolCategory: Identifiable, Hashable, CaseIterable where Self: R
 public struct ToolListView: View {
     
     @AppStorage("currentActivityId") var currentActivityId: String = ""
-    
-    public init() {}
+    var onTapTop: () -> Void = {}
+    public init(onTapTop: @escaping () -> Void = {}) {
+        self.onTapTop = onTapTop
+    }
     
     public var body: some View {
         ScrollView(.vertical) {
@@ -48,6 +49,7 @@ public struct ToolListView: View {
                         }
                     Spacer()
                 }.frame(height: 50)
+                    
                 ToolList(title: "Smart Shapes", forEachContent: {
                     ForEach(ViewEngine.Tool.ShapeTool.allCases, id: \.self) { tool in
                         ToolListItem(currentActivityId, tool: tool)
@@ -63,18 +65,28 @@ public struct ToolListView: View {
                         ToolListItem(currentActivityId, tool: tool)
                     }
                 })
+                ToolList(title: "Billiards", forEachContent: {
+                    ForEach(ViewEngine.Tool.PoolBallTool.allCases, id: \.self) { tool in
+                        ToolListItem(currentActivityId, tool: tool)
+                    }
+                })
                 Spacer()
             }
+            .padding(.all, 16)
+            
         }
-        .frame(maxWidth: UIScreen.main.bounds.width * 0.90, maxHeight: 300)
+        .frame(maxWidth: UIScreen.main.bounds.width * 0.92, maxHeight: .infinity)
         .solBackground()
+        .onTap {
+            onTapTop()
+        }
     }
 }
 @ViewBuilder
 public func ToolListItem(_ activityId: String, tool: any ToolCategory) -> some View {
     VStack {
         tool.BuildIcon()
-        Text(tool.displayName).font(.system(size: 8))
+        Text(tool.name).font(.system(size: 8))
     }
     .onTapAnimation {
         print("On Tap! \(tool.name)")

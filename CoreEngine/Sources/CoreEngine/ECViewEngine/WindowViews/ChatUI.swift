@@ -11,6 +11,12 @@ import FirebaseDatabase
 import Combine
 import RealmSwift
 
+
+
+
+
+
+
 public struct ChatView: View {
     
     public init() {}
@@ -116,19 +122,19 @@ public struct ChatView: View {
 
     public func sendMessage() {
         
-        let newMessage = Chat()
+        let newMessage = ChatMessage()
         newMessage.chatId = currentRoomId
-        newMessage.messageText = messageText
+        newMessage.text = messageText
         newMessage.senderId = UserTools.currentUserId
         newMessage.senderName = UserTools.currentUserId
         newMessage.senderImage = ""
         newMessage.timestamp = getCurrentTimestamp()
-
+        let dmess: [String: String?] = newMessage.toDict()
         firebaseDatabase { db in
             db.child(DatabasePaths.chat.rawValue)
                 .child(currentRoomId)
                 .child(newMessage.id)
-                .setValue(newMessage.toDict())
+                .setValue(dmess)
         }
 
         messageText = ""
@@ -139,7 +145,7 @@ public struct ChatView: View {
 }
 
 struct ChatMessageRow: View {
-    let chat: Chat
+    let chat: ChatMessage
     var isCurrentUser: Bool {
         chat.senderId == UserTools.currentUserId ?? ""
     }

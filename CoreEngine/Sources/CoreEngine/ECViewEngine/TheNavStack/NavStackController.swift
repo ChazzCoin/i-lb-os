@@ -157,13 +157,15 @@ public class NavWindowController: ObservableObject {
     @Published public var viewPool: [String: ManagedViewHolder] = [:]
     @Published public var backStack: CoreQueue<String> = CoreQueue()
     
-    @Published public var navSize: NavStackSize = .full_menu_bar
+    @Published public var navSize: NavStackSize = .full
     @Published public var mainState: NavStackState = .closed
     @Published public var sidebarIsEnabled: Bool = false
     @Published public var sidebarState: NavStackState = .closed
     
-    @Published public var isLocked = false
-    @Published public var isFloatable: Bool = false
+    
+    
+    @Published public var isLocked = true
+    @Published public var isFloatable: Bool = true
     
     @Published public var keyboardIsShowing = false
     @Published public var keyboardHeight = 0.0
@@ -280,6 +282,7 @@ public class NavWindowController: ObservableObject {
     
     public func setSize(gps: GlobalPositioningSystem, _ navSize: NavStackSize) {
         mainAnimation {
+//            let nv = NavStackSize.half
             self.navSize = navSize
             self.width = navSize.width
             self.height = navSize.height

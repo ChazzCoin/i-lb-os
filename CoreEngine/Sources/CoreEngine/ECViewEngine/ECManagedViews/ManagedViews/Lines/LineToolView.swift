@@ -89,7 +89,7 @@ public struct LineDrawingManaged: View {
         })
         .onAppear() {
             print("OnAppear: LineTool.")
-            MVO.initializeWithViewId(viewId: self.viewId)
+            MVO.initializeWithViewId(viewId: self.viewId, toolType: .line_straight)
         }
     }
     
@@ -199,9 +199,9 @@ public struct LineDrawingManaged: View {
             MVO.toggleMenuWindow()
             delayThenMain(1, mainBlock: {
                 if MVO.anchorsAreVisible {
-                    listenForSettings()
+                    MVO.listenForSettings()
                 } else {
-                    stopListeningForSettings()
+                    MVO.cancel = Set<AnyCancellable>()
                 }
             })
             

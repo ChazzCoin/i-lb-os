@@ -10,6 +10,9 @@ import SwiftUI
 
 
 public extension View {
+    func solBackgroundSquare() -> some View {
+        self.modifier(SOLBackgroundSquareModifier())
+    }
     func solBackground() -> some View {
         self.modifier(SOLBackgroundModifier())
     }
@@ -21,6 +24,20 @@ public extension View {
     }
 }
 
+public struct SOLBackgroundSquareModifier: ViewModifier {
+    @Environment(\.colorScheme) var colorScheme
+    public func body(content: Content) -> some View {
+        content
+            .background(
+                Rectangle()
+                    .fill(getBackgroundDarkGradient())
+            )
+            .overlay(
+               Rectangle()
+                   .stroke(getBackgroundDarkGradient(), lineWidth: 1) // Adjust lineWidth as needed
+           )
+    }
+}
 
 public struct SOLBackgroundModifier: ViewModifier {
     @Environment(\.colorScheme) var colorScheme

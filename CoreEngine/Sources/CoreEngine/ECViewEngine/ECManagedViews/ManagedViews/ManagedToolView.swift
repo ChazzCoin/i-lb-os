@@ -165,14 +165,19 @@ public struct enableManagedViewTool : ViewModifier {
                     MVO.popUpIsVisible = !MVO.popUpIsVisible
                     MVO.anchorsAreVisible = !MVO.anchorsAreVisible
                     self.MVO.toggleMenuWindow()
-                   
+                    delayThenMain(1, mainBlock: {
+                        if MVO.anchorsAreVisible {
+                            MVO.listenForSettings()
+                        } else {
+                            MVO.cancel = Set<AnyCancellable>()
+                        }
+                    })
                 }
             )
             .simultaneously(with: LongPressGesture(minimumDuration: 0.4)
                 .onEnded { _ in
                     print("Long Press")
                     MVO.showDeleteAlert = true
-                   
                 }
             )
         

@@ -221,7 +221,7 @@ public class UserTools: UserToolsObservable {
         do {
             try Auth.auth().signOut()
             UserTools.setisLoggedIn(false)
-            clearUserDefaults()
+            UserTools.clearUserDefaults()
             sendAuthChangeNotification()
             completion?(true, nil)
         } catch let signOutError as NSError {
@@ -229,7 +229,7 @@ public class UserTools: UserToolsObservable {
         }
     }
     
-    public static func signUp(email: String, password: String, onError: @escaping (any Error) -> Void, onComplete: @escaping (FirebaseAuth.User) -> Void) {
+    public static func signUp(email: String, password: String, username: String? = nil, onError: @escaping (any Error) -> Void, onComplete: @escaping (FirebaseAuth.User) -> Void) {
         
         Auth.auth().createUser(withEmail: email, password: password) { result, error in
             
@@ -240,7 +240,7 @@ public class UserTools: UserToolsObservable {
                 // Successfully signed up
                 if let user = result?.user {
                     UserTools.setisLoggedIn(true)
-                    UserTools.saveUserToRealm(fireUser: user)
+                    UserTools.saveUserToRealm(fireUser: user, username: username)
                     let changeRequest = user.createProfileChangeRequest()
                     changeRequest.displayName = user.displayName ?? ""
                     changeRequest.commitChanges { error in
@@ -276,12 +276,15 @@ public class UserTools: UserToolsObservable {
         }
     }
     
-    public static func saveUserToRealm(fireUser: FirebaseAuth.User) {
+    public static func saveUserToRealm(fireUser: FirebaseAuth.User, username: String? = nil) {
         let newUser = CoreUser()
         newUser.id = fireUser.uid
         setCurrentUserId(fireUser.uid)
         newUser.name = fireUser.displayName ?? ""
         newUser.email = fireUser.email ?? ""
+        if let un = username {
+            newUser.userName = un
+        }
         newRealm().safeWrite { r in
             r.create(CoreUser.self, value: newUser, update: .all)
             r.refresh()
@@ -303,7 +306,7 @@ public class UserTools: UserToolsObservable {
         }
     }
     
-    public static func ifUserDoesNotExistThenCreateOne(fireUser: FirebaseAuth.User) {
+    public static func ifUserDoesNotExistThenCreateOne(fireUser: FirebaseAuth.User, username: String? = nil) {
         var createUser = true
         var user: CoreUser? = nil
         if let u = newRealm().findByField(CoreUser.self, value: UserTools.currentUserId) {
@@ -317,6 +320,9 @@ public class UserTools: UserToolsObservable {
             newUser.email = fireUser.email ?? ""
             newUser.name = fireUser.displayName ?? "new"
             newUser.auth = "new"
+            if let un = username {
+                newUser.userName = un
+            }
             newRealm().safeWrite { r in
                 r.create(CoreUser.self, value: newUser, update: .all)
             }

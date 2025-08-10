@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import Combine
+import CoreEngine
 
 class GlobalPositioningSystem: ObservableObject {
     // Properties to store screen size and safe area insets
@@ -34,14 +35,17 @@ class GlobalPositioningSystem: ObservableObject {
                 }
             }
         }
-//        if let window = UIApplication.shared.windows.first {
-//            DispatchQueue.main.async {
-//                self.screenSize = window.frame.size
-//                let uiInsets = window.safeAreaInsets
-//                self.safeAreaInsets = EdgeInsets(top: uiInsets.top, leading: uiInsets.left, bottom: uiInsets.bottom, trailing: uiInsets.right)
-//            }
-//        }
     }
+    
+    var availableScreenRect: CGRect {
+        CGRect(
+            x: safeAreaInsets.leading + screenPaddingX,
+            y: safeAreaInsets.top + screenPaddingY,
+            width: screenSize.width - safeAreaInsets.leading - safeAreaInsets.trailing - (screenPaddingX * 2),
+            height: screenSize.height - safeAreaInsets.top - safeAreaInsets.bottom - (screenPaddingY * 2)
+        )
+    }
+
 
     // Function to get coordinates for specified area
     func getCoordinate(for area: ScreenArea) -> CGPoint {
@@ -109,29 +113,62 @@ enum ScreenArea {
     case center, topRight, topLeft, bottomRight, bottomLeft, bottomCenter, topCenter
 }
 
-struct GlobalPositioningZStack<Content: View>: View {
-    let content: (GeometryProxy, GlobalPositioningSystem) -> Content
-
-    init(@ViewBuilder content: @escaping (GeometryProxy, GlobalPositioningSystem) -> Content) {
-        self.content = content
+extension CGRect {
+    func locked(to bounds: CGRect) -> CGRect {
+        var newRect = self
+        if newRect.minX < bounds.minX { newRect.origin.x = bounds.minX }
+        if newRect.maxX > bounds.maxX { newRect.origin.x = bounds.maxX - newRect.width }
+        if newRect.minY < bounds.minY { newRect.origin.y = bounds.minY }
+        if newRect.maxY > bounds.maxY { newRect.origin.y = bounds.maxY - newRect.height }
+        return newRect
     }
-
-    @State var gps = GlobalPositioningSystem()
     
-    var body: some View {
-        GeometryReader { geometry in
-            content(geometry, gps)
-        }.frame(maxWidth: gps.screenSize.width, maxHeight: gps.screenSize.height)
-            .ignoresSafeArea(.all)
-            .background(Color.clear)
+    func isCompletelyWithin(_ bounds: CGRect) -> Bool {
+       return bounds.contains(self)
     }
+   func isPartiallyWithin(_ bounds: CGRect) -> Bool {
+       return self.intersects(bounds)
+   }
 }
+struct LockToScreenModifier: ViewModifier {
+    @ObservedObject var gps: GlobalPositioningSystem
+    @Binding var position: CGPoint
+    var size: CGSize
 
-struct GlobalPositioningZStack_Previews: PreviewProvider {
-    static var previews: some View {
-        GlobalPositioningZStack { geo, gps in
-            Text("Heyyyyy")
-                .position(x: gps.getCoordinate(for: .topRight).x, y: gps.getCoordinate(for: .topRight).y)
-        }
+    func body(content: Content) -> some View {
+        content
+            .position(position)
+            .onChange(of: position) { newValue in
+                // Clamp position if moved out of bounds
+                let frame = CGRect(origin: CGPoint(x: newValue.x - size.width/2, y: newValue.y - size.height/2), size: size)
+                let lockedFrame = frame.locked(to: gps.availableScreenRect)
+                let center = CGPoint(x: lockedFrame.midX, y: lockedFrame.midY)
+                if center != position {
+                    DispatchQueue.main.async {
+                        self.position = center
+                        
+                        
+                    }
+                }
+            }
     }
 }
+//
+//struct GlobalPositioningZStack<Content: View>: View {
+//    let content: (GeometryProxy, GlobalPositioningSystem) -> Content
+//
+//    init(@ViewBuilder content: @escaping (GeometryProxy, GlobalPositioningSystem) -> Content) {
+//        self.content = content
+//    }
+//
+//    @State var gps = GlobalPositioningSystem()
+//    
+//    var body: some View {
+//        GeometryReader { geometry in
+//            content(geometry, gps)
+//        }.frame(maxWidth: gps.screenSize.width, maxHeight: gps.screenSize.height)
+//            .ignoresSafeArea(.all)
+//            .background(Color.clear)
+//    }
+//}
+//

@@ -36,6 +36,11 @@ struct BoardEngine: View {
                  // Board Tools
                 MVEngine.Display(reset: self.$resetTools)
                 
+                PoolBallManagedView(viewId: "test", activityId: self.BEO.currentActivityId, ballType: .eightBall)
+                
+                PoolBallManagedView(viewId: "test1", activityId: self.BEO.currentActivityId, ballType: .solid1)
+                PoolBallManagedView(viewId: "test2", activityId: self.BEO.currentActivityId, ballType: .stripe9)
+                
                  // Temporary line being drawn
                  if self.BEO.isDraw {
                      if drawingStartPoint != .zero {

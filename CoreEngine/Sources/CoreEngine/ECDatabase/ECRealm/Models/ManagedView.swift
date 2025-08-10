@@ -22,16 +22,17 @@ public class ManagedView: Object, ObjectKeyIdentifiable {
     @Persisted public var sport: String = "tool"
     @Persisted public var toolType: String = "shape"
     @Persisted public var subToolType: String = "square"
-    @Persisted public var toolColor: String = "TOOLCOLOR.BLACK.name"  // Assuming it's a string representation
-    @Persisted public var toolSize: String = "TOOLSIZE.MEDIUM.name"  // Assuming it's a string representation
+    @Persisted public var toolColor: String = ""  // Assuming it's a string representation
+    @Persisted public var toolSize: String = "500.0"  // Assuming it's a string representation
     @Persisted public var x: Double = 0.0
     @Persisted public var y: Double = 0.0
-    @Persisted public var startX: Double = 100.0
-    @Persisted public var startY: Double = 100.0
-    @Persisted public var centerX: Double = 200.0
-    @Persisted public var centerY: Double = 200.0
-    @Persisted public var endX: Double = 300.0
-    @Persisted public var endY: Double = 300.0
+    @Persisted public var startX: Double = 0.0
+    @Persisted public var startY: Double = 0.0
+    @Persisted public var centerX: Double = 0.0
+    @Persisted public var centerY: Double = 0.0
+    @Persisted public var endX: Double = 0.0
+    @Persisted public var endY: Double = 0.0
+    @Persisted public var radius: Double = 0.0
     @Persisted public var width: Int = 100
     @Persisted public var height: Int = 100
     @Persisted public var rotation: Double = 0.0
@@ -41,12 +42,24 @@ public class ManagedView: Object, ObjectKeyIdentifiable {
     @Persisted public var lastUserId: String = "me"
     @Persisted public var isLocked: Bool = false
     @Persisted public var isDeleted: Bool = false
+    @Persisted public var isNew: Bool = true
     @Persisted public var headIsEnabled: Bool = true
     
     @Persisted public var colorRed: Double = 48.0
     @Persisted public var colorGreen: Double = 128.0
     @Persisted public var colorBlue: Double = 20.0
     @Persisted public var colorAlpha: Double = 0.75
+    
+    func areAllAttributesZero() -> Bool {
+        return x == 0.0 &&
+               y == 0.0 &&
+               startX == 0.0 &&
+               startY == 0.0 &&
+               centerX == 0.0 &&
+               centerY == 0.0 &&
+               endX == 0.0 &&
+               endY == 0.0
+    }
 }
 
 public class ManagedViewAction: Object, ObjectKeyIdentifiable {

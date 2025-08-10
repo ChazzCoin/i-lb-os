@@ -40,7 +40,7 @@ public class NavViewFactory {
     }
     
     // Returns a navigation controller loaded with views based on the sport and subType.
-    public func navView(viewId: String, activityId: String) -> NavWindowController {
+    @MainActor public func navView(viewId: String, activityId: String) -> NavWindowController {
         let managedView = managedViewPair(viewId: viewId, activityId: activityId)
         return NavWindowController().preLoad(window: managedView)
     }

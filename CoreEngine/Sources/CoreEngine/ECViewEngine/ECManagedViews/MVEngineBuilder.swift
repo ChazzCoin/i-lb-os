@@ -85,6 +85,7 @@ public extension CoreName {
         public static func buildToolView(_ toolType: Tool, viewId: String, activityId: String) -> some View {
             switch toolType {
                 case .soccer(let soccerTool): soccerTool.Build(viewId: viewId, activityId: activityId)
+                case .pool(let poolTool): poolTool.Build(viewId: viewId, activityId: activityId)
                 default: EmptyText()
             }
         }
@@ -94,6 +95,7 @@ public extension CoreName {
                 case "general": ViewEngine.Tool.GeneralTool.Build(name: subtype, viewId: viewId, activityId: activityId)
                 case "shape": ViewEngine.Tool.ShapeTool.Build(name: subtype, viewId: viewId, activityId: activityId)
                 case "soccer": ViewEngine.Tool.SoccerTool.Build(name: subtype, viewId: viewId, activityId: activityId)
+                case "pool": ViewEngine.Tool.PoolBallTool.Build(name: subtype, viewId: viewId, activityId: activityId)
                 default: EmptyText()
             }
         }
@@ -102,6 +104,7 @@ public extension CoreName {
             case general(GeneralTool)
             case shape(ShapeTool)
             case soccer(SoccerTool)
+            case pool(PoolBallTool)
             
 //            @ViewBuilder
 //            public static func BuildTool(subtype: String) -> some View {
@@ -215,6 +218,81 @@ public extension CoreName {
                 }
             }
             
+            public enum PoolBallTool: String, ToolCategory {
+                
+                case solid1 = "1"
+                case solid2 = "2"
+                case solid3 = "3"
+                case solid4 = "4"
+                case solid5 = "5"
+                case solid6 = "6"
+                case solid7 = "7"
+                case stripe9 = "9"
+                case stripe10 = "10"
+                case stripe11 = "11"
+                case stripe12 = "12"
+                case stripe13 = "13"
+                case stripe14 = "14"
+                case stripe15 = "15"
+                case eightBall = "8"
+                case que = "0"
+                public var id: String { self.rawValue }
+                public var name: String { rawValue }
+                
+                public var genre: String { "tool" }
+                public var type: String { "pool" }
+                
+                public var displayName: String {
+                    self.rawValue.split(separator: "_").map { "\($0)".capitalized }.joined(separator: " ").substring(from: 5)
+                }
+                public func BuildIcon() -> AnyView {
+                    AnyView(PoolBallIcon(ballType: self))//.frame(width: 30, height: 30)
+                }
+                public func Build(viewId: String, activityId: String) -> AnyView {
+                    AnyView(ManagedViewTool(viewId: viewId, activityId: activityId) {
+                        Image(self.name).resizable()
+                    })
+                }
+                public static func Build(name: String, viewId: String, activityId: String) -> AnyView {
+                    AnyView(ManagedViewTool(viewId: viewId, activityId: activityId) {
+                        Image(name).resizable()
+                    })
+                }
+                public func toArray() -> [any ToolCategory] {
+                    Array(PoolBallTool.allCases)
+                }
+                
+                public var color: SwiftUI.Color {
+                    switch self {
+                        case .que: return .white
+                        case .solid1, .stripe9:
+                            return .yellow
+                        case .solid2, .stripe10:
+                            return .blue
+                        case .solid3, .stripe11:
+                            return .red
+                        case .solid4, .stripe12:
+                            return .purple
+                        case .solid5, .stripe13:
+                            return .orange
+                        case .solid6, .stripe14:
+                            return .green
+                        case .solid7, .stripe15:
+                            return .purple.opacity(0.75)
+                        case .eightBall:
+                            return .black
+                    }
+                }
+                
+                public var number: Int {
+                    return Int(self.rawValue) ?? 0
+                }
+                
+                public var stripeColor: SwiftUI.Color {
+                    return self.number > 8 ? .white : .clear
+                }
+            }
+            
             public enum GeneralTool: String, ToolCategory {
                 
                 case airplane = "airplane"
@@ -265,6 +343,7 @@ public extension CoreName {
                 case squareAndArrowUp = "square.and.arrow.up"
                 case trash = "trash"
                 case wifi = "wifi"
+                case message = "message"
                 case wrench = "wrench"
                 case xmark = "xmark"
                 case app = "app"

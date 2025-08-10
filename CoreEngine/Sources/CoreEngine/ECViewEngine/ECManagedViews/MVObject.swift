@@ -57,6 +57,7 @@ public func boundingRect(start: CGPoint, end: CGPoint) -> CGRect {
 public class ManagedViewObject: ObservableObject {
     
     public init() {}
+    @Published public var isNew: Bool = false
     
     @Published public var lifeViewId: String = ""
     @Published public var lifeActivityId: String = ""
@@ -93,6 +94,7 @@ public class ManagedViewObject: ObservableObject {
     @Published public var lifeWidthTouch = 300.0
     @Published public var lifeHeightTouch = 300.0
     
+    @Published public var lifeToolSize: Double = 500.0
     @Published public var lifeWidth: Double = 10.0
     @Published public var lifeHeight = 75.0
     @Published public var lifeColor = Color.red
@@ -139,12 +141,14 @@ public class ManagedViewObject: ObservableObject {
     @Published public var firebaseNotificationToken: NotificationToken? = nil
     
     @Published public var hasBeenRetried = false
+    @Published public var toolType: ViewEngine.Tool.ShapeTool = .line_straight
     
     @MainActor
-    public func initializeWithViewId(viewId: String, activityId: String="") {
+    public func initializeWithViewId(viewId: String, activityId: String="", toolType: ViewEngine.Tool.ShapeTool = .line_straight) {
         main {
             self.lifeViewId = viewId
             self.lifeActivityId = activityId
+            self.toolType = toolType
             self.loadFromRealm()
             self.observeFromRealm()
             self.receiveOnSessionChange()
@@ -186,11 +190,13 @@ public class ManagedViewObject: ObservableObject {
             if action == WindowAction.open {
                 if self.anchorsAreVisible {
                     self.anchorsAreVisible = false
+                    self.popUpIsVisible = false
                 }
             }
             else if action == WindowAction.close {
                 if self.anchorsAreVisible {
                     self.anchorsAreVisible = false
+                    self.popUpIsVisible = false
                 }
             }
             else if action == WindowAction.toggle {
@@ -347,20 +353,65 @@ public class ManagedViewObject: ObservableObject {
             self.lifeLastUserId = umv.lastUserId
             self.isDeleted = umv.isDeleted
             
-            self.position = CGPoint(x: umv.x, y: umv.y)
-            self.lifeX = umv.x
-            self.lifeY = umv.y
-            self.lifeStartX = umv.startX
-            self.lifeStartY = umv.startY
-            self.lifeCenterX = umv.centerX
-            self.lifeCenterY = umv.centerY
-            self.lifeEndX = umv.endX
-            self.lifeEndY = umv.endY
-            
             self.lifeWidth = Double(umv.width)
             self.lifeHeight = Double(umv.height)
             self.lifeRotation = Angle(degrees: umv.rotation)
             
+            if umv.areAllAttributesZero() {
+                switch self.toolType {
+                    case .line_straight:
+                        self.lifeStartX = 0.0
+                        self.lifeStartY = 0.0
+                        self.lifeEndX = 500.0
+                        self.lifeEndY = 0.0
+                    case .line_curved:
+                        self.lifeStartX = 0.0
+                        self.lifeStartY = 0.0
+                        self.lifeEndX = 500.0
+                        self.lifeEndY = 0.0
+                    case .square:
+                        self.lifeX = 0.0
+                        self.lifeY = 0.0
+                        self.lifeCenterX = 500.0
+                        self.lifeCenterY = -500.0
+                        self.lifeStartX = 500.0
+                        self.lifeStartY = 0.0
+                        self.lifeEndX = 0.0
+                        self.lifeEndY = -500.0
+                    case .triangle:
+                        self.lifeX = 250.0
+                        self.lifeY = 0.0
+                        self.lifeStartX = 500.0
+                        self.lifeStartY = -500.0
+                        self.lifeCenterX = 0.0
+                        self.lifeCenterY = -500.0
+                    case .circle:
+                        self.lifeToolSize = 1000.0
+                        self.lifeWidth = 200.0
+                        self.position = CGPoint(x: 500.0, y: 0.0)
+                    default:
+                        self.position = CGPoint(x: umv.x, y: umv.y)
+                        self.lifeX = umv.x
+                        self.lifeY = umv.y
+                        self.lifeStartX = umv.startX
+                        self.lifeStartY = umv.startY
+                        self.lifeCenterX = umv.centerX
+                        self.lifeCenterY = umv.centerY
+                        self.lifeEndX = umv.endX
+                        self.lifeEndY = umv.endY
+                }
+            } else {
+                self.position = CGPoint(x: umv.x, y: umv.y)
+                self.lifeX = umv.x
+                self.lifeY = umv.y
+                self.lifeStartX = umv.startX
+                self.lifeStartY = umv.startY
+                self.lifeCenterX = umv.centerX
+                self.lifeCenterY = umv.centerY
+                self.lifeEndX = umv.endX
+                self.lifeEndY = umv.endY
+            }
+        
             self.lifeLineDash = Double(umv.lineDash)
             self.lifeHeadIsEnabled = umv.headIsEnabled
             
@@ -376,13 +427,15 @@ public class ManagedViewObject: ObservableObject {
                 self.loadWidthAndHeight()
                 self.loadRotationOfLine()
             }
-            // -> Handle?
-            if self.lifeToolType == "general" || self.lifeToolType == "soccer" {
-                self.minSizeCheck()
-            }
+//            // -> Handle?
+//            if self.lifeToolType == "general" || self.lifeToolType == "soccer" {
+//                self.minSizeCheck()
+//            }
+            self.isNew = false
         } else {
             if self.hasBeenRetried { return }
             self.hasBeenRetried = true
+            self.isNew = true
             ManagedViewEngine.createNewTool(viewId: lifeViewId, activityId: lifeActivityId, toolType: lifeToolType, subToolType: lifeToolType, sport: "")
             delayThenMain(1, mainBlock: { self.loadFromRealm() })
         }
@@ -434,6 +487,7 @@ public class ManagedViewObject: ObservableObject {
                 if self.lifeToolType != temp.toolType { self.lifeToolType = temp.toolType }
                 
                 // Adding withAnimation here just doesn't flow right. Didn't like it.
+                if self.lifeToolSize != Double(temp.toolSize) { self.lifeToolSize = Double(temp.toolSize) ?? 500.0 }
                 if self.lifeWidth != Double(temp.width) { self.lifeWidth = Double(temp.width) }
                 if self.lifeHeight != Double(temp.height) { self.lifeHeight = Double(temp.height) }
                 
@@ -455,7 +509,7 @@ public class ManagedViewObject: ObservableObject {
                 if self.lifeIsLocked != temp.isLocked { self.lifeIsLocked = temp.isLocked }
                 self.lifeLastUserId = temp.lastUserId
                 self.isDeleted = temp.isDeleted
-                self.minSizeCheck()
+//                self.minSizeCheck()
             }
         }
         
@@ -488,13 +542,14 @@ public class ManagedViewObject: ObservableObject {
                 mv.isLocked = self.isDragging ? true : self.lifeIsLocked
                 mv.isDeleted = self.isDeleted
                 mv.toolType = self.lifeToolType
+                mv.toolSize = String(self.lifeToolSize)
                 mv.width = Int(self.lifeWidth)
                 mv.height = Int(self.lifeHeight)
                 mv.rotation = self.lifeRotation.degrees
                 mv.lineDash = Int(self.lifeLineDash)
                 mv.lastUserId = self.currentUserId
                 mv.headIsEnabled = self.lifeHeadIsEnabled
-                self.updateFirebase(mv: mv)
+//                self.updateFirebase(mv: mv)
 //                self.saveSnapshotToHistoryInRealm()
                 r.refresh()
                 print("Updated Realm -> \(mv.x), \(mv.y)")
@@ -502,30 +557,27 @@ public class ManagedViewObject: ObservableObject {
         }
         
     }
-    
-//    public func updateRealmPos(x:Double?=nil, y:Double?=nil) {
-//        DispatchQueue.global(qos: .background).async {
-//            autoreleasepool {
-//                do {
-//                    let realm = try Realm()
-//                    if let mv = realm.findByField(ManagedView.self, value: self.lifeViewId) {
-//                        try realm.write {
-//                            mv.x = x ?? self.position.x
-//                            mv.y = y ?? self.position.y
-//                            mv.startX = x ?? self.position.x
-//                            mv.startY = y ?? self.position.y
-//                            mv.lastUserId = self.currentUserId
-//                            realm.refresh()
-//                            print("Updated Realm with new POS! 1 -> \(mv.x), \(mv.y)")
-//                        }
+    public func updateRealmPosition() {
+        DispatchQueue.global(qos: .background).async {
+            autoreleasepool {
+                do {
+                    let realm = try Realm()
+                    if let mv = realm.findByField(ManagedView.self, value: self.lifeViewId) {
+                        try realm.write {
+                            mv.x = self.position.x
+                            mv.y = self.position.y
+                            mv.lastUserId = self.currentUserId
+                            realm.refresh()
+                            print("Updated Realm with new POS! 2 -> \(mv.x), \(mv.y)")
+                        }
 //                        self.updateFirebase(mv: mv)
-//                    }
-//                } catch {
-//                    print("Realm error: \(error)")
-//                }
-//            }
-//        }
-//    }
+                    }
+                } catch {
+                    print("Realm error: \(error)")
+                }
+            }
+        }
+    }
     public func updateRealmPos(start: CGPoint? = nil, end: CGPoint? = nil) {
         DispatchQueue.global(qos: .background).async {
             autoreleasepool {
@@ -545,7 +597,7 @@ public class ManagedViewObject: ObservableObject {
                             realm.refresh()
                             print("Updated Realm with new POS! 2 -> \(mv.x), \(mv.y)")
                         }
-                        self.updateFirebase(mv: mv)
+//                        self.updateFirebase(mv: mv)
                     }
                 } catch {
                     print("Realm error: \(error)")
@@ -627,48 +679,6 @@ public class ManagedViewObject: ObservableObject {
         }
     }
     
-    // History
-    public func saveSnapshotToHistoryInRealm() {
-        DispatchQueue.global(qos: .background).async {
-            autoreleasepool {
-                do {
-                    let history = ManagedViewAction()
-                    history.viewId = self.lifeViewId
-                    history.boardId = self.lifeActivityId
-                    history.x = self.position.x
-                    history.y = self.position.y
-                    
-                    history.startX = Double(self.lifeStartX)
-                    history.startY = Double(self.lifeStartY)
-                    history.centerX = Double(self.lifeCenterX)
-                    history.centerY = Double(self.lifeCenterY)
-                    history.endX = Double(self.lifeEndX)
-                    history.endY = Double(self.lifeEndY)
-                    
-                    history.rotation = self.lifeRotation.degrees
-                    history.toolType = self.lifeToolType
-                    history.width = Int(self.lifeWidth)
-                    history.height = Int(self.lifeWidth)
-                    
-                    history.lineDash = Int(self.lifeLineDash)
-                    if let lc = self.lifeColor.toRGBA() {
-                        history.colorRed = lc.red
-                        history.colorGreen = lc.green
-                        history.colorBlue = lc.blue
-                        history.colorAlpha = lc.alpha
-                    }
-                    history.isLocked = self.lifeIsLocked
-                    history.lastUserId = self.currentUserId
-                    let realm = try Realm()
-                    realm.safeWrite { r in
-                        r.create(ManagedViewAction.self, value: history, update: .all)
-                    }
-                    
-                } catch {
-                    print("Realm error: \(error)")
-                }
-            }
-        }
-    }
+    
     
 }
