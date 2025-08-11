@@ -55,7 +55,9 @@ struct BinauralSoundView: View {
     // Optional explicit room (else uses AppStorage)
     @EnvironmentObject public var USER: UserToolsObservable
     private let explicitRoomId: String?
-    @AppStorage("currentRoomId") private var storedRoomId: String = ""
+//    @AppStorage("currentRoomId") private var currentRoomId: String = ""
+//    @AppStorage("currentWidgetId") private var currentWidgetId: String = ""
+//    @AppStorage("currentSessionId") private var currentSessionId: String = ""
 
     @StateObject private var participantsVM = ParticipantsController()
     @StateObject private var vm: BinauralSoundViewModel
@@ -73,16 +75,7 @@ struct BinauralSoundView: View {
         _vm = StateObject(wrappedValue: BinauralSoundViewModel())
     }
 
-    // Computeds
-//    private var allParticipantsReady: Bool {
-//        !vm.participants.isEmpty && vm.participants.values.allSatisfy { $0 }
-//    }
-//    private var canPlay: Bool { vm.isReady && allParticipantsReady }
-//    private var selfJoined: Bool { vm.participants.keys.contains(vm.currentUserId) }
-//    private var selfReady: Bool { vm.participants[vm.currentUserId] == true }
-
     var body: some View {
-        let roomId = explicitRoomId ?? storedRoomId
 
         ScrollView {
             VStack(spacing: 24) {
@@ -94,13 +87,16 @@ struct BinauralSoundView: View {
                         .foregroundColor(.accentColor)
                         .padding(.top)
                         .shadow(radius: 2)
-
-                    groupParticipationCard
+                    
+                    self.participantsVM.Display(isPlaying: vm.isPlaying)
+                    
+                    
+                    
                 }
                 .padding(.horizontal)
 
                 // Room + Preset controls
-                presetCard(roomId: roomId)
+                presetCard(roomId: USER.currentRoomId)
                     .padding(.horizontal)
 
                 // Controls Card
@@ -113,8 +109,10 @@ struct BinauralSoundView: View {
                         vm.prepareAudioBuffer()
                     } label: {
                         HStack {
-                            Image(systemName:"arrow.down.circle.dotted").font(.system(size: 40))
-                            Text("Load It In").font(.title2.bold())
+                            Image(systemName:"arrow.down.circle.dotted")
+                                .font(.system(size: 40))
+                            Text("Load It In")
+                                .font(.title2.bold())
                         }
                         .foregroundColor(.white)
                         .padding()
@@ -195,17 +193,25 @@ struct BinauralSoundView: View {
             vm.restartFirebaseObservers()
             beatDelta = abs(vm.freqRight - vm.freqLeft)
             self.vm.setUserId(user: USER.currentUserId)
-            let roomId = self.USER.currentRoomId ?? "default-room"
-            let sessionId = vm.currentPresetId ?? "default-session"
-            participantsVM.start(roomId: roomId, sessionId: sessionId)
+            if self.USER.currentRoomId.isEmpty {
+                self.USER.currentRoomId = "Alicia"
+            }
+            if self.USER.currentWidgetId.isEmpty {
+                self.USER.currentWidgetId = "hemi-sync"
+            }
+            if self.USER.currentSessionId.isEmpty {
+                self.USER.currentSessionId = "default-session"
+            }
+            self.vm.currentPresetId = self.USER.currentSessionId
+            self.participantsVM.start(roomId: self.USER.currentRoomId, sessionId: self.USER.currentSessionId)
         }
         .onDisappear {
             participantsVM.stop()
         }
-        .onChange(of: storedRoomId) { newId in
-            guard explicitRoomId == nil else { return }
-            vm.roomId = newId
-        }
+//        .onChange(of: USER.currentRoomId) { newId in
+//            guard USER.currentRoomId == nil else { return }
+//            vm.roomId = newId
+//        }
     }
     private var selfJoined: Bool {
         participantsVM.participants[participantsVM.currentUserId] != nil
@@ -267,33 +273,40 @@ struct BinauralSoundView: View {
                 Spacer()
 
                 HStack(spacing: 6) {
+                    
                     Image(systemName: allParticipantsReady ? "checkmark.circle.fill" : "circle")
                         .foregroundColor(allParticipantsReady ? .green : .gray)
+                    
                     Text("\(participantsVM.ready)/\(participantsVM.total) ready")
-                        .font(.caption).monospacedDigit().foregroundStyle(.secondary)
+                        .font(.caption)
+                        .monospacedDigit()
+                        .foregroundStyle(.secondary)
                 }
             }
 
             Divider()
-
-            VStack(alignment: .leading, spacing: 8) {
-                if participantsVM.participants.isEmpty {
-                    Text("No participants yet.")
-                        .font(.subheadline).foregroundStyle(.secondary)
-                } else {
-                    ForEach(
-                        participantsVM.participants.values.sorted(by: { $0.userName < $1.userName }),
-                        id: \.userId
-                    ) { p in
-                        HStack {
-                            Image(systemName: p.isReady ? "checkmark.circle.fill" : "circle")
-                                .foregroundColor(p.isReady ? .green : .gray)
-                            Text(p.userId == participantsVM.currentUserId ? "You" : (p.userName.isEmpty ? "User \(p.userId.prefix(6))" : p.userName))
-                                .font(.subheadline)
+            if !self.participantsVM.hasChanged {
+                VStack(alignment: .leading, spacing: 8) {
+                    if participantsVM.participants.isEmpty {
+                        Text("No participants yet.")
+                            .font(.subheadline).foregroundStyle(.secondary)
+                    } else {
+                        ForEach(
+                            participantsVM.participants.values.sorted(by: { $0.userName < $1.userName }), id: \.userId
+                        ) { p in
+                            HStack {
+                                Image(systemName: p.isReady ? "checkmark.circle.fill" : "circle")
+                                    .foregroundColor(p.isReady ? .green : .gray)
+                                
+                                Text(p.userId == participantsVM.currentUserId ? "You:" : (p.userName.isEmpty ? "User: \(p.userId.prefix(6))" : p.userName))
+                                    .font(.subheadline)
+                            }
+                            
                         }
                     }
                 }
             }
+            
         }
         .padding()
         .background(RoundedRectangle(cornerRadius: 16).fill(Color(.secondarySystemBackground)))

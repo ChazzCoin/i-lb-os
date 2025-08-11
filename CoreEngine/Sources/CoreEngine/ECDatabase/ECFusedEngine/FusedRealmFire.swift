@@ -15,6 +15,8 @@ import SwiftUI
 public class FusedRealmFire<O:Object> : ObservableObject {
     
     @AppStorage("currentUserId", store: UserDefaults(suiteName: "worlds")) public var currentUserId: String = ""
+    @AppStorage("currentRoomId", store: UserDefaults(suiteName: "worlds")) public var currentRoomId: String = ""
+    @AppStorage("currentSessionId", store: UserDefaults(suiteName: "worlds")) public var currentSessionId: String = ""
     
     @Published public var childAddedHandler: DatabaseHandle? = nil
     @Published public var childChangedHandler: DatabaseHandle? = nil
@@ -25,6 +27,7 @@ public class FusedRealmFire<O:Object> : ObservableObject {
     @Published public var notificationToken: NotificationToken?
     @Published public var path: String = ""
     @Published public var lifeId: String = ""
+    @Published public var sessionId: String = ""
     
     @Published public var isDeleted: Bool = false
     @Published public var hasChanged: Bool = false
@@ -38,6 +41,19 @@ public class FusedRealmFire<O:Object> : ObservableObject {
         self.loadFromFirebase(onResult: { item in
             onLoad(item)
         })
+    }
+    
+    public func load(roomId: String, sessionId: String, path: String, onLoad: @escaping (O) -> Void) {
+        self.path = path
+        self.ref = self.ref.child(self.path).child(roomId).child(sessionId)
+        self.ref.child(self.path).child(roomId).child(sessionId).observe(.childAdded) { snapshot in
+            let obj = snapshot.toCoreObject(O.self)
+            if let obj = obj { onLoad(obj) }
+        }
+        self.ref.child(self.path).child(roomId).child(sessionId).observe(.childChanged) { snapshot in
+            let obj = snapshot.toCoreObject(O.self)
+            if let obj = obj { onLoad(obj) }
+        }
     }
     
     public func resetHasChanged() {
@@ -81,7 +97,7 @@ public class FusedRealmFire<O:Object> : ObservableObject {
     }
     
     public func childAdded(onAdded: ((O) -> Void)? = nil) {
-        childAddedHandler = ref.observe(.childAdded, with: { snapshot in
+        childAddedHandler = self.ref.observe(.childAdded, with: { snapshot in
             let obj = snapshot.toCoreObject(O.self, realm: self.realmInstance)
             if let obj = obj as? O {
                 let o = obj.toDict()
@@ -93,12 +109,23 @@ public class FusedRealmFire<O:Object> : ObservableObject {
     }
     
     public func childChanged(onChange: ((O) -> Void)? = nil) {
-        childChangedHandler = ref.observe(.value, with: { snapshot in
-            let obj = snapshot.toCoreObject(O.self, realm: self.realmInstance)
-            if let obj = obj as? O {
-                let o = obj.toDict()
-                if o["lastUpdatedBy"] as? String == self.currentUserId { return }
-                onChange?(obj)
+        childChangedHandler = self.ref.observe(.value, with: { snapshot in
+            let obj = snapshot.toCoreObjects(O.self, realm: self.realmInstance)
+            if obj == nil {
+                let obj = snapshot.toCoreObject(O.self, realm: self.realmInstance)
+                if let obj = obj {
+                    let o1 = obj.toDict()
+                    if o1["lastUpdatedBy"] as? String == self.currentUserId { return }
+                    onChange?(obj)
+                }
+                return
+            }
+            if let obj = obj {
+                for o in obj {
+                    let o1 = o.toDict()
+                    if o1["lastUpdatedBy"] as? String == self.currentUserId { return }
+                    onChange?(o)
+                }
             }
             
         })

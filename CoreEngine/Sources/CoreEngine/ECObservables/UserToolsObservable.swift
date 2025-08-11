@@ -20,6 +20,7 @@ public class UserToolsObservable : ObservableObject {
     
     @AppStorage("currentRoomId", store: UserDefaults(suiteName: "worlds")) public var currentRoomId: String = ""
     @AppStorage("currentChatId", store: UserDefaults(suiteName: "worlds")) public var currentChatId: String = ""
+    @AppStorage("currentWidgetId", store: UserDefaults(suiteName: "worlds")) public var currentWidgetId: String = ""
     
     @AppStorage("defaultSport", store: UserDefaults(suiteName: "worlds")) public var defaultSport: String = ""
     

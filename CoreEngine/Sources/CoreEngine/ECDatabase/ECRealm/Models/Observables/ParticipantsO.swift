@@ -23,12 +23,18 @@ public final class ParticipantsController: ObservableObject {
     @Published public private(set) var total: Int = 0
     @Published public private(set) var ready: Int = 0
     @Published public private(set) var allReady: Bool = false
-
+    
+    @Published public var hasChanged: Bool = false
+    @Published public var currentIsReady: Bool = false
     // Scope
     @AppStorage("currentUserId", store: UserDefaults(suiteName: "worlds")) public var currentUserId: String = ""
+    @AppStorage("currentRoomId", store: UserDefaults(suiteName: "worlds")) public var currentRoomId: String = ""
+    @AppStorage("currentWidgetId", store: UserDefaults(suiteName: "worlds")) public var currentWidgetId: String = ""
+    @AppStorage("currentSessionId", store: UserDefaults(suiteName: "worlds")) public var currentSessionId: String = ""
 
     public private(set) var roomId: String = ""
     public private(set) var sessionId: String = ""
+    let realmInstance = newRealm()
 
     // Realtime + Realm glue
     private let fused = FusedRealmFire<InteractionParticipant>()
@@ -36,22 +42,160 @@ public final class ParticipantsController: ObservableObject {
     private var nodeRef: DatabaseReference { baseRef.child(FirePaths.participants(roomId: roomId, sessionId: sessionId)) }
 
     public init() {}
+    public var selfJoined: Bool { self.participants[self.currentUserId] != nil }
+    public var selfReady: Bool { self.participants[self.currentUserId]?.isReady == true }
+    public var allParticipantsReady: Bool { self.allReady }
+    @ViewBuilder
+    public func Display(isPlaying: Bool) -> some View {
+        VStack(spacing: 12) {
+            HStack {
+                Text("Group Participation").font(.headline)
+                Spacer()
+                // Live status pill from your audio VM
+                Text(isPlaying ? "Live: Playing" : "Standby")
+                    .font(.caption2)
+                    .padding(.vertical, 4).padding(.horizontal, 8)
+                    .background(isPlaying ? Color.green.opacity(0.2) : Color.gray.opacity(0.2))
+                    .foregroundColor(isPlaying ? .green : .secondary)
+                    .clipShape(Capsule())
+            }
+
+            HStack {
+                VStack(spacing: 12) {
+                    Button {
+                        // Join this session’s participants list
+                        self.join(
+                            userName: generateRandomName(), // or your own name source
+                            widgetType: .binaural,
+                            widgetId: "binaural-default"
+                        )
+                    } label: {
+                        Label(self.selfJoined ? "Joined" : "Join Group", systemImage: "person.badge.plus")
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .disabled(self.selfJoined)
+
+                    if self.selfReady {
+                        Button {
+                            self.setReady(false)
+                        } label: {
+                            Label("Not Ready", systemImage: "xmark.seal")
+                        }
+                        .buttonStyle(.bordered)
+                    } else {
+                        Button {
+                            self.setReady(true)
+                        } label: {
+                            Label("Ready!", systemImage: "checkmark.seal")
+                        }
+                        .buttonStyle(.bordered)
+                        .disabled(!self.selfJoined)
+                    }
+
+                    
+                }
+                Spacer()
+
+                HStack(spacing: 6) {
+                    
+                    Image(systemName: self.allParticipantsReady ? "checkmark.circle.fill" : "circle")
+                        .foregroundColor(self.allParticipantsReady ? .green : .gray)
+                    
+                    Text("\(self.ready)/\(self.total) ready")
+                        .font(.caption)
+                        .monospacedDigit()
+                        .foregroundStyle(.secondary)
+                }
+            }
+            Divider()
+            if !self.hasChanged {
+                VStack(alignment: .leading, spacing: 8) {
+                    if self.participants.isEmpty {
+                        Text("No participants yet.")
+                            .font(.subheadline).foregroundStyle(.secondary)
+                    } else {
+                        ForEach(
+                            self.participants.values.sorted(by: { $0.userName < $1.userName }), id: \.userId
+                        ) { p in
+                            HStack {
+                                Image(systemName: p.isReady ? "checkmark.circle.fill" : "circle")
+                                    .foregroundColor(p.isReady ? .green : .gray)
+                                
+                                Text(p.userId == self.currentUserId ? "You:" : (p.userName.isEmpty ? "User: \(p.userId.prefix(6))" : p.userName))
+                                    .font(.subheadline)
+                            }
+                            
+                        }
+                    }
+                }
+            }
+            
+        }
+        .padding()
+        .background(RoundedRectangle(cornerRadius: 16).fill(Color(.secondarySystemBackground)))
+        .shadow(radius: 2)
+    }
+    
+    @MainActor
+    public func refresh() {
+        self.participants.removeAll()
+        self.participants = [:]
+        let temp = self.realmInstance
+            .objects(InteractionParticipant.self)
+            .filter { $0.roomId == self.roomId && $0.sessionId == self.sessionId }
+        print("Participant Count: \(temp.count)")
+        for p in temp {
+            self.participants[p.userId] = p
+        }
+    }
 
     // MARK: - Lifecycle
     public func start(roomId: String, sessionId: String) {
+        self.participants.removeAll()
+        self.recompute()
         self.roomId = roomId
-        self.sessionId = sessionId
-
-        // Point FusedRealmFire to the collection node
-        fused.setReference { ref in
-            ref.child(FirePaths.participants(roomId: roomId, sessionId: sessionId))
+        if self.roomId.isEmpty {
+            self.roomId = self.currentRoomId
         }
-
+        self.sessionId = sessionId
+        if self.sessionId.isEmpty {
+            self.sessionId = self.currentSessionId
+        }
+        
+        let path = DatabasePaths.participants.rawValue
+        fused.load(roomId: roomId, sessionId: sessionId, path: path, onLoad: { item in
+            if self.hasChanged { return }
+            self.hasChanged = true
+            delayThenMain(2, mainBlock: {
+                self.applyUpsert(item)
+                self.hasChanged = false
+            })
+        })
+        DispatchQueue.main.async {
+            self.refresh()
+        }
+    
         // Observe children for add/change/remove
         fused.observeFire(
-            onAdded: { [weak self] item in self?.applyUpsert(item) },
-            onChange: { [weak self] item in self?.applyUpsert(item) },
-            onDelete: { [weak self] item in self?.applyDelete(item) }
+            onAdded: { item in
+                if self.hasChanged { return }
+                self.hasChanged = true
+                delayThenMain(2, mainBlock: {
+                    self.applyUpsert(item)
+                    self.hasChanged = false
+                })
+            },
+            onChange: { item in
+                if self.hasChanged { return }
+                self.hasChanged = true
+                delayThenMain(2, mainBlock: {
+                    self.applyUpsert(item)
+                    self.hasChanged = false
+                })
+            },
+            onDelete: { [weak self]
+                item in self?.applyDelete(item)
+            }
         )
     }
 
@@ -101,8 +245,10 @@ public final class ParticipantsController: ObservableObject {
         ])
         // Optimistic local update
         if var local = participants[uid] {
-//            local.isReady = isReady
-//            local.updatedAt = getCurrentTimestamp()
+            newRealm().safeWrite { r in
+                local.isReady = isReady
+                local.updatedAt = getCurrentTimestamp()
+            }
             applyUpsert(local)
         }
     }
@@ -110,6 +256,7 @@ public final class ParticipantsController: ObservableObject {
     public func toggleReady(userId: String? = nil) {
         let uid = userId ?? currentUserId
         let newVal = !(participants[uid]?.isReady ?? false)
+        self.currentIsReady = newVal
         setReady(newVal, userId: uid)
     }
 
@@ -120,8 +267,10 @@ public final class ParticipantsController: ObservableObject {
             "updatedAt": getCurrentTimestamp()
         ])
         if var local = participants[uid] {
-//            local.isActive = active
-//            local.updatedAt = getCurrentTimestamp()
+            newRealm().safeWrite { r in
+                local.isActive = active
+                local.updatedAt = getCurrentTimestamp()
+            }
             applyUpsert(local)
         }
     }
@@ -133,8 +282,10 @@ public final class ParticipantsController: ObservableObject {
             "updatedAt": getCurrentTimestamp()
         ])
         if var local = participants[uid] {
-//            local.role = role
-//            local.updatedAt = getCurrentTimestamp()
+            newRealm().safeWrite { r in
+                local.role = role
+                local.updatedAt = getCurrentTimestamp()
+            }
             applyUpsert(local)
         }
     }
@@ -151,16 +302,32 @@ public final class ParticipantsController: ObservableObject {
     private func applyUpsert(_ p: DataSnapshot) {
         DispatchQueue.main.async {
             if let obj = p.toCoreObject(InteractionParticipant.self) {
-                self.participants[obj.userId] = obj
-                self.recompute()
+                self.refresh()
+                self.total = self.participants.values.filter { $0.isActive }.count
+                self.ready = self.participants.values.filter { $0.isActive && $0.isReady }.count
+                self.allReady = (self.total > 0 && self.ready == self.total)
+                if self.currentUserId == obj.userId {
+                    self.currentIsReady = obj.isReady
+                }
             }
            
         }
     }
     private func applyUpsert(_ p: InteractionParticipant) {
         DispatchQueue.main.async {
-            self.participants[p.userId] = p
-            self.recompute()
+            
+//            var temp = self.participants
+//            self.participants.removeAll()
+//            self.participants[p.userId] = p
+//            self.participants = temp
+            self.refresh()
+            self.total = self.participants.values.filter { $0.isActive }.count
+            self.ready = self.participants.values.filter { $0.isActive && $0.isReady }.count
+            self.allReady = (self.total > 0 && self.ready == self.total)
+            if self.currentUserId == p.userId {
+                self.currentIsReady = p.isReady
+            }
+            
            
         }
     }
@@ -176,8 +343,8 @@ public final class ParticipantsController: ObservableObject {
     }
 
     private func recompute() {
-        total = participants.values.filter { $0.isActive }.count
-        ready = participants.values.filter { $0.isActive && $0.isReady }.count
-        allReady = (total > 0 && ready == total)
+        self.total = self.participants.values.filter { $0.isActive }.count
+        self.ready = self.participants.values.filter { $0.isActive && $0.isReady }.count
+        self.allReady = (self.total > 0 && self.ready == self.total)
     }
 }

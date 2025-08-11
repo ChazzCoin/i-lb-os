@@ -39,7 +39,7 @@ public final class BinauralSoundViewModel: ObservableObject {
 
 
     // MARK: - Current preset
-    @Published public private(set) var currentPresetId: String?
+    @Published public var currentPresetId: String = ""
     @Published public var presetName: String = "Untitled Preset"
     @Published public var isUpdating: Bool = false
     // MARK: - Synth Params
@@ -308,10 +308,10 @@ public final class BinauralSoundViewModel: ObservableObject {
     }
 
     public func deleteCurrentForRoom() {
-        guard let id = currentPresetId else { return }
+//        guard let id = currentPresetId else { return }
         let realm = threadRealm()
         try? realm.write {
-            if let obj = realm.object(ofType: BinauralSound.self, forPrimaryKey: id),
+            if let obj = realm.object(ofType: BinauralSound.self, forPrimaryKey: currentPresetId),
                obj.roomId == roomId {
                 realm.delete(obj)
             }
