@@ -21,8 +21,9 @@ public struct MenuBarStatic: View {
         self.onClick = onClick
     }
 
-    @AppStorage("isLoggedIn") public var isLoggedIn: Bool = false
-    @AppStorage("guideModeIsEnabled") public var guideModeIsEnabled: Bool = false
+    @AppStorage("isLoggedIn", store: UserDefaults(suiteName: "worlds")) public var isLoggedIn: Bool = false
+    @AppStorage("currentUserId", store: UserDefaults(suiteName: "worlds")) public var currentUserId: String = ""
+    @AppStorage("guideModeIsEnabled", store: UserDefaults(suiteName: "worlds")) public var guideModeIsEnabled: Bool = false
     @State public var iconStates = Array(repeating: false, count: 11)
     @Environment(\.colorScheme) public var colorScheme
     @State public var isLocked = false
@@ -35,10 +36,11 @@ public struct MenuBarStatic: View {
         MenuBarProvider.info,
         MenuBarProvider.lock,
         MenuBarProvider.toolbox,
-        MenuBarProvider.boardSettings,
+        MenuBarProvider.buddyList,
 //        MenuBarProvider.navHome,
         MenuBarProvider.session,
         MenuBarProvider.home,
+        MenuBarProvider.chat,
         MenuBarProvider.profile
     ]
     
@@ -46,7 +48,7 @@ public struct MenuBarStatic: View {
         MenuBarProvider.info,
         MenuBarProvider.lock,
         MenuBarProvider.toolbox,
-        MenuBarProvider.boardSettings,
+        MenuBarProvider.buddyList,
 //        MenuBarProvider.navHome,
         MenuBarProvider.session,
         MenuBarProvider.home,
@@ -95,7 +97,7 @@ public struct MenuBarStatic: View {
         .background(Color.clear)
         .position(using: gps, at: .topLeft, offsetX: 50, offsetY: showIcons ? ((gps.screenSize.height - 60) / 2) : 50)
         .onChange(of: isLoggedIn, perform: { value in
-            if value {
+            if value || !self.currentUserId.isEmpty {
                 icons = iconsLoggedIn
             } else {
                 icons = iconsLoggedOut
@@ -105,7 +107,7 @@ public struct MenuBarStatic: View {
             animateIcons()
         })
         .onAppear() {
-            if UserTools.isLoggedIn {
+            if self.isLoggedIn || !self.currentUserId.isEmpty {
                 icons = iconsLoggedIn
             } else {
                 icons = iconsLoggedOut

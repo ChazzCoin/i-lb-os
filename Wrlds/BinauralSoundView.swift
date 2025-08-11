@@ -44,6 +44,10 @@ struct DeviceFullSize: ViewModifier {
     }
 }
 
+public func roundTo(_ value: Double, places: Int) -> Double {
+    var d = String(format: "%.\(places)f", value)
+    return Double(d) ?? 0.0
+}
 extension View {
     func deviceFullSize() -> some View {
         self.modifier(DeviceFullSize())
@@ -64,6 +68,8 @@ struct BinauralSoundView: View {
     @Environment(\.colorScheme) private var colorScheme
 
     // Precise control state (top-level)
+    @State private var fineTunedControl: Bool = false
+    @State private var saveControls: Bool = false
     @State private var beatLinkOn: Bool = true
     @State private var beatDelta: Double = 0
     @State private var snapL: Bool = false
@@ -88,16 +94,10 @@ struct BinauralSoundView: View {
                         .padding(.top)
                         .shadow(radius: 2)
                     
-                    self.participantsVM.Display(isPlaying: vm.isPlaying)
-                    
-                    
+                    self.participantsVM.Display()
                     
                 }
                 .padding(.horizontal)
-
-                // Room + Preset controls
-                presetCard(roomId: USER.currentRoomId)
-                    .padding(.horizontal)
 
                 // Controls Card
                 controlsCard
@@ -194,7 +194,7 @@ struct BinauralSoundView: View {
             beatDelta = abs(vm.freqRight - vm.freqLeft)
             self.vm.setUserId(user: USER.currentUserId)
             if self.USER.currentRoomId.isEmpty {
-                self.USER.currentRoomId = "Alicia"
+                self.USER.currentRoomId = "Demo"
             }
             if self.USER.currentWidgetId.isEmpty {
                 self.USER.currentWidgetId = "hemi-sync"
@@ -208,269 +208,94 @@ struct BinauralSoundView: View {
         .onDisappear {
             participantsVM.stop()
         }
-//        .onChange(of: USER.currentRoomId) { newId in
-//            guard USER.currentRoomId == nil else { return }
-//            vm.roomId = newId
-//        }
     }
-    private var selfJoined: Bool {
-        participantsVM.participants[participantsVM.currentUserId] != nil
-    }
-    private var selfReady: Bool {
-        participantsVM.participants[participantsVM.currentUserId]?.isReady == true
-    }
-    private var allParticipantsReady: Bool {
-        participantsVM.allReady
-    }
-
-    // MARK: - Subviews
-
-    private var groupParticipationCard: some View {
-        VStack(spacing: 12) {
-            HStack {
-                Text("Group Participation").font(.headline)
-                Spacer()
-                // Live status pill from your audio VM
-                Text(vm.isPlaying ? "Live: Playing" : "Standby")
-                    .font(.caption2)
-                    .padding(.vertical, 4).padding(.horizontal, 8)
-                    .background(vm.isPlaying ? Color.green.opacity(0.2) : Color.gray.opacity(0.2))
-                    .foregroundColor(vm.isPlaying ? .green : .secondary)
-                    .clipShape(Capsule())
-            }
-
-            HStack(spacing: 12) {
-                Button {
-                    // Join this session’s participants list
-                    participantsVM.join(
-                        userName: generateRandomName(), // or your own name source
-                        widgetType: .binaural,
-                        widgetId: vm.currentPresetId ?? "binaural-default"
-                    )
-                } label: {
-                    Label(selfJoined ? "Joined" : "Join Group", systemImage: "person.badge.plus")
-                }
-                .buttonStyle(.borderedProminent)
-                .disabled(selfJoined)
-
-                if selfReady {
-                    Button {
-                        participantsVM.setReady(false)
-                    } label: {
-                        Label("I'm Not Ready", systemImage: "xmark.seal")
-                    }
-                    .buttonStyle(.bordered)
-                } else {
-                    Button {
-                        participantsVM.setReady(true)
-                    } label: {
-                        Label("I'm Ready", systemImage: "checkmark.seal")
-                    }
-                    .buttonStyle(.bordered)
-                    .disabled(!selfJoined)
-                }
-
-                Spacer()
-
-                HStack(spacing: 6) {
-                    
-                    Image(systemName: allParticipantsReady ? "checkmark.circle.fill" : "circle")
-                        .foregroundColor(allParticipantsReady ? .green : .gray)
-                    
-                    Text("\(participantsVM.ready)/\(participantsVM.total) ready")
-                        .font(.caption)
-                        .monospacedDigit()
-                        .foregroundStyle(.secondary)
-                }
-            }
-
-            Divider()
-            if !self.participantsVM.hasChanged {
-                VStack(alignment: .leading, spacing: 8) {
-                    if participantsVM.participants.isEmpty {
-                        Text("No participants yet.")
-                            .font(.subheadline).foregroundStyle(.secondary)
-                    } else {
-                        ForEach(
-                            participantsVM.participants.values.sorted(by: { $0.userName < $1.userName }), id: \.userId
-                        ) { p in
-                            HStack {
-                                Image(systemName: p.isReady ? "checkmark.circle.fill" : "circle")
-                                    .foregroundColor(p.isReady ? .green : .gray)
-                                
-                                Text(p.userId == participantsVM.currentUserId ? "You:" : (p.userName.isEmpty ? "User: \(p.userId.prefix(6))" : p.userName))
-                                    .font(.subheadline)
-                            }
-                            
-                        }
-                    }
-                }
-            }
-            
-        }
-        .padding()
-        .background(RoundedRectangle(cornerRadius: 16).fill(Color(.secondarySystemBackground)))
-        .shadow(radius: 2)
-    }
-
 
     private func presetCard(roomId: String) -> some View {
         VStack(spacing: 12) {
+            CoreButton(title: "Save / Update (Room)", action: {vm.saveOrUpdateForRoom(name: vm.presetName)}, isEnabled: true)
             HStack {
-                Label("Room", systemImage: "rectangle.3.group.bubble.left")
-                Spacer()
-                Text(roomId.isEmpty ? "—" : roomId)
-                    .font(.callout.monospaced())
-                    .foregroundStyle(.secondary)
-            }
-
-            HStack {
-                Label("Preset Name", systemImage: "tag")
-                Spacer()
-                TextField("Untitled Preset", text: $vm.presetName)
-                    .textFieldStyle(.roundedBorder)
-                    .frame(maxWidth: 280)
-                    .disabled(!vm.isReady)
-            }
-
-            HStack(spacing: 12) {
-                Button("Save / Update (Room)") { vm.saveOrUpdateForRoom(name: vm.presetName) }
-                    .buttonStyle(.borderedProminent)
-                    .disabled(!vm.isReady)
-
-                Button("Load Latest") { vm.refreshData() }
-                    .buttonStyle(.bordered)
-
-                Button(role: .destructive) { vm.deleteCurrentForRoom() } label: { Text("Delete") }
-                    .buttonStyle(.bordered)
-                    .disabled(vm.currentPresetId == nil)
+                CoreButton(title: "Load Latest", action: {vm.refreshData()}, isEnabled: true)
+                CoreButton(title: "Delete", action: {vm.deleteCurrentForRoom()}, isEnabled: vm.currentPresetId.isEmpty)
             }
         }
         .padding()
         .background(RoundedRectangle(cornerRadius: 16).fill(Color(.secondarySystemBackground)))
         .shadow(radius: 2)
+        .padding()
     }
 
     private var controlsCard: some View {
         VStack(spacing: 16) {
-            // Hemi readout
-            HStack {
-                Label("Hemi-Sync", systemImage: "waveform.circle")
-                Spacer()
-                Text("\(Int(vm.hemiFreq)) Hz").monospacedDigit().foregroundStyle(.secondary)
-            }
 
-            // Left
-            PrecisionControl(
-                label: "Left Freq",
-                icon: "waveform.path.ecg",
-                value: Binding(
-                    get: { vm.freqLeft },
-                    set: { newVal in
-                        let v = Double(Int(max(newVal, 1)))
-                        if beatLinkOn { beatDelta = max(0, vm.freqRight - v) }
-                        vm.freqLeft = v
-                    }
-                ),
-                range: 1...1000,
-                coarseStep: 1,
-                fineStep: 1,
-                decimals: 2,
-                unit: "Hz",
-                disabled: !vm.isReady
-            )
-
-            // Right + Beat Link
-            VStack(spacing: 8) {
-                PrecisionControl(
-                    label: "Right Freq",
-                    icon: "waveform.path.ecg",
-                    value: Binding(
-                        get: { vm.freqRight },
-                        set: { newVal in
-                            let v = Double(Int(max(newVal, 1)))
-                            if beatLinkOn { beatDelta = max(0, v - vm.freqLeft) }
-                            vm.freqRight = v
-                        }
-                    ),
-                    range: 1...1000,
-                    coarseStep: 1,
-                    fineStep: 1,
-                    decimals: 2,
-                    unit: "Hz",
-                    disabled: !vm.isReady
-                )
-//
-//                HStack(spacing: 12) {
-//                    Toggle(isOn: $beatLinkOn) {
-//                        Label("Link Δ (beat)", systemImage: "link")
-//                    }
-//                    .toggleStyle(.switch)
-//                    .disabled(!vm.isReady)
-//
-//                    PrecisionControl(
-//                        label: "Δ",
-//                        icon: "waveform.badge.plus",
-//                        value: Binding(
-//                            get: { beatDelta },
-//                            set: { newDelta in
-//                                beatDelta = max(0, newDelta)
-//                                if beatLinkOn { vm.freqRight = vm.freqLeft + beatDelta }
-//                            }
-//                        ),
-//                        range: 0...1000,
-//                        coarseStep: 1,
-//                        fineStep: 1,
-//                        decimals: 2,
-//                        unit: "Hz",
-//                        disabled: !vm.isReady
-//                    )
-//
-//                    Spacer()
-//
-//                    VStack(alignment: .trailing, spacing: 2) {
-//                        Text("Beat: \(abs(vm.freqRight - vm.freqLeft), specifier: "%.0f") Hz")
-//                            .font(.caption).monospacedDigit().foregroundStyle(.secondary)
-//                        Text("Binaural: \(vm.freqLeft < vm.freqRight ? "R>L" : (vm.freqLeft > vm.freqRight ? "L>R" : "—"))")
-//                            .font(.caption2).foregroundStyle(.secondary)
-//                    }
-//                }
-//                .onChange(of: vm.freqLeft) { _ in if beatLinkOn { vm.freqRight = vm.freqLeft + beatDelta } }
-//                .onChange(of: vm.freqRight) { _ in beatDelta = max(0, abs(vm.freqRight - vm.freqLeft)) }
-            }
-
-            // Note snapping (optional manual apply)
-//            NoteSnapper(freq: $vm.freqLeft,  snapEnabled: $snapL, aRef: $aRef, disabled: !vm.isReady)
-//            NoteSnapper(freq: $vm.freqRight, snapEnabled: $snapR, aRef: $aRef, disabled: !vm.isReady)
-
-            // Duration
+            AlignmentHemiSyncPickerCompact(leftHz: $vm.freqLeft, rightHz: $vm.freqRight)
+            
             DurationField(seconds: $vm.duration, disabled: !vm.isReady)
+            DisclosureGroup(isExpanded: $fineTunedControl, content: {
+                VStack {
+                    // Left
+                    PrecisionControl(
+                        label: "Left Freq",
+                        icon: "waveform.path.ecg",
+                        value: Binding(
+                            get: { vm.freqLeft },
+                            set: { newVal in
+                                let rounded = (newVal * 100).rounded() / 100
+                                if beatLinkOn {
+                                    beatDelta = max(0, vm.freqRight - rounded)
+                                }
+                                vm.freqLeft = rounded
+                            }
+                        ),
+                        range: 1...1000,
+                        coarseStep: 0.1,
+                        fineStep: 0.01,
+                        decimals: 2,
+                        unit: "Hz",
+                        disabled: !vm.isReady
+                    )
 
-            // Sample Rate
-//            HStack {
-//                Label("Sample Rate", systemImage: "waveform")
-//                Spacer()
-//                Picker("", selection: $vm.sampleRate) {
-//                    Text("43,200").tag(43200.0)
-//                    Text("44,000").tag(44000.0)
-//                }
-//                .pickerStyle(.segmented)
-//                .frame(maxWidth: 280)
-//                .disabled(!vm.isReady)
-//            }
+                    PrecisionControl(
+                        label: "Right Freq",
+                        icon: "waveform.path.ecg",
+                        value: Binding(
+                            get: { vm.freqRight },
+                            set: { newVal in
+                                let rounded = (newVal * 100).rounded() / 100
+                                if beatLinkOn {
+                                    beatDelta = max(0, rounded - vm.freqLeft)
+                                }
+                                vm.freqRight = rounded
+                            }
+                        ),
+                        range: 1...1000,
+                        coarseStep: 0.1,
+                        fineStep: 0.01,
+                        decimals: 2,
+                        unit: "Hz",
+                        disabled: !vm.isReady
+                    )
 
-            // Fade
-//            PrecisionControl(
-//                label: "Fade Time",
-//                icon: "arrow.right.to.line",
-//                value: $vm.fadeTime,
-//                range: 0.05...60,
-//                coarseStep: 0.5,
-//                fineStep: 0.05,
-//                decimals: 2,
-//                unit: "s",
-//                disabled: !vm.isReady
-//            )
+                }
+            }, label: {
+                Label("Fine-Tune Frequencies", systemImage: "waveform.circle")
+            })
+            
+            DisclosureGroup(isExpanded: $saveControls, content: {
+                VStack(spacing: 12) {
+                    CoreButton(title: "Save / Update (Room)", action: {vm.saveOrUpdateForRoom(name: vm.presetName)}, isEnabled: true)
+                    HStack {
+                        CoreButton(title: "Load Latest", action: {vm.refreshData()}, isEnabled: true)
+                        CoreButton(title: "Delete", action: {vm.deleteCurrentForRoom()}, isEnabled: !vm.currentPresetId.isEmpty)
+                    }
+                }
+                .padding()
+                .background(RoundedRectangle(cornerRadius: 16).fill(Color(.secondarySystemBackground)))
+                .shadow(radius: 2)
+            }, label: {
+                Label("Save/Load/Update", systemImage: "waveform.circle")
+            })
+
+
         }
         .padding()
         .background(

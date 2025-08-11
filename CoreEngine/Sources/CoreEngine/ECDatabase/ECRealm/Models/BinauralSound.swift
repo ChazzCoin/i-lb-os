@@ -10,7 +10,7 @@ import RealmSwift
 import FirebaseDatabase
 
 public class BinauralSound: Object, ObjectKeyIdentifiable {
-    @Persisted(primaryKey: true) public var id: String = "Alicia"
+    @Persisted(primaryKey: true) public var id: String = "Demo"
     
     // Core Sound Parameters
     @Persisted public var roomId: String = ""

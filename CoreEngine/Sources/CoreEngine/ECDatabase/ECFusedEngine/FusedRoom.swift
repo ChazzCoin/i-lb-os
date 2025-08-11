@@ -14,16 +14,17 @@ import FirebaseDatabase
 public class FusedRoom : ObservableObject {
     
     @StateObject public var USER = UserToolsObservable()
-    @AppStorage("currentUserId") public var currentUserId: String = ""
-    @AppStorage("currentUserHandle") public var currentUserHandle: String = ""
-    @AppStorage("currentRoomId") public var currentRoomId: String = "Alicia"
+    @AppStorage("currentUserId", store: UserDefaults(suiteName: "worlds")) public var currentUserId: String = ""
+    @AppStorage("currentUserName", store: UserDefaults(suiteName: "worlds")) public var currentUserName: String = ""
+    @AppStorage("currentRoomId", store: UserDefaults(suiteName: "worlds")) public var currentRoomId: String = ""
+    @AppStorage("currentChatId", store: UserDefaults(suiteName: "worlds")) public var currentChatId: String = ""
     public func setCurrentRoomId(_ id: String?) {
         if let id = id {
-            UserDefaults.standard.set(id, forKey: "currentRoomId")
-            self.roomId = id
-            self.chatId = id
-            self.getRoomDetails()
-//            self.getAllUsers()
+            DispatchQueue.main.async {
+                self.currentRoomId = id
+                self.currentChatId = id
+                self.getRoomDetails()
+            }
         }
     }
     @ObservedResults(Room.self) public var allRooms
@@ -31,18 +32,17 @@ public class FusedRoom : ObservableObject {
     @ObservedResults(CoreUser.self) public var allUsers
     @ObservedResults(ChatMessage.self) public var allMessages
     
-    @Published public var roomId: String = ""
     @Published public var chatId: String = ""
 
     
     public var currentRoom: Results<Room> {
-        return allRooms.filter("id == %@", self.roomId)
+        return allRooms.filter("id == %@", self.currentRoomId)
     }
     public var inRoom: Results<UserInRoom> {
-        return allUsersInRooms.filter("roomId == %@", self.roomId)
+        return allUsersInRooms.filter("roomId == %@", self.currentRoomId)
     }
     public var inRoomUserIds: [String] {
-        return allUsersInRooms.filter("roomId == %@", self.roomId).compactMap({ $0.guestId })
+        return allUsersInRooms.filter("roomId == %@", self.currentRoomId).compactMap({ $0.guestId })
     }
     public var usersInRoom: Results<CoreUser> {
         return allUsers.filter("id IN %@", inRoomUserIds)
@@ -84,11 +84,10 @@ public class FusedRoom : ObservableObject {
                 self.roomStatus = room.status
                 self.roomHasBeenLoaded = true
             }
-            self.roomId = tempID
-            self.chatId = tempID
+            self.currentRoomId = tempID
+            self.currentChatId = tempID
         } else {
-            self.currentRoomId = "Alicia"
-            self.roomId = "Alicia"
+            self.currentRoomId = ""
         }
         
         self.joinRoom(enteredRoomId: self.currentRoomId, completion: {
@@ -122,8 +121,8 @@ public class FusedRoom : ObservableObject {
         self.updateUserInRoom(status: .out_of_room)
         stop() // Stop observers and Firebase listeners
         self.room = nil
-        self.roomId = ""
-        self.chatId = ""
+        self.currentRoomId = ""
+        self.currentChatId = ""
         self.roomTitle = ""
         self.roomOwner = ""
         self.roomStatus = ""
@@ -135,7 +134,7 @@ public class FusedRoom : ObservableObject {
 
     
     public func getRoomDetails() {
-        if let room = self.realmInstance.object(ofType: Room.self, forPrimaryKey: roomId) {
+        if let room = self.realmInstance.object(ofType: Room.self, forPrimaryKey: currentRoomId) {
             main {
                 self.room = room
                 self.roomTitle = room.title
@@ -241,27 +240,24 @@ public class FusedRoom : ObservableObject {
     public func refreshMessages() {
         // You could also make this a Results<ChatMessage> for reactivity!
         let results = realmInstance.objects(ChatMessage.self)
-            .filter("roomId == %@", self.roomId)
+            .filter("roomId == %@", self.currentRoomId)
             .sorted(byKeyPath: "timestamp", ascending: true)
         messages = Array(results)
     }
     
     public func attachFileToRoom(title: String, author: String, fileUrl: URL) {
         CoreFirebaseStorage.uploadDocument(title: title, author: author, fileUrl: fileUrl) { durl in
-            
-//            uploadStatus = durl != nil ? "Upload complete!" : "Upload failed."
-            // Optionally, reset pickedURL/songTitle/songArtist here
             self.sendMessage(text: "", uri: fileUrl)
         }
     }
 
     public func sendMessage(text: String, uri: URL?=nil, reaction: String?=nil, status: String?=nil) {
-        if !self.roomId.isEmpty {
+        if !self.currentRoomId.isEmpty {
             let msg = ChatMessage()
-            msg.chatId = self.roomId
-            msg.roomId =  self.roomId
+            msg.chatId = self.currentRoomId
+            msg.roomId =  self.currentRoomId
             msg.senderId = self.currentUserId
-            msg.senderName = self.currentUserHandle
+            msg.senderName = self.currentUserName
             msg.text = text
             msg.uri = uri?.absoluteString ?? ""
             msg.reaction = reaction ?? ""
@@ -272,23 +268,23 @@ public class FusedRoom : ObservableObject {
                 realm.create(ChatMessage.self, value: msg, update: .all)
             }
             let dmsg: [String: String?] = msg.toDict()
-            chatRef.child(self.roomId).childByAutoId().setValue(dmsg)
+            chatRef.child(self.currentRoomId).childByAutoId().setValue(dmsg)
         }
         
     }
     public func addUserToRoom(roomId: String) {
-        if !self.roomId.isEmpty {
+        if !self.currentRoomId.isEmpty {
             let inroom = UserInRoom()
-            inroom.roomId = self.roomId
+            inroom.roomId = self.currentRoomId
             inroom.guestId = self.currentUserId
-            inroom.guestName = self.currentUserHandle
+            inroom.guestName = self.currentUserName
             inroom.auth =  UserAuth.visitor.name
             inroom.status = RoomStatus.in_room.name
             FusedTools.fusedWriter { realm in
                 realm.create(UserInRoom.self, value: inroom, update: .all)
             }
             let dinroom = inroom.toDict()
-            userInRoomRef.child(self.roomId).child(inroom.guestId).setValue(dinroom)
+            userInRoomRef.child(self.currentRoomId).child(inroom.guestId).setValue(dinroom)
         }
         
     }
@@ -349,7 +345,7 @@ public extension FusedRoom {
     func enterOrCreateRoom(withId roomId: String, completion: ((_ didCreate: Bool, _ error: Error?) -> Void)? = nil) {
 //        self.roomId = roomId
 //        self.USER.currentRoomId = roomId
-        let roomRef = ref.child(self.currentRoomId)
+        let roomRef = ref.child(roomId)
         roomRef.observeSingleEvent(of: .value) { [weak self] snapshot, _ in
             guard let self = self else { return }
             if snapshot.exists() {
@@ -357,7 +353,7 @@ public extension FusedRoom {
                 // Room Already Exists
                 let obj = snapshot.toCoreObject(Room.self, realm: self.realmInstance)
                 self.room = obj
-                self.roomId = obj?.id ?? ""
+                self.currentRoomId = obj?.id ?? ""
                 self.getRoomDetails()
                 self.getUsersInRoom()
                 self.completeRoomEntry(roomId: roomId, didCreate: false, completion: completion)
@@ -373,7 +369,7 @@ public extension FusedRoom {
                     "dateCreated": getTimeStamp(),
                     "dateUpdated": getTimeStamp(),
                     "ownerId": self.currentUserId,
-                    "ownerName": self.currentUserHandle,
+                    "ownerName": self.currentUserName,
                     "status": "open",
                     "title": "Room \(roomId)",
                     "subTitle": "",
@@ -390,7 +386,7 @@ public extension FusedRoom {
                         completion?(false, error)
                         return
                     }
-                    self.roomId = roomId
+                    self.currentRoomId = roomId
                     self.getRoomDetails()
                     self.getUsersInRoom()
                     self.completeRoomEntry(roomId: roomId, didCreate: true, completion: completion)

@@ -52,6 +52,7 @@
 		FB5B5BF72E468E210042438B /* BinauralSoundViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5B5BF62E468E1B0042438B /* BinauralSoundViewModel.swift */; };
 		FB5B5BF92E468E3F0042438B /* BinauralSoundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5B5BF82E468E3E0042438B /* BinauralSoundView.swift */; };
 		FB5B5BFB2E4731860042438B /* Controllers.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5B5BFA2E4731700042438B /* Controllers.swift */; };
+		FB5B5BFD2E4A12F80042438B /* BinauralController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5B5BFC2E4A12EE0042438B /* BinauralController.swift */; };
 		FB65D2C92B7D5E2E00564C37 /* SessionProviders.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB65D2C82B7D5E2E00564C37 /* SessionProviders.swift */; };
 		FB65D2CB2B7DC16300564C37 /* SolPickers.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB65D2CA2B7DC16300564C37 /* SolPickers.swift */; };
 		FB829F0A2B36A83300FAC6E0 /* WrldsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB829F092B36A83300FAC6E0 /* WrldsApp.swift */; };
@@ -214,6 +215,7 @@
 		FB5B5BF62E468E1B0042438B /* BinauralSoundViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BinauralSoundViewModel.swift; sourceTree = "<group>"; };
 		FB5B5BF82E468E3E0042438B /* BinauralSoundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BinauralSoundView.swift; sourceTree = "<group>"; };
 		FB5B5BFA2E4731700042438B /* Controllers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Controllers.swift; sourceTree = "<group>"; };
+		FB5B5BFC2E4A12EE0042438B /* BinauralController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BinauralController.swift; sourceTree = "<group>"; };
 		FB65D2C82B7D5E2E00564C37 /* SessionProviders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionProviders.swift; sourceTree = "<group>"; };
 		FB65D2CA2B7DC16300564C37 /* SolPickers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolPickers.swift; sourceTree = "<group>"; };
 		FB6C5B4C2BCDF894001B7514 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -505,6 +507,7 @@
 		FB829F082B36A83300FAC6E0 /* Wrlds */ = {
 			isa = PBXGroup;
 			children = (
+				FB5B5BFC2E4A12EE0042438B /* BinauralController.swift */,
 				FB5B5BFA2E4731700042438B /* Controllers.swift */,
 				FB5B5BF82E468E3E0042438B /* BinauralSoundView.swift */,
 				FB5B5BF62E468E1B0042438B /* BinauralSoundViewModel.swift */,
@@ -1033,6 +1036,7 @@
 				FB5B5BFB2E4731860042438B /* Controllers.swift in Sources */,
 				FBFF5CED2BCE068900149A31 /* ARKitView.swift in Sources */,
 				FBDE4F682B4F7736007FE880 /* FireData.swift in Sources */,
+				FB5B5BFD2E4A12F80042438B /* BinauralController.swift in Sources */,
 				FBDE4F702B4FA831007FE880 /* RecordShapeView.swift in Sources */,
 				FB8819F92B464CA200C16198 /* RealmChangeListener.swift in Sources */,
 				FB881A002B464D9700C16198 /* TimeProvider.swift in Sources */,

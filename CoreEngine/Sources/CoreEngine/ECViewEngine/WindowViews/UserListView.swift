@@ -16,6 +16,7 @@ public struct UsersListView: View {
             .filter("roomId == %@", currentRoomId)
     }
 
+    public init() {}
     public var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(spacing: 8) {
@@ -61,10 +62,10 @@ public struct UsersListView: View {
     }
 }
 
-private struct UserCard: View {
-    let user: UserInRoom
+public struct UserCard: View {
+    public let user: UserInRoom
 
-    var body: some View {
+    public var body: some View {
         HStack(spacing: 12) {
             // Avatar: Use a placeholder if no avatar
             if let url = URL(string: user.guestId ?? ""), !(user.guestId ?? "")!.isEmpty {

@@ -142,6 +142,8 @@ public struct RoomWindowView: View {
     @State public var enteredRoomId = ""
     @State public var isLoading = false
     @State public var statusMsg: String?
+    
+//    public init() {}
 
     public var body: some View {
         VStack(spacing: 14) {
@@ -179,10 +181,10 @@ public struct RoomWindowView: View {
                 // In a room: Show room info & leave/switch
                 VStack(spacing: 8) {
                     Label("Room ID:", systemImage: "number")
-                    Text(fusedRoom.roomId)
+                    Text(fusedRoom.currentRoomId)
                         .font(.title2)
                         .bold()
-                    if let room = fusedRoom.realmInstance.object(ofType: Room.self, forPrimaryKey: fusedRoom.roomId) {
+                    if let room = fusedRoom.realmInstance.object(ofType: Room.self, forPrimaryKey: fusedRoom.currentRoomId) {
                         Text(room.title.isEmpty ? "Untitled" : room.title)
                             .font(.headline)
                         Text(room.ownerName.isEmpty ? "" : "Owner: \(room.ownerName)")

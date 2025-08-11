@@ -22,12 +22,12 @@ public struct RoomChatView: View {
     @ObservedObject public var fusedRoom: FusedRoom
     @State public var text = ""
     @State public var showDocPicker: Bool = false
-    @AppStorage("currentUserId") public var userId: String = ""
+    @AppStorage("currentUserId", store: UserDefaults(suiteName: "worlds")) public var userId: String = ""
     @ObservedResults(ChatMessage.self) public var allMessages
     
     public var roomMessages: Results<ChatMessage> {
         return allMessages
-            .filter("chatId == %@", fusedRoom.roomId)
+            .filter("chatId == %@", fusedRoom.currentRoomId)
             .sorted(byKeyPath: "timestamp", ascending: true)
     }
     
@@ -43,7 +43,7 @@ public struct RoomChatView: View {
                         ForEach(roomMessages) { msg in
                             ChatBubbleView(
                                 message: msg,
-                                isCurrentUser: msg.senderId == userId,
+                                isCurrentUser: msg.senderId == self.fusedRoom.currentUserId,
                                 senderName: senderName(for: msg)
                             )
                             .id(msg.id)
@@ -116,7 +116,16 @@ public struct RoomChatView: View {
         .sheet(isPresented: $showDocPicker, content: {
             UploadChatAttachment()
         })
+        .onChange(of: fusedRoom.currentRoomId, perform: { item in
+            if fusedRoom.currentRoomId != item {
+                DispatchQueue.main.async {
+                    self.fusedRoom.currentRoomId = item
+                }
+            }
+        })
         .background(Color(.systemGray6))
+        .navigationTitle("Room: \(fusedRoom.currentRoomId)")
+
     }
     
     public func send() {

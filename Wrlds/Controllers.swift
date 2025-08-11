@@ -145,6 +145,19 @@ struct PrecisionControl: View {
                 .disabled(disabled)
 
                 Spacer()
+                
+                // In your view…
+                Menu {
+                    Picker("Hemi‑Sync Preset", selection: $value) {   // Bind to your frequency variable
+                        ForEach(hemiSyncPresets, id: \.hz) { preset in
+                            Text("\(preset.name) – \(String(format: "%.2f", preset.hz)) Hz")
+                                .tag(preset.hz as Double)
+                        }
+                    }
+                } label: {
+                    Label("Presets", systemImage: "dial.low")
+                }
+                .disabled(disabled)
             }
             .font(.caption)
         }
@@ -156,6 +169,40 @@ struct PrecisionControl: View {
         .onChange(of: coarseStep) { v in currentCoarse = max(v, 0.000_001) }
         .onChange(of: fineStep)   { v in currentFine   = max(v, 0.000_001) }
     }
+    // Example model (put near your view)
+    private let hemiSyncPresets: [(name: String, hz: Double)] = [
+        // Delta – Deep sleep, trance, regeneration
+        ("Delta • D360/144 • Tetrahedral Harmonic", 2.5),    // Divisor 144 → nested tetrahedral symmetry
+        ("Delta • D360/120 • Earth Core Mode", 3.0),         // Deep grounding, geomagnetic coupling
+        ("Delta • D360/90  • Merkaba Base Mode", 4.0),       // Phase-resonant Merkaba geometry
+
+        // Theta – Deep meditation, hypnagogic, creativity
+        ("Theta • D360/72  • Golden Ratio Link", 5.0),       // Sacred geometry ratio, brain-limbic sync
+        ("Theta • D360/60  • Harmonic 6", 6.0),              // 60-cycle alignment, major geometric divisor
+        ("Theta • Schumann Fundamental", 7.83),              // Earth-ionosphere resonance
+        ("Theta • D360/48  • Pyramid Focus", 7.5),           // Matches internal pyramid cavity harmonic
+
+        // Alpha – Relaxed wakefulness, flow state
+        ("Alpha • D360/45  • Metatron Ring", 8.0),           // Octave step from Schumann
+        ("Alpha • D360/40  • Platonic Solid Gateway", 9.0),  // Edge-length ratio for cube/octahedron
+        ("Alpha • D360/36  • Solar Harmonic", 10.0),         // Sun’s rotation link, 36 divisor
+        ("Alpha • D360/30  • Icosa/Dodeca Shell", 12.0),     // 30-edge divisor, icosahedral coherence
+
+        // Beta – Focused attention, alertness
+        ("Beta • D360/24  • Harmonic 15", 15.0),             // 24 divisor – tetrahedron-dodecahedral link
+        ("Beta • D360/20  • Icosahedral Mode", 18.0),        // 20 vertices – icosahedral phase coherence
+        ("Beta • D360/18  • High Focus", 20.0),              // Divisor 18 – triadic resonance
+
+        // High Beta / Gamma – Cognitive integration, peak focus
+        ("Beta • D360/12  • Cube-Octa Shell", 30.0),         // 12 faces/edges – cube-octahedral symmetry
+        ("Gamma • D360/9  • High Integration", 40.0),        // 9 divisor – triple-triad coherence
+        ("Gamma • D360/8  • Merkaba High Mode", 45.0),       // 8 vertices – dual-tetrahedron peak focus
+
+        // Bonus Aligned Resonances
+        ("Phi Ratio Harmonic", 1.618),                       // Golden ratio base – fractal coherence
+        ("Double Schumann Octave", 15.66),                   // 2× Schumann fundamental
+        ("Cosmic Day Mode • D360/1", 1440.0/60.0)            // 24h day cycle mapped to minutes (24.0 Hz)
+    ]
 
     // MARK: - utils
     private func clamp(_ v: Double, to r: ClosedRange<Double>) -> Double {

@@ -17,7 +17,7 @@ public final class BinauralSoundViewModel: ObservableObject {
     // MARK: - App/Room
     @ObservedObject public var fusedRealmFire: FusedRealmFire<BinauralSound> = FusedRealmFire<BinauralSound>()
     @AppStorage("currentUserId", store: UserDefaults(suiteName: "worlds")) public var currentUserId: String = ""
-    @AppStorage("currentRoomId", store: UserDefaults(suiteName: "worlds")) public var roomId: String = "Alicia" {
+    @AppStorage("currentRoomId", store: UserDefaults(suiteName: "worlds")) public var roomId: String = "Demo" {
         didSet { if oldValue != roomId { restartFirebaseObservers() } }
     }
 
@@ -226,7 +226,7 @@ public final class BinauralSoundViewModel: ObservableObject {
     // MARK: - Model snapshot helpers
     private func unmanagedFrom(_ dict: [String: Any]) -> BinauralSound {
         let s = BinauralSound()
-        s.id = dict["id"] as? String ?? dict["roomId"] as? String ?? "Alicia"
+        s.id = dict["id"] as? String ?? dict["roomId"] as? String ?? "Demo"
         s.roomId = dict["roomId"] as? String ?? ""
         s.name = dict["name"] as? String ?? "Untitled Preset"
 

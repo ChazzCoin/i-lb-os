@@ -26,42 +26,59 @@ public final class ParticipantsController: ObservableObject {
     
     @Published public var hasChanged: Bool = false
     @Published public var currentIsReady: Bool = false
+    @Published public var currentHasJoined: Bool = false
     // Scope
     @AppStorage("currentUserId", store: UserDefaults(suiteName: "worlds")) public var currentUserId: String = ""
     @AppStorage("currentRoomId", store: UserDefaults(suiteName: "worlds")) public var currentRoomId: String = ""
     @AppStorage("currentWidgetId", store: UserDefaults(suiteName: "worlds")) public var currentWidgetId: String = ""
     @AppStorage("currentSessionId", store: UserDefaults(suiteName: "worlds")) public var currentSessionId: String = ""
 
-    public private(set) var roomId: String = ""
-    public private(set) var sessionId: String = ""
     let realmInstance = newRealm()
 
     // Realtime + Realm glue
     private let fused = FusedRealmFire<InteractionParticipant>()
     private var baseRef = Database.database().reference()
-    private var nodeRef: DatabaseReference { baseRef.child(FirePaths.participants(roomId: roomId, sessionId: sessionId)) }
+    private var nodeRef: DatabaseReference { baseRef.child(FirePaths.participants(roomId: currentRoomId, sessionId: currentSessionId)) }
 
     public init() {}
     public var selfJoined: Bool { self.participants[self.currentUserId] != nil }
     public var selfReady: Bool { self.participants[self.currentUserId]?.isReady == true }
     public var allParticipantsReady: Bool { self.allReady }
     @ViewBuilder
-    public func Display(isPlaying: Bool) -> some View {
+    public func Display() -> some View {
         VStack(spacing: 12) {
             HStack {
                 Text("Group Participation").font(.headline)
                 Spacer()
-                // Live status pill from your audio VM
-                Text(isPlaying ? "Live: Playing" : "Standby")
-                    .font(.caption2)
-                    .padding(.vertical, 4).padding(.horizontal, 8)
-                    .background(isPlaying ? Color.green.opacity(0.2) : Color.gray.opacity(0.2))
-                    .foregroundColor(isPlaying ? .green : .secondary)
-                    .clipShape(Capsule())
+
+                HStack(spacing: 6) {
+                    
+                    Image(systemName: self.allParticipantsReady ? "checkmark.circle.fill" : "circle")
+                        .foregroundColor(self.allParticipantsReady ? .green : .gray)
+                    
+                    Text("\(self.ready)/\(self.total) ready")
+                        .font(.caption)
+                        .monospacedDigit()
+                        .foregroundStyle(.secondary)
+                }
+            }
+            HStack {
+                Label("Room", systemImage: "rectangle.3.group.bubble.left")
+                Spacer()
+                Text(currentRoomId.isEmpty ? "—" : currentRoomId)
+                    .font(.callout.monospaced())
+                    .foregroundStyle(.secondary)
+            }
+            HStack {
+                Label("Session", systemImage: "rectangle.3.group.bubble.left")
+                Spacer()
+                Text(currentSessionId.isEmpty ? "—" : currentSessionId)
+                    .font(.callout.monospaced())
+                    .foregroundStyle(.secondary)
             }
 
             HStack {
-                VStack(spacing: 12) {
+                HStack(spacing: 12) {
                     Button {
                         // Join this session’s participants list
                         self.join(
@@ -89,26 +106,17 @@ public final class ParticipantsController: ObservableObject {
                             Label("Ready!", systemImage: "checkmark.seal")
                         }
                         .buttonStyle(.bordered)
-                        .disabled(!self.selfJoined)
+                        .disabled(self.hasChanged)
                     }
 
                     
                 }
-                Spacer()
+//                Spacer()
 
-                HStack(spacing: 6) {
-                    
-                    Image(systemName: self.allParticipantsReady ? "checkmark.circle.fill" : "circle")
-                        .foregroundColor(self.allParticipantsReady ? .green : .gray)
-                    
-                    Text("\(self.ready)/\(self.total) ready")
-                        .font(.caption)
-                        .monospacedDigit()
-                        .foregroundStyle(.secondary)
-                }
+                
             }
             Divider()
-            if !self.hasChanged {
+            if !self.hasChanged && self.currentHasJoined {
                 VStack(alignment: .leading, spacing: 8) {
                     if self.participants.isEmpty {
                         Text("No participants yet.")
@@ -142,26 +150,29 @@ public final class ParticipantsController: ObservableObject {
         self.participants = [:]
         let temp = self.realmInstance
             .objects(InteractionParticipant.self)
-            .filter { $0.roomId == self.roomId && $0.sessionId == self.sessionId }
+            .filter { $0.roomId == self.currentRoomId && $0.sessionId == self.currentSessionId }
         print("Participant Count: \(temp.count)")
         for p in temp {
             self.participants[p.userId] = p
+           
         }
+        
+        if let current = self.realmInstance
+            .objects(InteractionParticipant.self)
+            .filter { $0.userId == self.currentUserId && $0.roomId == self.currentRoomId && $0.sessionId == self.currentSessionId }.first {
+                self.currentIsReady = current.isReady
+                self.currentHasJoined = current.isActive
+            }
+        
     }
 
     // MARK: - Lifecycle
     public func start(roomId: String, sessionId: String) {
         self.participants.removeAll()
         self.recompute()
-        self.roomId = roomId
-        if self.roomId.isEmpty {
-            self.roomId = self.currentRoomId
-        }
-        self.sessionId = sessionId
-        if self.sessionId.isEmpty {
-            self.sessionId = self.currentSessionId
-        }
-        
+        self.currentRoomId = roomId
+        self.currentSessionId = sessionId
+
         let path = DatabasePaths.participants.rawValue
         fused.load(roomId: roomId, sessionId: sessionId, path: path, onLoad: { item in
             if self.hasChanged { return }
@@ -218,9 +229,9 @@ public final class ParticipantsController: ObservableObject {
         var p = InteractionParticipant()
         p.id = uid            // make the participant’s PK = userId (stable key)
         p.userId = uid
-        p.roomId = roomId
+        p.roomId = currentRoomId
         p.widgetId = widgetId
-        p.sessionId = sessionId
+        p.sessionId = currentSessionId
         p.userName = userName
         p.imgUrl = imgUrl
         p.widgetType = widgetType.rawValue
@@ -316,11 +327,12 @@ public final class ParticipantsController: ObservableObject {
     private func applyUpsert(_ p: InteractionParticipant) {
         DispatchQueue.main.async {
             
-//            var temp = self.participants
-//            self.participants.removeAll()
-//            self.participants[p.userId] = p
-//            self.participants = temp
             self.refresh()
+            print("UserId: \(self.currentUserId)")
+            if p.userId == self.currentUserId {
+                self.currentIsReady = p.isReady
+                self.currentHasJoined = p.isActive
+            }
             self.total = self.participants.values.filter { $0.isActive }.count
             self.ready = self.participants.values.filter { $0.isActive && $0.isReady }.count
             self.allReady = (self.total > 0 && self.ready == self.total)

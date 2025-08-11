@@ -140,8 +140,20 @@ struct CanvasEngine: View {
                 print("Setting New User ID")
                 self.USER.currentUserId = generateRandomUserId()
             }
+            self.fusedRoom.startUp()
+            
             navTools.addView(
-                callerId: MenuBarProvider.home.tool.title,
+                callerId: MenuBarProvider.buddyList.tool.title,
+                mainContent: {  UsersListView().environmentObject(self.BEO) },
+                sideContent: { EmptyView() }
+            )
+            navTools.addView(
+                callerId: MenuBarProvider.toolbox.tool.title,
+                mainContent: {  RoomWindow().environmentObject(self.fusedRoom) },
+                sideContent: { EmptyView() }
+            )
+            navTools.addView(
+                callerId: MenuBarProvider.chat.tool.title,
                 mainContent: { RoomChatView(fusedRoom: fusedRoom).environmentObject(self.BEO) },
                 sideContent: { EmptyView() }
             )
