@@ -29,6 +29,7 @@ public struct DynamicGradientBackground: View {
     public var body: some View {
         LinearGradient(gradient: Gradient(colors: [startColor, endColor]), startPoint: .topLeading, endPoint: .bottomTrailing)
             .edgesIgnoringSafeArea(.all)
+            
             .onAppear {
                 changeGradientColors()
             }

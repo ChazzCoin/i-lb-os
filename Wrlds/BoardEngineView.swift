@@ -37,6 +37,7 @@ class BoardEngineObject : ObservableObject {
     @Published var canvasOffset = CGPoint.zero
     @Published var canvasScale: CGFloat = 0.1
     @Published var canvasRotation: CGFloat = 0.0
+    @Published var canvasAngle: Angle = Angle(degrees: 0.0)
     @GestureState var gestureScale: CGFloat = 1.0
     @Published var lastScaleValue: CGFloat = 1.0
 
@@ -130,7 +131,7 @@ class BoardEngineObject : ObservableObject {
 }
 
 struct BoardEngine: View {
-    
+    @EnvironmentObject public var USER: UserToolsObservable
     @EnvironmentObject var BEO: BoardEngineObject
     
     @State var cancellables = Set<AnyCancellable>()
@@ -165,21 +166,40 @@ struct BoardEngine: View {
 //                 BinauralSoundView().deviceFullSize()
 //             }
              
+             WindowManagerView {
+                 RoomWindow()
+             }
+             .frame(width: 500, height: 500)
+             .scaleEffect(7.0)
+             .position(CGPoint(x: 15000.0, y: -5000.0))
+             
+             WindowManagerView {
+                 BinauralSoundView()
+                     .environmentObject(self.USER)
+             }
+             .frame(width: 1000, height: 1500)
+             .scaleEffect(7.0)
+             
 //             .scaleEffect(7.0)
 //             .position(CGPoint(x: 15000.0, y: -5000.0))
 //             
-//             Text("Welcome to the Awakening")
-//                 .font(.system(size: 1000))
-//                 .frame(maxWidth: .infinity)
-//                 .position(CGPoint(x: 15000.0, y: -5000.0))
+             AwakeningBanner(
+                 title: "Welcome to the Awakening",
+                 subtitle: "Go on, explore.",
+                 position: CGPoint(x: 2500, y: 2000),
+                 maxWidth: 20000,                 // fits your 20k canvas nicely
+                 cornerRadius: 1600,
+                 canvasScale: 7.0     // pass your live zoom to keep strokes crisp
+             )
+
              
-             if self.BEO.boardRefreshFlag {
-                 MusicPlayerView()
-                     .frame(width: 500, height: 500)
-                     .scaleEffect(7.0)
-                     .background(Color.white)
-//                     .position()
-             }
+//             if self.BEO.boardRefreshFlag {
+//                 MusicPlayerView()
+//                     .frame(width: 500, height: 500)
+//                     .scaleEffect(7.0)
+//                     .background(Color.white)
+////                     .position()
+//             }
 //             
 //             NavStackFloatingWindow(id: "new", viewBuilder: {
 //                 UserLoginSignupView()
@@ -194,9 +214,9 @@ struct BoardEngine: View {
              
         }
         .frame(width: self.BEO.boardWidth, height: self.BEO.boardHeight)
-        .background(
-            DrawGridLines()
-        )
+//        .background(
+//            DrawGridLines()
+//        )
         .onDrop(of: [.text], isTargeted: nil) { providers in
             providers.first?.loadObject(ofClass: NSString.self) { (droppedString, error) in
                 

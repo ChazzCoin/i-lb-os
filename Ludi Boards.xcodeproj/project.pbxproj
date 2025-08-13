@@ -59,6 +59,8 @@
 		FB829F0C2B36A83300FAC6E0 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB829F0B2B36A83300FAC6E0 /* ContentView.swift */; };
 		FB829F0E2B36A83400FAC6E0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FB829F0D2B36A83400FAC6E0 /* Assets.xcassets */; };
 		FB829F112B36A83400FAC6E0 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FB829F102B36A83400FAC6E0 /* Preview Assets.xcassets */; };
+		FB8578752E4C53D3003C9D9F /* CanvasGridLines.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB8578742E4C53CB003C9D9F /* CanvasGridLines.swift */; };
+		FB8578772E4C7140003C9D9F /* AwakeningBannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB8578762E4C713A003C9D9F /* AwakeningBannerView.swift */; };
 		FB87BE092B734425003B880D /* Michael.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB87BE082B734425003B880D /* Michael.swift */; };
 		FB8819D12B46436300C16198 /* CanvasEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB8819D02B46436300C16198 /* CanvasEngine.swift */; };
 		FB8819D32B4649CC00C16198 /* BoardEngineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB8819D22B4649CC00C16198 /* BoardEngineView.swift */; };
@@ -224,6 +226,8 @@
 		FB829F0B2B36A83300FAC6E0 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		FB829F0D2B36A83400FAC6E0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FB829F102B36A83400FAC6E0 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		FB8578742E4C53CB003C9D9F /* CanvasGridLines.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasGridLines.swift; sourceTree = "<group>"; };
+		FB8578762E4C713A003C9D9F /* AwakeningBannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AwakeningBannerView.swift; sourceTree = "<group>"; };
 		FB87BE082B734425003B880D /* Michael.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Michael.swift; sourceTree = "<group>"; };
 		FB8819D02B46436300C16198 /* CanvasEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasEngine.swift; sourceTree = "<group>"; };
 		FB8819D22B4649CC00C16198 /* BoardEngineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardEngineView.swift; sourceTree = "<group>"; };
@@ -507,6 +511,8 @@
 		FB829F082B36A83300FAC6E0 /* Wrlds */ = {
 			isa = PBXGroup;
 			children = (
+				FB8578762E4C713A003C9D9F /* AwakeningBannerView.swift */,
+				FB8578742E4C53CB003C9D9F /* CanvasGridLines.swift */,
 				FB5B5BFC2E4A12EE0042438B /* BinauralController.swift */,
 				FB5B5BFA2E4731700042438B /* Controllers.swift */,
 				FB5B5BF82E468E3E0042438B /* BinauralSoundView.swift */,
@@ -1033,6 +1039,7 @@
 			files = (
 				FB18F1202B62288700D89F8D /* Assets.xcassets in Sources */,
 				FB8819E02B464B2300C16198 /* GlobalPositioning.swift in Sources */,
+				FB8578772E4C7140003C9D9F /* AwakeningBannerView.swift in Sources */,
 				FB5B5BFB2E4731860042438B /* Controllers.swift in Sources */,
 				FBFF5CED2BCE068900149A31 /* ARKitView.swift in Sources */,
 				FBDE4F682B4F7736007FE880 /* FireData.swift in Sources */,
@@ -1048,6 +1055,7 @@
 				FB8819D32B4649CC00C16198 /* BoardEngineView.swift in Sources */,
 				FB94E3962E238AEC0088E277 /* DocumentPicker.swift in Sources */,
 				FB829F0A2B36A83300FAC6E0 /* WrldsApp.swift in Sources */,
+				FB8578752E4C53D3003C9D9F /* CanvasGridLines.swift in Sources */,
 				FB8819F32B464CA200C16198 /* RealmFind.swift in Sources */,
 				FB94E3982E23938A0088E277 /* GridLines.swift in Sources */,
 				FB8819D12B46436300C16198 /* CanvasEngine.swift in Sources */,
@@ -1205,7 +1213,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_ASSET_PATHS = "\"Wrlds/Preview Content\"";
 				DEVELOPMENT_TEAM = 248J2GKL56;
 				ENABLE_PREVIEWS = YES;
@@ -1224,7 +1232,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.6;
+				MARKETING_VERSION = 1.8;
 				PRODUCT_BUNDLE_IDENTIFIER = io.ludi.Wrlds;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1239,7 +1247,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_ASSET_PATHS = "\"Wrlds/Preview Content\"";
 				DEVELOPMENT_TEAM = 248J2GKL56;
 				ENABLE_PREVIEWS = YES;
@@ -1258,7 +1266,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.6;
+				MARKETING_VERSION = 1.8;
 				PRODUCT_BUNDLE_IDENTIFIER = io.rpgs.wthn;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

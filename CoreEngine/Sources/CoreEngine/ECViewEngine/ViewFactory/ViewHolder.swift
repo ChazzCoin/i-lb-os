@@ -9,7 +9,6 @@ import Foundation
 import SwiftUI
 
 
-
 public class CoreViewHolder<C: View, S: View>: Identifiable {
     
     @Published public var id: String

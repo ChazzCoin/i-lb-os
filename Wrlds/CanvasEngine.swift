@@ -95,35 +95,21 @@ struct CanvasEngine: View {
     var body: some View {
         GlobalPositioningZStack(coordinateSpace: CoreNameSpace.local) { windowGPS in
             
+            // Screen/Window Level
             GlobalPositioningReader(coordinateSpace: CoreNameSpace.global) { geo, gps in
-                
                 // Left Hand Menu Bar
                 MenuBarStatic(showIcons: $menuIsOpen, gps: gps){}
                 // Navigation Window
                 navTools.getNavStackView()
                     
-//                FloatingFusedRoomManagerView()
-//                DynaWrap(id: "dynaWrapFloatingButtons") {
-//                    FloatingProfileView(profileImageDiameter: 360, orbitRadius: 300)
-//                }
-//                FloatingSocialView()
-                
-//                self.modelPanel.Display(.center)
-                
-//                TimedView($testTrigger, seconds: 10) {
-//                    NotificationPanel(message: self.$notificationMessage, icon: self.$notificationIcon)
-//                        .position(using: gps, at: .topCenter, offsetX: 0, offsetY: 75)
-//                }
-                
-//                ModePanel(title: "Your Current Activity", subTitle: self.BEO.currentActivityId, showButton: false, isFlashing: true)
-//                    .position(using: gps, at: .topRight, offsetX: 200, offsetY: 50)
-                
-            }.zIndex(35.0)
+            }
+            .zIndex(35.0)
             
+            // Board/Canvas Level
             GlobalPositioningReader(coordinateSpace: CoreNameSpace.canvas, width: 20000, height: 20000) { cGeo, cGps in
-                // Board/Canvas Level
                 BoardEngine()
                     .zIndex(2.0)
+                    .environmentObject(self.USER)
                     .environmentObject(self.BEO)
                     .frame(width: 20000, height: 20000)
                     .offset(x: self.BEO.canvasOffset.x, y: self.BEO.canvasOffset.y)
@@ -133,12 +119,18 @@ struct CanvasEngine: View {
             }
             .zIndex(0.0)
             .background(DynamicGradientBackground())
-            .gesture(self.BEO.gesturesAreLocked ? nil : dragAngleGestures.simultaneously(with: scaleGestures))
+//            .background(
+//                DrawGridLinesDyna(offset: self.$BEO.canvasOffset, scale: self.$BEO.canvasScale, rotation: self.$BEO.canvasAngle)
+//            )
+//            .background(DrawGridLines())
         }
+        .gesture(self.BEO.gesturesAreLocked ? nil : dragAngleGestures.simultaneously(with: scaleGestures))
+//        .drawingGroup()
         .onAppear() {
             if self.USER.currentUserId.isEmpty {
                 print("Setting New User ID")
                 self.USER.currentUserId = generateRandomUserId()
+                self.USER.currentUserName = generateRandomName()
             }
             self.fusedRoom.startUp()
             
@@ -167,8 +159,22 @@ struct CanvasEngine: View {
 //        GlobalPositioningZStack { geo, gps in
             
 //            BinauralSoundView()
+//                FloatingFusedRoomManagerView()
+//                DynaWrap(id: "dynaWrapFloatingButtons") {
+//                    FloatingProfileView(profileImageDiameter: 360, orbitRadius: 300)
+//                }
+//                FloatingSocialView()
                 
-            
+//                self.modelPanel.Display(.center)
+                
+//                TimedView($testTrigger, seconds: 10) {
+//                    NotificationPanel(message: self.$notificationMessage, icon: self.$notificationIcon)
+//                        .position(using: gps, at: .topCenter, offsetX: 0, offsetY: 75)
+//                }
+                
+//                ModePanel(title: "Your Current Activity", subTitle: self.BEO.currentActivityId, showButton: false, isFlashing: true)
+//                    .position(using: gps, at: .topRight, offsetX: 200, offsetY: 50)
+    
 //            CoreSignUpView()
 //                .position(gps.getCoordinate(for: .bottomCenter))
 //            MusicPlayerView()

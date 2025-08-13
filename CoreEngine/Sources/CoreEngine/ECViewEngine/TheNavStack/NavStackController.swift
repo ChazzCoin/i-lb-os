@@ -162,8 +162,6 @@ public class NavWindowController: ObservableObject {
     @Published public var sidebarIsEnabled: Bool = false
     @Published public var sidebarState: NavStackState = .closed
     
-    
-    
     @Published public var isLocked = true
     @Published public var isFloatable: Bool = true
     
@@ -282,7 +280,6 @@ public class NavWindowController: ObservableObject {
     
     public func setSize(gps: GlobalPositioningSystem, _ navSize: NavStackSize) {
         mainAnimation {
-//            let nv = NavStackSize.half
             self.navSize = navSize
             self.width = navSize.width
             self.height = navSize.height
