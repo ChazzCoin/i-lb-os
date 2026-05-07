@@ -1,0 +1,197 @@
+# CLAUDE.md
+
+Working context for Claude Code sessions on this repo. Read this
+before making non-trivial changes.
+
+> This file is **project-specific**. It overrides and extends the
+> generic foundation in `.claude/task-rules.md`. Update the
+> placeholders below for this project. The kit's `/sync` will never
+> overwrite this file — it's yours to evolve.
+
+## 🪡 Auto-loaded primitives
+
+Claude Code follows `@`-imports here. The kit ships a set of small
+primitive files that should be loaded on every session — leave the
+imports below in place unless you've removed the corresponding
+file. Delete a line if the file isn't used in this project.
+
+@.claude/welcome.md
+@.claude/pact.md
+@.claude/mode.md
+@.claude/bookmarks.md
+@.claude/wont-do.md
+@docs/notes/INDEX.md
+
+*Why each one:*
+- **`welcome.md`** — first-thing context: where you left off, what's
+  in flight. Auto-updated by `/handoff`.
+- **`pact.md`** — your working-relationship preferences with Claude.
+  Portable across repos.
+- **`mode.md`** — currently-active work mode (a *drive*, not a
+  filter). Only present when a mode is active. When loaded, its
+  drive prose shapes Claude's appetite for the session. Switch with
+  `/mode <name>`; clear with `/mode normal`. See the kit's
+  `kit/modes/README.md` for the concept.
+- **`bookmarks.md`** — curated `path:line` pointers for fast
+  orientation.
+- **`wont-do.md`** — anti-feature list. Stops relitigating closed
+  conversations.
+- **`docs/notes/INDEX.md`** — rolling index of `/lessons` notes.
+  Future Claude sessions read prior learnings on session start.
+
+If your project uses `/inbox`, add `@.claude/inbox/<your-handle>.md`
+to load your messages on session start.
+
+**Project terminology overrides.** Define any project-specific
+meanings of kit terms (versioning, lifecycle states, verification
+gate, etc.) in `.claude/vocabulary-overrides.md`. Defaults are in
+`.claude/vocabulary.md`.
+
+## What this is
+
+{{ONE-PARAGRAPH PROJECT DESCRIPTION — what does this project do, who
+uses it, why does it exist? Be specific. Not marketing. Replace this
+text.}}
+
+## Platform
+
+{{Declare the project's platform so universal skills (especially
+`/release`) can find the right platform-specific extensions.}}
+
+**Platform:** {{ios | web | python | android | backend | universal}}
+
+When this is set, agents read the matching `.claude/<platform>-*.md`
+files (e.g. `.claude/ios-task-rules.md`,
+`.claude/ios-conventions.md`) alongside the universal
+`.claude/task-rules.md`. Multi-platform projects can list more than
+one — e.g. `ios + python` for an iOS app talking to a Python API,
+or `web + python` for a web frontend with a Python backend.
+Agents will read all relevant prefix files for cross-boundary work.
+
+If `universal`, only the unprefixed kit files apply — useful for
+docs sites, libraries, or projects whose platform isn't yet
+represented in the kit.
+
+The `/release` skill detects this declaration first, then falls
+back to inferring from manifest files (`*.xcodeproj` → ios,
+`pyproject.toml` → python, `package.json` → web, etc.).
+
+## Tech stack
+
+{{LIST THE STACK — language(s), framework(s), runtime(s), key
+libraries, databases, hosting, third-party services. Anything that
+would change how someone reads the code.}}
+
+Examples to delete:
+- Vite 6 + React 18 + Tailwind 3
+- Firebase (Auth + Realtime Database)
+- Node 20+ required
+
+## Commands
+
+The skills (`/build`, `/run`, `/release`) and the verification gate
+in `task-rules.md` discover commands from this section. Fill them in
+once and the rest of the kit picks them up.
+
+| Purpose | Command |
+|---|---|
+| **Build** | `{{BUILD COMMAND — e.g. npm run build, cargo build, ./gradlew build, swift build}}` |
+| **Run / dev** | `{{RUN COMMAND — e.g. npm run dev, cargo run, python main.py}}` |
+| **Test (verification gate)** | `{{HEADLESS TEST COMMAND — e.g. npm run test:e2e, pytest, go test ./..., cargo test}}` |
+| **Test (focused / watched)** | `{{FILTERED OR WATCHED TEST COMMAND — e.g. npm run test:e2e:watch -- TASK-XXX}}` |
+| **Test (parade — final review)** | `{{FULL HEADED SUITE — e.g. npm run test:e2e:watch}}` |
+| **Deploy** | `{{DEPLOY COMMAND — e.g. npm run deploy, fastlane release}}` |
+| **Rollback** | `{{ROLLBACK COMMAND — e.g. firebase hosting:rollback, kubectl rollout undo}}` |
+| **Dependency audit** | `{{AUDIT COMMAND — e.g. npm audit, cargo audit, pip-audit}}` |
+
+If any of these don't apply, write `n/a` and leave a one-line note.
+
+## Toolchain pinning
+
+{{LIST VERSION PINS THE PROJECT REQUIRES — node version, python
+version, ruby version, xcode version, etc. Note where they're
+pinned (.nvmrc, .tool-versions, etc.).}}
+
+Example to delete:
+- Node 20+ required (`.nvmrc`). For non-interactive shells:
+  `export NVM_DIR="$HOME/.nvm" && \. "$NVM_DIR/nvm.sh" && nvm use`
+
+## Folder layout
+
+```
+{{TOP-LEVEL DIRECTORY TREE — what's where, with one-line annotations.
+Don't enumerate every file; just the structure that orients a reader.}}
+```
+
+## Schema ownership
+
+{{IF THIS PROJECT MIRRORS AN EXTERNALLY-OWNED SCHEMA, document it here.
+Who owns it? Where is the canonical source? What's the discipline?
+
+If the project owns its own schema, delete this section and replace
+with: "This project owns its own schema; no external mirror discipline
+applies."}}
+
+Example to delete:
+> iOS owns the schema. Field names are byte-identical to Realm classes.
+> The canonical source lives at `../ios-app/Sources/Models/`. Use
+> `/schema-check` to reconcile.
+
+## Schema registry
+
+{{IF THIS PROJECT HAS A FILE THAT REGISTERS ALL DATA PATHS / TYPES /
+COLLECTIONS, identify it here. The schema-discipline rule references
+this file. Delete this section if not applicable.}}
+
+Example to delete:
+> `src/firebase/paths.js` is the canonical registry of all RTDB
+> collections. Any new collection must be added there. Don't bypass
+> with one-off `ref(rtdb, "...")` calls.
+
+## Gated files (project-specific extensions)
+
+The kit's `task-rules.md` lists generic gated-file categories.
+This section adds project-specific ones:
+
+{{LIST FILES OR DIRECTORIES THAT REQUIRE EXPLICIT PERMISSION TO TOUCH
+IN THIS PROJECT BEYOND THE GENERIC LIST. Things like critical config,
+security rules, generated code, vendored files. Delete if no extras.}}
+
+## Local dev
+
+{{HOW TO GET A FRESH CLONE RUNNING. Step-by-step — install deps, env
+vars, secrets, run command, expected output. The goal: a new
+contributor can clone and be running in 10 minutes.}}
+
+## Environment variables
+
+{{LIST ENV VARS THE PROJECT READS. Reference .env.example as the
+authoritative list. Note any that are required vs optional.}}
+
+## Test infrastructure
+
+{{IF THE PROJECT HAS NON-OBVIOUS TEST SETUP — test accounts, fixture
+data, emulator vs production targets, etc. — document it here. The
+test-pairing convention also lives here:}}
+
+**Test/task pairing:** {{e.g. "every E2E spec is paired 1:1 with a
+task. Filename `e2e/tests/TASK-XXX-slug.spec.js` matches the task ID
+and slug. The first line of the spec links back to the task file."}}
+
+## Deploy
+
+{{HOW DEPLOY WORKS IN THIS PROJECT. Live URL, hosting service,
+named-site / project / environment specifics, who has access, where
+to find logs.}}
+
+## Conventions
+
+{{PROJECT-SPECIFIC CODE / DESIGN CONVENTIONS THAT AREN'T OBVIOUS
+FROM READING THE CODE. Naming patterns, component shapes, data flow,
+gotchas. Anything you'd tell a new contributor in their first hour.}}
+
+## Pause points / open questions
+
+{{KNOWN ROUGH EDGES, DEFERRED DECISIONS, THINGS THE TEAM IS AWARE OF
+BUT HASN'T ADDRESSED. Honest about gaps. Empty is fine if there are
+none.}}
