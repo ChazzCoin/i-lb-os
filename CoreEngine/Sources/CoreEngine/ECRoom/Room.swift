@@ -8,8 +8,32 @@
 import Foundation
 import RealmSwift
 
-public class UserInRoom: Object, ObjectKeyIdentifiable {
+public class Presence: Object, ObjectKeyIdentifiable {
     @Persisted(primaryKey: true) public var id: String = UUID().uuidString
+    @Persisted public var dateCreated: String = getTimeStamp()
+    @Persisted public var dateUpdated: String = getTimeStamp()
+    @Persisted public var roomId: String = "null"
+    @Persisted public var userId: String = "null"
+    @Persisted public var userName: String = "null"
+    @Persisted public var role: String = UserRole.temp.name
+    @Persisted public var auth: String = UserAuth.visitor.name
+    @Persisted public var status: String = RoomStatus.out_of_room.name
+}
+
+public class Connection: Object, ObjectKeyIdentifiable {
+    @Persisted(primaryKey: true) public var id: String = UUID().uuidString
+    @Persisted public var dateCreated: String = getTimeStamp()
+    @Persisted public var dateUpdated: String = getTimeStamp()
+    @Persisted public var userOne: String = "null"
+    @Persisted public var userTwo: String = "null"
+    @Persisted public var connection: String = ConnectionStatus.waiting_approval.name
+    @Persisted public var status: String = RoomStatus.out_of_room.name
+}
+
+public class RoomStream: Object, ObjectKeyIdentifiable {
+    @Persisted(primaryKey: true) public var id: String = UUID().uuidString
+    @Persisted public var dateCreated: String = getTimeStamp()
+    @Persisted public var dateUpdated: String = getTimeStamp()
     @Persisted public var roomId: String = "null"
     @Persisted public var guestId: String = "null"
     @Persisted public var guestName: String = "null"

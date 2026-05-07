@@ -55,14 +55,17 @@ public extension CoreName {
             case house = "house"
             case magnifyingglass = "magnifyingglass"
             case map = "map"
+            case message = "message"
             case mic = "mic"
             case moon = "moon"
             case paperplane = "paperplane"
             case pencil = "pencil"
             case person = "person"
+            case people = "person.3"
             case phone = "phone"
             case photo = "photo"
             case plus = "plus"
+            case profile = "person.text.rectangle.fill"
             case printer = "printer"
             case scissors = "scissors"
             case squareAndArrowUp = "square.and.arrow.up"
@@ -113,6 +116,8 @@ public extension CoreName {
             case display = "display"
             case dotRadiowavesLeftAndRight = "dot.radiowaves.left.and.right"
             case ear = "ear"
+            case room = "house.and.flag.fill"
+            case headphones = "beats.headphones"
             public var name: String { rawValue }
         }
     }

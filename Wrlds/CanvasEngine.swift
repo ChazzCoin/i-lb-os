@@ -12,32 +12,217 @@ import Combine
 import CoreEngine
 
 struct CanvasEngine: View {
+    
     @EnvironmentObject public var USER: UserToolsObservable
     @StateObject public var fusedRoom = FusedRoom()
-    @StateObject var BEO = BoardEngineObject()
-    @StateObject var navTools: NavWindowController = NavWindowController()
-    @State var cancellables = Set<AnyCancellable>()
-    @State var showMenuBar: Bool = true
-    @State var popupIsVisible: Bool = true
-    var maxScaleFactor: CGFloat = 1.0
+    @StateObject public var BEO = BoardEngineObject()
+    @StateObject public var navTools: NavWindowController = NavWindowController()
+    @StateObject public var nodeTools: NodeWindowController = NodeWindowController()
+    @ObservedObject public var MVEngine: ManagedViewEngine = ManagedViewEngine(bounds: CGRect(origin: .zero, size: CGSize(width: 20000.0, height: 20000.0)))
+    @State public var cancellables = Set<AnyCancellable>()
+    @State public var showMenuBar: Bool = false
+    @State public var popupIsVisible: Bool = true
+    public var maxScaleFactor: CGFloat = 1.0
     
-    @State private var angle: Angle = .zero
-    @State private var lastAngle: Angle = .zero
+    @State public var angle: Angle = .zero
+    @State public var lastAngle: Angle = .zero
     
-    @State private var translation: CGPoint = .zero
-    @State private var lastOffset = CGPoint.zero
+    @State public var translation: CGPoint = .zero
+    @State public var lastOffset = CGPoint.zero
     
-    @State private var offsetTwo = CGSize.zero
-    @State private var isDragging = false
-    @State private var toolBarIsEnabled = true
-    @State private var position = CGPoint(x: 0, y: 0) // Initial position
-    @GestureState private var dragOffset = CGSize.zero
+    @State public var offsetTwo = CGSize.zero
+    @State public var isDragging = false
+    @State public var toolBarIsEnabled = true
+    @State public var position = CGPoint(x: 0, y: 0) // Initial position
+    @GestureState public var dragOffset = CGSize.zero
     
-    // Initial size of your drawing canvas
-    let initialWidth: CGFloat = 6000
-    let initialHeight: CGFloat = 6000
+    @State public var menuIsOpen: Bool = false
     
-    var dragAngleGestures: some Gesture {
+    @State var storeInMenuBar = Set<AnyCancellable>()
+    
+    @State var idone = UUID()
+    
+    @State var canvasOneRect = CGRect(origin: CGPoint(x: 0.0, y: 0.0), size: CGSize(width: 20000.0, height: 20000.0))
+    @State var canvasTwoRect = CGRect(origin: CGPoint(x: 20000.0, y: 0.0), size: CGSize(width: 20000.0, height: 20000.0))
+    
+    public var body: some View {
+        GlobalPositioningZStack(coordinateSpace: CoreNameSpace.local.name, width: 50000, height: 50000) { windowGPS in
+            
+            // Screen/Window Level
+            GlobalPositioningReader(coordinateSpace: CoreNameSpace.global) { geo, gps in
+                // Left Hand Menu Bar
+                CoreCanvasMenuView(onTapTop: { menuIsOpen.toggle() })
+                    .environmentObject(gps)
+                    .environmentObject(self.BEO)
+                // Navigation Window
+                navTools.getNavStackView().zIndex(100.0)
+//                nodeTools.displayFullScreenView().zIndex(100.0)
+            }
+            .zIndex(2.0)
+            
+            // Board/Canvas Level
+            GlobalPositioningZStack(coordinateSpace: CoreNameSpace.canvas.name, width: 20000, height: 20000) { cGps in
+                
+                ZStack {
+                    AwakeningBanner(
+                        title: "Welcome to the Awakening",
+                        subtitle: "Go on, explore.",
+                        position: CGPoint(x: 0.0, y: 0.0),
+                        maxWidth: 1000,                 // fits your 20k canvas nicely
+                        cornerRadius: 1600,
+                        canvasScale: 7.0     // pass your live zoom to keep strokes crisp
+                    )
+                }
+                .zIndex(2.0)
+                .scaleEffect(7.0)
+                .position(CGPoint(x: 0.0, y: 0.0))
+                
+                MVEngine.Display().zIndex(2.0)
+                
+                WindowManagerView {
+                    BinauralSoundView()
+                        .environmentObject(self.USER)
+                }
+                .zIndex(2.0)
+                .frame(width: 1000, height: 1500)
+                .scaleEffect(7.0)
+                .position(CGPoint(x: 20000.0, y: 20000.0))
+
+            }
+            .offset(x: self.BEO.canvasOffset.x, y: self.BEO.canvasOffset.y)
+            .scaleEffect(self.BEO.canvasScale)
+            .rotationEffect(Angle(degrees: self.BEO.canvasRotation))
+            .zIndex(0.0)
+            
+            // Board/Canvas Level
+            GlobalPositioningZStack(coordinateSpace: CoreNameSpace.canvas.name, width: 20000, height: 20000) { cGps in
+                
+                nodeTools.displayAllNodes().zIndex(5.0)
+                BoardEngineView()
+                    .zIndex(0.0)
+        
+
+            }
+
+            }
+            .offset(x: self.BEO.canvasOffset.x + 20000.0, y: self.BEO.canvasOffset.y)
+            .scaleEffect(self.BEO.canvasScale)
+            .rotationEffect(Angle(degrees: self.BEO.canvasRotation))
+            .zIndex(0.0)
+            
+        }
+        .zIndex(1.0)
+        .background(Color.white.opacity(0.0001))
+        .gesture(self.BEO.gesturesAreLocked ? nil : dragAngleGestures.simultaneously(with: scaleGestures))
+        .onDoubleTap() {
+            self.BEO.canvasScale -= 0.01
+        }
+        .onAppear() {
+            if self.BEO.isPad {
+                self.BEO.canvasScale = 0.1
+            } else {
+                self.BEO.canvasScale = 0.03
+            }
+            if self.USER.currentUserId.isEmpty {
+                print("Setting New User ID")
+                self.USER.currentUserId = generateRandomUserId()
+                self.USER.currentUserName = generateRandomName()
+            }
+            self.fusedRoom.startUp()
+            
+            nodeTools.addView(
+                callerId: MenuBarProvider.chat.tool.title,
+                mainContent: { RoomChatView(fusedRoom: fusedRoom).environmentObject(self.BEO) },
+                sideContent: { EmptyView() }
+            )
+            nodeTools.addView(
+                callerId: "media_player",
+                mainContent: { MusicPlayerView() },
+                sideContent: { EmptyView() }
+            )
+            
+            navTools.addView(
+                callerId: MenuBarProvider.buddyList.tool.title,
+                mainContent: {  UsersListView().environmentObject(self.BEO) },
+                sideContent: { EmptyView() }
+            )
+            navTools.addView(
+                callerId: MenuBarProvider.toolbox.tool.title,
+                mainContent: {  RoomWindow().environmentObject(self.fusedRoom) },
+                sideContent: { EmptyView() }
+            )
+            navTools.addView(
+                callerId: MenuBarProvider.chat.tool.title,
+                mainContent: { RoomChatView(fusedRoom: fusedRoom).environmentObject(self.BEO) },
+                sideContent: { EmptyView() }
+            )
+            navTools.addView(
+                callerId: MenuBarProvider.info.tool.title,
+                mainContent: { BinauralSoundView().environmentObject(self.USER) },
+                sideContent: { EmptyView() }
+            )
+            navTools.addView(
+                callerId: MenuBarProvider.profile.tool.title,
+                mainContent: { CoreProfileView().environmentObject(self.USER) },
+                sideContent: { EmptyView() }
+            )
+
+            
+            BroadcastTools.listenForNodeStreams(storeIn: &storeInMenuBar, onEvent: { stream in
+                print("Node Stream: \(stream.id) - \(stream.position)")
+            })
+            
+            BroadcastTools.listenForWindowCalls(storeIn: &storeInMenuBar, onEvent: { id, action in
+                print("ID!!!!! \(id)")
+                switch id {
+                    case "toolbox":
+                        if action == WindowAction.open {
+                            closeAllWindows()
+                            self.BEO.toolBarPickerWindowIsVisible = true
+                        }
+                        else if action == WindowAction.close {
+                            closeAllWindows()
+                        }
+                        else if action == WindowAction.toggle {
+                            self.BEO.toolBarPickerWindowIsVisible.toggle()
+                        }
+                    case "board settings":
+                        if action == WindowAction.open {
+                            closeAllWindows()
+                            self.BEO.boardSettingsWindowIsVisible = true
+                        }
+                        else if action == WindowAction.close {
+                            closeAllWindows()
+                        }
+                        else if action == WindowAction.toggle {
+                            self.BEO.boardSettingsWindowIsVisible.toggle()
+                        }
+                    case MenuBarProvider.chat.tool.title:
+                        if action == WindowAction.open {
+                            closeAllWindows()
+                            self.BEO.mvSettingsWindowIsVisible = true
+                        }
+                        else if action == WindowAction.close {
+                            closeAllWindows()
+                        }
+                        else if action == WindowAction.toggle {
+                            self.BEO.mvSettingsWindowIsVisible.toggle()
+                        }
+                    default: return
+                }
+            })
+        }
+        
+    }
+    
+    public func closeAllWindows() {
+        self.BEO.boardSettingsWindowIsVisible = false
+        self.BEO.toolBarPickerWindowIsVisible = false
+        self.BEO.mvSettingsWindowIsVisible = false
+    }
+    
+    // Gestures
+    public var dragAngleGestures: some Gesture {
         DragGesture()
             .onChanged { gesture in
                 if self.BEO.gesturesAreLocked { return }
@@ -66,7 +251,7 @@ struct CanvasEngine: View {
             }
     }
     
-    var scaleGestures: some Gesture {
+    public var scaleGestures: some Gesture {
         MagnificationGesture()
             .onChanged { value in
                 if self.BEO.gesturesAreLocked { return }
@@ -80,7 +265,7 @@ struct CanvasEngine: View {
             }
     }
     
-    var rotationGestures: some Gesture {
+    public var rotationGestures: some Gesture {
         RotationGesture()
             .onChanged { value in
                 let scaledAngle = (value - self.lastAngle) * 0.5
@@ -90,152 +275,8 @@ struct CanvasEngine: View {
                 self.lastAngle += value // Update the last angle on gesture end
             }
     }
-    @State var menuIsOpen: Bool = false
     
-    var body: some View {
-        GlobalPositioningZStack(coordinateSpace: CoreNameSpace.local) { windowGPS in
-            
-            // Screen/Window Level
-            GlobalPositioningReader(coordinateSpace: CoreNameSpace.global) { geo, gps in
-                // Left Hand Menu Bar
-                MenuBarStatic(showIcons: $menuIsOpen, gps: gps){}
-                // Navigation Window
-                navTools.getNavStackView()
-                    
-            }
-            .zIndex(35.0)
-            
-            // Board/Canvas Level
-            GlobalPositioningReader(coordinateSpace: CoreNameSpace.canvas, width: 20000, height: 20000) { cGeo, cGps in
-                BoardEngine()
-                    .zIndex(2.0)
-                    .environmentObject(self.USER)
-                    .environmentObject(self.BEO)
-                    .frame(width: 20000, height: 20000)
-                    .offset(x: self.BEO.canvasOffset.x, y: self.BEO.canvasOffset.y)
-                    .scaleEffect(self.BEO.canvasScale)
-                    .rotationEffect(Angle(degrees: self.BEO.canvasRotation))
-                    .zIndex(1.0)
-            }
-            .zIndex(0.0)
-            .background(DynamicGradientBackground())
-//            .background(
-//                DrawGridLinesDyna(offset: self.$BEO.canvasOffset, scale: self.$BEO.canvasScale, rotation: self.$BEO.canvasAngle)
-//            )
-//            .background(DrawGridLines())
-        }
-        .gesture(self.BEO.gesturesAreLocked ? nil : dragAngleGestures.simultaneously(with: scaleGestures))
-//        .drawingGroup()
-        .onAppear() {
-            if self.USER.currentUserId.isEmpty {
-                print("Setting New User ID")
-                self.USER.currentUserId = generateRandomUserId()
-                self.USER.currentUserName = generateRandomName()
-            }
-            self.fusedRoom.startUp()
-            
-            navTools.addView(
-                callerId: MenuBarProvider.buddyList.tool.title,
-                mainContent: {  UsersListView().environmentObject(self.BEO) },
-                sideContent: { EmptyView() }
-            )
-            navTools.addView(
-                callerId: MenuBarProvider.toolbox.tool.title,
-                mainContent: {  RoomWindow().environmentObject(self.fusedRoom) },
-                sideContent: { EmptyView() }
-            )
-            navTools.addView(
-                callerId: MenuBarProvider.chat.tool.title,
-                mainContent: { RoomChatView(fusedRoom: fusedRoom).environmentObject(self.BEO) },
-                sideContent: { EmptyView() }
-            )
-            navTools.addView(
-                callerId: MenuBarProvider.info.tool.title,
-                mainContent: { BinauralSoundView().environmentObject(self.USER) },
-                sideContent: { EmptyView() }
-            )
-        }
-        
-//        GlobalPositioningZStack { geo, gps in
-            
-//            BinauralSoundView()
-//                FloatingFusedRoomManagerView()
-//                DynaWrap(id: "dynaWrapFloatingButtons") {
-//                    FloatingProfileView(profileImageDiameter: 360, orbitRadius: 300)
-//                }
-//                FloatingSocialView()
-                
-//                self.modelPanel.Display(.center)
-                
-//                TimedView($testTrigger, seconds: 10) {
-//                    NotificationPanel(message: self.$notificationMessage, icon: self.$notificationIcon)
-//                        .position(using: gps, at: .topCenter, offsetX: 0, offsetY: 75)
-//                }
-                
-//                ModePanel(title: "Your Current Activity", subTitle: self.BEO.currentActivityId, showButton: false, isFlashing: true)
-//                    .position(using: gps, at: .topRight, offsetX: 200, offsetY: 50)
-    
-//            CoreSignUpView()
-//                .position(gps.getCoordinate(for: .bottomCenter))
-//            MusicPlayerView()
-//                .frame(width: 500, height: 500)
-//                .background(Color.white)
-//                .position(gps.getCoordinate(for: .center))
-//            FloatingSocialView()
-//            FloatingFusedRoomManagerView()
-//            navTools.getNavStackView()
-//        }
-//        .zIndex(3.0)
-        
-//        ZStack() {
-//            // Board/Canvas Level
-//            ZStack() {
-//                
-//                
-//                
-//                BoardEngine()
-//                    .zIndex(2.0)
-//                    .environmentObject(self.BEO)
-//                
-//            }
-//            .frame(width: 20000, height: 20000)
-//            .offset(x: self.BEO.canvasOffset.x, y: self.BEO.canvasOffset.y)
-//            .scaleEffect(self.BEO.canvasScale)
-//            .rotationEffect(Angle(degrees: self.BEO.canvasRotation))
-//            .zIndex(1.0)
-//            
-//        }
-//        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-////        .background(Color.purple.opacity(0.5))
-////        .background(StarryNightAnimatedView())
-//        .background(DynamicGradientBackground())
-////        .background(DrawGridLines())
-////        .background(DynamicGradientBackground())
-//        .gesture(self.BEO.gesturesAreLocked ? nil : dragAngleGestures.simultaneously(with: scaleGestures))
-//        .zIndex(0.0)
-//        .onAppear() {
-//            //
-//            navTools.addView(
-//                callerId: MenuBarProvider.activity.tool.title,
-//                mainContent: { RoomChatView(fusedRoom: fusedRoom).environmentObject(self.BEO) },
-//                sideContent: { EmptyView() }
-//            )
-//            // Profile
-////            navTools.addView(
-////                callerId: MenuBarProvider.profile.tool.title,
-////                mainContent: { CoreSignUpView() },
-////                sideContent: { EmptyView() }
-////            )
-//            
-//           
-////            navTools.mainState = .open
-//            
-////            navTools.navTo(viewId: MenuBarProvider.activity.tool.title)
-//        }
-        
-    }
+
     
 }
-
-
 

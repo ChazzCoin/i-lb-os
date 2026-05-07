@@ -1,9 +1,6 @@
 import SwiftUI
 
 
-
-
-
 /*
  
         VIEW BREAKDOWN

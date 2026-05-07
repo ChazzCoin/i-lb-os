@@ -29,7 +29,7 @@ public struct AwakeningBanner: View {
     }
 
     // Scale-aware pixel unit so strokes/shadows stay ~1px on screen as you zoom.
-    private var px: CGFloat { 1 / max(canvasScale, 0.1) }
+    private var px: CGFloat { 1 / max(canvasScale, 0.01) }
 
     public var body: some View {
         ZStack {
@@ -40,10 +40,10 @@ public struct AwakeningBanner: View {
 
             // Glass card container
             VStack(spacing: 400 * px) {
-                titleView
+//                titleView
                 if let subtitle {
                     Text(subtitle)
-                        .font(.system(size: 900, weight: .semibold, design: .rounded))
+                        .font(.system(size: 100, weight: .semibold, design: .rounded))
                         .minimumScaleFactor(0.2)
                         .foregroundStyle(.secondary)
                         .kerning(8)
@@ -68,7 +68,7 @@ public struct AwakeningBanner: View {
 //                    .padding(.horizontal, 1000 * px)
             }
             .padding(.vertical, 900 * px)
-            .frame(maxWidth: .infinity)
+//            .frame(maxWidth: .infinity)
 //            .background(.ultraThinMaterial, in:
 //                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
 //            )
@@ -88,7 +88,7 @@ public struct AwakeningBanner: View {
 //            .drawingGroup()
         }
 //        .frame(maxWidth: .infinity)
-        .position(position)
+//        .position(position)
         .allowsHitTesting(false)
         .onAppear {
             withAnimation(.linear(duration: 6).repeatForever(autoreverses: false)) {

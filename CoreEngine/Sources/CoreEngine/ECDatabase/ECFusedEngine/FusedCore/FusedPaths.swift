@@ -52,6 +52,7 @@ public enum DatabasePaths: String, CaseIterable {
     case userInRoom = "userInRoom"
     case friendRequests = "friendRequests"
     case participants = "participants"
+    case managed_stream = "managed_stream"
     
     // Function to map object type to DatabasePaths
     public static func path(forObjectType objectType: Object.Type) -> DatabasePaths? {
@@ -72,7 +73,7 @@ public enum DatabasePaths: String, CaseIterable {
                 return .users
             case is Room.Type:
                 return .rooms
-            case is UserInRoom.Type:
+            case is Presence.Type:
                 return .userInRoom
             case is Organization.Type:
                 return .organizations
@@ -86,6 +87,8 @@ public enum DatabasePaths: String, CaseIterable {
                 return .friendRequests
             case is InteractionParticipant.Type:
                 return .participants
+            case is ManagedStream.Type:
+                return .managed_stream
             default:
                 return nil
         }
@@ -105,7 +108,7 @@ public enum DatabasePaths: String, CaseIterable {
             case DatabasePaths.rooms.rawValue:
                 return Room.self
             case DatabasePaths.userInRoom.rawValue:
-                return UserInRoom.self
+                return Presence.self
             case DatabasePaths.users.rawValue:
                 return CoreUser.self
             case DatabasePaths.organizations.rawValue:
@@ -124,6 +127,8 @@ public enum DatabasePaths: String, CaseIterable {
                 return FriendRequest.self
             case DatabasePaths.participants.rawValue:
                 return InteractionParticipant.self
+            case DatabasePaths.managed_stream.rawValue:
+                return ManagedStream.self
             default:
                 return nil
         }

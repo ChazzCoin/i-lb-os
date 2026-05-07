@@ -10,7 +10,7 @@ import SwiftUI
 import Combine
 import CoreEngine
 
-class GlobalPositioningSystem: ObservableObject {
+class WorldsGlobalPositioningSystem: ObservableObject {
     // Properties to store screen size and safe area insets
     @State var screenPaddingX: CGFloat = 50
     @State var screenPaddingY: CGFloat = 25
@@ -131,7 +131,7 @@ extension CGRect {
    }
 }
 struct LockToScreenModifier: ViewModifier {
-    @ObservedObject var gps: GlobalPositioningSystem
+    @ObservedObject var gps: WorldsGlobalPositioningSystem
     @Binding var position: CGPoint
     var size: CGSize
 
@@ -153,22 +153,3 @@ struct LockToScreenModifier: ViewModifier {
             }
     }
 }
-//
-//struct GlobalPositioningZStack<Content: View>: View {
-//    let content: (GeometryProxy, GlobalPositioningSystem) -> Content
-//
-//    init(@ViewBuilder content: @escaping (GeometryProxy, GlobalPositioningSystem) -> Content) {
-//        self.content = content
-//    }
-//
-//    @State var gps = GlobalPositioningSystem()
-//    
-//    var body: some View {
-//        GeometryReader { geometry in
-//            content(geometry, gps)
-//        }.frame(maxWidth: gps.screenSize.width, maxHeight: gps.screenSize.height)
-//            .ignoresSafeArea(.all)
-//            .background(Color.clear)
-//    }
-//}
-//

@@ -72,16 +72,18 @@ public struct ManagedViewTool<C: View>: View {
     @ViewBuilder public var content: () -> C
     public let viewId: String
     public let activityId: String
+    public var bounds: CGRect? = nil
     
-    public init(viewId: String, activityId: String="", @ViewBuilder contentIn: @escaping () -> C) {
+    public init(viewId: String, activityId: String="", bounds: CGRect? = nil, @ViewBuilder contentIn: @escaping () -> C) {
         self.viewId = viewId
         self.activityId = activityId
+        self.bounds = bounds
         self.content = contentIn
     }
 
     public var body: some View {
         content()
-            .enableManagedViewBasic(viewId: viewId, activityId: activityId)
+            .enableManagedViewBasic(viewId: viewId, activityId: activityId, bounds: self.bounds)
     }
 }
 
@@ -90,9 +92,13 @@ public struct enableManagedViewTool : ViewModifier {
     @State public var viewId: String
     @State public var activityId: String
     
-    public init(viewId: String, activityId: String="") {
+    public let bounds: CGRect?
+    
+    public init(viewId: String, activityId: String="", bounds: CGRect?=nil) {
         self.viewId = viewId
         self.activityId = activityId
+        self.bounds = bounds
+        print(self.bounds as Any)
     }
     
     @StateObject public var MVO: ManagedViewObject = ManagedViewObject()
@@ -110,7 +116,7 @@ public struct enableManagedViewTool : ViewModifier {
                   y: MVO.position.y + (MVO.isDragging ? dragOffset.height : 0) + (MVO.lifeHeight))
         
         .opacity(!MVO.isDisabledChecker() && !MVO.isDeletedChecker() ? 1 : 0.0)
-        .simultaneousGesture(gestureDragBasicTool())
+        .highPriorityGesture(gestureDragBasicTool())
         .onChange(of: self.MVO.toolBarCurrentViewId, perform: { _ in
             if self.MVO.toolBarCurrentViewId != self.viewId { MVO.popUpIsVisible = false }
         })
@@ -140,9 +146,16 @@ public struct enableManagedViewTool : ViewModifier {
                         self.MVO.useOriginal = false
                     }
                     let translation = drag.translation
-                    MVO.position = CGPoint(x: MVO.originalPosition.x + translation.width,
+                    let temp = CGPoint(x: MVO.originalPosition.x + translation.width,
                                            y: MVO.originalPosition.y + translation.height)
+                    if let bounds = self.bounds {
+                        let clampped = clamp(position: temp, to: bounds)
+                        MVO.position = clampped
+                    } else {
+                        MVO.position = temp
+                    }
                     MVO.updateRealmPos(start: MVO.position, end: MVO.position)
+                    BroadcastTools.send(.Canvas, value: NodeStream(id: self.viewId, position: MVO.position))
                 }
             }
             .onEnded { drag in
@@ -151,12 +164,19 @@ public struct enableManagedViewTool : ViewModifier {
                     if MVO.lifeIsLocked { return }
                     MVO.isDragging = false
                     let translation = drag.translation
-                    MVO.position = CGPoint(
+                    let temp = CGPoint(
                         x: MVO.originalPosition.x + translation.width,
                         y: MVO.originalPosition.y + translation.height
                     )
+                    if let bounds = self.bounds {
+                        let clampped = clamp(position: temp, to: bounds)
+                        MVO.position = clampped
+                    } else {
+                        MVO.position = temp
+                    }
                     MVO.updateRealmPos(start: MVO.position, end: MVO.position)
                     self.MVO.useOriginal = true
+                    BroadcastTools.send(.Canvas, value: NodeStream(id: self.viewId, position: MVO.position))
                 }
             }
             .simultaneously(with: TapGesture(count: 2)

@@ -115,10 +115,6 @@ struct UploadAudioView: View {
             print("Unable to create a bookmark: \(error)")
         }
         
-        
-        
-        
-        
         if let fileURL = accessBookmarkedFile() {
             
             // Security Scoping

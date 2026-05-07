@@ -167,8 +167,6 @@ public struct NavStackWindow: View {
                         }
                     }
                 }
-                // Optional: title for collapsed stacks
-//                .navigationTitle(NAV.activeTitle ?? "Ludi Boards")
                 .navigationBarTitleDisplayMode(.inline)
         }
     }

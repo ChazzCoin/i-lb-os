@@ -32,18 +32,6 @@ struct WrldsApp: SwiftUI.App {
     var body: some Scene {
         
         WindowGroup(id: "canvas") {
-//            CoreCanvasEngine(
-//                global: { _,_ in
-//                    
-//                },
-//                canvas: { gps in
-//                    ZStack{
-//                        Text("HELLO")
-//                    }
-//                    .frame(width: 200, height: 200)
-//                    .background(.blue)
-//                    .position(using: gps, at: .bottomCenter)
-//                })
             CanvasEngine()
                 .environmentObject(self.USER)
             

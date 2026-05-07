@@ -28,7 +28,7 @@ public class FusedRoom : ObservableObject {
         }
     }
     @ObservedResults(Room.self) public var allRooms
-    @ObservedResults(UserInRoom.self) public var allUsersInRooms
+    @ObservedResults(Presence.self) public var allUsersInRooms
     @ObservedResults(CoreUser.self) public var allUsers
     @ObservedResults(ChatMessage.self) public var allMessages
     
@@ -38,11 +38,11 @@ public class FusedRoom : ObservableObject {
     public var currentRoom: Results<Room> {
         return allRooms.filter("id == %@", self.currentRoomId)
     }
-    public var inRoom: Results<UserInRoom> {
+    public var inRoom: Results<Presence> {
         return allUsersInRooms.filter("roomId == %@", self.currentRoomId)
     }
     public var inRoomUserIds: [String] {
-        return allUsersInRooms.filter("roomId == %@", self.currentRoomId).compactMap({ $0.guestId })
+        return allUsersInRooms.filter("roomId == %@", self.currentRoomId).compactMap({ $0.userId })
     }
     public var usersInRoom: Results<CoreUser> {
         return allUsers.filter("id IN %@", inRoomUserIds)
@@ -157,7 +157,7 @@ public class FusedRoom : ObservableObject {
     }
     public func getUsersInRoom() {
         firebaseDatabase { db in
-            db.child(DatabasePaths.userInRoom.rawValue).pullByField(UserInRoom.self, value: self.currentRoomId, field: "roomId", realm: self.realmInstance)
+            db.child(DatabasePaths.userInRoom.rawValue).pullByField(Presence.self, value: self.currentRoomId, field: "roomId", realm: self.realmInstance)
         }
     }
     // Fused Firebase -> Realm
@@ -180,12 +180,12 @@ public class FusedRoom : ObservableObject {
         userAddedHandler = userInRoomRef
             .child(self.currentRoomId)
             .observe(.childAdded, with: { snapshot in
-                let _ = snapshot.toCoreObject(UserInRoom.self, realm: self.realmInstance)
+                let _ = snapshot.toCoreObject(Presence.self, realm: self.realmInstance)
             })
         userChangedHandler = userInRoomRef
             .child(self.currentRoomId)
             .observe(.childChanged, with: { snapshot in
-                let _ = snapshot.toCoreObject(UserInRoom.self, realm: self.realmInstance)
+                let _ = snapshot.toCoreObject(Presence.self, realm: self.realmInstance)
             })
     }
     
@@ -274,28 +274,28 @@ public class FusedRoom : ObservableObject {
     }
     public func addUserToRoom(roomId: String) {
         if !self.currentRoomId.isEmpty {
-            let inroom = UserInRoom()
+            let inroom = Presence()
             inroom.roomId = self.currentRoomId
-            inroom.guestId = self.currentUserId
-            inroom.guestName = self.currentUserName
+            inroom.userId = self.currentUserId
+            inroom.userName = self.currentUserName
             inroom.auth =  UserAuth.visitor.name
             inroom.status = RoomStatus.in_room.name
             FusedTools.fusedWriter { realm in
-                realm.create(UserInRoom.self, value: inroom, update: .all)
+                realm.create(Presence.self, value: inroom, update: .all)
             }
             let dinroom = inroom.toDict()
-            userInRoomRef.child(self.currentRoomId).child(inroom.guestId).setValue(dinroom)
+            userInRoomRef.child(self.currentRoomId).child(inroom.userId).setValue(dinroom)
         }
         
     }
     
     public func updateUserInRoom(status: RoomStatus) {
             
-        if let inroom = self.realmInstance.findByField(UserInRoom.self, field: "guestId", value: self.currentUserId) {
+        if let inroom = self.realmInstance.findByField(Presence.self, field: "userId", value: self.currentUserId) {
             self.realmInstance.safeWrite { r in
                 inroom.status = status.name
-                var gId = inroom.guestId
-                if inroom.guestId.isEmpty {
+                var gId = inroom.userId
+                if inroom.userId.isEmpty {
                     gId = "\(UUID())"
                     
                 }

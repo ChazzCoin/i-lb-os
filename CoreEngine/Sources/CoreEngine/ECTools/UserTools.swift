@@ -10,6 +10,31 @@ import FirebaseAuth
 import FirebaseDatabase
 import RealmSwift
 
+public enum CoreUserProvider {
+
+    public static func loadCurrentUser() -> CoreUser? {
+        if let userId = UserTools.currentUserId {
+            guard !userId.isEmpty else { return nil }
+
+            let realm = newRealm()
+
+            // 1️⃣ Realm first
+            if let realmUser = realm.findByField(CoreUser.self, value: userId) {
+                return CoreUser(value: realmUser) // detached copy
+            }
+            // 2️⃣ Firebase fallback
+            if let fireUser = UserTools.firebaseUser {
+                UserTools.saveUserToRealm(fireUser: fireUser)
+                return realm.findByField(CoreUser.self, value: userId)
+            }
+
+            return nil
+
+        }
+        return nil
+    }
+}
+
 
 public extension UserTools {
     

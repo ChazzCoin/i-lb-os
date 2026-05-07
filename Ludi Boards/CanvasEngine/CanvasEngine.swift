@@ -12,50 +12,50 @@ import Combine
 import CoreEngine
 
 
-class CanvasEngineControl: ObservableObject {
+public class CanvasEngineControl: ObservableObject {
     
-    @AppStorage("showMenuBar") var showMenuBar: Bool = true
-    @AppStorage("toolBarPickerWindowIsVisible") var toolBarPickerWindowIsVisible: Bool = false
-    @AppStorage("boardSettingsWindowIsVisible") var boardSettingsWindowIsVisible: Bool = false
-    @AppStorage("mvSettingsWindowIsVisible") var mvSettingsWindowIsVisible: Bool = false
+    @AppStorage("showMenuBar", store: UserDefaults(suiteName: "CoreEngine")) public var showMenuBar: Bool = true
+    @AppStorage("toolBarPickerWindowIsVisible", store: UserDefaults(suiteName: "CoreEngine")) public var toolBarPickerWindowIsVisible: Bool = false
+    @AppStorage("boardSettingsWindowIsVisible", store: UserDefaults(suiteName: "CoreEngine")) public var boardSettingsWindowIsVisible: Bool = false
+    @AppStorage("mvSettingsWindowIsVisible", store: UserDefaults(suiteName: "CoreEngine")) public var mvSettingsWindowIsVisible: Bool = false
     
-    @AppLifecycle(.appDidEnterBackground) var appDidEnterBackground: Bool
-    @AppStorage("gesturesAreLocked") var gesturesAreLocked: Bool = false
-    @AppStorageCGFloat("canvasWidth") var canvasWidth: CGFloat = 8000.0
-    @AppStorageCGFloat("canvasHeight") var canvasHeight: CGFloat = 8000.0
-    @AppStorageCGPoint("canvasOffset") var canvasOffset = CGPoint(x: 6000, y: 6000)
-    @AppStorageCGFloat("canvasScale") var canvasScale: CGFloat = 0.1
-    @AppStorageCGFloat("canvasRotation") var canvasRotation: CGFloat = 0.0
-    @GestureState var gestureScale: CGFloat = 1.0
-    @AppStorageCGFloat("lastScaleValue") var lastScaleValue: CGFloat = 1.0
-    @AppStorageAngle("angle") var angle: Angle = .zero
-    @AppStorageAngle("lastAngle") var lastAngle: Angle = .zero
+    @AppLifecycle(.appDidEnterBackground) public var appDidEnterBackground: Bool
+    @AppStorage("gesturesAreLocked", store: UserDefaults(suiteName: "CoreEngine")) public var gesturesAreLocked: Bool = false
+    @Published public var canvasWidth: CGFloat = 8000.0
+    @Published public var canvasHeight: CGFloat = 8000.0
+    @Published public var canvasOffset = CGPoint(x: 6000, y: 6000)
+    @Published public var canvasScale: CGFloat = 0.1
+    @Published public var canvasRotation: CGFloat = 0.0
+    @GestureState public var gestureScale: CGFloat = 1.0
+    @Published public var lastScaleValue: CGFloat = 1.0
+    @Published public var angle: Angle = .zero
+    @Published public var lastAngle: Angle = .zero
     
-    @AppStorageCGPoint("dropPosition") var dropPosition = CGPoint.zero
-    @AppStorageDictionary("coordinates") public var coordinates: [String: Any]
+    @Published public var dropPosition = CGPoint.zero
+    @Published public var coordinates: [String: Any] = [:]
     
-    @AppStorageCGPoint("translation") var translation: CGPoint = CGPoint(x: 6000, y: 6000)
-    @AppStorageCGPoint("lastOffset") var lastOffset = CGPoint(x: 6000, y: 6000)
-    @AppStorage("isDragging") var isDragging: Bool = false
-    @AppStorageCGPoint("position") var position = CGPoint(x: 0, y: 0)
+    @Published public var translation: CGPoint = CGPoint(x: 6000, y: 6000)
+    @Published public var lastOffset = CGPoint(x: 6000, y: 6000)
+    @Published public var isDragging: Bool = false
+    @Published public var position = CGPoint(x: 0, y: 0)
     
-    @AppStorage("masterResetCanvas") var masterResetCanvas: Bool = false
-    func masterResetTheCanvas() {
+    @Published public var masterResetCanvas: Bool = false
+    public func masterResetTheCanvas() {
         self.masterResetCanvas = true
         self.masterResetCanvas = false
     }
     
 }
 
-struct CanvasEngine: View {
+public struct CanvasEngine: View {
     
-    @StateObject var CanvasControl = CanvasEngineControl()
+    @StateObject public var CanvasControl = CanvasEngineControl()
     
     @AppLifecycle(.appDidEnterBackground) public var appDidEnterBackground: Bool
-    @StateObject var navTools: NavWindowController = NavWindowController()
-    @ObservedObject var UTO = UserToolsObservable()
-    @ObservedObject var BEO = BoardEngineObject()
-    @ObservedObject var DO = OrientationInfo()
+    @StateObject public var navTools: NavWindowController = NavWindowController()
+    @ObservedObject public var UTO = UserToolsObservable()
+    @ObservedObject public var BEO = BoardEngineObject()
+    @ObservedObject public var DO = OrientationInfo()
 
     @State var storeInMenuBar = Set<AnyCancellable>()
     @State var cancellables = Set<AnyCancellable>()
@@ -64,88 +64,13 @@ struct CanvasEngine: View {
     
     @State private var offsetTwo = CGSize.zero
     @GestureState private var dragOffset = CGSize.zero
+    @State public var lastOffset = CGPoint.zero
     
     // Initial size of your drawing canvas
     let initialWidth: CGFloat = 6000
     let initialHeight: CGFloat = 6000
     
-    var dragAngleGestures: some Gesture {
-        DragGesture()
-            .onChanged { gesture in
-                if self.CanvasControl.gesturesAreLocked { return }
-
-                // Simplify calculations and potentially invert them
-                let translation = gesture.translation
-                let cosAngle = cos(Angle(degrees: self.CanvasControl.canvasRotation).radians)
-                let sinAngle = sin(Angle(degrees: self.CanvasControl.canvasRotation).radians)
-
-                // Invert the translation adjustments
-                let adjustedX = cosAngle * translation.width + sinAngle * translation.height
-                let adjustedY = -sinAngle * translation.width + cosAngle * translation.height
-                let rotationAdjustedTranslation = CGPoint(x: adjustedX, y: adjustedY)
-
-                let offsetX = self.CanvasControl.lastOffset.x + (rotationAdjustedTranslation.x / self.CanvasControl.canvasScale)
-                let offsetY = self.CanvasControl.lastOffset.y + (rotationAdjustedTranslation.y / self.CanvasControl.canvasScale)
-                self.CanvasControl.canvasOffset = CGPoint(x: offsetX, y: offsetY)
-            }
-            .onEnded { _ in
-                if self.CanvasControl.gesturesAreLocked { return }
-                self.CanvasControl.lastOffset = self.CanvasControl.canvasOffset
-            }
-            .updating($dragOffset) { value, state, _ in
-                if self.CanvasControl.gesturesAreLocked { return }
-                state = value.translation
-            }
-    }
     
-    var scaleGestures: some Gesture {
-        MagnificationGesture()
-            .onChanged { value in
-                if self.CanvasControl.gesturesAreLocked { return }
-                let delta = value / self.BEO.lastScaleValue
-                self.CanvasControl.canvasScale *= delta
-                self.CanvasControl.lastScaleValue = value
-            }
-            .onEnded { value in
-                if self.CanvasControl.gesturesAreLocked { return }
-                self.CanvasControl.lastScaleValue = 1.0
-            }
-    }
-    
-    var rotationGestures: some Gesture {
-        RotationGesture()
-            .onChanged { value in
-                let scaledAngle = (value - self.CanvasControl.lastAngle) * 0.5
-                self.CanvasControl.angle = self.CanvasControl.lastAngle + scaledAngle
-            }
-            .onEnded { value in
-                self.CanvasControl.lastAngle += value // Update the last angle on gesture end
-            }
-    }
-    
-    func toggleDrawingMode(shapeSubType:String=ShapeToolProvider.line_straight) {
-        
-        if self.BEO.isDraw {
-            disableDrawing()
-        } else {
-            enableDrawing(shapeSubType: shapeSubType)
-        }
-    }
-    
-    func enableDrawing(shapeSubType:String=ShapeToolProvider.line_straight) {
-        self.BEO.isDraw = true
-        self.BEO.shapeSubType = shapeSubType
-        self.CanvasControl.gesturesAreLocked = true
-//        self.toolBarIsShowing = false
-        self.CanvasControl.showMenuBar = false
-    }
-    
-    func disableDrawing() {
-        self.BEO.isDraw = false
-        self.CanvasControl.gesturesAreLocked = false
-//        self.BEO.toolBarIsShowing = true
-        self.CanvasControl.showMenuBar = true
-    }
     
     @State var showRecordingsSheet = false
     @State var menuIsOpen = false
@@ -160,24 +85,25 @@ struct CanvasEngine: View {
     
     @State var alertRecordAnimation = false
     @State var alertRecordAnimationTitle = "Animation Recording"
-    var alertRecordAnimationMessage: String {
+    public var alertRecordAnimationMessage: String {
         return "Are you sure you want to \(self.BEO.isRecording ? "Stop" : "Start") recording?"
     }
     
     
     
     @StateObject public var modelPanel = PanelModeController(title: "Testing Mode Panel", subTitle: "Looks to be good to me!")
-    @State var testTrigger = true
-    @State var wrapIsVisible = true
+    @State public var testTrigger = true
+    @State public var wrapIsVisible = true
     
     
-    @State var CanvasMenuHeightFull: Double = UIScreen.main.bounds.height
-    @State var CanvasMenuHeightHalf: Double = UIScreen.main.bounds.height / 2
+    @State public var CanvasMenuHeightFull: Double = UIScreen.main.bounds.height
+    @State public var CanvasMenuHeightHalf: Double = UIScreen.main.bounds.height / 2
     
-    var body: some View {
+    public var body: some View {
         
         GlobalPositioningZStack(coordinateSpace: .global) { windowGPS in
             
+            // Screen
             GlobalPositioningReader(coordinateSpace: .global) { geo, gps in
                 
                 /*
@@ -186,20 +112,21 @@ struct CanvasEngine: View {
                     3. Board Management
                  */
                 
-                CanvasMenuView(onTapTop: { CanvasControl.toolBarPickerWindowIsVisible.toggle() })
-                    .environmentObject(gps)
-                    .environmentObject(self.BEO)
-                
-                MvSettingsBar {}
-                    .zIndex(2.0)
-                    .toggleFromBelow($CanvasControl.boardSettingsWindowIsVisible, using: gps, viewHeight: 165)
-                    .environmentObject(self.BEO)
-                    
-                
-                // Left Hand Menu Bar
-                MenuBarStatic(showIcons: $menuIsOpen, gps: gps){}
-                // Navigation Window
-                navTools.getNavStackView()
+//                Icons.SystemIcon(icon: .arrowLeft)
+//                CanvasMenuView(onTapTop: { CanvasControl.toolBarPickerWindowIsVisible.toggle() })
+//                    .environmentObject(gps)
+//                    .environmentObject(self.BEO)
+//                
+//                MvSettingsBar {}
+//                    .zIndex(2.0)
+//                    .toggleFromBelow($CanvasControl.boardSettingsWindowIsVisible, using: gps, viewHeight: 165)
+//                    .environmentObject(self.BEO)
+//                    
+//                
+//                // Left Hand Menu Bar
+//                MenuBarStatic(showIcons: $menuIsOpen, gps: gps){}
+//                // Navigation Window
+//                navTools.getNavStackView()
                                 
 //                DynaWrap(id: "dynaWrapFloatingButtons") {
 //                    FloatingProfileView(profileImageDiameter: 360, orbitRadius: 300)
@@ -216,27 +143,30 @@ struct CanvasEngine: View {
 //                ModePanel(title: "Your Current Activity", subTitle: self.BEO.currentActivityId, showButton: false, isFlashing: true)
 //                    .position(using: gps, at: .topRight, offsetX: 200, offsetY: 50)
                 
-            }.zIndex(35.0)
+            }.zIndex(2.0)
             
-            GlobalPositioningReader(coordinateSpace: .canvas, width: 20000, height: 20000) { cGeo, cGps in
-                // Board/Canvas Level
+            // Board
+            GlobalPositioningZStack(coordinateSpace: CoreNameSpace.canvas.name, width: 20000, height: 20000) { cGps in
+                
                 if !CanvasControl.masterResetCanvas {
                     BoardEngine()
-                        .zIndex(2.0)
+                        .zIndex(0.0)
                         .environmentObject(self.BEO)
                         .environmentObject(self.navTools)
-                        .background(.clear)
-                        .frame(width: cGeo.size.width, height: cGeo.size.height)
-                        .offset(x: self.BEO.canvasOffset.x, y: self.BEO.canvasOffset.y)
-                        .scaleEffect(self.BEO.canvasScale)
-                        .rotationEffect(Angle(degrees: self.BEO.canvasRotation))
+
                 }
+
             }
+            .offset(x: self.BEO.canvasOffset.x, y: self.BEO.canvasOffset.y)
+            .scaleEffect(self.BEO.canvasScale)
+            .rotationEffect(Angle(degrees: self.BEO.canvasRotation))
             .zIndex(0.0)
-            .background(Color.black.opacity(0.0001))
-            .gesture(self.BEO.gesturesAreLocked ? nil : dragAngleGestures.simultaneously(with: scaleGestures))
+
         }
-        .background(StarryNightAnimatedView())
+        .zIndex(1.0)
+        .background(Color.black.opacity(0.0001))
+        .gesture(dragAngleGestures.simultaneously(with: scaleGestures))
+//        .background(StarryNightAnimatedView())
         .onAppear() {
             _appDidEnterBackground.onChange = {
                 print("YESSSS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
@@ -363,6 +293,85 @@ struct CanvasEngine: View {
             sideContent: { EmptyView() }
         ))
 //        navTools.addNewNavStackToPool(viewId: caller, viewBuilder: { HomeDashboardView().environmentObject(self.BEO) })
+    }
+    
+    
+    var dragAngleGestures: some Gesture {
+        DragGesture()
+            .onChanged { gesture in
+//                if self.CanvasControl.gesturesAreLocked { return }
+
+                // Simplify calculations and potentially invert them
+                let translation = gesture.translation
+                let cosAngle = cos(Angle(degrees: self.CanvasControl.canvasRotation).radians)
+                let sinAngle = sin(Angle(degrees: self.CanvasControl.canvasRotation).radians)
+
+                // Invert the translation adjustments
+                let adjustedX = cosAngle * translation.width + sinAngle * translation.height
+                let adjustedY = -sinAngle * translation.width + cosAngle * translation.height
+                let rotationAdjustedTranslation = CGPoint(x: adjustedX, y: adjustedY)
+
+                let offsetX = self.lastOffset.x + (rotationAdjustedTranslation.x / self.CanvasControl.canvasScale)
+                let offsetY = self.lastOffset.y + (rotationAdjustedTranslation.y / self.CanvasControl.canvasScale)
+                self.CanvasControl.canvasOffset = CGPoint(x: offsetX, y: offsetY)
+            }
+            .onEnded { _ in
+//                if self.CanvasControl.gesturesAreLocked { return }
+                self.lastOffset = self.CanvasControl.canvasOffset
+            }
+            .updating($dragOffset) { value, state, _ in
+//                if self.CanvasControl.gesturesAreLocked { return }
+                state = value.translation
+            }
+    }
+    
+    var scaleGestures: some Gesture {
+        MagnificationGesture()
+            .onChanged { value in
+//                if self.CanvasControl.gesturesAreLocked { return }
+                let delta = value / self.BEO.lastScaleValue
+                self.CanvasControl.canvasScale *= delta
+                self.CanvasControl.lastScaleValue = value
+            }
+            .onEnded { value in
+//                if self.CanvasControl.gesturesAreLocked { return }
+                self.CanvasControl.lastScaleValue = 1.0
+            }
+    }
+    
+    var rotationGestures: some Gesture {
+        RotationGesture()
+            .onChanged { value in
+                let scaledAngle = (value - self.CanvasControl.lastAngle) * 0.5
+                self.CanvasControl.angle = self.CanvasControl.lastAngle + scaledAngle
+            }
+            .onEnded { value in
+                self.CanvasControl.lastAngle += value // Update the last angle on gesture end
+            }
+    }
+    
+    func toggleDrawingMode(shapeSubType:String=ShapeToolProvider.line_straight) {
+        
+        if self.BEO.isDraw {
+            disableDrawing()
+        } else {
+            enableDrawing(shapeSubType: shapeSubType)
+        }
+    }
+    
+    func enableDrawing(shapeSubType:String=ShapeToolProvider.line_straight) {
+        self.BEO.isDraw = true
+        self.BEO.shapeSubType = shapeSubType
+        self.CanvasControl.gesturesAreLocked = true
+//        self.toolBarIsShowing = false
+        self.CanvasControl.showMenuBar = false
+    }
+    
+    func disableDrawing() {
+        self.BEO.isDraw = false
+        self.CanvasControl.gesturesAreLocked = false
+//        self.BEO.toolBarIsShowing = true
+        self.CanvasControl.showMenuBar = true
     }
 
 }

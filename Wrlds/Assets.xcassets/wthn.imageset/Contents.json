@@ -1,15 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "wthn.png",
+      "filename" : "AWAKE LOGO PLay 3.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "AWAKE LOGO PLay 4.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
+      "filename" : "AWAKE LOGO PLay 5.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

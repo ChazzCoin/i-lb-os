@@ -15,6 +15,7 @@ public class ManagedPlayerRef: Object, ObjectKeyIdentifiable {
     @Persisted public var status: String = "1"
 }
 
+
 public class ManagedView: Object, ObjectKeyIdentifiable {
     @Persisted(primaryKey: true) public var id: String = UUID().uuidString
     @Persisted public var dateUpdated: Int = 0

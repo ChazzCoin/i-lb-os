@@ -12,29 +12,29 @@ import RealmSwift
 import FirebaseDatabase
 import CoreEngine
 
-class BoardEngineObject : ObservableObject {
+public class BoardEngineObject : ObservableObject {
 
-    @ObservedResults(SessionPlan.self) var allSessionPlans
-    @ObservedResults(ActivityPlan.self) var allActivityPlans
-    @ObservedResults(ManagedView.self) var allTools
-    @ObservedResults(ManagedViewAction.self) var allToolActions
+    @ObservedResults(SessionPlan.self) public var allSessionPlans
+    @ObservedResults(ActivityPlan.self) public var allActivityPlans
+    @ObservedResults(ManagedView.self) public var allTools
+    @ObservedResults(ManagedViewAction.self) public var allToolActions
     
-    var currentToolActionIndex: Int?
-    var sortedFilteredActions: Results<ManagedViewAction>?
+    public var currentToolActionIndex: Int?
+    public var sortedFilteredActions: Results<ManagedViewAction>?
 
-    func setupToolActions() {
+    public func setupToolActions() {
         sortedFilteredActions = allToolActions
             .filter("boardId == %@", self.currentActivityId)
             .sorted(byKeyPath: "dateCreated", ascending: false)
         resetHistoryIndex()
     }
 
-    func resetHistoryIndex() {
+    public func resetHistoryIndex() {
         guard let actions = sortedFilteredActions else { return }
         self.currentToolActionIndex = actions.count > 0 ? actions.count - 1 : nil
     }
 
-    func undoLastToolAction() {
+    public func undoLastToolAction() {
         guard let index = currentToolActionIndex, let actions = sortedFilteredActions, index >= 0 else {
             resetHistoryIndex()
             return
@@ -47,7 +47,7 @@ class BoardEngineObject : ObservableObject {
     }
     
     
-    func loadToolAction(viewId:String, actionId:String) {
+    public func loadToolAction(viewId:String, actionId:String) {
         if let action = self.realmInstance.findByField(ManagedViewAction.self, value: actionId) {
             self.realmInstance.safeFindByField(ManagedView.self, value: viewId) { obj in
                 obj.absorbAction(from: action, saveRealm: self.realmInstance)
@@ -55,33 +55,33 @@ class BoardEngineObject : ObservableObject {
         }
     }
     
-    @AppStorage("defaultSport") var defaultSport: String = "Soccer"
-    @AppStorage("isLoggedIn") var isLoggedIn: Bool = false
-    @AppStorage("currentUserId") var currentUserId: String = ""
-    @AppStorage("currentUserName") var currentUserName: String = ""
-    @AppStorage("currentUserRole") var currentUserRole: String = ""
-    @AppStorage("currentUserAuth") var currentUserAuth: String = ""
-    @AppStorage("currentOrgId") var currentOrgId: String = "none"
-    @AppStorage("currentOrgName") var currentOrgName: String = "none"
-    @AppStorage("currentTeamId") var currentTeamId: String = "none"
-    @AppStorage("currentSessionId") var currentSessionId: String = ""
-    @AppStorage("currentActivityId") var currentActivityId: String = ""
-    @AppStorage("currentChatId") var currentChatId: String = ""
+    @AppStorage("defaultSport") public var defaultSport: String = "Soccer"
+    @AppStorage("isLoggedIn") public var isLoggedIn: Bool = false
+    @AppStorage("currentUserId") public var currentUserId: String = ""
+    @AppStorage("currentUserName") public var currentUserName: String = ""
+    @AppStorage("currentUserRole") public var currentUserRole: String = ""
+    @AppStorage("currentUserAuth") public var currentUserAuth: String = ""
+    @AppStorage("currentOrgId") public var currentOrgId: String = "none"
+    @AppStorage("currentOrgName") public var currentOrgName: String = "none"
+    @AppStorage("currentTeamId") public var currentTeamId: String = "none"
+    @AppStorage("currentSessionId") public var currentSessionId: String = ""
+    @AppStorage("currentActivityId") public var currentActivityId: String = ""
+    @AppStorage("currentChatId") public var currentChatId: String = ""
     
     @AppStorage("isPlayingAnimation") public var isPlayingAnimation: Bool = false
     @AppStorage("toolBarCurrentViewId") public var toolBarCurrentViewId: String = ""
     @AppStorage("toolSettingsIsShowing") public var toolSettingsIsShowing: Bool = false
     @AppStorage("ignoreUpdates") public var ignoreUpdates: Bool = false
     
-    let realmInstance = realm()
-    let boards = Sports()
-    @Published var guideModeIsEnabled = true
-    @Published var boardRefreshFlag = true
+    public let realmInstance = realm()
+    public let boards = Sports()
+    @Published public var guideModeIsEnabled = true
+    @Published public var boardRefreshFlag = true
     
-    @Published var globalWindowsIndex = 3.0
-    @Published var windowIsOpen: Bool = false
-    @Published var gesturesAreLocked: Bool = false
-    @Published var isShowingPopUp: Bool = false
+    @Published public var globalWindowsIndex = 3.0
+    @Published public var windowIsOpen: Bool = false
+    @Published public var gesturesAreLocked: Bool = false
+    @Published public var isShowingPopUp: Bool = false
     
     // Current User
 //    @Published var isLoggedIn: Bool = true
@@ -116,7 +116,7 @@ class BoardEngineObject : ObservableObject {
     @Published var toolBarIsShowing = false
 //    @Published var toolBarCurrentViewId = ""
     
-    init() {
+    public init() {
         dropDelegate = CustomDropDelegate(
             BEO: .constant(self),
             updatePosition: { position in
@@ -153,8 +153,6 @@ class BoardEngineObject : ObservableObject {
     @Published var doSnapshot = false
     
     // Current Session/Activity
-    @Published var sessions: [SessionPlan] = []
-    @Published var activities: [ActivityPlan] = []
     @Published var basicTools: [ManagedView] = []
     @Published var lineTools: [ManagedView] = []
     

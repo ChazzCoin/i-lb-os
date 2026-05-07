@@ -77,21 +77,21 @@ public struct SwitchFullHalfHide: View {
     
     public var body: some View {
         HStack {
-            Button("Full") {
+            Button("1") {
                 status = "full"
                 onChange("full")
             }
             .buttonStyle(.bordered)
             .tint(status == "full" ? .green : .gray)
             
-            Button("Half") {
+            Button("1/2") {
                 status = "half"
                 onChange("half")
             }
             .buttonStyle(.bordered)
             .tint(status == "half" ? .orange : .gray)
             
-            Button("Hide") {
+            Button("0") {
                 status = "hide"
                 onChange("hide")
             }

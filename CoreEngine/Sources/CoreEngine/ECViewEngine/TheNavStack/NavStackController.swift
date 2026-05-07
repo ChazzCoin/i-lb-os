@@ -314,7 +314,7 @@ public class NavWindowController: ObservableObject {
     public func turnOffFloating(gps: GlobalPositioningSystem) {
         self.isFloatable = false
         self.isLocked = true
-        setSize(gps: gps, .full_menu_bar)
+        setSize(gps: gps, .full)
     }
     
     public func masterResetTheWindow() {
@@ -413,8 +413,8 @@ public class NavWindowController: ObservableObject {
     }
     
     public func toggleWindowSize(gps: GlobalPositioningSystem) {
-        if self.navSize != NavStackSize.full_menu_bar {
-            setSize(gps: gps, .full_menu_bar)
+        if self.navSize != NavStackSize.full {
+            setSize(gps: gps, .full)
         } else {
             setSize(gps: gps, .half)
         }

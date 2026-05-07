@@ -174,7 +174,7 @@ struct MusicPlayerView: View {
                 
             }) {
                 Text("Upload Song")
-                    .frame(minWidth: 0, maxWidth: .infinity)
+//                    .frame(minWidth: 0, maxWidth: .infinity)
                     .padding()
                     .foregroundColor(.white)
                     .background(Color.blue)
@@ -185,7 +185,7 @@ struct MusicPlayerView: View {
         .background(
             RecordShape()
                 .stroke(Color.black, lineWidth: 5)
-                .frame(width: 1000, height: 1000)
+//                .frame(width: 1000, height: 1000)
                 .background(Color.gray.opacity(0.0))
                 .padding(50)
         )

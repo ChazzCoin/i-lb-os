@@ -9,9 +9,9 @@ import SwiftUI
 
 public struct UsersListView: View {
     @AppStorage("currentRoomId") public var currentRoomId: String = ""
-    @ObservedResults(UserInRoom.self) public var allUsers
+    @ObservedResults(Presence.self) public var allUsers
     
-    public var roomUsers: Results<UserInRoom> {
+    public var roomUsers: Results<Presence> {
         return allUsers
             .filter("roomId == %@", currentRoomId)
     }
@@ -63,18 +63,18 @@ public struct UsersListView: View {
 }
 
 public struct UserCard: View {
-    public let user: UserInRoom
+    public let user: Presence
 
     public var body: some View {
         HStack(spacing: 12) {
             // Avatar: Use a placeholder if no avatar
-            if let url = URL(string: user.guestId ?? ""), !(user.guestId ?? "")!.isEmpty {
+            if let url = URL(string: user.userId ?? ""), !(user.userId ?? "")!.isEmpty {
                 AsyncImage(url: url) { image in
                     image.resizable()
                 } placeholder: {
                     Circle()
                         .fill(Color.blue.opacity(0.18))
-                        .overlay(Text((user.guestName ?? "vistor").first?.uppercased() ?? "?")
+                        .overlay(Text((user.userName ?? "vistor").first?.uppercased() ?? "?")
                             .font(.title2).foregroundColor(.blue))
                 }
                 .frame(width: 42, height: 42)
@@ -85,13 +85,13 @@ public struct UserCard: View {
                     .fill(Color.blue.opacity(0.18))
                     .frame(width: 42, height: 42)
                     .overlay(
-                        Text((user.guestName ?? "vistor").first?.uppercased() ?? "?")
+                        Text((user.userName ?? "vistor").first?.uppercased() ?? "?")
                             .font(.title2).foregroundColor(.blue)
                     )
             }
 
             VStack(alignment: .leading, spacing: 2) {
-                Text(user.guestId ?? user.guestId)
+                Text(user.userId ?? user.userName)
                     .font(.headline)
                     .foregroundColor(.primary)
                 Text(user.status)

@@ -58,3 +58,9 @@ public enum CanvasAction: String, CaseIterable {
     case refresh = "refresh"
     case closeWindows = "close_windows"
 }
+
+public struct NodeStream: Identifiable {
+    public var id: String
+    public var position: CGPoint
+    public var action: String?
+}

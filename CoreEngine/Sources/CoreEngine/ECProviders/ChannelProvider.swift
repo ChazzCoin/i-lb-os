@@ -60,6 +60,30 @@ public class NavStackMessage {
     }
 }
 
+public class NodeStackMessage {
+    public var nodeId: String = "master"
+    public var navAction: WindowAction? = nil
+    public var sidebarAction: WindowAction? = nil
+    public var size: NodeStackSize? = nil
+    public var viewName: String? = nil
+    public var viewAction: WindowAction? = nil
+    
+    public init(
+        nodeId: String = "master",
+        navAction: WindowAction? = nil,
+        sidebarAction: WindowAction? = nil,
+        size: NodeStackSize? = nil,
+        viewName: String? = nil,
+        viewAction: WindowAction? = nil
+    ) {
+        self.nodeId = nodeId
+        self.navAction = navAction
+        self.sidebarAction = sidebarAction
+        self.size = size
+        self.viewName = viewName
+        self.viewAction = viewAction
+    }
+}
 
 public class OnCreateTool {
     public var toolType: String = ""
@@ -166,6 +190,7 @@ public enum CodiChannel {
     case message
     case broadcast
     case NavStackMessage
+    case NodeStackMessage
     case Canvas
     case SESSION_ON_ID_CHANGE
     case ACTIVITY_ON_ID_CHANGE
@@ -200,6 +225,8 @@ public enum CodiChannel {
                 return BroadcastChannel.shared.subject
             case .NavStackMessage:
                 return NavStackToggleChannel.shared.subject
+        case .NodeStackMessage:
+            return NodeStackToggleChannel.shared.subject
             case .Canvas:
                 return CanvasChannel.shared.subject
             case .SESSION_ON_ID_CHANGE:
@@ -253,6 +280,10 @@ public class CanvasChannel {
 }
 public class NavStackToggleChannel {
     static let shared = NavStackToggleChannel()
+    let subject = PassthroughSubject<Any, Never>()
+}
+public class NodeStackToggleChannel {
+    static let shared = NodeStackToggleChannel()
     let subject = PassthroughSubject<Any, Never>()
 }
 // Example of a channel

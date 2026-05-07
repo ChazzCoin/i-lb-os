@@ -88,6 +88,14 @@ public class BroadcastTools: ObservableObject {
         }
     }
     
+    public static func listenForNodeStreams(storeIn: inout Set<AnyCancellable>, onEvent: @escaping (NodeStream) -> Void) {
+        BroadcastTools().subscribeTo(.Canvas, storeIn: &storeIn) { wc in
+            if let stream = wc as? NodeStream {
+                onEvent(stream)
+            }
+        }
+    }
+    
     // Consider adding functionality to remove specific subscriptions if needed
     public func unsubscribeAll() { cancellables.removeAll() }
     

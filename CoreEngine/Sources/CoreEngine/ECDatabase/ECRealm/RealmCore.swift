@@ -19,6 +19,15 @@ import Realm
                 GO AWAY.
  */
 
+func serializeArray<T: Encodable>(_ array: [T]) throws -> String {
+    let data = try JSONEncoder().encode(array)
+    return String(data: data, encoding: .utf8) ?? "[]"
+}
+func deserializeArray<T: Decodable>(_ string: String, as type: T.Type) throws -> [T] {
+    let data = Data(string.utf8)
+    return try JSONDecoder().decode([T].self, from: data)
+}
+
 
 
 public class RealmInstance {

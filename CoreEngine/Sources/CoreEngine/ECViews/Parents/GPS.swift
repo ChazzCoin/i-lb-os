@@ -146,8 +146,37 @@ public struct GlobalPositioningZStack<Content: View>: View {
         .frame(width: gps.effectiveSize.width, height: gps.effectiveSize.height)
 //        .ignoresSafeArea(.all)
         .background(Color.clear)
+        .border(Color.AIMYellow, width: 10)
     }
 }
+public struct CanvasNode<Content: View>: View {
+    @EnvironmentObject public var registry: ManagedViewEngine
+
+    public let id: UUID
+    public let content: Content
+
+    public init(id: UUID, @ViewBuilder content: () -> Content) {
+        self.id = id
+        self.content = content()
+    }
+
+    public var body: some View {
+        content
+            .gesture(
+                DragGesture()
+                    .onChanged { value in
+                        registry.updatePosition(
+                            id: id,
+                            CGPoint(
+                                x: value.location.x,
+                                y: value.location.y
+                            )
+                        )
+                    }
+            )
+    }
+}
+
 
 public struct GlobalPositioningReader<Content: View>: View {
     public let content: (GeometryProxy, GlobalPositioningSystem) -> Content
@@ -179,6 +208,7 @@ public struct GlobalPositioningReader<Content: View>: View {
         .frame(width: gps.effectiveSize.width, height: gps.effectiveSize.height)
         .ignoresSafeArea(.all)
         .background(Color.clear)
+//        .border(Color.yellow, width: 10)
     }
 }
 

@@ -43,6 +43,7 @@
 		FB3E02C12B0C9A6D00D8558C /* BuddyProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02C02B0C9A6D00D8558C /* BuddyProfileView.swift */; };
 		FB3E02C52B0D2A8500D8558C /* ThumbnailListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3E02C42B0D2A8500D8558C /* ThumbnailListView.swift */; };
 		FB426AA12B55B6A30058CD9D /* _NotificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB426AA02B55B6A30058CD9D /* _NotificationView.swift */; };
+		FB43C7E52F27D0160039C377 /* SpatialEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB43C7E42F27D0120039C377 /* SpatialEngine.swift */; };
 		FB4840962B1D43AD0003377A /* BarListPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB4840952B1D43AD0003377A /* BarListPicker.swift */; };
 		FB48409A2B1EBC940003377A /* Sports.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB4840992B1EBC940003377A /* Sports.swift */; };
 		FB48409C2B1EBE8B0003377A /* StopWatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB48409B2B1EBE8B0003377A /* StopWatch.swift */; };
@@ -63,7 +64,7 @@
 		FB8578772E4C7140003C9D9F /* AwakeningBannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB8578762E4C713A003C9D9F /* AwakeningBannerView.swift */; };
 		FB87BE092B734425003B880D /* Michael.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB87BE082B734425003B880D /* Michael.swift */; };
 		FB8819D12B46436300C16198 /* CanvasEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB8819D02B46436300C16198 /* CanvasEngine.swift */; };
-		FB8819D32B4649CC00C16198 /* BoardEngineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB8819D22B4649CC00C16198 /* BoardEngineView.swift */; };
+		FB8819D32B4649CC00C16198 /* BoardEngineObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB8819D22B4649CC00C16198 /* BoardEngineObject.swift */; };
 		FB8819E02B464B2300C16198 /* GlobalPositioning.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB8819DF2B464B2200C16198 /* GlobalPositioning.swift */; };
 		FB8819F32B464CA200C16198 /* RealmFind.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB8819E32B464CA200C16198 /* RealmFind.swift */; };
 		FB8819F92B464CA200C16198 /* RealmChangeListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB8819E42B464CA200C16198 /* RealmChangeListener.swift */; };
@@ -159,6 +160,7 @@
 		FBF515C22BBDF76A0066EAA9 /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF515C12BBDF76A0066EAA9 /* SessionManager.swift */; };
 		FBF515C42BBDFA700066EAA9 /* TheAssigner.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF515C32BBDFA700066EAA9 /* TheAssigner.swift */; };
 		FBF515D82BC08DB60066EAA9 /* CoreEngine in Frameworks */ = {isa = PBXBuildFile; productRef = FBF515D72BC08DB60066EAA9 /* CoreEngine */; };
+		FBF68C342F625803001DCF45 /* BoardEngineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF68C332F625803001DCF45 /* BoardEngineView.swift */; };
 		FBFF5CD62BCDFBF900149A31 /* RealityKitContent in Frameworks */ = {isa = PBXBuildFile; productRef = FBFF5CD52BCDFBF900149A31 /* RealityKitContent */; };
 		FBFF5CD82BCDFBF900149A31 /* SouthVisionApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBFF5CD72BCDFBF900149A31 /* SouthVisionApp.swift */; };
 		FBFF5CDA2BCDFBF900149A31 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBFF5CD92BCDFBF900149A31 /* ContentView.swift */; };
@@ -207,6 +209,7 @@
 		FB3E02C02B0C9A6D00D8558C /* BuddyProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuddyProfileView.swift; sourceTree = "<group>"; };
 		FB3E02C42B0D2A8500D8558C /* ThumbnailListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailListView.swift; sourceTree = "<group>"; };
 		FB426AA02B55B6A30058CD9D /* _NotificationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _NotificationView.swift; sourceTree = "<group>"; };
+		FB43C7E42F27D0120039C377 /* SpatialEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpatialEngine.swift; sourceTree = "<group>"; };
 		FB4840952B1D43AD0003377A /* BarListPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarListPicker.swift; sourceTree = "<group>"; };
 		FB4840992B1EBC940003377A /* Sports.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sports.swift; sourceTree = "<group>"; };
 		FB48409B2B1EBE8B0003377A /* StopWatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopWatch.swift; sourceTree = "<group>"; };
@@ -230,7 +233,7 @@
 		FB8578762E4C713A003C9D9F /* AwakeningBannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AwakeningBannerView.swift; sourceTree = "<group>"; };
 		FB87BE082B734425003B880D /* Michael.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Michael.swift; sourceTree = "<group>"; };
 		FB8819D02B46436300C16198 /* CanvasEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasEngine.swift; sourceTree = "<group>"; };
-		FB8819D22B4649CC00C16198 /* BoardEngineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardEngineView.swift; sourceTree = "<group>"; };
+		FB8819D22B4649CC00C16198 /* BoardEngineObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardEngineObject.swift; sourceTree = "<group>"; };
 		FB8819DF2B464B2200C16198 /* GlobalPositioning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalPositioning.swift; sourceTree = "<group>"; };
 		FB8819E32B464CA200C16198 /* RealmFind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmFind.swift; sourceTree = "<group>"; };
 		FB8819E42B464CA200C16198 /* RealmChangeListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmChangeListener.swift; sourceTree = "<group>"; };
@@ -326,6 +329,7 @@
 		FBF515C12BBDF76A0066EAA9 /* SessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManager.swift; sourceTree = "<group>"; };
 		FBF515C32BBDFA700066EAA9 /* TheAssigner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TheAssigner.swift; sourceTree = "<group>"; };
 		FBF515C52BC084250066EAA9 /* CoreEngine */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = CoreEngine; sourceTree = "<group>"; };
+		FBF68C332F625803001DCF45 /* BoardEngineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardEngineView.swift; sourceTree = "<group>"; };
 		FBFF5CD12BCDFBF900149A31 /* SouthVision.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SouthVision.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FBFF5CD42BCDFBF900149A31 /* RealityKitContent */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = RealityKitContent; sourceTree = "<group>"; };
 		FBFF5CD72BCDFBF900149A31 /* SouthVisionApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SouthVisionApp.swift; sourceTree = "<group>"; };
@@ -372,7 +376,7 @@
 			isa = PBXGroup;
 			children = (
 				FBD9AFB92AFF03D7005F8620 /* CanvasEngine.swift */,
-				FB15DD292B07443600A21290 /* BoardEngineView.swift */,
+				FBF68C332F625803001DCF45 /* BoardEngineView.swift */,
 				FBBDD0232B6F6D8B0009844B /* CanvasExtensions.swift */,
 				FBF515B82BBD03FF0066EAA9 /* BoardEngineObject.swift */,
 				FBE54B812C61CC1100C165DF /* BoardEngineById.swift */,
@@ -511,6 +515,7 @@
 		FB829F082B36A83300FAC6E0 /* Wrlds */ = {
 			isa = PBXGroup;
 			children = (
+				FB43C7E42F27D0120039C377 /* SpatialEngine.swift */,
 				FB8578762E4C713A003C9D9F /* AwakeningBannerView.swift */,
 				FB8578742E4C53CB003C9D9F /* CanvasGridLines.swift */,
 				FB5B5BFC2E4A12EE0042438B /* BinauralController.swift */,
@@ -526,7 +531,8 @@
 				FB8819FF2B464D9700C16198 /* TimeProvider.swift */,
 				FB8819E12B464CA100C16198 /* Realm */,
 				FB8819DF2B464B2200C16198 /* GlobalPositioning.swift */,
-				FB8819D22B4649CC00C16198 /* BoardEngineView.swift */,
+				FB8819D22B4649CC00C16198 /* BoardEngineObject.swift */,
+				FB15DD292B07443600A21290 /* BoardEngineView.swift */,
 				FB8819D02B46436300C16198 /* CanvasEngine.swift */,
 				FB829F092B36A83300FAC6E0 /* WrldsApp.swift */,
 				FB94E3972E23938A0088E277 /* GridLines.swift */,
@@ -1045,6 +1051,7 @@
 				FBDE4F682B4F7736007FE880 /* FireData.swift in Sources */,
 				FB5B5BFD2E4A12F80042438B /* BinauralController.swift in Sources */,
 				FBDE4F702B4FA831007FE880 /* RecordShapeView.swift in Sources */,
+				FB43C7E52F27D0160039C377 /* SpatialEngine.swift in Sources */,
 				FB8819F92B464CA200C16198 /* RealmChangeListener.swift in Sources */,
 				FB881A002B464D9700C16198 /* TimeProvider.swift in Sources */,
 				FBDE4F6C2B4F846C007FE880 /* FireParser.swift in Sources */,
@@ -1052,7 +1059,7 @@
 				FB5B5BF72E468E210042438B /* BinauralSoundViewModel.swift in Sources */,
 				FB829F0C2B36A83300FAC6E0 /* ContentView.swift in Sources */,
 				FBDE4F632B4F73C2007FE880 /* Song.swift in Sources */,
-				FB8819D32B4649CC00C16198 /* BoardEngineView.swift in Sources */,
+				FB8819D32B4649CC00C16198 /* BoardEngineObject.swift in Sources */,
 				FB94E3962E238AEC0088E277 /* DocumentPicker.swift in Sources */,
 				FB829F0A2B36A83300FAC6E0 /* WrldsApp.swift in Sources */,
 				FB8578752E4C53D3003C9D9F /* CanvasGridLines.swift in Sources */,
@@ -1087,6 +1094,7 @@
 				FBDF0DC92B224EB500FADE44 /* AllManagedViewsService.swift in Sources */,
 				FBE2C6242B1B2E01004C0116 /* HomeDashboardView.swift in Sources */,
 				FB18F1402B63946100D89F8D /* XShape.swift in Sources */,
+				FBF68C342F625803001DCF45 /* BoardEngineView.swift in Sources */,
 				FB9EB6E32BB695FD00FDD5DE /* ActivityCategoryProvider.swift in Sources */,
 				FBE385502B4B32950090901C /* _FriendsListView.swift in Sources */,
 				FB9F1DD92B1533C400FD9078 /* _FirebaseLogin.swift in Sources */,
@@ -1212,14 +1220,15 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 10;
 				DEVELOPMENT_ASSET_PATHS = "\"Wrlds/Preview Content\"";
 				DEVELOPMENT_TEAM = 248J2GKL56;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Wrlds/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Wrlds;
+				INFOPLIST_KEY_CFBundleDisplayName = Awakening101;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
 				INFOPLIST_KEY_NSCameraUsageDescription = AR/VR;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -1232,7 +1241,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.8;
+				MARKETING_VERSION = 2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = io.ludi.Wrlds;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1246,14 +1255,15 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 10;
 				DEVELOPMENT_ASSET_PATHS = "\"Wrlds/Preview Content\"";
 				DEVELOPMENT_TEAM = 248J2GKL56;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Wrlds/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Wrlds;
+				INFOPLIST_KEY_CFBundleDisplayName = Awakening101;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
 				INFOPLIST_KEY_NSCameraUsageDescription = AR/VR;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -1266,7 +1276,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.8;
+				MARKETING_VERSION = 2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = io.rpgs.wthn;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

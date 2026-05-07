@@ -26,10 +26,10 @@ public extension CoreName {
         }
         
         @ViewBuilder
-        public static func GenreBuilder(for genre: String, in type: String, as subtype: String, viewId: String, activityId: String) -> some View {
+        public static func GenreBuilder(for genre: String, in type: String, as subtype: String, viewId: String, activityId: String, bounds: CGRect?=nil) -> some View {
             switch genre {
                 case "nav": EmptyText()
-                case "tool": ViewEngine.ToolBuilder(in: type, as: subtype, viewId: viewId, activityId: activityId)
+                case "tool": ViewEngine.ToolBuilder(in: type, as: subtype, viewId: viewId, activityId: activityId, bounds: bounds)
                 default: EmptyText()
             }
         }
@@ -90,12 +90,12 @@ public extension CoreName {
             }
         }
         @ViewBuilder
-        public static func ToolBuilder(in type: String, as subtype: String, viewId: String, activityId: String) -> some View {
+        public static func ToolBuilder(in type: String, as subtype: String, viewId: String, activityId: String, bounds: CGRect?=nil) -> some View {
             switch type {
-                case "general": ViewEngine.Tool.GeneralTool.Build(name: subtype, viewId: viewId, activityId: activityId)
+            case "general": ViewEngine.Tool.GeneralTool.Build(name: subtype, viewId: viewId, activityId: activityId, bounds: bounds)
                 case "shape": ViewEngine.Tool.ShapeTool.Build(name: subtype, viewId: viewId, activityId: activityId)
-                case "soccer": ViewEngine.Tool.SoccerTool.Build(name: subtype, viewId: viewId, activityId: activityId)
-                case "pool": ViewEngine.Tool.PoolBallTool.Build(name: subtype, viewId: viewId, activityId: activityId)
+                case "soccer": ViewEngine.Tool.SoccerTool.Build(name: subtype, viewId: viewId, activityId: activityId, bounds: bounds)
+                case "pool": ViewEngine.Tool.PoolBallTool.Build(name: subtype, viewId: viewId, activityId: activityId, bounds: bounds)
                 default: EmptyText()
             }
         }
@@ -208,8 +208,8 @@ public extension CoreName {
                         Image(self.name).resizable()
                     })
                 }
-                public static func Build(name: String, viewId: String, activityId: String) -> AnyView {
-                    AnyView(ManagedViewTool(viewId: viewId, activityId: activityId) {
+                public static func Build(name: String, viewId: String, activityId: String, bounds: CGRect?=nil) -> AnyView {
+                    AnyView(ManagedViewTool(viewId: viewId, activityId: activityId, bounds: bounds) {
                         Image(name).resizable()
                     })
                 }
@@ -253,8 +253,8 @@ public extension CoreName {
                         Image(self.name).resizable()
                     })
                 }
-                public static func Build(name: String, viewId: String, activityId: String) -> AnyView {
-                    AnyView(ManagedViewTool(viewId: viewId, activityId: activityId) {
+                public static func Build(name: String, viewId: String, activityId: String, bounds: CGRect?=nil) -> AnyView {
+                    AnyView(ManagedViewTool(viewId: viewId, activityId: activityId, bounds: bounds) {
                         Image(name).resizable()
                     })
                 }
@@ -406,8 +406,8 @@ public extension CoreName {
                         Image(systemName: self.name).resizable()
                     })
                 }
-                public static func Build(name: String, viewId: String, activityId: String) -> AnyView {
-                    AnyView(ManagedViewTool(viewId: viewId, activityId: activityId) {
+                public static func Build(name: String, viewId: String, activityId: String, bounds: CGRect?=nil) -> AnyView {
+                    AnyView(ManagedViewTool(viewId: viewId, activityId: activityId, bounds: bounds) {
                         Image(systemName: name).resizable()
                     })
                 }

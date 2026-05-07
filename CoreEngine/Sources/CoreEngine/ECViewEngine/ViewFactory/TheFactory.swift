@@ -38,6 +38,10 @@ public class ViewFactory {
         return ManagedViewHolder(id: callerId, mainBuilder: { mainContent() }, sidebarBuilder: { sideContent() } )
     }
     
+    public static func BuildNodeHolder<Content: View, Side: View>(callerId: String, @ViewBuilder mainContent: @escaping () -> Content, @ViewBuilder sideContent: @escaping () -> Side) -> NodeViewHolder {
+        return NodeViewHolder(id: callerId, mainBuilder: { mainContent() }, sidebarBuilder: { sideContent() } )
+    }
+    
     public struct ViewEngineBuilder: View {
         public var genre: ViewEngine.Genre
         public var viewId: String

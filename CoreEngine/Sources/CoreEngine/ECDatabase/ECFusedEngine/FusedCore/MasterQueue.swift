@@ -95,7 +95,7 @@ public class MasterFusedQueue {
                     q.userQueue.safeAddReplace(userItem)
                 case let roomItem as Room:
                     q.roomQueue.safeAddReplace(roomItem)
-                case let userInRoomItem as UserInRoom:
+            case let userInRoomItem as Presence:
                     q.userInRoomQueue.safeAddReplace(userInRoomItem)
                 case let playerItem as PlayerRef:
                     q.playersQueue.safeAddReplace(playerItem)

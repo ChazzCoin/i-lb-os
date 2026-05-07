@@ -9,113 +9,103 @@ import Foundation
 import SwiftUI
 import RealmSwift
 
-
 public struct CoreProfileView: View {
-    
+
     public init() {}
-    
-    @StateObject public var USER = UserToolsObservable()
-    
-    @State public var realmInstance = realm()
-    
-    @ObservedResults(CoreUser.self) public var allUsers
-    public var currentUser: CoreUser? {
-        if let id = UserTools.currentUserId {
-            return allUsers.filter("id == %@", id).first
-        }
-        return nil
+
+    @StateObject private var USER = UserToolsObservable()
+    @ObservedResults(CoreUser.self) private var allUsers
+
+    private var currentUser: CoreUser? {
+        guard let id = UserTools.currentUserId else { return nil }
+        return allUsers.first(where: { $0.id == id })
     }
 
-    @State public var showNewPlanSheet = false
-    @State public var showChatButton = true
-    @State public var showAddBuddyButton = true
-    @State public var showShareActivityButton = true
-    
     public var body: some View {
-        Form {
-            Group() {
-                Image(systemName: "person.crop.circle.fill")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 120, height: 120)
-                    .padding(.top, 30)
-                
-                VStack {
-                    
-                    Text("User Name")
-                        .font(.caption)
+        ScrollView {
+            VStack(spacing: 24) {
+
+                // MARK: - Avatar + Name
+                VStack(spacing: 12) {
+                    Image(systemName: "person.crop.circle.fill")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 110, height: 110)
+                        .foregroundStyle(.secondary)
+
+                    Text(UserTools.currentUserName ?? "Not Set")
+                        .font(.title)
                         .fontWeight(.bold)
-                        .padding(.trailing)
-                    HStack {
-                        Text(UserTools.currentUserName ?? "not set")
-                            .font(.largeTitle)
-                            .fontWeight(.bold)
-                        
+
+                    HStack(spacing: 6) {
+                        Circle()
+                            .frame(width: 8, height: 8)
+                            .foregroundColor(.green)
+
                         Text("Online")
                             .font(.subheadline)
-                            .foregroundColor(.green)
+                            .foregroundColor(.secondary)
                     }
-                    
                 }
-                
-                
-                VStack {
-                    Text("User ID")
-                        .font(.caption)
-                        .fontWeight(.bold)
-                        .padding(.trailing)
-                    Text(UserTools.currentUserId ?? "not set")
-                        .font(.subheadline)
-                        .fontWeight(.bold)
-                }
-                
-                VStack {
-                    Text("User Handle")
-                        .font(.caption)
-                        .fontWeight(.bold)
-                        .padding(.trailing)
-                    Text(UserTools.currentUserHandle ?? "not set")
-                        .font(.subheadline)
-                        .fontWeight(.bold)
-                }
+                .padding(.top, 32)
 
-                
-                if UserTools.isLoggedIn {
-                    Section(header: Text("Connection Status")) {
-//                        InternetSpeedChecker()
-                    }
+                // MARK: - Profile Details
+                VStack(spacing: 16) {
+                    ProfileRow(
+                        title: "User ID",
+                        value: UserTools.currentUserId ?? "Not Set"
+                    )
+
+                    ProfileRow(
+                        title: "Handle",
+                        value: UserTools.currentUserHandle ?? "Not Set"
+                    )
                 }
-                
-                CoreConfirmButton(
-                    title: "Sign Out",
-                    message: "Are you sure you want to logout?",
-                    action: {
-                        UserTools.logout()
-                    },
-                    isEnabled: true
-                )
-                
+                .padding(.horizontal)
+
+                // MARK: - Actions
+                VStack(spacing: 12) {
+                    CoreConfirmButton(
+                        title: "Sign Out",
+                        message: "Are you sure you want to sign out?",
+                        action: {
+                            UserTools.logout()
+                        },
+                        isEnabled: true
+                    )
+                }
+                .padding(.top, 12)
+
+                Spacer(minLength: 32)
             }
-            .padding(.bottom, 20)
         }
-
-        .navigationBarTitle("Profile", displayMode: .inline)
+        .navigationTitle("Profile")
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button("Edit") {
-                    // Edit profile action
+                    // Edit profile
                 }
             }
         }
     }
+}
 
-    
-    public func profileInfoRow(title: String, value: String) -> some View {
-        VStack(alignment: .leading) {
-            Text(title + ":")
-                .font(.headline)
+private struct ProfileRow: View {
+
+    let title: String
+    let value: String
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(title)
+                .font(.caption)
+                .foregroundColor(.secondary)
+
             Text(value)
                 .font(.body)
+                .fontWeight(.medium)
+
             Divider()
         }
     }

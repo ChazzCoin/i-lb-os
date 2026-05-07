@@ -157,7 +157,7 @@ public struct DynaWrap<C: View>: View {
     @ViewBuilder public let viewHolder: () -> C
     @StateRealmObject var dyna: ManagedView  // StateRealmObject manages the live object state
     @State public var isVisible: Bool = true
-    @State public var useOriginal = true
+    @State public var useOriginal = false
     @State public var originOffPos = CGPoint(x: 0, y: 0)
     @State private var isDragging = false
     @GestureState private var dragOffset = CGSize.zero

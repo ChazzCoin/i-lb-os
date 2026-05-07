@@ -8,6 +8,25 @@
 import Foundation
 import SwiftUI
 
+public enum ConnectionStatus: CaseIterable {
+    case active
+    case inactive
+    case waiting_approval
+    case denied_approval
+    case expired
+    
+    public var name: String {
+        switch self {
+            case .active: return "active"
+            case .inactive: return "inactive"
+            case .waiting_approval: return "waiting_approval"
+            case .denied_approval: return "denied_approval"
+            case .expired: return "expired"
+        }
+    }
+    
+}
+
 public enum RoomStatus: CaseIterable {
     case in_room
     case out_of_room
