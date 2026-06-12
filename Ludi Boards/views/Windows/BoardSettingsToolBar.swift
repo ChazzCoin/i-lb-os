@@ -228,7 +228,7 @@ struct BoardSettingsBar: View {
                             .resizable()
                             .frame(width: 25, height: 25)
                             .foregroundColor(getForegroundColor(colorScheme))
-                        MenuBarText("\(fieldRotation)", color: getFontColor(colorScheme))
+                        MenuBarText("\(Int(fieldRotation))°", color: getFontColor(colorScheme))
                     }
                     
                     HStack {
@@ -310,7 +310,7 @@ struct BoardSettingsBar: View {
                             .resizable()
                             .frame(width: 25, height: 25)
                             .foregroundColor(getForegroundColor(colorScheme))
-                        MenuBarText("\(lineStroke)", color: getFontColor(colorScheme))
+                        MenuBarText("\(Int(lineStroke))", color: getFontColor(colorScheme))
                     }
                     
                     HStack {
@@ -323,7 +323,7 @@ struct BoardSettingsBar: View {
                             .font(.title)
                             .onTapAnimation {
                                 print("make lineStroke smaller")
-                                lineStroke = (lineStroke - 10).bounded(byMin: 50, andMax: 400)
+                                lineStroke = (lineStroke - 10).bounded(byMin: 10, andMax: 200)
                                 self.BEO.boardFeildLineStroke = lineStroke
                                 saveToRealm()
                             }
@@ -337,7 +337,7 @@ struct BoardSettingsBar: View {
                             .font(.title)
                             .onTapAnimation {
                                 print("make lineStroke bigger")
-                                lineStroke = (lineStroke + 10).bounded(byMin: 50, andMax: 400)
+                                lineStroke = (lineStroke + 10).bounded(byMin: 10, andMax: 200)
                                 self.BEO.boardFeildLineStroke = lineStroke
                                 saveToRealm()
                             }
@@ -399,13 +399,14 @@ struct BoardSettingsBar: View {
             Text(self.alertRecordAnimationMessage)
         }
         .sheet(isPresented: self.$showBoardPicker, content: {
-            BoardListPicker(initialSelected: self.isCurrentPlan ? self.BEO.boardBgName : self.backgroundView, viewBuilder: self.BEO.boards.getAllMinis()) { v in
+            BoardListPicker(initialSelected: self.BEO.boardBgName, viewBuilder: self.BEO.boards.getAllMinis()) { v in
                 fieldName = v
                 self.BEO.setBoardBgView(boardName: v)
                 saveToRealm()
             }
-//            .frame(width: 400)
-//            .padding(.bottom, UIScreen.main.bounds.height/2)
+            // Soccer minis dereference BEO — inject explicitly rather than
+            // relying on implicit sheet environment inheritance.
+            .environmentObject(self.BEO)
         })
         .sheet(isPresented: self.$showRecordingsSheet, content: {
             RecordingListView(isShowing: self.$showRecordingsSheet)
@@ -417,11 +418,6 @@ struct BoardSettingsBar: View {
     }
 
     
-    func closeWindow() { 
-        self.BEO.boardSettingsIsShowing = false
-        BroadcastTools.send(.NavStackMessage, value: NavStackMessage(viewName: "board settings", viewAction: WindowAction.close))
-    }
-    
     // Function to rotate the view by a certain angle
     private func rotateView(by degrees: Double) {
         let newAngle = fieldRotation + degrees
@@ -432,48 +428,33 @@ struct BoardSettingsBar: View {
             fieldRotation += 360
         }
     }
-    
+
+    // Persist the LIVE board state (BEO) — never local picker state, which
+    // starts at Color.clear and would wipe the stored colors.
     func saveToRealm() {
         if let activityPlan = self.BEO.realmInstance.findByField(ActivityPlan.self, value: self.BEO.currentActivityId) {
-            self.BEO.realmInstance.safeWrite { r in
-                 activityPlan.backgroundLineStroke = self.lineStroke
-                 activityPlan.backgroundLineAlpha = self.lineOpacity
-                 activityPlan.backgroundAlpha = self.colorOpacity
-                 activityPlan.backgroundRotation = self.fieldRotation
-                 activityPlan.backgroundView = self.fieldName
-                
-                if let c = bgColor.toRGBA() {
-                    activityPlan.backgroundRed = c.red
-                    activityPlan.backgroundGreen = c.green
-                    activityPlan.backgroundBlue = c.blue
-                    activityPlan.backgroundAlpha = c.alpha
-                }
-                
-                if let lc = lineColor.toRGBA() {
-                    activityPlan.backgroundLineRed = lc.red
-                    activityPlan.backgroundLineGreen = lc.green
-                    activityPlan.backgroundLineBlue = lc.blue
-                    activityPlan.backgroundLineAlpha = lc.alpha
-                }
-                
-                // TODO: FIREBASE
+            self.BEO.realmInstance.safeWrite { _ in
+                activityPlan.backgroundView = self.BEO.boardBgName
+                activityPlan.backgroundRotation = self.BEO.boardFeildRotation
+                activityPlan.backgroundLineStroke = self.BEO.boardFeildLineStroke
+                activityPlan.backgroundRed = self.BEO.boardBgRed
+                activityPlan.backgroundGreen = self.BEO.boardBgGreen
+                activityPlan.backgroundBlue = self.BEO.boardBgBlue
+                activityPlan.backgroundAlpha = self.BEO.boardBgAlpha
+                activityPlan.backgroundLineRed = self.BEO.boardFieldLineRed
+                activityPlan.backgroundLineGreen = self.BEO.boardFieldLineGreen
+                activityPlan.backgroundLineBlue = self.BEO.boardFieldLineBlue
+                activityPlan.backgroundLineAlpha = self.BEO.boardFieldLineAlpha
             }
         }
     }
-    
-    // Realm / Firebase
+
+    // Seed the bar's display state from the live board.
     func loadFromRealm() {
-        
-        if let activityPlan = self.BEO.realmInstance.findByField(ActivityPlan.self, value: self.currentActivityId) {
-            // set attributes
-            self.lineStroke = activityPlan.backgroundLineStroke
-            self.lineOpacity = activityPlan.backgroundLineAlpha
-            self.colorOpacity = activityPlan.backgroundAlpha
-            self.fieldRotation = activityPlan.backgroundRotation
-            self.fieldName = activityPlan.backgroundView
-                        
-        }
+        self.lineStroke = self.BEO.boardFeildLineStroke
+        self.fieldRotation = self.BEO.boardFeildRotation
+        self.fieldName = self.BEO.boardBgName
     }
-    
+
 }
 

@@ -17,7 +17,12 @@ struct LudiBoardsApp: SwiftUI.App {
     @State var cancellables = Set<AnyCancellable>()
     
     init() {
-        let realmConfiguration = Realm.Configuration(deleteRealmIfMigrationNeeded: true)
+        // Bump schemaVersion whenever a @Persisted model changes; additive
+        // changes migrate automatically. Never wipe user boards on update.
+        let realmConfiguration = Realm.Configuration(
+            schemaVersion: 1,
+            migrationBlock: { _, _ in }
+        )
         Realm.Configuration.defaultConfiguration = realmConfiguration
         FirebaseApp.configure()
     }

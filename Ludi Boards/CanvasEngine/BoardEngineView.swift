@@ -13,18 +13,16 @@ import FirebaseDatabase
 import CoreEngine
 
 struct BoardEngine: View {
-    
+
     @Environment(\.scenePhase) var deviceState
     @EnvironmentObject var BEO: BoardEngineObject
-    @ObservedObject public var MVEngine: ManagedViewEngine = ManagedViewEngine()
+    // Filter rendered tools by the same key every creation path writes.
+    @StateObject public var MVEngine: ManagedViewEngine = ManagedViewEngine(idKey: "currentActivityId")
 
-    @AppStorage("currentBoardId") var currentBoardId: String = ""
-    
     @State var cancellables = Set<AnyCancellable>()
 
     @State private var drawingStartPoint: CGPoint = .zero
     @State private var drawingEndPoint: CGPoint = .zero
-    @State private var showCreateActivitySheet = false
     @State private var resetTools = false
     
     var body: some View {
@@ -33,12 +31,7 @@ struct BoardEngine: View {
                  
                  // Board Tools
                 MVEngine.Display(reset: self.$resetTools)
-                
-                PoolBallManagedView(viewId: "test", activityId: self.BEO.currentActivityId, ballType: .eightBall)
-                
-                PoolBallManagedView(viewId: "test1", activityId: self.BEO.currentActivityId, ballType: .solid1)
-                PoolBallManagedView(viewId: "test2", activityId: self.BEO.currentActivityId, ballType: .stripe9)
-                
+
                  // Temporary line being drawn
                  if self.BEO.isDraw {
                      if drawingStartPoint != .zero {
@@ -53,12 +46,19 @@ struct BoardEngine: View {
             }
             .frame(width: self.BEO.boardWidth, height: self.BEO.boardHeight)
             .background(
-                FieldOverlayView(width: self.BEO.canvasWidth, height: self.BEO.canvasHeight, background: {self.BEO.boardBgColor},
+                // Board-sized, center-aligned: the field background must share
+                // the tools' coordinate space or spawned tools miss the field.
+                FieldOverlayView(width: self.BEO.boardWidth, height: self.BEO.boardHeight, background: {self.BEO.boardBgColor},
                     overlay: {
                         if let CurrentBoardBackground = self.BEO.boards.getAllBoards()[self.BEO.boardBgName] {
                             CurrentBoardBackground()
                                 .zIndex(2.0)
                                 .environmentObject(self.BEO)
+                                // Rotate the field uniformly here so EVERY
+                                // background honors rotation, not just the
+                                // vector soccer views.
+                                .rotationEffect(.degrees(self.BEO.boardFeildRotation))
+                                .animation(.easeInOut, value: self.BEO.boardFeildRotation)
                         }
                     })
             )
@@ -78,25 +78,31 @@ struct BoardEngine: View {
             )
         }
 
-        .sheet(isPresented: $showCreateActivitySheet, content: {
-            ActivityDetailsView(activityId: "new", isShowing: $showCreateActivitySheet)
-        })
         .onAppear {
-           
+
             print("BoardEngineView onAppear")
+            self.BEO.ensureDefaultActivityPlan()
+            self.BEO.loadBoardSettings()
             onSessionIdChange()
             onToolCreated()
             onToolDeleted()
-            
+
         }
     }
-    
+
     @MainActor
     func onSessionIdChange() {
         CodiChannel.SESSION_ON_ID_CHANGE.receive(on: RunLoop.main) { sc in
-            let temp = sc as! String
-            self.currentBoardId = temp
-            
+            // Payload is a String activityId or an ActivityChange wrapper.
+            let newId: String
+            if let s = sc as? String {
+                newId = s
+            } else if let ac = sc as? ActivityChange, let aId = ac.activityId {
+                newId = aId
+            } else {
+                return
+            }
+            self.BEO.changeActivity(activityId: newId)
         }.store(in: &cancellables)
     }
     
@@ -111,31 +117,37 @@ struct BoardEngine: View {
     @MainActor
     func onToolCreated() {
         CodiChannel.TOOL_ON_CREATE.receive(on: RunLoop.main) { tool in
-            if let _ = tool as? ManagedTool {
-                self.resetTools = true
-                self.resetTools = false
+            // ToolListItem sends the new tool's id as a String; the legacy
+            // drag toolbar sends a ManagedTool. Refresh for either.
+            if tool is String || tool is ManagedTool {
+                self.BEO.refreshBoard()
             }
         }.store(in: &cancellables)
     }
     
 
-    // TODO: MOVE TO CENTRAL BOARD OBJECT
     // Line/Drawing
     private func saveLineData(start: CGPoint, end: CGPoint) {
         FusedTools.fusedCreator(ManagedView.self)  { r in
             let line = ManagedView()
-            line.boardId = self.currentBoardId
+            line.boardId = self.BEO.currentActivityId
             line.lastUserId = UserTools.currentUserId ?? ""
             line.startX = Double(start.x)
             line.startY = Double(start.y)
             line.endX = Double(end.x)
             line.endY = Double(end.y)
+            // Curved lines render centerX/Y as the curve's control point;
+            // start at the midpoint so a fresh curve begins straight.
+            line.centerX = Double((start.x + end.x) / 2)
+            line.centerY = Double((start.y + end.y) / 2)
             line.x = Double(start.x)
             line.y = Double(start.y)
             line.width = 10
             line.toolColor = "Black"
-            line.sport = self.BEO.defaultSport
-            line.toolType = ShapeToolProvider.type
+            // Genre routing: ViewEngine.GenreBuilder switches on
+            // sport ("tool") -> toolType ("shape") -> subToolType (ShapeTool raw value).
+            line.sport = ViewEngine.Tool.ShapeTool.line_straight.genre
+            line.toolType = ViewEngine.Tool.ShapeTool.line_straight.type
             line.subToolType = self.BEO.shapeSubType
             line.lineDash = 1
             line.dateUpdated = Int(Date().timeIntervalSince1970)

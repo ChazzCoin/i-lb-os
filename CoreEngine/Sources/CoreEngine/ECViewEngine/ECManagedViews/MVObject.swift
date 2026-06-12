@@ -160,7 +160,15 @@ public class ManagedViewObject: ObservableObject {
     @MainActor
     public func receiveOnSessionChange() {
         CodiChannel.SESSION_ON_ID_CHANGE.receive(on: RunLoop.main) { sc in
-            let temp = sc as! String
+            // Payload is a String activityId or an ActivityChange wrapper.
+            let temp: String
+            if let s = sc as? String {
+                temp = s
+            } else if let ac = sc as? ActivityChange, let aId = ac.activityId {
+                temp = aId
+            } else {
+                return
+            }
             if self.lifeActivityId == temp {
                 self.isDisabled = false
             } else {
@@ -357,48 +365,41 @@ public class ManagedViewObject: ObservableObject {
             self.lifeHeight = Double(umv.height)
             self.lifeRotation = Angle(degrees: umv.rotation)
             
-            if umv.areAllAttributesZero() {
+            // Tools created from the palette carry a spawn x/y but no shape
+            // geometry — anchor the per-shape defaults at the spawn point.
+            let geometryIsUnset = umv.startX == 0.0 && umv.startY == 0.0
+                && umv.centerX == 0.0 && umv.centerY == 0.0
+                && umv.endX == 0.0 && umv.endY == 0.0
+            if geometryIsUnset {
+                let ax = umv.x
+                let ay = umv.y
+                self.position = CGPoint(x: ax, y: ay)
+                self.lifeX = ax
+                self.lifeY = ay
                 switch self.toolType {
-                    case .line_straight:
-                        self.lifeStartX = 0.0
-                        self.lifeStartY = 0.0
-                        self.lifeEndX = 500.0
-                        self.lifeEndY = 0.0
-                    case .line_curved:
-                        self.lifeStartX = 0.0
-                        self.lifeStartY = 0.0
-                        self.lifeEndX = 500.0
-                        self.lifeEndY = 0.0
+                    case .line_straight, .line_dotted, .line_curved:
+                        self.lifeStartX = ax
+                        self.lifeStartY = ay
+                        self.lifeCenterX = ax + 250.0
+                        self.lifeCenterY = ay
+                        self.lifeEndX = ax + 500.0
+                        self.lifeEndY = ay
                     case .square:
-                        self.lifeX = 0.0
-                        self.lifeY = 0.0
-                        self.lifeCenterX = 500.0
-                        self.lifeCenterY = -500.0
-                        self.lifeStartX = 500.0
-                        self.lifeStartY = 0.0
-                        self.lifeEndX = 0.0
-                        self.lifeEndY = -500.0
+                        self.lifeCenterX = ax + 500.0
+                        self.lifeCenterY = ay - 500.0
+                        self.lifeStartX = ax + 500.0
+                        self.lifeStartY = ay
+                        self.lifeEndX = ax
+                        self.lifeEndY = ay - 500.0
                     case .triangle:
-                        self.lifeX = 250.0
-                        self.lifeY = 0.0
-                        self.lifeStartX = 500.0
-                        self.lifeStartY = -500.0
-                        self.lifeCenterX = 0.0
-                        self.lifeCenterY = -500.0
+                        self.lifeX = ax + 250.0
+                        self.lifeStartX = ax + 500.0
+                        self.lifeStartY = ay - 500.0
+                        self.lifeCenterX = ax
+                        self.lifeCenterY = ay - 500.0
                     case .circle:
                         self.lifeToolSize = 1000.0
                         self.lifeWidth = 200.0
-                        self.position = CGPoint(x: 500.0, y: 0.0)
-                    default:
-                        self.position = CGPoint(x: umv.x, y: umv.y)
-                        self.lifeX = umv.x
-                        self.lifeY = umv.y
-                        self.lifeStartX = umv.startX
-                        self.lifeStartY = umv.startY
-                        self.lifeCenterX = umv.centerX
-                        self.lifeCenterY = umv.centerY
-                        self.lifeEndX = umv.endX
-                        self.lifeEndY = umv.endY
                 }
             } else {
                 self.position = CGPoint(x: umv.x, y: umv.y)

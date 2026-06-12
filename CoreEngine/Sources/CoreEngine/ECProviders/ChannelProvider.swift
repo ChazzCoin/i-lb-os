@@ -242,7 +242,7 @@ public enum CodiChannel {
             case .TOOL_ON_CREATE:
                 return ToolOnCreateChannel.shared.subject
             case .TOOL_ON_DELETE:
-                return ToolOnCreateChannel.shared.subject
+                return ToolOnDeleteChannel.shared.subject
             case .TOOL_ON_FOLLOW:
                 return ToolOnFollowChannel.shared.subject
             case .TOOL_SUBSCRIPTION:

@@ -83,7 +83,7 @@ public struct ToolListView: View {
     }
 }
 @ViewBuilder
-public func ToolListItem(_ activityId: String, tool: any ToolCategory) -> some View {
+public func ToolListItem(_ activityId: String, tool: any ToolCategory, spawnX: Double = 0.0, spawnY: Double = 0.0) -> some View {
     VStack {
         tool.BuildIcon()
         Text(tool.name).font(.system(size: 8))
@@ -91,12 +91,17 @@ public func ToolListItem(_ activityId: String, tool: any ToolCategory) -> some V
     .onTapAnimation {
         print("On Tap! \(tool.name)")
         var tempId = ""
+        // Jitter the spawn point so consecutive taps don't stack tools
+        // exactly on top of each other.
+        let jitter = { Double.random(in: -250.0...250.0) }
         FusedTools.fusedCreator(ManagedView.self) { r in
             let newTool = ManagedView()
             newTool.toolType = tool.type
             newTool.subToolType = tool.name
             newTool.sport = tool.genre
             newTool.boardId = activityId
+            newTool.x = spawnX == 0.0 ? 0.0 : spawnX + jitter()
+            newTool.y = spawnY == 0.0 ? 0.0 : spawnY + jitter()
             tempId = newTool.id
             return newTool
         }

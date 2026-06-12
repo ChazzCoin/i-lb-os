@@ -11,46 +11,46 @@ import CoreEngine
 
 
 public struct CanvasMenuView: View {
-    
-    var onTapTop: () -> Void = {}
+
     @EnvironmentObject var GPS: GlobalPositioningSystem
     @EnvironmentObject var BEO: BoardEngineObject
-    
-    public init(onTapTop: @escaping () -> Void = {}) {
-        self.onTapTop = onTapTop
-    }
-    
-    @StateObject var CAP: ActivityPlanObject = ActivityPlanObject()
+
+    public init() {}
+
     @AppStorage("currentActivityId") var currentActivityId: String = ""
-    @AppStorage("gesturesAreLocked") var gesturesAreLocked: Bool = false
     @State var currentSize: Double = UIScreen.main.bounds.height
     @State var CanvasMenuHeightFull: Double = UIScreen.main.bounds.height
-    @State var CanvasMenuHeightHalf: Double = UIScreen.main.bounds.height / 2
-    
-    @State var isShowing: Bool = false
+
     @State var showBoardSettings: Bool = false
     @State var showTools: Bool = true
     @State var showSize: String = "hide"
-    
-    func getSize(stateIn: String) -> Double {
-        if stateIn == "full" {
-            return UIScreen.main.bounds.height
-        }
-        else if stateIn == "half" {
-            return (UIScreen.main.bounds.height / 2)
-        }
-        else if stateIn == "hide" {
-            return (UIScreen.main.bounds.height / 2)
-        }
-        return (UIScreen.main.bounds.height / 2)
+
+    // Tap-to-add tools spawn at the center of the board so they land in view.
+    var spawnX: Double { self.BEO.boardWidth / 2 }
+    var spawnY: Double { self.BEO.boardHeight / 2 }
+
+    // Lines are created by drawing on the board (the pencil buttons), not by
+    // tap-to-add — a tapped-in line would have zero length.
+    let shapeTools: [ViewEngine.Tool.ShapeTool] = [.circle, .square, .triangle]
+
+    func isDrawing(_ subType: ViewEngine.Tool.ShapeTool) -> Bool {
+        return self.BEO.isDraw && self.BEO.shapeSubType == subType.rawValue
     }
-    
+
+    func toggleDraw(_ subType: ViewEngine.Tool.ShapeTool) {
+        self.BEO.toggleDrawingMode(subType: subType.rawValue)
+        if self.BEO.isDraw {
+            // Drop the drawer out of the way so the board is drawable.
+            withAnimation { self.showSize = "hide" }
+        }
+    }
+
     public var body: some View {
-        
+
         VStack {
-            
+
             HStack {
-                
+
                 SwitchFullHalfHide() { state in
                     if state == "full" {
                         self.currentSize = self.CanvasMenuHeightFull
@@ -67,7 +67,27 @@ public struct CanvasMenuView: View {
                 }
                 .padding(.leading)
                 .padding(.trailing)
-                
+
+                // Draw: straight line
+                SolIconButton(
+                    systemName: "pencil",
+                    width: 30.0,
+                    height: 30.0,
+                    fontColor: isDrawing(.line_straight) ? Color.red : Color.primary,
+                    onTap: { toggleDraw(.line_straight) }
+                )
+                .padding(.trailing)
+
+                // Draw: curved line
+                SolIconButton(
+                    systemName: "scribble",
+                    width: 30.0,
+                    height: 30.0,
+                    fontColor: isDrawing(.line_curved) ? Color.red : Color.primary,
+                    onTap: { toggleDraw(.line_curved) }
+                )
+                .padding(.trailing)
+
                 SolIconButton(
                     systemName: self.BEO.gesturesAreLocked ? "lock.fill" : "lock.open",
                     width: 30.0,
@@ -75,13 +95,44 @@ public struct CanvasMenuView: View {
                     fontColor: Color.red,
                     onTap: {
                         withAnimation {
-                            self.BEO.gesturesAreLocked = !self.BEO.gesturesAreLocked
+                            // Draw mode owns the gesture lock; unlocking
+                            // mid-draw would make one drag both draw and pan.
+                            if self.BEO.isDraw {
+                                self.BEO.disableDrawing()
+                            } else {
+                                self.BEO.gesturesAreLocked = !self.BEO.gesturesAreLocked
+                            }
                         }
                     }
                 )
-                .padding(.leading)
                 .padding(.trailing)
-                
+
+                // Zoom out / in / reset — wired to BEO.canvasScale, which the
+                // canvas reads via .scaleEffect.
+                SolIconButton(
+                    systemName: "minus.magnifyingglass",
+                    width: 30.0,
+                    height: 30.0,
+                    onTap: { withAnimation { self.BEO.zoomOut() } }
+                )
+                .padding(.trailing)
+
+                SolIconButton(
+                    systemName: "plus.magnifyingglass",
+                    width: 30.0,
+                    height: 30.0,
+                    onTap: { withAnimation { self.BEO.zoomIn() } }
+                )
+                .padding(.trailing)
+
+                SolIconButton(
+                    systemName: "arrow.counterclockwise",
+                    width: 30.0,
+                    height: 30.0,
+                    onTap: { withAnimation { self.BEO.resetZoom() } }
+                )
+                .padding(.trailing)
+
                 SolIconConfirmButton(
                     systemName: "trash",
                     title: "Delete All Tools",
@@ -92,67 +143,66 @@ public struct CanvasMenuView: View {
                         self.BEO.deleteAllTools()
                     }
                 )
-                .padding(.leading)
                 .padding(.trailing)
-                
+
+                // Home dashboard (sessions, activities, teams)
+                SolIconButton(
+                    systemName: "house",
+                    width: 30.0,
+                    height: 30.0,
+                    onTap: {
+                        BroadcastTools.send(.NavStackMessage, value: NavStackMessage(
+                            navAction: .toggle,
+                            viewName: MenuBarProvider.home.tool.title,
+                            viewAction: .toggle
+                        ))
+                    }
+                )
+                .padding(.trailing)
+
                 Spacer()
-                
-                BodyText("This is a status update!", color: .red)
-                    .padding(.leading)
-                    .padding(.trailing)
-                
+
             }.frame(height: 50)
-            
+
             ScrollView(.vertical) {
                 LazyVStack {
-                    
-                    
+
                     CustomDisclosureGroup(isExpanded: $showBoardSettings, title: "Board Settings") {
                         BoardSettingsBar()
                     }
-                    
+
                     CustomDisclosureGroup(isExpanded: $showTools, title: "Tools") {
-                        ToolList(title: "Smart Tools", forEachContent: {
-                            ForEach(ViewEngine.Tool.ShapeTool.allCases, id: \.self) { tool in
-                                ToolListItem(currentActivityId, tool: tool)
-                            }
-                        })
-                        ToolList(title: "General", forEachContent: {
-                            ForEach(ViewEngine.Tool.GeneralTool.allCases, id: \.self) { tool in
-                                ToolListItem(currentActivityId, tool: tool)
+                        ToolList(title: "Shapes", forEachContent: {
+                            ForEach(shapeTools, id: \.self) { tool in
+                                ToolListItem(currentActivityId, tool: tool, spawnX: spawnX, spawnY: spawnY)
                             }
                         })
                         ToolList(title: "Soccer", forEachContent: {
                             ForEach(ViewEngine.Tool.SoccerTool.allCases, id: \.self) { tool in
-                                ToolListItem(currentActivityId, tool: tool)
+                                ToolListItem(currentActivityId, tool: tool, spawnX: spawnX, spawnY: spawnY)
                             }
                         })
                         ToolList(title: "Billiards", forEachContent: {
                             ForEach(ViewEngine.Tool.PoolBallTool.allCases, id: \.self) { tool in
-                                ToolListItem(currentActivityId, tool: tool)
+                                ToolListItem(currentActivityId, tool: tool, spawnX: spawnX, spawnY: spawnY)
+                            }
+                        })
+                        ToolList(title: "General", forEachContent: {
+                            ForEach(ViewEngine.Tool.GeneralTool.allCases, id: \.self) { tool in
+                                ToolListItem(currentActivityId, tool: tool, spawnX: spawnX, spawnY: spawnY)
                             }
                         })
                     }
-                    
+
                     Spacer()
                 }
-    //            .padding(.all, 16)
                 .padding(.bottom, 50)
             }
-            
-        }
-        .onChange(of: self.currentActivityId) {
-            self.CAP.loadActivityPlan(byId: self.currentActivityId)
+
         }
         .frame(width: UIScreen.main.bounds.width * 0.92, height: currentSize)
         .solBackground()
         .toggleFromBelow($showSize, using: GPS, viewHeight: $currentSize, offsetY: 50)
-        .onTap {
-            onTapTop()
-        }
-        .onAppear() {
-            self.CAP.loadActivityPlan(byId: self.currentActivityId)
-        }
     }
 }
 
@@ -160,22 +210,22 @@ struct CustomDisclosureGroup<Content: View>: View {
     @Binding var isExpanded: Bool
     let title: String
     let content: Content
-    
+
     init(isExpanded: Binding<Bool>, title: String, @ViewBuilder content: () -> Content) {
         self._isExpanded = isExpanded
         self.title = title
         self.content = content()
     }
-    
+
     var body: some View {
         VStack {
             HStack {
                 Text(title)
                     .font(.headline)
                     .foregroundColor(.primary)
-                
+
                 Spacer()
-                
+
                 Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
                     .foregroundColor(.primary)
                     .rotationEffect(Angle(degrees: isExpanded ? 180 : 0))
@@ -192,10 +242,9 @@ struct CustomDisclosureGroup<Content: View>: View {
                     isExpanded.toggle()
                 }
             }
-            
+
             if isExpanded {
                 content
-//                    .padding()
                     .background(
                         RoundedRectangle(cornerRadius: 10)
                             .fill(Color(UIColor.systemGray6))
@@ -204,17 +253,5 @@ struct CustomDisclosureGroup<Content: View>: View {
                     .transition(.move(edge: .top).combined(with: .opacity))
             }
         }
-//        .padding(.horizontal)
-    }
-}
-
-struct BoardSettingsBarView: View {
-    var body: some View {
-        Text("Board Settings Content")
-            .frame(maxWidth: .infinity)
-            .padding()
-            .background(Color.white)
-            .cornerRadius(8)
-            .shadow(radius: 2)
     }
 }

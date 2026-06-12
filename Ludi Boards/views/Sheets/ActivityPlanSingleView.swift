@@ -128,11 +128,17 @@ struct ActivityPlanSingleView: View {
                                 .padding()
                         }
                         ColorListPicker() { color in
-//                            bgColor = color
+                            // Mirror into the plan so the pick persists on save.
+                            if let c = color.toRGBA() {
+                                self.APO.backgroundRed = c.red
+                                self.APO.backgroundGreen = c.green
+                                self.APO.backgroundBlue = c.blue
+                                self.APO.backgroundAlpha = c.alpha
+                            }
                             if self.isCurrentPlan {
                                 self.BEO.setColor(colorIn: color)
                             }
-                            
+
                         }
                     }
                     .border(Color.secondaryBackground, width: 1.0)
@@ -152,10 +158,12 @@ struct ActivityPlanSingleView: View {
                             onEditingChanged: { editing in
                                 if !editing {
                                     if self.isCurrentPlan {
-                                        self.BEO.boardBgAlpha = colorOpacity
+                                        // The slider binds APO.backgroundAlpha —
+                                        // push that value, not a stale local.
+                                        self.BEO.boardBgAlpha = self.APO.backgroundAlpha
                                         self.BEO.boardBgColor = self.BEO.getColor()
                                     }
-                                    
+
                                 }
                             }
                         )
@@ -175,11 +183,17 @@ struct ActivityPlanSingleView: View {
 //                                .padding()
 //                        }
                         ColorListPicker() { color in
-//                            lineColor = color
+                            // Mirror into the plan so the pick persists on save.
+                            if let c = color.toRGBA() {
+                                self.APO.backgroundLineRed = c.red
+                                self.APO.backgroundLineGreen = c.green
+                                self.APO.backgroundLineBlue = c.blue
+                                self.APO.backgroundLineAlpha = c.alpha
+                            }
                             if self.isCurrentPlan {
                                 self.BEO.setFieldLineColor(colorIn: color)
                             }
-                            
+
                         }
                     }
                     .border(Color.secondaryBackground, width: 1.0)

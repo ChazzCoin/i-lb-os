@@ -1,1 +1,5 @@
 .claude/worktrees/
+
+# Xcode derived data (local builds)
+.build-dd/
+.DS_Store
