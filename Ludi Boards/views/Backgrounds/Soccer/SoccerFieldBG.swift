@@ -70,7 +70,6 @@ struct SoccerFieldFullView: View {
                 path.addRect(CGRect(x: width - goalAreaWidth, y: (height - goalAreaHeight) / 2, width: goalAreaWidth, height: goalAreaHeight))
             }
             .stroke(isMini ? self.BEO.foregroundColor() : self.BEO.boardFieldLineColor, lineWidth: isMini ? 3.0 : self.BEO.boardFeildLineStroke)
-            .rotationEffect(.degrees(self.BEO.boardFeildRotation))
         }
         .frame(width: isMini ? 100.0 : self.BEO.boardHeight, height: isMini ? 100.0 : self.BEO.boardWidth)
     }
@@ -110,7 +109,6 @@ struct SoccerFieldHalfView: View {
                 path.addRect(CGRect(x: width - goalAreaWidth, y: (height - goalAreaHeight) / 2, width: goalAreaWidth, height: goalAreaHeight))
             }
             .stroke(isMini ? self.BEO.foregroundColor() : self.BEO.boardFieldLineColor, lineWidth: isMini ? 3.0 : self.BEO.boardFeildLineStroke)
-            .rotationEffect(.degrees(self.BEO.boardFeildRotation))
         }
         .frame(width: isMini ? 100.0 : self.BEO.boardHeight, height: isMini ? 100.0 : self.BEO.boardWidth)
     }

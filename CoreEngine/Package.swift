@@ -18,7 +18,7 @@ let package = Package(
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on. github.com/firebase/firebase-ios-sdk.git
-        .package(url: "https://github.com/realm/realm-cocoa.git", branch: "master"),
+        .package(url: "https://github.com/realm/realm-cocoa.git", from: "20.0.0"),
         .package(url: "https://github.com/firebase/firebase-ios-sdk.git", from: "10.18.0")
     ],
     targets: [

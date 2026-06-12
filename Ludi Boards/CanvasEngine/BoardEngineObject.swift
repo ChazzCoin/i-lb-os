@@ -91,8 +91,31 @@ public class BoardEngineObject : ObservableObject {
     // Current Board
     @Published var showTipViewStatic: Bool = false
     @Published var isDraw: Bool = false
-    @Published var shapeSubType: String = "LINE"
+    @Published var shapeSubType: String = ViewEngine.Tool.ShapeTool.line_straight.rawValue
     @Published var isLoading: Bool = true
+
+    // Drawing mode: while drawing, canvas pan/zoom is locked so the
+    // drag gesture draws lines instead of moving the board.
+    func enableDrawing(subType: String = ViewEngine.Tool.ShapeTool.line_straight.rawValue) {
+        shapeSubType = subType
+        isDraw = true
+        gesturesAreLocked = true
+    }
+
+    func disableDrawing() {
+        isDraw = false
+        gesturesAreLocked = false
+    }
+
+    func toggleDrawingMode(subType: String = ViewEngine.Tool.ShapeTool.line_straight.rawValue) {
+        // Re-tapping the active line type exits draw mode; tapping the other
+        // line type switches to it without leaving draw mode.
+        if isDraw && shapeSubType == subType {
+            disableDrawing()
+        } else {
+            enableDrawing(subType: subType)
+        }
+    }
     
     // Shared
     @Published var isSharedBoard = false
@@ -126,26 +149,27 @@ public class BoardEngineObject : ObservableObject {
     }
     
     // Board Settings
+    // Color components are 0-1 scale (what SwiftUI Color expects);
+    // loadBoardSettings normalizes legacy 0-255 rows on the way in.
+    // Defaults match the ActivityPlan model so the pre-load frame and a
+    // freshly created default plan render identically.
     @Published var boardWidth: CGFloat = 5000.0
     @Published var boardHeight: CGFloat = 6000.0
-    @Published var boardStartPosX: CGFloat = 0.0
-    @Published var boardStartPosY: CGFloat = 1000.0
-    @Published var boardBgColor: Color = Color.secondaryBackground
     @Published var boardBgName: String = "Sol"
-    @Published var boardBgRed: Double = 48.0
-    @Published var boardBgGreen: Double = 128.0
-    @Published var boardBgBlue: Double = 20.0
+    @Published var boardBgRed: Double = 0.2
+    @Published var boardBgGreen: Double = 0.78
+    @Published var boardBgBlue: Double = 0.34
     @Published var boardBgAlpha: Double = 0.75
+    @Published var boardBgColor: Color = Color(red: 0.2, green: 0.78, blue: 0.34, opacity: 0.75)
     @Published var boardFieldLineColor: Color = Color.white
-    @Published var boardFieldLineRed: Double = 48.0
-    @Published var boardFieldLineGreen: Double = 128.0
-    @Published var boardFieldLineBlue: Double = 20.0
-    @Published var boardFieldLineAlpha: Double = 0.75
+    @Published var boardFieldLineRed: Double = 1.0
+    @Published var boardFieldLineGreen: Double = 1.0
+    @Published var boardFieldLineBlue: Double = 1.0
+    @Published var boardFieldLineAlpha: Double = 1.0
     @Published var boardFeildLineStroke: Double = 10
     @Published var boardFeildRotation: Double = 0
-    
+
     // Device Config
-    @Published var deviceScreenBounds = UIScreen.main.bounds
     @Published var deviceType = UIDevice.current.userInterfaceIdiom
     func deviceIsPhone() -> Bool { return self.deviceType == .phone }
     func deviceIsPad() -> Bool { return self.deviceType == .pad }
@@ -161,12 +185,64 @@ public class BoardEngineObject : ObservableObject {
 //    @Published var currentActivityId: String = ""
     func changeSession(sessionId:String) { self.currentSessionId = sessionId }
     func changeActivity(activityId:String) {
-        if activityId.isEmpty { return }
+        // "nil" guards against legacy senders that stringified a missing id.
+        if activityId.isEmpty || activityId == "nil" { return }
         if activityId != self.currentActivityId {
-//            FirebaseRoomService.leaveRoom(roomId: self.currentActivityId)
             self.currentActivityId = activityId
-//            FirebaseRoomService.enterRoom(roomId: activityId)
             self.setupToolActions()
+            self.loadBoardSettings()
+            // currentActivityId is @AppStorage, which does not publish from an
+            // ObservableObject — fire the change so the board re-filters.
+            self.objectWillChange.send()
+        }
+    }
+
+    // The free build's default board: guarantee an ActivityPlan row exists
+    // so board settings always have somewhere to persist.
+    static let defaultBoardId = "default-board"
+
+    func ensureDefaultActivityPlan() {
+        if currentActivityId.isEmpty {
+            currentActivityId = Self.defaultBoardId
+        }
+        if realmInstance.findByField(ActivityPlan.self, value: currentActivityId) == nil {
+            realmInstance.safeWrite { r in
+                let plan = ActivityPlan()
+                plan.id = self.currentActivityId
+                plan.title = "My Board"
+                plan.backgroundRotation = 0
+                r.create(ActivityPlan.self, value: plan, update: .all)
+            }
+        }
+        // Adopt any tools created before the default board had an id.
+        let orphans = realmInstance.objects(ManagedView.self).filter("boardId == %@", "")
+        if !orphans.isEmpty {
+            realmInstance.safeWrite { _ in
+                for tool in orphans { tool.boardId = self.currentActivityId }
+            }
+        }
+        setupToolActions()
+    }
+
+    // Apply persisted board settings to the live board. Legacy rows may
+    // store 0-255 color components; normalize to SwiftUI's 0-1 scale.
+    func loadBoardSettings() {
+        guard let plan = realmInstance.findByField(ActivityPlan.self, value: currentActivityId) else { return }
+        func norm(_ v: Double) -> Double { v > 1.0 ? v / 255.0 : v }
+        boardBgRed = norm(plan.backgroundRed)
+        boardBgGreen = norm(plan.backgroundGreen)
+        boardBgBlue = norm(plan.backgroundBlue)
+        boardBgAlpha = norm(plan.backgroundAlpha)
+        boardBgColor = getColor()
+        boardFieldLineRed = norm(plan.backgroundLineRed)
+        boardFieldLineGreen = norm(plan.backgroundLineGreen)
+        boardFieldLineBlue = norm(plan.backgroundLineBlue)
+        boardFieldLineAlpha = norm(plan.backgroundLineAlpha)
+        boardFieldLineColor = getFieldLineColor()
+        boardFeildLineStroke = plan.backgroundLineStroke
+        boardFeildRotation = plan.backgroundRotation
+        if !plan.backgroundView.isEmpty {
+            boardBgName = plan.backgroundView
         }
     }
     
@@ -227,6 +303,23 @@ public class BoardEngineObject : ObservableObject {
         canvasOffset = CGPoint.zero
         canvasRotation = 0.0
     }
+
+    // Canvas zoom — multiplicative steps clamped to the same range as the
+    // pinch gesture (CanvasEngine.scaleGestures). Touches only canvasScale,
+    // so it never desyncs the pan gesture's lastOffset.
+    static let minCanvasScale: CGFloat = 0.03
+    static let maxCanvasScale: CGFloat = 1.5
+    static let defaultCanvasScale: CGFloat = 0.1
+
+    func zoomIn() {
+        canvasScale = min(canvasScale * 1.2, Self.maxCanvasScale)
+    }
+    func zoomOut() {
+        canvasScale = max(canvasScale / 1.2, Self.minCanvasScale)
+    }
+    func resetZoom() {
+        canvasScale = Self.defaultCanvasScale
+    }
     
     func getColor() -> Color {
         return Color(red: boardBgRed, green: boardBgGreen, blue: boardBgBlue, opacity: boardBgAlpha)
@@ -234,14 +327,6 @@ public class BoardEngineObject : ObservableObject {
     
     func getFieldLineColor() -> Color {
         return Color(red: boardFieldLineRed, green: boardFieldLineGreen, blue: boardFieldLineBlue, opacity: boardFieldLineAlpha)
-    }
-    
-    func setColor(red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat) {
-        boardBgRed = red
-        boardBgGreen = green
-        boardBgBlue = blue
-        boardBgAlpha = alpha
-        boardBgColor = getColor()
     }
     
     func setColor(colorIn:Color) {
@@ -265,7 +350,6 @@ public class BoardEngineObject : ObservableObject {
     }
   
     func setBoardBgView(boardName: String) { boardBgName = boardName }
-    func boardBgView() -> AnyView { AnyView(SoccerFieldFullView(isMini: false)) }
     func foregroundColor() -> Color { return Color.primaryBackground }
     func backgroundColor() -> Color { return Color.secondaryBackground }
     
@@ -496,29 +580,36 @@ struct CustomDropDelegate: DropDelegate {
         }
         itemProvider.loadObject(ofClass: NSString.self) { (droppedString, error) in
             DispatchQueue.main.async {
+                guard let dropped = droppedString as? String else { return }
+
                 let newTool = ManagedView()
-                newTool.toolType = droppedString as! String
+                // Resolve the dragged payload against the tool catalog so the
+                // ViewEngine builder can route it (sport -> toolType -> subToolType).
+                var catalog: [any ToolCategory] = []
+                catalog += ViewEngine.Tool.ShapeTool.allCases.map { $0 as any ToolCategory }
+                catalog += ViewEngine.Tool.SoccerTool.allCases.map { $0 as any ToolCategory }
+                catalog += ViewEngine.Tool.PoolBallTool.allCases.map { $0 as any ToolCategory }
+                catalog += ViewEngine.Tool.GeneralTool.allCases.map { $0 as any ToolCategory }
+                if let match = catalog.first(where: { $0.name == dropped }) {
+                    newTool.sport = match.genre
+                    newTool.toolType = match.type
+                    newTool.subToolType = match.name
+                } else {
+                    newTool.toolType = dropped
+                }
                 newTool.boardId = BEO.currentActivityId
                 newTool.x = dropLocation.x
                 newTool.y = dropLocation.y
                 BEO.realmInstance.safeWrite { r in
                     r.create(ManagedView.self, value: newTool, update: .all)
                 }
-                
+
                 let toolHistory = ManagedViewAction()
                 toolHistory.absorb(from: newTool)
                 toolHistory.isStart = true
                 BEO.realmInstance.safeWrite { r in
                     r.create(ManagedViewAction.self, value: toolHistory, update: .all)
                 }
-                
-                // TODO: Firebase Users ONLY
-//                firebaseDatabase(safeFlag: UserTools.userIsVerifiedToProceed()) { fdb in
-//                    fdb.child(DatabasePaths.managedViews.rawValue)
-//                        .child(BEO.currentActivityId)
-//                        .child(newTool.id)
-//                        .setValue(newTool.toDict())
-//                }
 
                 // Update the position
                 updatePosition(dropLocation)

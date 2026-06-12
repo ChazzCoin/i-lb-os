@@ -55,7 +55,7 @@ public struct CircleShapeManagedView: View {
         })
         .onAppear() {
             print("OnAppear: CircleTool.")
-            MVO.loadManagedView(byId: self.MVO.id)
+            MVO.loadManagedView(byId: self.viewId)
         }
         
     }

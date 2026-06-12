@@ -22,13 +22,14 @@ struct FieldOverlayView<Background: View, Overlay: View>: View {
     }
 
     var body: some View {
-        GeometryReader { geometry in
-            ZStack {
-                background
-                    .frame(width: width, height: height)
-                overlay
-                    .frame(width: width, height: height)
-            }
+        // No GeometryReader: it anchored the fixed-size content top-leading,
+        // offsetting the field from the board. A plain ZStack center-aligns
+        // inside .background, keeping the field in the tools' coordinate space.
+        ZStack {
+            background
+                .frame(width: width, height: height)
+            overlay
+                .frame(width: width, height: height)
         }
     }
 }

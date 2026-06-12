@@ -58,27 +58,39 @@ public enum NavStackSize: String, CaseIterable {
     case floatable_medium = "floatable_medium"
     case floatable_small = "floatable_small"
     
-    public var height: Double {
+    // Fraction of the container each preset occupies. Sizing should be
+    // derived from the actual container (window) size, not UIScreen —
+    // UIScreen.main.bounds is wrong under Split View / Stage Manager
+    // and stale across rotation. Prefer width(in:)/height(in:).
+    public var widthFactor: Double {
         switch self {
-            case .full: return UIScreen.main.bounds.height
-            case .full_menu_bar: return UIScreen.main.bounds.height
-            case .half: return UIScreen.main.bounds.height * 0.5
-            case .floatable_large: return UIScreen.main.bounds.height * 0.6
-            case .floatable_medium: return UIScreen.main.bounds.height * 0.5
-            case .floatable_small: return UIScreen.main.bounds.height * 0.4
+            case .full: return 1.0
+            case .full_menu_bar: return 0.9
+            case .half: return 0.5
+            case .floatable_large: return 0.6
+            case .floatable_medium: return 0.5
+            case .floatable_small: return 0.4
         }
     }
-    
-    public var width: Double {
+
+    public var heightFactor: Double {
         switch self {
-            case .full: return UIScreen.main.bounds.width
-            case .full_menu_bar: return UIScreen.main.bounds.width * 0.9
-            case .half: return UIScreen.main.bounds.width * 0.5
-            case .floatable_large: return UIScreen.main.bounds.width * 0.6
-            case .floatable_medium: return UIScreen.main.bounds.width * 0.5
-            case .floatable_small: return UIScreen.main.bounds.width * 0.4
+            case .full: return 1.0
+            case .full_menu_bar: return 1.0
+            case .half: return 0.5
+            case .floatable_large: return 0.6
+            case .floatable_medium: return 0.5
+            case .floatable_small: return 0.4
         }
     }
+
+    public func width(in container: CGSize) -> Double { container.width * widthFactor }
+    public func height(in container: CGSize) -> Double { container.height * heightFactor }
+
+    // Screen-relative fallbacks, kept for default-init only. Same values
+    // as before. Runtime paths use the container-aware variants above.
+    public var width: Double { UIScreen.main.bounds.width * widthFactor }
+    public var height: Double { UIScreen.main.bounds.height * heightFactor }
 }
 
 
@@ -146,43 +158,45 @@ public extension NavWindowController {
 }
 
 public class NavWindowController: ObservableObject {
-    
+
     @Published public var id: String = "master"
-    @StateRealmObject public var dyna = ManagedView()
-    
-    @ObservedObject public var gps = GlobalPositioningSystem(CoreNameSpace.global)
-    @ObservedObject public var broadcaster: BroadcastTools = BroadcastTools()
-    
+
+    // Plain references: SwiftUI property wrappers (@ObservedObject,
+    // @StateRealmObject, @GestureState) are inert inside an
+    // ObservableObject — they only function inside a View. Keeping
+    // them here gave a false sense of observation and led to
+    // undefined _dyna reassignment.
+    public var gps = GlobalPositioningSystem(CoreNameSpace.global)
+    public var broadcaster: BroadcastTools = BroadcastTools()
+
     @Published public var activeView: ManagedViewHolder? = nil
-    @Published public var viewPool: [String: ManagedViewHolder] = [:]
-    @Published public var backStack: CoreQueue<String> = CoreQueue()
-    
+    @Published public var viewPool: [WindowID: ManagedViewHolder] = [:]
+    @Published public var backStack: CoreQueue<WindowID> = CoreQueue()
+
     @Published public var navSize: NavStackSize = .full
     @Published public var mainState: NavStackState = .closed
     @Published public var sidebarIsEnabled: Bool = false
     @Published public var sidebarState: NavStackState = .closed
-    
+
     @Published public var isLocked = true
     @Published public var isFloatable: Bool = true
-    
+
     @Published public var keyboardIsShowing = false
     @Published public var keyboardHeight = 0.0
-    
+
     @Published public var masterResetNavWindow = false
-      
+
     @Published public var width = NavStackSize.full_menu_bar.width
     @Published public var height = NavStackSize.full_menu_bar.height
-    
+
     @Published public var offset = CGSize.zero
     @Published public var position = CGPoint(x: 0, y: 0)
     @Published public var originOffPos = CGPoint(x: 0, y: 0)
     @Published public var offPos = CGPoint(x: 0, y: 0)
-    @GestureState public var dragOffset = CGSize.zero
-    @Published public var isDragging = false
-    
+
     public var realmInstance: Realm = newRealm()
-    @Published public var cancellables = Set<AnyCancellable>()
-    
+    public var cancellables = Set<AnyCancellable>()
+
     @Published public var navStackCount = 0
     
     @ViewBuilder
@@ -200,73 +214,62 @@ public class NavWindowController: ObservableObject {
     public init() {
         self.broadcaster = BroadcastTools()
         broadcaster.subscribeTo(.NavStackMessage, storeIn: &cancellables) { wc in
-            if let navIntake = wc as? NavStackMessage {
-                
-                if navIntake.navId.lowercased() != self.id { return }
-                print("NavStack Intake -> NAV TO: \(String(describing: navIntake.viewName))")
-                if let nt = navIntake.viewName?.lowercased() {
-                    guard let _ = self.viewPool[nt.lowercased()] else {
-                        return
-                    }
-                } else {
-                    return
-                }
-               
-                if let io = navIntake.navAction {
-                    switch io {
-                        case .toggle:
-                            if self.mainState == NavStackState.open {
-                                self.mainState = NavStackState.closed
-                            } else {
-                                self.mainState = NavStackState.open
-                            }
-                        case .open: self.mainState = NavStackState.open
-                        case .close: return self.mainState = NavStackState.closed
-                        default: return
-                    }
-                }
-                if let sio = navIntake.sidebarAction {
-                    switch sio {
-                        case .toggle:
-                            if self.sidebarState == NavStackState.open {
-                                self.sidebarState = NavStackState.closed
-                            } else {
-                                self.sidebarState = NavStackState.open
-                            }
-                        case .open: self.sidebarState = NavStackState.open
-                        case .close: return self.sidebarState = NavStackState.closed
-                        default: return
-                    }
-                }
-                
-                if let s = navIntake.size {
-                    if self.navSize.rawValue != s.rawValue {
-                        self.setSize(gps: self.gps, s)
-                    }
-                }
-                if let nt = navIntake.viewName?.lowercased() {
-                    
-                    if let va = navIntake.viewAction {
-                        switch va {
-                            case .toggle:
-                                if self.activeView?.id == nt {
-                                    self.goBack()
-                                } else {
-                                    self.navTo(viewId: nt)
-                                }
-                            case .open: self.navTo(viewId: nt)
-                            case .close: self.goBack()
-                            default: return
-                        }
-                    }
-                    
-                }
-            }
+            guard let navIntake = wc as? NavStackMessage else { return }
+            self.handleNavStackMessage(navIntake)
         }
         self.preLoadWithCoreViews()
         self.loadDynaView()
     }
-    
+
+    // Routes an incoming message. Shell-level intents (open/close the
+    // window, change size, toggle the sidebar) are handled regardless
+    // of whether a view is named — that's what openNavStack() and
+    // size-only messages rely on. Only the view-level intent requires
+    // the named view to already be in the pool.
+    public func handleNavStackMessage(_ navIntake: NavStackMessage) {
+        if navIntake.navId.lowercased() != self.id.lowercased() { return }
+
+        if let io = navIntake.navAction {
+            switch io {
+                case .toggle: self.mainState = (self.mainState == .open) ? .closed : .open
+                case .open:   self.mainState = .open
+                case .close:  self.mainState = .closed
+                default: break
+            }
+        }
+
+        if let sio = navIntake.sidebarAction {
+            switch sio {
+                case .toggle: self.sidebarState = (self.sidebarState == .open) ? .closed : .open
+                case .open:   self.sidebarState = .open
+                case .close:  self.sidebarState = .closed
+                default: break
+            }
+        }
+
+        if let s = navIntake.size, self.navSize.rawValue != s.rawValue {
+            self.setSize(gps: self.gps, s)
+        }
+
+        // View-level navigation: requires a registered view. If the
+        // view isn't in the pool, log and skip — but the shell-level
+        // intents above have already been applied.
+        guard let viewName = navIntake.viewName, let va = navIntake.viewAction else { return }
+        let key = WindowID(viewName)
+        guard self.viewPool[key] != nil else {
+            print("NavStack[\(self.id)]: ignoring viewAction for unregistered view '\(key)'")
+            return
+        }
+        switch va {
+            case .toggle:
+                if self.activeView.map({ WindowID($0.id) }) == key { self.goBack() }
+                else { self.navTo(viewId: viewName) }
+            case .open:  self.navTo(viewId: viewName)
+            case .close: self.goBack()
+            default: break
+        }
+    }
+
     public func toggleSize() {
         if navSize == NavStackSize.full_menu_bar {
             self.isFloatable = false
@@ -281,8 +284,8 @@ public class NavWindowController: ObservableObject {
     public func setSize(gps: GlobalPositioningSystem, _ navSize: NavStackSize) {
         mainAnimation {
             self.navSize = navSize
-            self.width = navSize.width
-            self.height = navSize.height
+            self.width = navSize.width(in: gps.effectiveSize)
+            self.height = navSize.height(in: gps.effectiveSize)
             self.resetPosition(gps: gps)
             self.offset = CGSize.zero
             self.originOffPos = CGPoint(x: 0, y: 0)
@@ -317,9 +320,13 @@ public class NavWindowController: ObservableObject {
         setSize(gps: gps, .full)
     }
     
+    // Forces SwiftUI to tear down and rebuild the window body. The flag
+    // must be flipped back on a LATER runloop tick — flipping it true
+    // then false synchronously renders nothing (SwiftUI only ever sees
+    // the final `false`), which made the old version a silent no-op.
     public func masterResetTheWindow() {
         masterResetNavWindow = true
-        masterResetNavWindow = false
+        main { self.masterResetNavWindow = false }
     }
     
     public func preLoadWithCoreViews() {
@@ -332,70 +339,76 @@ public class NavWindowController: ObservableObject {
     
     // Function to add a view to the pool
     public func addView(window: ManagedViewHolder) {
-       viewPool[window.id.lowercased()] = window
-       if activeView == nil { setActiveViewByID(window.id.lowercased()) }
+       viewPool[WindowID(window.id)] = window
+       if activeView == nil { setActiveViewByID(window.id) }
     }
-    
+
     public func addView<Content: View, Side: View>(callerId: String, @ViewBuilder mainContent: @escaping () -> Content, @ViewBuilder sideContent: @escaping () -> Side = { EmptyView()}) {
         let newManagedWindow = VF.BuildManagedHolder(
             callerId: callerId.lowercased(),
             mainContent: mainContent,
             sideContent: sideContent
         )
-        viewPool[newManagedWindow.id.lowercased()] = newManagedWindow
-        if activeView == nil { setActiveViewByID(newManagedWindow.id.lowercased()) }   
+        viewPool[WindowID(newManagedWindow.id)] = newManagedWindow
+        if activeView == nil { setActiveViewByID(newManagedWindow.id) }
     }
-    
+
     public func preLoad(window: ManagedViewHolder) -> NavWindowController {
-        viewPool[window.id.lowercased()] = window
-        if activeView == nil { setActiveViewByID(window.id.lowercased()) }
+        viewPool[WindowID(window.id)] = window
+        if activeView == nil { setActiveViewByID(window.id) }
         return self
     }
-    
+
     public func preLoad<Content: View, Side: View>(callerId: String, @ViewBuilder mainContent: @escaping () -> Content, @ViewBuilder sideContent: @escaping () -> Side = { EmptyView()}) -> NavWindowController {
         let newManagedWindow = VF.BuildManagedHolder(
             callerId: callerId.lowercased(),
             mainContent: mainContent,
             sideContent: sideContent
         )
-        viewPool[newManagedWindow.id.lowercased()] = newManagedWindow
-        if activeView == nil { setActiveViewByID(newManagedWindow.id.lowercased()) }
+        viewPool[WindowID(newManagedWindow.id)] = newManagedWindow
+        if activeView == nil { setActiveViewByID(newManagedWindow.id) }
         return self
     }
 
     // Function to make a view active by its ID
     public func setActiveViewByID(_ id: String) {
-        guard let window = viewPool[id.lowercased()] else { return }
+        let key = WindowID(id)
+        guard let window = viewPool[key] else { return }
         activeView = window
-        backStack.enqueue(id.lowercased())
+        if backStack.top != key { backStack.push(key) }
     }
 
     // Get the currently active view
     public func getActiveView() -> ManagedViewHolder? {
         return activeView
     }
-    
+
     // Function to navigate to a specific view by ID
     public func navTo(viewId: String) {
-        guard let window = viewPool[viewId.lowercased()] else { return }
+        let key = WindowID(viewId)
+        guard let window = viewPool[key] else { return }
         activeView = window
-        backStack.enqueue(viewId.lowercased())
+        if backStack.top != key { backStack.push(key) }
     }
 
-    // Function to go back to the previous view in the history
+    // Function to go back to the previous view in the history. The back
+    // stack is LIFO: the current view is the top, the previous view is
+    // the next one down. Refuse to pop the last remaining entry.
     public func goBack() {
-        _ = backStack.dequeue() // Remove current view
-        guard let previousViewId = backStack.peek() else { return }
-        if let previousView = viewPool[previousViewId.lowercased()] {
+        guard backStack.count > 1 else { return }
+        _ = backStack.pop() // remove current (top of stack)
+        guard let previousViewId = backStack.top else { return }
+        if let previousView = viewPool[previousViewId] {
             activeView = previousView
         }
     }
-    
+
     public func baseNav(windowId: String, _ action: WindowAction) {
-        guard let window = viewPool[windowId.lowercased()] else { return }
+        let key = WindowID(windowId)
+        guard let window = viewPool[key] else { return }
         switch action {
             case .toggle: window.toggleMinimized()
-            case .open: setActiveViewByID(windowId.lowercased())
+            case .open: setActiveViewByID(windowId)
             case .close:
                 window.windowLevel = .closed
                 goBack() // Navigate back if a window is closed
@@ -403,13 +416,13 @@ public class NavWindowController: ObservableObject {
             default: break
         }
     }
-    
+
     public func resetNavStack(gps: GlobalPositioningSystem) {
         setSize(gps: gps, .full)
     }
 
     public func resetPosition(gps: GlobalPositioningSystem) {
-        position = gps.getGlobalCoordinate(for: self.navSize == NavStackSize.full ? .center : .centerRight, childWidth: self.navSize.width, childHeight: self.navSize.height)
+        position = gps.getGlobalCoordinate(for: self.navSize == NavStackSize.full ? .center : .centerRight, childWidth: self.navSize.width(in: gps.effectiveSize), childHeight: self.navSize.height(in: gps.effectiveSize))
     }
     
     public func toggleWindowSize(gps: GlobalPositioningSystem) {
@@ -434,47 +447,39 @@ public class NavWindowController: ObservableObject {
     }
 
     // MARK: DynaView
+    // Window geometry persists into a ManagedView row keyed by this
+    // controller's id. `toolType` holds the size preset's rawValue;
+    // `isLocked` holds the REAL lock state (floatable is its inverse).
     public func loadDynaView() {
-        if let managedView = realmInstance.object(ofType: ManagedView.self, forPrimaryKey: self.id) {
-            mainAnimation {
-                self._dyna = StateRealmObject(wrappedValue: managedView)
-                self.masterResetTheWindow()
+        guard let managedView = realmInstance.object(ofType: ManagedView.self, forPrimaryKey: self.id) else { return }
+        mainAnimation {
+            // Restore ANY persisted preset, not just three of six.
+            if let savedSize = NavStackSize(rawValue: managedView.toolType) {
+                self.navSize = savedSize
+                self.width = savedSize.width(in: self.gps.effectiveSize)
+                self.height = savedSize.height(in: self.gps.effectiveSize)
             }
-            mainAnimation {
-                if managedView.toolType == NavStackSize.full.rawValue {
-                    self.navSize = NavStackSize.full
-                    self.width = NavStackSize.full.width
-                    self.height = NavStackSize.full.height
-                } else if managedView.toolType == NavStackSize.full_menu_bar.rawValue {
-                    self.navSize = NavStackSize.full_menu_bar
-                    self.width = NavStackSize.full_menu_bar.width
-                    self.height = NavStackSize.full_menu_bar.height
-                } else if managedView.toolType == NavStackSize.floatable_medium.rawValue {
-                    self.navSize = NavStackSize.floatable_medium
-                    self.width = NavStackSize.floatable_medium.width
-                    self.height = NavStackSize.floatable_medium.height
-                }
-//                if managedView.isLocked {
-//                    self.isFloatable = true
-//                    self.navSize = NavStackSize.floatable_medium
-//                    self.width = NavStackSize.floatable_medium.width
-//                    self.height = NavStackSize.floatable_medium.height
-//                }
-                self.position = CGPoint(x: managedView.startX, y: managedView.startY)
-                self.offPos = CGPoint(x: managedView.x, y: managedView.y)
-            }
-        } 
+            self.isLocked = managedView.isLocked
+            self.isFloatable = !managedView.isLocked
+            self.position = CGPoint(x: managedView.startX, y: managedView.startY)
+            self.offPos = CGPoint(x: managedView.x, y: managedView.y)
+            self.masterResetTheWindow()
+        }
     }
-    
+
     public func saveDynaView() {
         guard let managedView = realmInstance.object(ofType: ManagedView.self, forPrimaryKey: self.id) else {
             realmWriter { r in
                 let managedView = ManagedView()
                 managedView.id = self.id
                 managedView.toolType = self.navSize.rawValue
-                managedView.isLocked = self.isFloatable
+                managedView.isLocked = self.isLocked
+                managedView.width = Int(self.width)
+                managedView.height = Int(self.height)
                 managedView.x = self.offPos.x
                 managedView.y = self.offPos.y
+                managedView.startX = self.position.x
+                managedView.startY = self.position.y
                 r.create(ManagedView.self, value: managedView, update: .all)
                 r.refresh()
             }
@@ -482,7 +487,7 @@ public class NavWindowController: ObservableObject {
         }
         realmWriter { r in
             managedView.toolType = self.navSize.rawValue
-            managedView.isLocked = self.isFloatable
+            managedView.isLocked = self.isLocked
             managedView.width = Int(self.width)
             managedView.height = Int(self.height)
             managedView.x = self.offPos.x

@@ -25,25 +25,38 @@ public func clamp(position: CGPoint, to bounds: CGRect) -> CGPoint {
 
 // Parent (Type)
 public class ManagedViewEngine: ObservableObject {
-    
-    public init() {}
-    
+
+    // The UserDefaults key this engine filters tools by. Rooms-based apps
+    // (Wrlds) keep the default; Ludi Boards passes "currentActivityId" so
+    // the render filter matches the key its creation paths write.
+    public let boardIdKey: String
+
+    public init(idKey: String = "currentRoomId") {
+        self.boardIdKey = idKey
+        self._roomId = AppStorage(wrappedValue: "", idKey)
+    }
+
+    public init(idKey: String = "currentRoomId", bounds: CGRect) {
+        self.boardIdKey = idKey
+        self._roomId = AppStorage(wrappedValue: "", idKey)
+        self.bounds = bounds
+    }
+
     @State var bounds: CGRect = CGRect(origin: .zero, size: CGSize(width: 20000.0, height: 20000.0))
     @Published public var nodes: [UUID : Node] = [:]
-    
+
     public func updateBounds(bounds: CGRect) {
         self.bounds = bounds
     }
-    public init(bounds: CGRect) {
-        self.bounds = bounds
-    }
-    
+
     @AppStorage("isLoggedIn") var isLoggedIn: Bool = false
-    @AppStorage("currentRoomId") var roomId: String = ""
-    
+    @AppStorage var roomId: String
+
     @ObservedResults(ManagedView.self) public var allTools
     public var boardManagedViews: Results<ManagedView> {
-        if roomId.isEmpty { return allTools }
+        // Strict filter: tools created with an empty board id ("" — the
+        // default local board) match an empty filter value, so the free,
+        // no-activity flow still renders. No id ever shows another board's tools.
         return allTools.filter("boardId == %@", roomId)
     }
 

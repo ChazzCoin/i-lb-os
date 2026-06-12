@@ -56,6 +56,11 @@ public class ManagedViewO: ObservableObject {
     
     @Published public var oXY: CGPoint = CGPoint(x: 0.0, y: 0.0)
     @Published public var cancel = Set<AnyCancellable>()
+
+    // Tool-settings selection (same keys ManagedViewObject writes, standard store)
+    @AppStorage("toolBarCurrentViewId") public var toolBarCurrentViewId: String = ""
+    @AppStorage("toolSettingsIsShowing") public var toolSettingsIsShowing: Bool = false
+    @AppStorage("selectedManagedViewId") public var selectedManagedViewId: String = ""
     // Realm instance
     public var realm: Realm
     
@@ -148,87 +153,137 @@ public class ManagedViewO: ObservableObject {
         setupByToolType(toolType)
     }
     
-    public func setupByToolType(_ toolType: any ToolCategory) {
+    public func setupByToolType(_ toolType: any ToolCategory, anchorX: Double = 0.0, anchorY: Double = 0.0) {
         switch toolType {
-            case ViewEngine.Tool.ShapeTool.line_straight:
-                self.startX = 0.0
-                self.startY = 0.0
-                self.endX = 500.0
-                self.endY = 0.0
-            case ViewEngine.Tool.ShapeTool.line_curved:
-                self.startX = 0.0
-                self.startY = 0.0
-                self.endX = 500.0
-                self.endY = 0.0
+            case ViewEngine.Tool.ShapeTool.line_straight, ViewEngine.Tool.ShapeTool.line_curved:
+                self.startX = anchorX
+                self.startY = anchorY
+                self.centerX = anchorX + 250.0
+                self.centerY = anchorY
+                self.endX = anchorX + 500.0
+                self.endY = anchorY
             case ViewEngine.Tool.ShapeTool.square:
-                self.x = 0.0
-                self.y = 0.0
-                self.centerX = 500.0
-                self.centerY = -500.0
-                self.startX = 500.0
-                self.startY = 0.0
-                self.endX = 0.0
-                self.endY = -500.0
+                self.x = anchorX
+                self.y = anchorY
+                self.centerX = anchorX + 500.0
+                self.centerY = anchorY - 500.0
+                self.startX = anchorX + 500.0
+                self.startY = anchorY
+                self.endX = anchorX
+                self.endY = anchorY - 500.0
             case ViewEngine.Tool.ShapeTool.triangle:
-                self.x = 250.0
-                self.y = 0.0
-                self.startX = 500.0
-                self.startY = -500.0
-                self.centerX = 0.0
-                self.centerY = -500.0
+                self.x = anchorX + 250.0
+                self.y = anchorY
+                self.startX = anchorX + 500.0
+                self.startY = anchorY - 500.0
+                self.centerX = anchorX
+                self.centerY = anchorY - 500.0
             case ViewEngine.Tool.ShapeTool.circle:
                 self.radius = 1000.0
                 self.width = 200
-                self.x = 500.0
-                self.y = 0.0
-                self.position = CGPoint(x: 500.0, y: 0.0)
+                self.x = anchorX
+                self.y = anchorY
+                self.position = CGPoint(x: anchorX, y: anchorY)
             default:
                 return
         }
     }
 
+    // Copy a Realm row's values onto the published mirrors.
+    private func absorb(from managedView: ManagedView) {
+        self.id = managedView.id
+        self.dateUpdated = managedView.dateUpdated
+        self.boardId = managedView.boardId
+        self.sport = managedView.sport
+        self.toolType = managedView.toolType
+        self.subToolType = managedView.subToolType
+        self.toolColor = managedView.toolColor
+        self.toolSize = managedView.toolSize
+        self.x = managedView.x
+        self.y = managedView.y
+        self.startX = managedView.startX
+        self.startY = managedView.startY
+        self.centerX = managedView.centerX
+        self.centerY = managedView.centerY
+        self.endX = managedView.endX
+        self.endY = managedView.endY
+        self.width = managedView.width
+        self.height = managedView.height
+        self.radius = managedView.radius
+        self.rotation = managedView.rotation
+        self.lineDash = managedView.lineDash
+        self.translationX = managedView.translationX
+        self.translationY = managedView.translationY
+        self.lastUserId = managedView.lastUserId
+        self.isLocked = managedView.isLocked
+        self.isDeleted = managedView.isDeleted
+        self.headIsEnabled = managedView.headIsEnabled
+        self.colorRed = managedView.colorRed
+        self.colorGreen = managedView.colorGreen
+        self.colorBlue = managedView.colorBlue
+        self.colorAlpha = managedView.colorAlpha
+        self.isNew = managedView.isNew
+        self.position = CGPoint(x: managedView.x, y: managedView.y)
+    }
+
     // Function to load an existing ManagedView by ID
     public func loadManagedView(byId managedViewId: String) {
         if let managedView = realm.object(ofType: ManagedView.self, forPrimaryKey: managedViewId) {
-            // Update properties with the values from Realm
-            self.id = managedView.id
-            self.dateUpdated = managedView.dateUpdated
-            self.boardId = managedView.boardId
-            self.sport = managedView.sport
-            self.toolType = managedView.toolType
-            self.subToolType = managedView.subToolType
-            self.toolColor = managedView.toolColor
-            self.toolSize = managedView.toolSize
-            self.x = managedView.x
-            self.y = managedView.y
-            self.startX = managedView.startX
-            self.startY = managedView.startY
-            self.centerX = managedView.centerX
-            self.centerY = managedView.centerY
-            self.endX = managedView.endX
-            self.endY = managedView.endY
-            self.width = managedView.width
-            self.height = managedView.height
-            self.radius = managedView.radius
-            self.rotation = managedView.rotation
-            self.lineDash = managedView.lineDash
-            self.translationX = managedView.translationX
-            self.translationY = managedView.translationY
-            self.lastUserId = managedView.lastUserId
-            self.isLocked = managedView.isLocked
-            self.isDeleted = managedView.isDeleted
-            self.headIsEnabled = managedView.headIsEnabled
-            self.colorRed = managedView.colorRed
-            self.colorGreen = managedView.colorGreen
-            self.colorBlue = managedView.colorBlue
-            self.colorAlpha = managedView.colorAlpha
-            self.isNew = managedView.isNew
+            absorb(from: managedView)
             if self.isNew {
-                setupByToolType(toToolType())
+                // First render: apply per-shape geometry defaults anchored at
+                // the spawn point, persist them, and clear the flag so later
+                // loads keep the user's saved positions.
+                setupByToolType(toToolType(), anchorX: managedView.x, anchorY: managedView.y)
+                self.isNew = false
+                self.position = CGPoint(x: self.x, y: self.y)
+                realm.safeWrite { _ in
+                    managedView.x = self.x
+                    managedView.y = self.y
+                    managedView.startX = self.startX
+                    managedView.startY = self.startY
+                    managedView.centerX = self.centerX
+                    managedView.centerY = self.centerY
+                    managedView.endX = self.endX
+                    managedView.endY = self.endY
+                    managedView.radius = self.radius
+                    managedView.width = self.width
+                    managedView.isNew = false
+                }
             }
+            observeFromRealm()
         } else {
             print("ManagedView with ID \(managedViewId) not found.")
         }
+    }
+
+    // Live updates: settings-bar edits and any other Realm writes flow back
+    // onto the published mirrors (the bar and the tool view hold separate
+    // ManagedViewO instances).
+    public var notificationToken: NotificationToken? = nil
+
+    public func observeFromRealm() {
+        notificationToken?.invalidate()
+        guard let mv = realm.object(ofType: ManagedView.self, forPrimaryKey: self.id) else { return }
+        notificationToken = mv.observe { [weak self] change in
+            guard let self = self else { return }
+            switch change {
+                case .change(let object, _):
+                    guard let mv = object as? ManagedView, !mv.isInvalidated else { return }
+                    DispatchQueue.main.async {
+                        if self.isDragging { return }
+                        self.absorb(from: mv)
+                    }
+                case .deleted:
+                    DispatchQueue.main.async { self.isDeleted = true }
+                case .error(let error):
+                    print("ManagedViewO observer error: \(error)")
+            }
+        }
+    }
+
+    deinit {
+        notificationToken?.invalidate()
     }
 
     // Function to save changes back to Realm
@@ -343,13 +398,13 @@ public class ManagedViewO: ObservableObject {
     
     public func toggleMenuWindow() {
         if anchorsAreVisible {
-//            self.toolBarCurrentViewId = self.lifeViewId
-//            self.toolSettingsIsShowing = true
-//            self.selectedManagedViewId = self.lifeViewId
+            self.toolBarCurrentViewId = self.id
+            self.toolSettingsIsShowing = true
+            self.selectedManagedViewId = self.id
             BroadcastTools.send(.NavStackMessage, value: NavStackMessage(viewName: "mvSettings", viewAction: WindowAction.open))
         } else {
-//            self.toolSettingsIsShowing = false
-//            self.selectedManagedViewId = ""
+            self.toolSettingsIsShowing = false
+            self.selectedManagedViewId = ""
             BroadcastTools.send(.NavStackMessage, value: NavStackMessage(viewName: "mvSettings", viewAction: WindowAction.close))
         }
     }
