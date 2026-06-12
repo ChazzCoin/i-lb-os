@@ -108,7 +108,7 @@ public class BoardEngineObject : ObservableObject {
     @GestureState var gestureScale: CGFloat = 1.0
     @Published var lastScaleValue: CGFloat = 1.0
     @Published var dropPosition = CGPoint.zero
-    @Published var dropDelegate: CustomDropDelegate?
+    var dropDelegate: CustomDropDelegate!
     
     @Published var boardSettingsIsShowing = false
     @Published var menuSettingsIsShowing = false
@@ -118,9 +118,9 @@ public class BoardEngineObject : ObservableObject {
     
     public init() {
         dropDelegate = CustomDropDelegate(
-            BEO: .constant(self),
-            updatePosition: { position in
-                self.dropPosition = position
+            BEO: self,
+            updatePosition: { [weak self] position in
+                self?.dropPosition = position
             }
         )
     }
@@ -132,14 +132,16 @@ public class BoardEngineObject : ObservableObject {
     @Published var boardStartPosY: CGFloat = 1000.0
     @Published var boardBgColor: Color = Color.secondaryBackground
     @Published var boardBgName: String = "Sol"
-    @Published var boardBgRed: Double = 48.0
-    @Published var boardBgGreen: Double = 128.0
-    @Published var boardBgBlue: Double = 20.0
+    // Color(red:green:blue:opacity:) expects 0–1 components. These defaults are
+    // the field green (48,128,20) normalized; setColor() writes 0–1 too via toRGBA().
+    @Published var boardBgRed: Double = 48.0 / 255.0
+    @Published var boardBgGreen: Double = 128.0 / 255.0
+    @Published var boardBgBlue: Double = 20.0 / 255.0
     @Published var boardBgAlpha: Double = 0.75
     @Published var boardFieldLineColor: Color = Color.white
-    @Published var boardFieldLineRed: Double = 48.0
-    @Published var boardFieldLineGreen: Double = 128.0
-    @Published var boardFieldLineBlue: Double = 20.0
+    @Published var boardFieldLineRed: Double = 48.0 / 255.0
+    @Published var boardFieldLineGreen: Double = 128.0 / 255.0
+    @Published var boardFieldLineBlue: Double = 20.0 / 255.0
     @Published var boardFieldLineAlpha: Double = 0.75
     @Published var boardFeildLineStroke: Double = 10
     @Published var boardFeildRotation: Double = 0
@@ -333,56 +335,52 @@ public class BoardEngineObject : ObservableObject {
     
     private func runAnimation() {
         guard !recordingsByRecordingId.isEmpty else { return }
-        let dispatchGroup = DispatchGroup()
-        let initialDelay = 1.0 // Start with a delay of 1 second
-        var currentDelay = initialDelay
         if !self.isPlayingAnimation { return }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-            for item in self.recordingsByRecordingIdInInitState {
-                if !self.isPlayingAnimation { return }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    if !self.isPlayingAnimation { return }
-                    dispatchGroup.enter()  // Enter the group for each async task
+        let dispatchGroup = DispatchGroup()
+        let initialDelay = 1.0
 
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+            if !self.isPlayingAnimation { return }
+
+            // Phase 1 — apply every tool's initial state. enter() must happen
+            // synchronously here (not inside asyncAfter), otherwise the group is
+            // empty when notify() is registered and Phase 2 starts immediately.
+            for item in self.recordingsByRecordingIdInInitState {
+                dispatchGroup.enter()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    guard self.isPlayingAnimation else { dispatchGroup.leave(); return }
                     self.realmInstance.safeFindByField(ManagedView.self, value: item.toolId) { obj in
                         obj.absorbRecordingAction(from: item, saveRealm: self.realmInstance)
-                        dispatchGroup.leave()  // Leave the group when the task is done
                     }
+                    dispatchGroup.leave()
                 }
-                currentDelay += 1.0 // Increase the delay for the next task
             }
-            
-            // Notify when all tasks in the first loop are done
-            if !self.isPlayingAnimation { return }
-            dispatchGroup.notify(queue: .main) {
-                var nextDelay = initialDelay
 
-                // Now start the second loop
+            // Phase 2 — only after all initial state is applied, replay actions.
+            dispatchGroup.notify(queue: .main) {
+                guard self.isPlayingAnimation else { return }
+                var nextDelay = initialDelay
+                let total = self.recordingsByRecordingId.count
                 var count = 0
-                var total = self.recordingsByRecordingId.count
                 for item in self.recordingsByRecordingId {
-                    if !self.isPlayingAnimation { return }
                     if item.orderIndex == 0 { continue }
-                    count = count + 1
+                    count += 1
+                    let isLast = (count >= total)
                     DispatchQueue.main.asyncAfter(deadline: .now() + nextDelay) {
-                        if !self.isPlayingAnimation { return }
+                        guard self.isPlayingAnimation else { return }
                         self.realmInstance.safeFindByField(ManagedView.self, value: item.toolId) { obj in
                             obj.absorbRecordingAction(from: item, saveRealm: self.realmInstance)
                         }
-                        
-                        if count >= total {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + nextDelay + 3.0) {
+                        if isLast {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
                                 self.isPlayingAnimation = false
                             }
                         }
                     }
-                    nextDelay += 1.0 // Increase the delay for the next task
+                    nextDelay += 1.0
                 }
-                
             }
-            
         }
-        
     }
 
 
@@ -484,20 +482,23 @@ public class BoardEngineObject : ObservableObject {
 }
 
 struct CustomDropDelegate: DropDelegate {
-    @Binding var BEO: BoardEngineObject // Replace with your actual type
-    @State var updatePosition: (CGPoint) -> Void
+    // Property wrappers (@Binding/@State) are meaningless outside a View and
+    // were causing undefined behavior here. Plain references are correct.
+    let BEO: BoardEngineObject
+    let updatePosition: (CGPoint) -> Void
 
     func performDrop(info: DropInfo) -> Bool {
         let dropLocation = info.location
-        
+
         // Handle the drop and get the dropped content
         guard let itemProvider = info.itemProviders(for: [.text]).first else {
             return false
         }
         itemProvider.loadObject(ofClass: NSString.self) { (droppedString, error) in
             DispatchQueue.main.async {
+                guard let toolType = droppedString as? String else { return }
                 let newTool = ManagedView()
-                newTool.toolType = droppedString as! String
+                newTool.toolType = toolType
                 newTool.boardId = BEO.currentActivityId
                 newTool.x = dropLocation.x
                 newTool.y = dropLocation.y

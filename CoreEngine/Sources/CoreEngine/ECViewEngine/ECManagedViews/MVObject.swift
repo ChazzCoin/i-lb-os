@@ -121,24 +121,26 @@ public class ManagedViewObject: ObservableObject {
     @Published public var originalLifeEnd = CGPoint.zero
     
     public let realmInstance: Realm = newRealm()
-    @Published public var objectNotificationToken: NotificationToken? = nil
-    @Published public var managedViewNotificationToken: NotificationToken? = nil
-    @Published public var cancellables = Set<AnyCancellable>()
-    @Published public var cancel = Set<AnyCancellable>()
-    
-    @Published public var coordinateStackBasic: [CGPoint] = []
-    @Published public var coordinateStack: [[String:CGPoint]] = []
-    
+    // Infrastructure handles — never bound by the UI, so no @Published
+    // (it would churn objectWillChange on every token/handle assignment).
+    public var objectNotificationToken: NotificationToken? = nil
+    public var managedViewNotificationToken: NotificationToken? = nil
+    public var cancellables = Set<AnyCancellable>()
+    public var cancel = Set<AnyCancellable>()
+
+    public var coordinateStackBasic: [CGPoint] = []
+    public var coordinateStack: [[String:CGPoint]] = []
+
     // Firebase
-    @Published public var reference: DatabaseReference = Database
+    public let reference: DatabaseReference = Database
         .database()
         .reference()
         .child(DatabasePaths.managedViews.rawValue)
-    @Published public var observerHandle: DatabaseHandle?
-    @Published public var isObserving = false
-    @Published public var isWriting: Bool = false
-    @Published public var nofityToken: NotificationToken? = nil
-    @Published public var firebaseNotificationToken: NotificationToken? = nil
+    public var observerHandle: DatabaseHandle?
+    public var isObserving = false
+    public var isWriting: Bool = false
+    public var nofityToken: NotificationToken? = nil
+    public var firebaseNotificationToken: NotificationToken? = nil
     
     @Published public var hasBeenRetried = false
     @Published public var toolType: ViewEngine.Tool.ShapeTool = .line_straight
@@ -307,12 +309,14 @@ public class ManagedViewObject: ObservableObject {
     }
     
     public func animateToNextCoordinate() {
-        print("!!!COORDINATES COUNT: \(coordinateStack.count)")
-        
-        guard !coordinateStack.isEmpty || self.isDragging else {
+        guard !coordinateStack.isEmpty else { return }
+        // Dragging takes over: drop any queued remote coordinates so we never
+        // removeFirst() on an empty stack (crash) and never fight the user.
+        if isDragging {
+            coordinateStack.removeAll()
             return
         }
-        
+
         let nextCoordinate = coordinateStack.removeFirst()
         mainAnimation {
             self.position = nextCoordinate["position"] ?? self.position
@@ -457,10 +461,16 @@ public class ManagedViewObject: ObservableObject {
                 } else {
                     
                     if temp.lastUserId != self.currentUserId {
-                        
-                        if temp.startX == 0.0 && temp.startY == 0.0 { return }
-                        if temp.endX == 0.0 && temp.endY == 0.0 { return }
-                        
+
+                        // The start/end-zero guards are only meaningful for
+                        // line/shape tools. Basic tools (general/soccer/pool)
+                        // legitimately have start==end==0 and move by position —
+                        // gating these guards lets their remote moves apply.
+                        if self.lifeToolType == "shape" {
+                            if temp.startX == 0.0 && temp.startY == 0.0 { return }
+                            if temp.endX == 0.0 && temp.endY == 0.0 { return }
+                        }
+
                         let newPosition = CGPoint(x: temp.x, y: temp.y)
                         let startPosition = CGPoint(x: temp.startX, y: temp.startY)
                         let endPosition = CGPoint(x: temp.endX, y: temp.endY)
@@ -516,20 +526,22 @@ public class ManagedViewObject: ObservableObject {
     }
     
     // Update
-    public func updateRealm(start: CGPoint? = nil, end: CGPoint? = nil, x:Double?=nil, y:Double?=nil) {
+    public func updateRealm(start: CGPoint? = nil, end: CGPoint? = nil, center: CGPoint? = nil, x:Double?=nil, y:Double?=nil) {
         if self.isDisabledChecker() {return}
         if self.isDeletedChecker() {return}
         if let mv = self.realmInstance.findByField(ManagedView.self, value: self.lifeViewId) {
             self.realmInstance.safeWrite { r in
-                
+
                 // Modify the object
                 mv.x = x ?? self.lifeX
                 mv.y = y ?? self.lifeY
-                
+
                 mv.startX = Double(start?.x ?? CGFloat(self.lifeStartX))
                 mv.startY = Double(start?.y ?? CGFloat(self.lifeStartY))
-                mv.centerX = Double(start?.x ?? CGFloat(self.lifeCenterX))
-                mv.centerY = Double(start?.y ?? CGFloat(self.lifeCenterY))
+                // Center is the curve control point — it must come from `center`,
+                // never from `start` (that silently corrupts curved-line geometry).
+                mv.centerX = Double(center?.x ?? CGFloat(self.lifeCenterX))
+                mv.centerY = Double(center?.y ?? CGFloat(self.lifeCenterY))
                 mv.endX = Double(end?.x ?? CGFloat(self.lifeEndX))
                 mv.endY = Double(end?.y ?? CGFloat(self.lifeEndY))
                 
@@ -557,28 +569,7 @@ public class ManagedViewObject: ObservableObject {
         }
         
     }
-    public func updateRealmPosition() {
-        DispatchQueue.global(qos: .background).async {
-            autoreleasepool {
-                do {
-                    let realm = try Realm()
-                    if let mv = realm.findByField(ManagedView.self, value: self.lifeViewId) {
-                        try realm.write {
-                            mv.x = self.position.x
-                            mv.y = self.position.y
-                            mv.lastUserId = self.currentUserId
-                            realm.refresh()
-                            print("Updated Realm with new POS! 2 -> \(mv.x), \(mv.y)")
-                        }
-//                        self.updateFirebase(mv: mv)
-                    }
-                } catch {
-                    print("Realm error: \(error)")
-                }
-            }
-        }
-    }
-    public func updateRealmPos(start: CGPoint? = nil, end: CGPoint? = nil) {
+    public func updateRealmPos(start: CGPoint? = nil, end: CGPoint? = nil, center: CGPoint? = nil) {
         DispatchQueue.global(qos: .background).async {
             autoreleasepool {
                 do {
@@ -589,15 +580,14 @@ public class ManagedViewObject: ObservableObject {
                             mv.y = Double(start?.y ?? CGFloat(self.lifeY))
                             mv.startX = Double(start?.x ?? CGFloat(self.lifeStartX))
                             mv.startY = Double(start?.y ?? CGFloat(self.lifeStartY))
-                            mv.centerX = Double(start?.x ?? CGFloat(self.lifeCenterX))
-                            mv.centerY = Double(start?.y ?? CGFloat(self.lifeCenterY))
+                            // Center comes from `center`, never `start` — see updateRealm.
+                            mv.centerX = Double(center?.x ?? CGFloat(self.lifeCenterX))
+                            mv.centerY = Double(center?.y ?? CGFloat(self.lifeCenterY))
                             mv.endX = Double(end?.x ?? CGFloat(self.lifeEndX))
                             mv.endY = Double(end?.y ?? CGFloat(self.lifeEndY))
                             mv.lastUserId = self.currentUserId
                             realm.refresh()
-                            print("Updated Realm with new POS! 2 -> \(mv.x), \(mv.y)")
                         }
-//                        self.updateFirebase(mv: mv)
                     }
                 } catch {
                     print("Realm error: \(error)")
@@ -620,22 +610,27 @@ public class ManagedViewObject: ObservableObject {
     }
     
     public func startFirebaseObserver() {
-        
-        if isObserving || self.lifeActivityId.isEmpty || self.lifeViewId.isEmpty {return}
-//        if !self.realmInstance.isLiveSessionPlan(activityId: self.lifeActivityId) { return }
-        
-        observerHandle = reference.child(self.lifeActivityId).child(self.lifeViewId).observe(.value, with: { snapshot in
+
+        if isObserving || self.lifeViewId.isEmpty {return}
+
+        // Flat path scheme: managedViews/<viewId>. This matches the collection
+        // observer (MVEngineControl) and updateFirebase so reads and writes
+        // agree on one layout. A single .value observer covers both updates and
+        // remote deletion — observing .childRemoved on a leaf node would (wrongly)
+        // fire whenever any single field was removed, not when the node is deleted.
+        let node = reference.child(self.lifeViewId)
+        observerHandle = node.observe(.value, with: { snapshot in
+            guard snapshot.exists() else {
+                // Node removed remotely → tombstone locally.
+                if self.isDeleted { return }
+                if let mv = self.realmInstance.findByField(ManagedView.self, value: self.lifeViewId) {
+                    main { self.isDeleted = true }
+                    self.realmInstance.safeWrite { _ in mv.isDeleted = true }
+                }
+                return
+            }
             let _ = snapshot.toCoreObjects(ManagedView.self, realm: self.realmInstance)
         })
-        reference.child(self.lifeActivityId).child(self.lifeViewId).observe(.childRemoved, with: { snapshot in
-           if let mv = self.realmInstance.findByField(ManagedView.self, value: self.lifeViewId) {
-               if self.isDeleted {return}
-               main {self.isDeleted = true}
-               self.realmInstance.safeWrite { r in
-                   mv.isDeleted = true
-               }
-           }
-       })
         main {self.isObserving = true}
     }
     

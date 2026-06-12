@@ -28,7 +28,7 @@ public class ManagedViewEngine: ObservableObject {
     
     public init() {}
     
-    @State var bounds: CGRect = CGRect(origin: .zero, size: CGSize(width: 20000.0, height: 20000.0))
+    var bounds: CGRect = CGRect(origin: .zero, size: CGSize(width: 20000.0, height: 20000.0))
     @Published public var nodes: [UUID : Node] = [:]
     
     public func updateBounds(bounds: CGRect) {
@@ -39,11 +39,14 @@ public class ManagedViewEngine: ObservableObject {
     }
     
     @AppStorage("isLoggedIn") var isLoggedIn: Bool = false
-    @AppStorage("currentRoomId") var roomId: String = ""
-    
+    // Canonical board identity — same key BEO / drops / line-save use.
+    @AppStorage("currentActivityId") var roomId: String = ""
+
     @ObservedResults(ManagedView.self) public var allTools
     public var boardManagedViews: Results<ManagedView> {
-        if roomId.isEmpty { return allTools }
+        // No board selected → render nothing. Never fall back to "all tools",
+        // which would bleed every board's tools onto the current one.
+        if roomId.isEmpty { return allTools.filter("boardId == %@", "__none__") }
         return allTools.filter("boardId == %@", roomId)
     }
 

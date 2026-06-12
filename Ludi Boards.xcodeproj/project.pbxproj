@@ -11,7 +11,6 @@
 		FB10AE052B0DC8E600295F4B /* Tips.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB10AE042B0DC8E600295F4B /* Tips.swift */; };
 		FB10AE0B2B0F162F00295F4B /* ActivityPlanThumbView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB10AE0A2B0F162F00295F4B /* ActivityPlanThumbView.swift */; };
 		FB10AE0D2B0F16B100295F4B /* ActivityPlanThumbList.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB10AE0C2B0F16B100295F4B /* ActivityPlanThumbList.swift */; };
-		FB15DD2A2B07443600A21290 /* BoardEngineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB15DD292B07443600A21290 /* BoardEngineView.swift */; };
 		FB18F1202B62288700D89F8D /* Assets.xcassets in Sources */ = {isa = PBXBuildFile; fileRef = FB829F0D2B36A83400FAC6E0 /* Assets.xcassets */; };
 		FB18F13E2B6391B500D89F8D /* Square.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB18F13D2B6391B500D89F8D /* Square.swift */; };
 		FB18F1402B63946100D89F8D /* XShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB18F13F2B63946100D89F8D /* XShape.swift */; };
@@ -138,7 +137,6 @@
 		FBE2C6262B1BD7BA004C0116 /* TipBoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE2C6252B1BD7BA004C0116 /* TipBoxView.swift */; };
 		FBE385502B4B32950090901C /* _FriendsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE3854F2B4B32950090901C /* _FriendsListView.swift */; };
 		FBE54B7F2C5DED4100C165DF /* ToolToPlayerRef.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE54B7E2C5DED4100C165DF /* ToolToPlayerRef.swift */; };
-		FBE54B822C61CC1100C165DF /* BoardEngineById.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE54B812C61CC1100C165DF /* BoardEngineById.swift */; };
 		FBE54B842C64821500C165DF /* CanvasMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE54B832C64821500C165DF /* CanvasMenuView.swift */; };
 		FBEBEF962B49506800B8BA32 /* _LiveChat.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBEBEF952B49506800B8BA32 /* _LiveChat.swift */; };
 		FBF1A5F92B5E342B0088150C /* SolIconButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF1A5F82B5E342B0088150C /* SolIconButton.swift */; };
@@ -307,7 +305,6 @@
 		FBE2C6252B1BD7BA004C0116 /* TipBoxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TipBoxView.swift; sourceTree = "<group>"; };
 		FBE3854F2B4B32950090901C /* _FriendsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _FriendsListView.swift; sourceTree = "<group>"; };
 		FBE54B7E2C5DED4100C165DF /* ToolToPlayerRef.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolToPlayerRef.swift; sourceTree = "<group>"; };
-		FBE54B812C61CC1100C165DF /* BoardEngineById.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardEngineById.swift; sourceTree = "<group>"; };
 		FBE54B832C64821500C165DF /* CanvasMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasMenuView.swift; sourceTree = "<group>"; };
 		FBEBEF952B49506800B8BA32 /* _LiveChat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _LiveChat.swift; sourceTree = "<group>"; };
 		FBF1A5F82B5E342B0088150C /* SolIconButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolIconButton.swift; sourceTree = "<group>"; };
@@ -379,7 +376,6 @@
 				FBF68C332F625803001DCF45 /* BoardEngineView.swift */,
 				FBBDD0232B6F6D8B0009844B /* CanvasExtensions.swift */,
 				FBF515B82BBD03FF0066EAA9 /* BoardEngineObject.swift */,
-				FBE54B812C61CC1100C165DF /* BoardEngineById.swift */,
 				FBE54B832C64821500C165DF /* CanvasMenuView.swift */,
 			);
 			path = CanvasEngine;
@@ -1100,7 +1096,6 @@
 				FB9F1DD92B1533C400FD9078 /* _FirebaseLogin.swift in Sources */,
 				FB18F1692B68718000D89F8D /* SearchableSessionListView.swift in Sources */,
 				FBF3A9A42BE167450088AAAC /* FloatingButtons.swift in Sources */,
-				FBE54B822C61CC1100C165DF /* BoardEngineById.swift in Sources */,
 				FBDF0DC52B21811000FADE44 /* SharedSessionsView.swift in Sources */,
 				FBAE62AD2B295A8100E008D5 /* ManagedPopUpView.swift in Sources */,
 				FB18F13E2B6391B500D89F8D /* Square.swift in Sources */,
@@ -1177,7 +1172,6 @@
 				FBE54B7F2C5DED4100C165DF /* ToolToPlayerRef.swift in Sources */,
 				FBF1A5F92B5E342B0088150C /* SolIconButton.swift in Sources */,
 				FB18F1832B6AE54200D89F8D /* SearchableRecordingsListView.swift in Sources */,
-				FB15DD2A2B07443600A21290 /* BoardEngineView.swift in Sources */,
 				FBFF5CF22BCE4D0E00149A31 /* CoreBuddyListView.swift in Sources */,
 				FB18F17E2B6ABDA200D89F8D /* PdfImaging.swift in Sources */,
 				FBA7EB802C59F860004A097D /* Sheets.swift in Sources */,

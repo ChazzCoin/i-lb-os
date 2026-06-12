@@ -16,16 +16,19 @@ struct BoardEngine: View {
     
     @Environment(\.scenePhase) var deviceState
     @EnvironmentObject var BEO: BoardEngineObject
-    @ObservedObject public var MVEngine: ManagedViewEngine = ManagedViewEngine()
+    @StateObject public var MVEngine: ManagedViewEngine = ManagedViewEngine()
 
-    @AppStorage("currentBoardId") var currentBoardId: String = ""
-    
+    // Canonical board identity. Mirrors BEO.currentActivityId via the same
+    // AppStorage key so the engine filter, line-save, and drops all agree.
+    @AppStorage("currentActivityId") var currentActivityId: String = ""
+
     @State var cancellables = Set<AnyCancellable>()
 
     @State private var drawingStartPoint: CGPoint = .zero
     @State private var drawingEndPoint: CGPoint = .zero
     @State private var showCreateActivitySheet = false
     @State private var resetTools = false
+    @State private var didSubscribe = false
     
     var body: some View {
         GeometryReader { geo in
@@ -33,12 +36,7 @@ struct BoardEngine: View {
                  
                  // Board Tools
                 MVEngine.Display(reset: self.$resetTools)
-                
-                PoolBallManagedView(viewId: "test", activityId: self.BEO.currentActivityId, ballType: .eightBall)
-                
-                PoolBallManagedView(viewId: "test1", activityId: self.BEO.currentActivityId, ballType: .solid1)
-                PoolBallManagedView(viewId: "test2", activityId: self.BEO.currentActivityId, ballType: .stripe9)
-                
+
                  // Temporary line being drawn
                  if self.BEO.isDraw {
                      if drawingStartPoint != .zero {
@@ -62,7 +60,7 @@ struct BoardEngine: View {
                         }
                     })
             )
-            .onDrop(of: [.text], delegate: self.BEO.dropDelegate!)
+            .onDrop(of: [.text], delegate: self.BEO.dropDelegate)
             .simultaneousGesture( self.BEO.isDraw ?
                 DragGesture()
                     .onChanged { value in
@@ -82,21 +80,20 @@ struct BoardEngine: View {
             ActivityDetailsView(activityId: "new", isShowing: $showCreateActivitySheet)
         })
         .onAppear {
-           
-            print("BoardEngineView onAppear")
+            if self.didSubscribe { return }
+            self.didSubscribe = true
             onSessionIdChange()
             onToolCreated()
             onToolDeleted()
-            
         }
     }
-    
+
     @MainActor
     func onSessionIdChange() {
         CodiChannel.SESSION_ON_ID_CHANGE.receive(on: RunLoop.main) { sc in
-            let temp = sc as! String
-            self.currentBoardId = temp
-            
+            guard let temp = sc as? String else { return }
+            self.currentActivityId = temp
+
         }.store(in: &cancellables)
     }
     
@@ -124,7 +121,7 @@ struct BoardEngine: View {
     private func saveLineData(start: CGPoint, end: CGPoint) {
         FusedTools.fusedCreator(ManagedView.self)  { r in
             let line = ManagedView()
-            line.boardId = self.currentBoardId
+            line.boardId = self.currentActivityId
             line.lastUserId = UserTools.currentUserId ?? ""
             line.startX = Double(start.x)
             line.startY = Double(start.y)

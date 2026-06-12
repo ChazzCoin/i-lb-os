@@ -18,7 +18,9 @@ let package = Package(
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on. github.com/firebase/firebase-ios-sdk.git
-        .package(url: "https://github.com/realm/realm-cocoa.git", branch: "master"),
+        // Pinned to the v20 line. master pulls a realm-core whose bundled s2
+        // C++ specializes std::is_pod, which Xcode 26's C++20 toolchain rejects.
+        .package(url: "https://github.com/realm/realm-cocoa.git", .upToNextMajor(from: "20.0.0")),
         .package(url: "https://github.com/firebase/firebase-ios-sdk.git", from: "10.18.0")
     ],
     targets: [
