@@ -15,7 +15,9 @@ public enum FusedRoomFeature: Int {
 public struct FloatingFusedRoomManagerView: View {
     
     public init() {}
-    @StateObject var navTools: NavWindowController = NavWindowController()
+    // (Removed an unused NavWindowController() — see WindowHolder.swift.
+    // It only appeared in commented-out code but still subscribed and
+    // raced the real "master" window's persisted geometry.)
     @StateObject public var fusedRoom = FusedRoom()
     @AppStorage("isLoggedIn") public var isLoggedIn: Bool = false
     @AppStorage("currentUserId") public var currentUserId: String = ""

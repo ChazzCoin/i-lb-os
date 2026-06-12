@@ -36,27 +36,37 @@ public enum NodeStackSize: String, CaseIterable {
     case floatable_medium = "floatable_medium"
     case floatable_small = "floatable_small"
     
-    public var height: Double {
+    // Fraction of the container each preset occupies. Derive sizing from
+    // the actual container, not UIScreen (wrong under Split View / Stage
+    // Manager, stale across rotation). Prefer width(in:)/height(in:).
+    public var widthFactor: Double {
         switch self {
-            case .full: return UIScreen.main.bounds.height
-            case .full_menu_bar: return UIScreen.main.bounds.height
-            case .half: return UIScreen.main.bounds.height * 0.5
-            case .floatable_large: return UIScreen.main.bounds.height * 0.6
-            case .floatable_medium: return UIScreen.main.bounds.height * 0.5
-            case .floatable_small: return UIScreen.main.bounds.height * 0.4
+            case .full: return 1.0
+            case .full_menu_bar: return 0.9
+            case .half: return 0.5
+            case .floatable_large: return 0.6
+            case .floatable_medium: return 0.5
+            case .floatable_small: return 0.4
         }
     }
-    
-    public var width: Double {
+
+    public var heightFactor: Double {
         switch self {
-            case .full: return UIScreen.main.bounds.width
-            case .full_menu_bar: return UIScreen.main.bounds.width * 0.9
-            case .half: return UIScreen.main.bounds.width * 0.5
-            case .floatable_large: return UIScreen.main.bounds.width * 0.6
-            case .floatable_medium: return UIScreen.main.bounds.width * 0.5
-            case .floatable_small: return UIScreen.main.bounds.width * 0.4
+            case .full: return 1.0
+            case .full_menu_bar: return 1.0
+            case .half: return 0.5
+            case .floatable_large: return 0.6
+            case .floatable_medium: return 0.5
+            case .floatable_small: return 0.4
         }
     }
+
+    public func width(in container: CGSize) -> Double { container.width * widthFactor }
+    public func height(in container: CGSize) -> Double { container.height * heightFactor }
+
+    // Screen-relative fallbacks, kept for default-init only.
+    public var width: Double { UIScreen.main.bounds.width * widthFactor }
+    public var height: Double { UIScreen.main.bounds.height * heightFactor }
 }
 
 
@@ -188,13 +198,15 @@ public class NodeWindowController: ObservableObject {
     
     @AppStorage("currentRoomId", store: UserDefaults(suiteName: "worlds")) public var currentRoomId: String = ""
     
-    @ObservedObject public var gps = GlobalPositioningSystem(CoreNameSpace.canvas)
-    @ObservedObject public var broadcaster: BroadcastTools = BroadcastTools()
-    
+    // Plain references — SwiftUI property wrappers are inert inside an
+    // ObservableObject (see NavWindowController for the full rationale).
+    public var gps = GlobalPositioningSystem(CoreNameSpace.canvas)
+    public var broadcaster: BroadcastTools = BroadcastTools()
+
     @Published public var fullScreenView: NodeViewHolder? = nil
-    @Published public var viewPool: [String: NodeViewHolder] = [:]
-    @Published public var preloadedPool: [String: NodeViewHolder] = [:]
-    @Published public var backStack: CoreQueue<String> = CoreQueue()
+    @Published public var viewPool: [WindowID: NodeViewHolder] = [:]
+    @Published public var preloadedPool: [WindowID: NodeViewHolder] = [:]
+    @Published public var backStack: CoreQueue<WindowID> = CoreQueue()
     
     @Published public var navSize: NodeStackSize = .full
     @Published public var mainState: NodeStackState = .closed
@@ -213,8 +225,8 @@ public class NodeWindowController: ObservableObject {
     @Published public var height = NodeStackSize.full_menu_bar.height
     
     public var realmInstance: Realm = newRealm()
-    @Published public var cancellables = Set<AnyCancellable>()
-    
+    public var cancellables = Set<AnyCancellable>()
+
     @Published public var nodeStackCount = 0
     
     @ViewBuilder
@@ -254,70 +266,54 @@ public class NodeWindowController: ObservableObject {
     public init() {
         self.broadcaster = BroadcastTools()
         broadcaster.subscribeTo(.NodeStackMessage, storeIn: &cancellables) { wc in
-            if let navIntake = wc as? NodeStackMessage {
-                
-                if navIntake.nodeId.lowercased() != self.id { return }
-                print("NodeStack Intake -> NAV TO: \(String(describing: navIntake.viewName))")
-                if let nt = navIntake.viewName?.lowercased() {
-                    guard let _ = self.viewPool[nt.lowercased()] else {
-                        return
-                    }
-                } else {
-                    return
-                }
-               
-                if let io = navIntake.navAction {
-                    switch io {
-                        case .toggle:
-                            if self.mainState == NodeStackState.open {
-                                self.mainState = NodeStackState.closed
-                            } else {
-                                self.mainState = NodeStackState.open
-                            }
-                        case .open: self.mainState = NodeStackState.open
-                        case .close: return self.mainState = NodeStackState.closed
-                        default: return
-                    }
-                }
-                if let sio = navIntake.sidebarAction {
-                    switch sio {
-                        case .toggle:
-                            if self.sidebarState == NodeStackState.open {
-                                self.sidebarState = NodeStackState.closed
-                            } else {
-                                self.sidebarState = NodeStackState.open
-                            }
-                        case .open: self.sidebarState = NodeStackState.open
-                        case .close: return self.sidebarState = NodeStackState.closed
-                        default: return
-                    }
-                }
-                
-                if let s = navIntake.size {
-                    if self.navSize.rawValue != s.rawValue {
-                        self.setSize(gps: self.gps, s)
-                    }
-                }
-                if let nt = navIntake.viewName?.lowercased() {
-                    
-                    if let va = navIntake.viewAction {
-                        switch va {
-                            case .toggle:
-                                if self.fullScreenView?.id == nt {
-                                    self.goBack()
-                                } else {
-                                    self.navTo(viewId: nt)
-                                }
-                            case .open: self.navTo(viewId: nt)
-                            case .close: self.goBack()
-                            default: return
-                        }
-                    }
-                    
-                }
-            }
+            guard let navIntake = wc as? NodeStackMessage else { return }
+            self.handleNodeStackMessage(navIntake)
         }
         self.preLoadWithCoreViews()
+    }
+
+    // Shell-level intents (open/close/size/sidebar) apply regardless of
+    // whether a view is named; only view-level navigation requires the
+    // named view to already be in the pool.
+    public func handleNodeStackMessage(_ navIntake: NodeStackMessage) {
+        if navIntake.nodeId.lowercased() != self.id.lowercased() { return }
+
+        if let io = navIntake.navAction {
+            switch io {
+                case .toggle: self.mainState = (self.mainState == .open) ? .closed : .open
+                case .open:   self.mainState = .open
+                case .close:  self.mainState = .closed
+                default: break
+            }
+        }
+
+        if let sio = navIntake.sidebarAction {
+            switch sio {
+                case .toggle: self.sidebarState = (self.sidebarState == .open) ? .closed : .open
+                case .open:   self.sidebarState = .open
+                case .close:  self.sidebarState = .closed
+                default: break
+            }
+        }
+
+        if let s = navIntake.size, self.navSize.rawValue != s.rawValue {
+            self.setSize(gps: self.gps, s)
+        }
+
+        guard let viewName = navIntake.viewName, let va = navIntake.viewAction else { return }
+        let key = WindowID(viewName)
+        guard self.viewPool[key] != nil else {
+            print("NodeStack[\(self.id)]: ignoring viewAction for unregistered view '\(key)'")
+            return
+        }
+        switch va {
+            case .toggle:
+                if self.fullScreenView.map({ WindowID($0.id) }) == key { self.goBack() }
+                else { self.navTo(viewId: viewName) }
+            case .open:  self.navTo(viewId: viewName)
+            case .close: self.goBack()
+            default: break
+        }
     }
     
     public func toggleSize() {
@@ -334,8 +330,8 @@ public class NodeWindowController: ObservableObject {
     public func setSize(gps: GlobalPositioningSystem, _ navSize: NodeStackSize) {
         mainAnimation {
             self.navSize = navSize
-            self.width = navSize.width
-            self.height = navSize.height
+            self.width = navSize.width(in: gps.effectiveSize)
+            self.height = navSize.height(in: gps.effectiveSize)
             self.masterResetTheWindow()
         }
     }
@@ -365,9 +361,11 @@ public class NodeWindowController: ObservableObject {
         setSize(gps: gps, .full)
     }
     
+    // Flag must flip back on a LATER runloop tick or SwiftUI never sees
+    // the teardown (see NavWindowController for the full rationale).
     public func masterResetTheWindow() {
         masterResetNavWindow = true
-        masterResetNavWindow = false
+        main { self.masterResetNavWindow = false }
     }
     
     public func preLoadWithCoreViews() {
@@ -380,83 +378,88 @@ public class NodeWindowController: ObservableObject {
     
     // Function to add a view to the pool
     public func addView(window: NodeViewHolder) {
-       viewPool[window.id.lowercased()] = window
-       if fullScreenView == nil { setActiveViewByID(window.id.lowercased()) }
+       viewPool[WindowID(window.id)] = window
+       if fullScreenView == nil { setActiveViewByID(window.id) }
     }
-    
+
     public func addView<Content: View, Side: View>(callerId: String, @ViewBuilder mainContent: @escaping () -> Content, @ViewBuilder sideContent: @escaping () -> Side = { EmptyView()}) {
         let newManagedWindow = VF.BuildNodeHolder(
             callerId: callerId.lowercased(),
             mainContent: mainContent,
             sideContent: sideContent
         )
-        viewPool[newManagedWindow.id.lowercased()] = newManagedWindow
-        if fullScreenView == nil { setActiveViewByID(newManagedWindow.id.lowercased()) }
+        viewPool[WindowID(newManagedWindow.id)] = newManagedWindow
+        if fullScreenView == nil { setActiveViewByID(newManagedWindow.id) }
     }
-    
+
     public func swapFromPreload(id: String) -> NodeWindowController {
-        if let preWindow = preloadedPool[id.lowercased()] {
+        if let preWindow = preloadedPool[WindowID(id)] {
             self.addView(window: preWindow)
         }
         return self
     }
     public func swapFromView(id: String) -> NodeWindowController {
-        if let preWindow = viewPool[id.lowercased()] {
+        if let preWindow = viewPool[WindowID(id)] {
             return self.preLoad(window: preWindow)
         }
         return self
     }
-    
+
     public func preLoad(window: NodeViewHolder) -> NodeWindowController {
-        preloadedPool[window.id.lowercased()] = window
-        if fullScreenView == nil { setActiveViewByID(window.id.lowercased()) }
+        preloadedPool[WindowID(window.id)] = window
+        if fullScreenView == nil { setActiveViewByID(window.id) }
         return self
     }
-    
+
     public func preLoad<Content: View, Side: View>(callerId: String, @ViewBuilder mainContent: @escaping () -> Content, @ViewBuilder sideContent: @escaping () -> Side = { EmptyView()}) -> NodeWindowController {
         let newManagedWindow = VF.BuildNodeHolder(
             callerId: callerId.lowercased(),
             mainContent: mainContent,
             sideContent: sideContent
         )
-        preloadedPool[newManagedWindow.id.lowercased()] = newManagedWindow
-        if fullScreenView == nil { setActiveViewByID(newManagedWindow.id.lowercased()) }
+        preloadedPool[WindowID(newManagedWindow.id)] = newManagedWindow
+        if fullScreenView == nil { setActiveViewByID(newManagedWindow.id) }
         return self
     }
 
     // Function to make a view active by its ID
     public func setActiveViewByID(_ id: String) {
-        guard let window = viewPool[id.lowercased()] else { return }
+        let key = WindowID(id)
+        guard let window = viewPool[key] else { return }
         fullScreenView = window
-        backStack.enqueue(id.lowercased())
+        if backStack.top != key { backStack.push(key) }
     }
 
     // Get the currently active view
     public func getActiveView() -> NodeViewHolder? {
         return fullScreenView
     }
-    
+
     // Function to navigate to a specific view by ID
     public func navTo(viewId: String) {
-        guard let window = viewPool[viewId.lowercased()] else { return }
+        let key = WindowID(viewId)
+        guard let window = viewPool[key] else { return }
         fullScreenView = window
-        backStack.enqueue(viewId.lowercased())
+        if backStack.top != key { backStack.push(key) }
     }
 
-    // Function to go back to the previous view in the history
+    // Function to go back to the previous view in the history. LIFO:
+    // current is the top, previous is the next one down.
     public func goBack() {
-        _ = backStack.dequeue() // Remove current view
-        guard let previousViewId = backStack.peek() else { return }
-        if let previousView = viewPool[previousViewId.lowercased()] {
+        guard backStack.count > 1 else { return }
+        _ = backStack.pop() // remove current (top of stack)
+        guard let previousViewId = backStack.top else { return }
+        if let previousView = viewPool[previousViewId] {
             fullScreenView = previousView
         }
     }
-    
+
     public func baseNav(windowId: String, _ action: WindowAction) {
-        guard let window = viewPool[windowId.lowercased()] else { return }
+        let key = WindowID(windowId)
+        guard let window = viewPool[key] else { return }
         switch action {
             case .toggle: window.toggleMinimized()
-            case .open: setActiveViewByID(windowId.lowercased())
+            case .open: setActiveViewByID(windowId)
             case .close:
                 window.windowLevel = .closed
                 goBack() // Navigate back if a window is closed
