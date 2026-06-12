@@ -12,7 +12,9 @@ public struct WindowManagerView<C: View>: View {
     public init(_ viewHolder: @escaping () -> C) {
         self.viewHolder = viewHolder
     }
-    @StateObject var navTools: NavWindowController = NavWindowController()
+    // (Removed an unused NavWindowController() here — it never rendered a
+    // stack but still subscribed to the NavStack channel and raced the
+    // real "master" window on its persisted Realm row.)
     @StateObject public var fusedRoom = FusedRoom()
     @AppStorage("isLoggedIn") public var isLoggedIn: Bool = false
     @AppStorage("currentUserId") public var currentUserId: String = ""

@@ -30,17 +30,9 @@ public class BroadcastTools: ObservableObject {
         NotificationCenter.default.post(name: name.notificationName, object: value)
     }
     public func subscribeTo(_ name: BroadcastEvents, storeIn: inout Set<AnyCancellable>, _ onChange: @escaping (Any?) -> Void) {
-       return NotificationCenter.default.publisher(for: name.notificationName)
+       NotificationCenter.default.publisher(for: name.notificationName)
                 .receive(on: DispatchQueue.main)
-                .sink { v in
-                    if self.ignoreRequest {
-                        self.ignoreRequest = false
-                        return
-                    }
-                    self.ignoreRequest = true
-                    onChange(v)
-                    delayThenMain(0.5, mainBlock: { self.ignoreRequest = false })
-                }
+                .sink { v in onChange(v) }
                 .store(in: &storeIn)
     }
     
@@ -55,15 +47,7 @@ public class BroadcastTools: ObservableObject {
     public func subscribeTo(_ name: CodiChannel, storeIn: inout Set<AnyCancellable>, _ onChange: @escaping (Any?) -> Void) {
         name.subject
             .receive(on: DispatchQueue.main)
-            .sink { v in
-                if self.ignoreRequest {
-                    self.ignoreRequest = false
-                    return
-                }
-                self.ignoreRequest = true
-                onChange(v)
-                delayThenMain(0.5, mainBlock: { self.ignoreRequest = false })
-            }
+            .sink { v in onChange(v) }
             .store(in: &storeIn)
     }
     

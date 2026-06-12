@@ -17,8 +17,6 @@ public struct NavStackWindow: View {
     @StateObject public var DO = OrientationInfo()
     @Environment(\.horizontalSizeClass) private var hSize
 
-    @GestureState public var dragOffset = CGSize.zero
-    @State public var isDragging = false
     @State public var useOriginal = false
     
     @State var visibility: NavigationSplitViewVisibility = .detailOnly
@@ -40,14 +38,13 @@ public struct NavStackWindow: View {
         .animation(.easeInOut(duration: 0.10), value: NAV.mainState)
         .position(NAV.position)
         .offset(
-            x: NAV.offPos.x + (NAV.isDragging ? NAV.dragOffset.width : 0),
-            y: (NAV.offPos.y + (NAV.isDragging ? NAV.dragOffset.height : 0)) + NAV.keyboardHeight
+            x: NAV.offPos.x,
+            y: NAV.offPos.y - NAV.keyboardHeight
         )
         .simultaneousGesture( NAV.isLocked || !NAV.isFloatable ? nil :
             DragGesture()
                 .onChanged { value in
                     main {
-                        isDragging = true
                         if useOriginal {
                             NAV.originOffPos = NAV.offPos
                             useOriginal = false
@@ -56,7 +53,7 @@ public struct NavStackWindow: View {
                             x: NAV.originOffPos.x + value.translation.width,
                             y: NAV.originOffPos.y + value.translation.height
                         )
-                        NAV.saveDynaView()
+                        // No Realm write mid-drag — persisted once in onEnded.
                     }
                 }
                 .onEnded { value in
@@ -65,7 +62,6 @@ public struct NavStackWindow: View {
                             x: NAV.originOffPos.x + value.translation.width,
                             y: NAV.originOffPos.y + value.translation.height
                         )
-                        NAV.isDragging = false
                         useOriginal = true
                         NAV.saveDynaView()
                     }
@@ -75,15 +71,13 @@ public struct NavStackWindow: View {
             onAppear: { height in
                 mainAnimation {
                     NAV.keyboardIsShowing = true
-                    if height < 100 { NAV.keyboardHeight = 0.0; return }
-                    if NAV.keyboardHeight < height { NAV.keyboardHeight = height / 2 }
+                    NAV.keyboardHeight = keyboardOverlap(keyboardFrameHeight: height)
                 }
             },
-            onDisappear: { height in
+            onDisappear: { _ in
                 mainAnimation {
                     NAV.keyboardIsShowing = false
-                    if height > 100 { NAV.keyboardHeight = 0.0; return }
-                    if NAV.keyboardHeight > height { NAV.keyboardHeight = height * 2 }
+                    NAV.keyboardHeight = 0.0
                 }
             }
         )
@@ -104,6 +98,19 @@ public struct NavStackWindow: View {
         }
     }
 
+    // True overlap (in points) between the window's bottom edge and the
+    // keyboard's top edge. Shift the window up by exactly this much —
+    // replaces the old device-specific height/2 and height*2 guesses.
+    // NOTE: keyboard avoidance is runtime/device-sensitive; verify on
+    // a physical device across iPhone/iPad and floating positions.
+    private func keyboardOverlap(keyboardFrameHeight: CGFloat) -> CGFloat {
+        guard keyboardFrameHeight > 1 else { return 0 }
+        let screenH = NAV.gps.effectiveSize.height
+        let windowBottom = NAV.position.y + NAV.offPos.y + (NAV.height / 2)
+        let keyboardTop = screenH - keyboardFrameHeight
+        return max(0, windowBottom - keyboardTop)
+    }
+
     // MARK: - iPad / Regular width
     @ViewBuilder
     private func ModernSplitView() -> some View {
@@ -114,6 +121,7 @@ public struct NavStackWindow: View {
             NAV.getActiveView()?.getSidebarView()
         } detail: {
             NAV.getActiveView()?.getMainView()
+                .id(NAV.activeView?.id)
                 .background(Image("sol_bg_big").opacity(0.3))
                 .environmentObject(NAV)
                 .toolbar {
@@ -146,6 +154,7 @@ public struct NavStackWindow: View {
     private func CompactStackView() -> some View {
         NavigationStack {
             NAV.getActiveView()?.getMainView()
+                .id(NAV.activeView?.id)
                 .background(Image("sol_bg_big").opacity(0.3))
                 .environmentObject(NAV)
                 .toolbar {

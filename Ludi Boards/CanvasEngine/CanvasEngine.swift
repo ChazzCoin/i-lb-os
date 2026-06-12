@@ -266,7 +266,7 @@ public struct CanvasEngine: View {
     func menuBarButtonListener() {
         CodiChannel.MENU_WINDOW_CONTROLLER.receive(on: RunLoop.main) { controller in
             print("Received on MENU_TOGGLER channel: \(controller)")
-            let temp = controller as! WindowController
+            guard let temp = controller as? WindowController else { return }
             switch MenuBarProvider.parseByTitle(title: temp.windowId) {
             case .menuBar: return self.CanvasControl.showMenuBar = !self.CanvasControl.showMenuBar
                 case .info: return self.BEO.showTipViewStatic = !self.BEO.showTipViewStatic
