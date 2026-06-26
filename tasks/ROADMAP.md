@@ -88,6 +88,39 @@ Tasks:
 
 ---
 
+## Phase ST — Smart Tools (Tier 1)
+
+> **Scope.** Import the Smart Tool Catalogue; wire 13 Tier-1 tactical
+> tools (catalog + dispatcher + Library Tactics tab). Tiers 2–5 deferred.
+
+Tasks:
+
+- TASK-014 — Smart Tools — Tier 1 (13 tactical tools wired) ✅
+
+---
+
+## Phase TH — Tool System Hardening
+
+> **Scope.** Close the 2026-06-26 audit's gaps in the tool editing
+> layer (`docs/audits/2026-06-26-tool-system.md`). Finishing wiring,
+> not a rewrite. Order below = suggested ship order (HIGH first; 016/020
+> depend on 015).
+
+Tasks (in suggested ship order):
+
+- TASK-015 — Fix smart-tool selection (unblock Properties for tactic tools) ✅
+- TASK-016 — Make the Properties panel tool-family-aware ✅
+- TASK-017 — Make tool views re-render on Realm change (colour edits show) ✅
+- TASK-018 — Unify the four tool-creation paths (defaults + persistence) ✅
+- TASK-019 — Wire the roster "Add player" + roster write-back ✅
+- TASK-020 — Smart-tool drag/edit robustness ✅
+- TASK-021 — Unified selection: shared ring, single-tap, non-global state ✅
+- TASK-022 — Delete dead routes & duplicate views ✅
+- TASK-023 — Board-scale constants & shared CoreEngine tokens ✅
+- TASK-024 — Engine hygiene: extract DEBUG harness + model nits ✅
+
+---
+
 ## Cross-cutting
 
 Tasks that don't fit a single phase — typically infrastructure that

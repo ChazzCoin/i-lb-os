@@ -101,7 +101,27 @@ struct EngineSquadPanel: View {
                 }
             }
         } footer: {
-            PanelFooter { FooterButton(symbol: "plus", label: "Add player") }
+            PanelFooter {
+                Button(action: addPlayer) { FooterButton(symbol: "plus", label: "Add player") }
+                    .buttonStyle(.plain)
+            }
+        }
+    }
+
+    // Create a new home roster player (TASK-019): the button was previously a
+    // no-op, so the roster could only ever be DEBUG-seeded.
+    private func addPlayer() {
+        let home = roster("home")
+        let nextNumber = (home.map(\.number).max() ?? 0) + 1
+        BEO.realmInstance.safeWrite { r in
+            let p = RosterPlayer()
+            p.boardId = BEO.currentActivityId
+            p.teamSide = "home"
+            p.number = nextNumber
+            p.name = "Player \(nextNumber)"
+            p.position = "—"
+            p.orderIndex = home.count
+            r.create(RosterPlayer.self, value: p, update: .all)
         }
     }
 
@@ -172,6 +192,8 @@ struct PropertiesPanel: View {
     var subtitle: String = "#9 · Striker · Home"
     var sizeReadout: String = "34 px"
     var rotationReadout: String = "0°"
+    var sizeLabel: String = "SIZE"
+    var showRotation: Bool = true     // hidden for tools that ignore rotation (TASK-016)
     var teamColor: Int = 0
     var showLinkedPlayer: Bool = true
     var onPickColor: (Int) -> Void = { _ in }
@@ -185,12 +207,14 @@ struct PropertiesPanel: View {
     // Static / preview convenience (self-managed sliders).
     init() { _size = .constant(0.52); _rotation = .constant(0.5) }
     init(number: String, name: String, subtitle: String, sizeReadout: String,
-         rotationReadout: String, teamColor: Int, showLinkedPlayer: Bool,
+         rotationReadout: String, sizeLabel: String = "SIZE", showRotation: Bool = true,
+         teamColor: Int, showLinkedPlayer: Bool,
          size: Binding<Double>, rotation: Binding<Double>,
          onPickColor: @escaping (Int) -> Void, onDuplicate: @escaping () -> Void,
          onDelete: @escaping () -> Void, onClose: @escaping () -> Void) {
         self.number = number; self.name = name; self.subtitle = subtitle
         self.sizeReadout = sizeReadout; self.rotationReadout = rotationReadout
+        self.sizeLabel = sizeLabel; self.showRotation = showRotation
         self.teamColor = teamColor; self.showLinkedPlayer = showLinkedPlayer
         self.onPickColor = onPickColor; self.onDuplicate = onDuplicate
         self.onDelete = onDelete; self.onClose = onClose
@@ -248,8 +272,10 @@ struct PropertiesPanel: View {
                     }
                 }
 
-                SliderRow(label: "SIZE", value: $size, readout: sizeReadout)
-                SliderRow(label: "ROTATION", value: $rotation, readout: rotationReadout, centered: true)
+                SliderRow(label: sizeLabel, value: $size, readout: sizeReadout)
+                if showRotation {
+                    SliderRow(label: "ROTATION", value: $rotation, readout: rotationReadout, centered: true)
+                }
 
                 // Linked player (real roster lands in RD-5)
                 if showLinkedPlayer {
@@ -297,9 +323,20 @@ struct EnginePropertiesPanel: View {
     @State private var name: String = "Player"
     @State private var subtitle: String = "Soccer"
     @State private var linked: Bool = false
+    @State private var isLine: Bool = false   // line/smart family: width = stroke, no rotation
 
-    private static let minW = 80.0, maxW = 500.0
+    // Token = soccer disc / equipment (size 80–500); line/smart = stroke 10–140.
+    private var minW: Double { isLine ? 10 : 80 }
+    private var maxW: Double { isLine ? 140 : 500 }
     private static let colorNames = ["Teal", "Silver", "Black", "Lime", "Red"]
+    // RGB (0–1) for each swatch so line/smart tools (which render from RGBA) update.
+    private static let colorRGB: [(Double, Double, Double)] = [
+        (0.243, 0.443, 0.404), // Teal  #3E7167
+        (0.925, 0.937, 0.945), // Silver #ECEFF1
+        (0.173, 0.212, 0.282), // Black  #2C3648
+        (0.796, 0.859, 0.165), // Lime   #CBDB2A
+        (0.941, 0.447, 0.420), // Red    #F0726B
+    ]
 
     var body: some View {
         PropertiesPanel(
@@ -308,6 +345,8 @@ struct EnginePropertiesPanel: View {
             subtitle: subtitle,
             sizeReadout: "\(Int(currentWidth)) px",
             rotationReadout: "\(Int((rotation * 360).rounded()))°",
+            sizeLabel: isLine ? "STROKE" : "SIZE",
+            showRotation: !isLine,
             teamColor: teamColor,
             showLinkedPlayer: linked,                // real when the tool is roster-linked
             size: Binding(get: { size }, set: { size = $0; writeSize($0) }),
@@ -321,7 +360,7 @@ struct EnginePropertiesPanel: View {
         .onChange(of: state.selectedToolId) { _, _ in loadFromTool() }
     }
 
-    private var currentWidth: Double { Self.minW + size * (Self.maxW - Self.minW) }
+    private var currentWidth: Double { minW + size * (maxW - minW) }
 
     private func tool() -> ManagedView? {
         guard let id = state.selectedToolId else { return nil }
@@ -330,8 +369,10 @@ struct EnginePropertiesPanel: View {
 
     private func loadFromTool() {
         guard let mv = tool() else { return }
-        size = max(0, min(1, (Double(mv.width) - Self.minW) / (Self.maxW - Self.minW)))
-        rotation = (mv.rotation / 360).truncatingRemainder(dividingBy: 1)
+        isLine = (mv.toolType == "shape" || mv.toolType == "tactic")
+        size = max(0, min(1, (Double(mv.width) - minW) / (maxW - minW)))
+        let f = (mv.rotation / 360).truncatingRemainder(dividingBy: 1)
+        rotation = f < 0 ? f + 1 : f   // normalise negative angles (TASK-016)
         teamColor = Self.colorNames.firstIndex(of: mv.toolColor) ?? 0
         number = mv.jerseyNumber > 0 ? "\(mv.jerseyNumber)" : "\(SoccerPlayerToolView.placeholderNumber(mv.id))"
         // Real identity when the tool is linked to a roster player (RD-5).
@@ -349,8 +390,11 @@ struct EnginePropertiesPanel: View {
 
     private func writeSize(_ v: Double) {
         guard let mv = tool() else { return }
-        let w = Int((Self.minW + v * (Self.maxW - Self.minW)).rounded())
-        BEO.realmInstance.safeWrite { _ in mv.width = w; mv.height = w }
+        let w = Int((minW + v * (maxW - minW)).rounded())
+        BEO.realmInstance.safeWrite { _ in
+            mv.width = w
+            if !isLine { mv.height = w }   // line/smart: width is the stroke, no height
+        }
     }
     private func writeRotation(_ v: Double) {
         guard let mv = tool() else { return }
@@ -359,8 +403,13 @@ struct EnginePropertiesPanel: View {
     private func pickColor(_ i: Int) {
         teamColor = i
         guard let mv = tool() else { return }
-        BEO.realmInstance.safeWrite { _ in mv.toolColor = Self.colorNames[i] }
-        BEO.refreshBoard()    // re-render so the disc picks up the new colour
+        let rgb = Self.colorRGB[i]
+        BEO.realmInstance.safeWrite { _ in
+            mv.toolColor = Self.colorNames[i]          // token discs read this
+            mv.colorRed = rgb.0; mv.colorGreen = rgb.1 // line/smart render from RGBA
+            mv.colorBlue = rgb.2; mv.colorAlpha = 1
+        }
+        // Views observe Realm now (TASK-017), so the change shows without refreshBoard.
     }
     private func delete() {
         guard let mv = tool() else { return }
@@ -429,10 +478,16 @@ private struct SliderRow: View {
 // MARK: - 3. Library panel
 
 struct LibraryPanel: View {
-    var onAddTool: (String) -> Void = { _ in }   // equipment item name → engine tool
-    var onPickBoard: (Int) -> Void = { _ in }     // board preset index → background
+    var onAddTool: (String) -> Void = { _ in }    // equipment item name → engine tool
+    var onAddSmart: (String) -> Void = { _ in }   // smart-tool subToolType → engine tool
+    var onPickBoard: (Int) -> Void = { _ in }      // board preset index → background
     @State private var sport = 0
-    @State private var tab: LibraryTab = .equipment
+    @State private var tab: LibraryTab = {
+        #if DEBUG
+        if ProcessInfo.processInfo.environment["REDESIGN_LIBTAB"] == "tactics" { return .tactics }
+        #endif
+        return .equipment
+    }()
     @State private var board = 0
 
     var body: some View {
@@ -483,12 +538,19 @@ struct LibraryPanel: View {
                         }
                     }
                     LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 9), count: 3), spacing: 9) {
-                        ForEach(Sample.equipment) { item in
-                            EquipmentCell(item: item)
-                                .onTapGesture { onAddTool(item.name) }
-                                // Drag payload must be the catalog subtype so the
-                                // board's drop delegate resolves it correctly.
-                                .draggable(RedesignToolCatalog.equipmentSubtype[item.name] ?? item.name)
+                        if tab == .tactics {
+                            // Smart Tools — sourced straight from the engine catalog.
+                            ForEach(ViewEngine.Tool.SmartTool.allCases, id: \.self) { st in
+                                ToolCell(symbol: st.icon, label: st.displayName)
+                                    .onTapGesture { onAddSmart(st.name) }
+                                    .draggable(st.name)   // subtype payload; drop delegate resolves it
+                            }
+                        } else {
+                            ForEach(Sample.equipment) { item in
+                                ToolCell(symbol: item.symbol, label: item.name)
+                                    .onTapGesture { onAddTool(item.name) }
+                                    .draggable(RedesignToolCatalog.equipmentSubtype[item.name] ?? item.name)
+                            }
                         }
                     }
                 }
@@ -513,6 +575,34 @@ enum RedesignToolCatalog {
         2: "Soccer Field Full View",
         3: "Pool Table 1",
     ]
+
+    /// Single source of default geometry/colour for a placed smart (tactic) tool
+    /// (TASK-018) — used by tap-add, drag-drop and the DEBUG seed so they can't
+    /// drift. `center` is the board-space point the tool spans around.
+    static func makeSmartTool(_ subType: String, boardId: String, center: CGPoint) -> ManagedView {
+        let mv = ManagedView()
+        mv.boardId = boardId
+        mv.sport = "tool"; mv.toolType = "tactic"; mv.subToolType = subType
+        configureSmartTool(mv, center: center)
+        return mv
+    }
+
+    /// Apply the shared default geometry/colour to a tactic tool (used by both
+    /// `makeSmartTool` and the drag-drop path, which already has the row).
+    static func configureSmartTool(_ mv: ManagedView, center: CGPoint) {
+        mv.startX = center.x - 420; mv.startY = center.y
+        mv.endX = center.x + 420; mv.endY = center.y
+        mv.centerX = center.x; mv.centerY = center.y - 240
+        mv.x = center.x; mv.y = center.y
+        mv.width = 34; mv.jerseyNumber = 7
+        mv.toolColor = "Lime"
+        mv.colorRed = 0.796; mv.colorGreen = 0.859; mv.colorBlue = 0.165; mv.colorAlpha = 1
+        mv.dateUpdated = Int(Date().timeIntervalSince1970)
+    }
+
+    /// Default equipment tool size, shared by tap-add and drag-drop (TASK-018)
+    /// so the same item isn't 200 via tap but 100 via drop.
+    static let equipmentSize = 200
 }
 
 /// Engine-wired Library: equipment tap adds the tool at board centre (and is
@@ -521,7 +611,14 @@ struct EngineLibraryPanel: View {
     @EnvironmentObject var BEO: BoardEngineObject
 
     var body: some View {
-        LibraryPanel(onAddTool: addTool, onPickBoard: pickBoard)
+        LibraryPanel(onAddTool: addTool, onAddSmart: addSmartTool, onPickBoard: pickBoard)
+    }
+
+    private func addSmartTool(_ subType: String) {
+        let mv = RedesignToolCatalog.makeSmartTool(subType, boardId: BEO.currentActivityId,
+                                                   center: CGPoint(x: 2500, y: 3000))
+        BEO.realmInstance.safeWrite { r in r.create(ManagedView.self, value: mv, update: .all) }
+        BEO.refreshBoard()
     }
 
     private func addTool(_ name: String) {
@@ -530,7 +627,8 @@ struct EngineLibraryPanel: View {
             let mv = ManagedView()
             mv.boardId = BEO.currentActivityId
             mv.sport = "tool"; mv.toolType = "soccer"; mv.subToolType = sub
-            mv.x = 2500; mv.y = 3000; mv.width = 200; mv.height = 200
+            mv.x = 2500; mv.y = 3000
+            mv.width = RedesignToolCatalog.equipmentSize; mv.height = RedesignToolCatalog.equipmentSize
             mv.dateUpdated = Int(Date().timeIntervalSince1970)
             r.create(ManagedView.self, value: mv, update: .all)
         }
@@ -587,14 +685,17 @@ private struct BoardThumb: View {
     }
 }
 
-private struct EquipmentCell: View {
-    var item: EquipmentItem
+/// Library cell for any tool (equipment or smart) — icon + label.
+private struct ToolCell: View {
+    var symbol: String
+    var label: String
     var body: some View {
         VStack(spacing: 7) {
-            Image(systemName: item.symbol).font(.system(size: 22, weight: .light)).foregroundStyle(Brand.textMid)
-            Text(item.name).font(AppFont.ui(10, .medium)).foregroundStyle(Brand.textMuted)
+            Image(systemName: symbol).font(.system(size: 22, weight: .light)).foregroundStyle(Brand.textMid)
+            Text(label).font(AppFont.ui(10, .medium)).foregroundStyle(Brand.textMuted)
+                .lineLimit(1).minimumScaleFactor(0.8)
         }
-        .frame(maxWidth: .infinity).padding(.vertical, 13)
+        .frame(maxWidth: .infinity).padding(.vertical, 13).frame(height: 64)
         .background(.white.opacity(0.04), in: RoundedRectangle(cornerRadius: 11, style: .continuous))
         .overlay(RoundedRectangle(cornerRadius: 11).strokeBorder(Brand.panelLine))
     }

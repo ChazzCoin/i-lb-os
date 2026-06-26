@@ -96,6 +96,7 @@ public extension CoreName {
                 case "shape": ViewEngine.Tool.ShapeTool.Build(name: subtype, viewId: viewId, activityId: activityId)
                 case "soccer": ViewEngine.Tool.SoccerTool.Build(name: subtype, viewId: viewId, activityId: activityId, bounds: bounds)
                 case "pool": ViewEngine.Tool.PoolBallTool.Build(name: subtype, viewId: viewId, activityId: activityId, bounds: bounds)
+                case "tactic": ViewEngine.Tool.SmartTool.Build(name: subtype, viewId: viewId, activityId: activityId, bounds: bounds)
                 default: EmptyText()
             }
         }
@@ -302,6 +303,75 @@ public extension CoreName {
                 }
             }
             
+            // Smart Tools (tactical) — Tier 1. All cases render through the one
+            // `SmartToolManaged` dispatcher, which reads the concrete subToolType
+            // from the tool's ManagedView and draws in absolute board space.
+            public enum SmartTool: String, ToolCategory {
+                case passArrow     = "tactic_pass_arrow"
+                case runArrow      = "tactic_run_arrow"
+                case dribbleArrow  = "tactic_dribble_arrow"
+                case curveArrow    = "tactic_curve_arrow"
+                case overlapRun    = "tactic_overlap_run"
+                case zoneRect      = "tactic_zone_rect"
+                case distanceTool  = "tactic_distance_tool"
+                case offsideLine   = "tactic_offside_line"
+                case angleTool     = "tactic_angle_tool"
+                case spotlight     = "tactic_spotlight"
+                case focusRing     = "tactic_focus_ring"
+                case agilityLadder = "tactic_agility_ladder"
+                case statBadge     = "tactic_stat_badge"
+
+                public var id: String { rawValue }
+                public var name: String { rawValue }
+                public var genre: String { "tool" }
+                public var type: String { "tactic" }
+
+                public var displayName: String {
+                    switch self {
+                    case .passArrow:     return "Pass Arrow"
+                    case .runArrow:      return "Run Arrow"
+                    case .dribbleArrow:  return "Dribble"
+                    case .curveArrow:    return "Curved Pass"
+                    case .overlapRun:    return "Overlap Run"
+                    case .zoneRect:      return "Zone"
+                    case .distanceTool:  return "Distance"
+                    case .offsideLine:   return "Offside Line"
+                    case .angleTool:     return "Angle"
+                    case .spotlight:     return "Spotlight"
+                    case .focusRing:     return "Focus Ring"
+                    case .agilityLadder: return "Ladder"
+                    case .statBadge:     return "Stat Badge"
+                    }
+                }
+                public var icon: String {
+                    switch self {
+                    case .passArrow:     return "arrow.up.right"
+                    case .runArrow:      return "arrow.up.forward"
+                    case .dribbleArrow:  return "scribble.variable"
+                    case .curveArrow:    return "arrow.turn.up.right"
+                    case .overlapRun:    return "arrow.uturn.up"
+                    case .zoneRect:      return "rectangle.dashed"
+                    case .distanceTool:  return "ruler"
+                    case .offsideLine:   return "flag.checkered"
+                    case .angleTool:     return "angle"
+                    case .spotlight:     return "rays"
+                    case .focusRing:     return "scope"
+                    case .agilityLadder: return "ladder"
+                    case .statBadge:     return "gauge"
+                    }
+                }
+                public func BuildIcon() -> AnyView {
+                    AnyView(Image(systemName: icon).font(.system(size: 18, weight: .medium)))
+                }
+                public func Build(viewId: String, activityId: String) -> AnyView {
+                    AnyView(SmartToolManaged(viewId: viewId, activityId: activityId))
+                }
+                public static func Build(name: String, viewId: String, activityId: String, bounds: CGRect?=nil) -> AnyView {
+                    AnyView(SmartToolManaged(viewId: viewId, activityId: activityId))
+                }
+                public func toArray() -> [any ToolCategory] { Array(SmartTool.allCases) }
+            }
+
             public enum GeneralTool: String, ToolCategory {
                 
                 case airplane = "airplane"

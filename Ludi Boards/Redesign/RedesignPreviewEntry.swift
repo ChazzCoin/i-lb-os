@@ -48,10 +48,17 @@ struct RedesignRootView: View {
             .onAppear(perform: requestLandscapeOniPad)
             .onAppear(perform: configureRedesignBoard)
             // Initial sync: `selectedManagedViewId` persists across launches, so
-            // reflect whatever the engine already holds (onChange only fires on
-            // a *change*, missing an already-set value at launch).
+            // reflect whatever the engine already holds — but VALIDATE it first
+            // (TASK-021): a stale id from a prior launch / deleted tool / other
+            // board must not ring a phantom selection.
             .onAppear {
-                if !engineSelectedId.isEmpty { state.select(engineSelectedId) }
+                guard !engineSelectedId.isEmpty else { return }
+                if let mv = BEO.realmInstance.object(ofType: ManagedView.self, forPrimaryKey: engineSelectedId),
+                   !mv.isDeleted, mv.boardId == BEO.currentActivityId {
+                    state.select(engineSelectedId)
+                } else {
+                    engineSelectedId = ""   // drop the stale id
+                }
             }
             // engine → state: a tapped tool opens Properties.
             .onChange(of: engineSelectedId) { _, newId in

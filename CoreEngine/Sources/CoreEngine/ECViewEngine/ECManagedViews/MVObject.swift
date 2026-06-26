@@ -177,6 +177,17 @@ public class ManagedViewObject: ObservableObject {
         }.store(in: &cancellables)
     }
     
+    /// Idempotent single-tap select (TASK-021): always writes the selection, no
+    /// toggle. Used by the redesign so a single tap selects a tool and opens
+    /// Properties (vs the legacy double-tap toggle in `toggleMenuWindow`).
+    public func selectTool() {
+        self.anchorsAreVisible = true
+        self.toolBarCurrentViewId = self.lifeViewId
+        self.selectedManagedViewId = self.lifeViewId
+        self.toolSettingsIsShowing = true
+        BroadcastTools.send(.NavStackMessage, value: NavStackMessage(viewName: "mvSettings", viewAction: WindowAction.open))
+    }
+
     public func toggleMenuWindow() {
         if anchorsAreVisible {
             self.toolBarCurrentViewId = self.lifeViewId
@@ -529,8 +540,9 @@ public class ManagedViewObject: ObservableObject {
                 
                 mv.startX = Double(start?.x ?? CGFloat(self.lifeStartX))
                 mv.startY = Double(start?.y ?? CGFloat(self.lifeStartY))
-                mv.centerX = Double(start?.x ?? CGFloat(self.lifeCenterX))
-                mv.centerY = Double(start?.y ?? CGFloat(self.lifeCenterY))
+                // Center is its own point — never derive it from `start` (TASK-024).
+                mv.centerX = Double(self.lifeCenterX)
+                mv.centerY = Double(self.lifeCenterY)
                 mv.endX = Double(end?.x ?? CGFloat(self.lifeEndX))
                 mv.endY = Double(end?.y ?? CGFloat(self.lifeEndY))
                 

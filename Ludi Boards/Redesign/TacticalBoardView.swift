@@ -116,9 +116,6 @@ struct TacticalBoardView: View {
                     showArrows: state.panel != .library
                 )
                 .frame(maxWidth: 780)
-                .overlay(alignment: .top) {
-                    if state.hasSelection { contextToolbar.offset(y: -54) }
-                }
                 Spacer(minLength: 320)
             }
             .padding(.top, 58)
@@ -134,21 +131,6 @@ struct TacticalBoardView: View {
         }
     }
 
-    private var contextToolbar: some View {
-        HStack(spacing: 2) {
-            ForEach(["drop.fill", "arrow.counterclockwise", "square.on.square", "link"], id: \.self) { s in
-                Image(systemName: s).font(.system(size: 15, weight: .medium))
-                    .foregroundStyle(Brand.textMid).frame(width: 30, height: 30)
-            }
-            Rectangle().fill(.white.opacity(0.12)).frame(width: 1, height: 18).padding(.horizontal, 3)
-            Image(systemName: "trash").font(.system(size: 15, weight: .medium))
-                .foregroundStyle(Brand.danger).frame(width: 30, height: 30)
-        }
-        .padding(5)
-        .background(Brand.bgMid.opacity(0.95), in: RoundedRectangle(cornerRadius: 11, style: .continuous))
-        .overlay(RoundedRectangle(cornerRadius: 11).strokeBorder(.white.opacity(0.1)))
-        .shadow(color: .black.opacity(0.7), radius: 14, y: 12)
-    }
 }
 
 // MARK: - Context toolbar (engine-wired duplicate / delete on the selected tool)

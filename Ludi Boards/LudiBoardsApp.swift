@@ -21,7 +21,10 @@ struct LudiBoardsApp: SwiftUI.App {
         // changes migrate automatically. Never wipe user boards on update.
         let realmConfiguration = Realm.Configuration(
             // v2 (RD-5): additive — ManagedView gains playerId/jerseyNumber/
-            // teamSide + the new RosterPlayer model. Realm migrates automatically.
+            // teamSide + the new RosterPlayer model. Additive changes migrate
+            // automatically; a future NON-additive change (rename/remove/retype)
+            // must populate this block with explicit oldObject/newObject mapping
+            // or Realm throws at launch (TASK-024).
             schemaVersion: 2,
             migrationBlock: { _, _ in }
         )

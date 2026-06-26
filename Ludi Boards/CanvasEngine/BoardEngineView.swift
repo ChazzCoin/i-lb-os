@@ -80,7 +80,9 @@ struct BoardEngine: View {
 
         .onAppear {
 
+            #if DEBUG
             print("BoardEngineView onAppear")
+            #endif
             self.BEO.ensureDefaultActivityPlan()
             self.BEO.loadBoardSettings()
             // RD-2 / TASK-003: DEBUG hook to preview a registry board background
@@ -99,6 +101,7 @@ struct BoardEngine: View {
             }
             #if DEBUG
             seedRedesignToolsIfRequested()
+            seedSmartToolsIfRequested()
             #endif
             onSessionIdChange()
             onToolCreated()
@@ -161,6 +164,37 @@ struct BoardEngine: View {
                 rp.position = p.2; rp.teamSide = p.3; rp.orderIndex = i
                 r.create(RosterPlayer.self, value: rp, update: .all)
             }
+        }
+    }
+
+    // Smart Tools: seed a grid of every tactical tool to verify the render path
+    // (REDESIGN_SMART=1). Independent of REDESIGN_SEED. Idempotent per board.
+    private func seedSmartToolsIfRequested() {
+        guard ProcessInfo.processInfo.environment["REDESIGN_SMART"] == "1" else { return }
+        let boardId = self.BEO.currentActivityId
+        guard self.BEO.realmInstance.objects(ManagedView.self)
+            .filter("boardId == %@ AND toolType == %@", boardId, "tactic").isEmpty else { return }
+        let subs = ["tactic_pass_arrow", "tactic_run_arrow", "tactic_dribble_arrow",
+                    "tactic_curve_arrow", "tactic_overlap_run", "tactic_zone_rect",
+                    "tactic_distance_tool", "tactic_offside_line", "tactic_angle_tool",
+                    "tactic_spotlight", "tactic_focus_ring", "tactic_agility_ladder",
+                    "tactic_stat_badge"]
+        self.BEO.realmInstance.safeWrite { r in
+            for (i, sub) in subs.enumerated() {
+                let col = i % 4, row = i / 4
+                let cx = 1400.0 + Double(col) * 1050.0
+                let cy = 1600.0 + Double(row) * 1250.0
+                // Shared factory (TASK-018) so the seed can't drift from the live paths.
+                let mv = RedesignToolCatalog.makeSmartTool(sub, boardId: boardId, center: CGPoint(x: cx, y: cy))
+                r.create(ManagedView.self, value: mv, update: .all)
+            }
+        }
+        self.BEO.refreshBoard()
+        // Verify smart-tool selection → Properties headlessly (TASK-015/016).
+        if ProcessInfo.processInfo.environment["REDESIGN_SMART_SELECT"] == "1",
+           let first = self.BEO.realmInstance.objects(ManagedView.self)
+               .filter("boardId == %@ AND toolType == %@", boardId, "tactic").first {
+            UserDefaults.standard.set(first.id, forKey: "selectedManagedViewId")
         }
     }
 

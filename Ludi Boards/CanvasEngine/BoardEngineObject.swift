@@ -593,6 +593,7 @@ struct CustomDropDelegate: DropDelegate {
                 catalog += ViewEngine.Tool.SoccerTool.allCases.map { $0 as any ToolCategory }
                 catalog += ViewEngine.Tool.PoolBallTool.allCases.map { $0 as any ToolCategory }
                 catalog += ViewEngine.Tool.GeneralTool.allCases.map { $0 as any ToolCategory }
+                catalog += ViewEngine.Tool.SmartTool.allCases.map { $0 as any ToolCategory }
                 if let match = catalog.first(where: { $0.name == dropped }) {
                     newTool.sport = match.genre
                     newTool.toolType = match.type
@@ -603,6 +604,14 @@ struct CustomDropDelegate: DropDelegate {
                 newTool.boardId = BEO.currentActivityId
                 newTool.x = dropLocation.x
                 newTool.y = dropLocation.y
+                // Shared factory so drag/tap/seed defaults can't drift (TASK-018).
+                if newTool.toolType == "tactic" {
+                    RedesignToolCatalog.configureSmartTool(newTool, center: dropLocation)
+                } else if newTool.toolType == "soccer" && !newTool.subToolType.isEmpty {
+                    // Match the tap-add equipment size (was left at the model default 100).
+                    newTool.width = RedesignToolCatalog.equipmentSize
+                    newTool.height = RedesignToolCatalog.equipmentSize
+                }
                 BEO.realmInstance.safeWrite { r in
                     r.create(ManagedView.self, value: newTool, update: .all)
                 }

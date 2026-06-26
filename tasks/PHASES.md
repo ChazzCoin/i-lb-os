@@ -104,6 +104,33 @@ harness, and do final iPad-landscape polish. Ships the redesign.
 
 ---
 
+## Phase ST — Smart Tools (Tier 1)
+
+**Status:** ✅ Shipped (2026-06-26)
+
+**Scope.** Import the Smart Tool Catalogue (24 SwiftUI tactical tools)
+and wire **Tier 1 (13 tools)** end-to-end — a new `SmartTool` catalog,
+the `SmartToolManaged` board-scale dispatcher, and a Library **Tactics**
+tab. Tiers 2–5 (multi-point, computed overlays, generators, FreezeFrame)
+deferred. See `docs/design/smart-tools/`.
+
+---
+
+## Phase TH — Tool System Hardening
+
+**Status:** ✅ Shipped (2026-06-26)
+
+**Scope.** Close the gaps the 2026-06-26 tool-system audit
+(`docs/audits/2026-06-26-tool-system.md`) found in the *editing*
+layer the redesign added over the engine. The render pipeline is
+sound; the interaction wiring is half-finished. Make smart tools
+selectable, make Properties tool-family-aware, make tool views
+re-render on data change, unify the four create paths, wire the
+roster, harden smart-tool drag/selection, and clear out dead routes /
+magic numbers / DEBUG scaffolding. No model rewrite — finishing wiring.
+
+---
+
 *(Add phases as the project evolves. Use `/plan` to think through new
 phases conversationally; use `/task` to file tasks under existing
 phases.)*

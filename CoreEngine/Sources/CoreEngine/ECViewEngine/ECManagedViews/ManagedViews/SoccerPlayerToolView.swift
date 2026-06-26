@@ -11,15 +11,29 @@
 //
 
 import SwiftUI
+import RealmSwift
 
 public struct SoccerPlayerToolView: View {
     let viewId: String
+    // Observe the row so colour/number/team edits (e.g. from Properties) update
+    // the disc live instead of being read once on appear (TASK-017).
+    @ObservedRealmObject var mv: ManagedView
 
-    @State private var fill: Color = Color(hex: "4D8576")   // home default
-    @State private var ink: Color = .white
-    @State private var number: Int = 1
+    public init(viewId: String) {
+        self.viewId = viewId
+        let obj = newRealm().object(ofType: ManagedView.self, forPrimaryKey: viewId)
+        _mv = ObservedRealmObject(wrappedValue: obj ?? ManagedView())
+    }
 
-    public init(viewId: String) { self.viewId = viewId }
+    private var number: Int { mv.jerseyNumber > 0 ? mv.jerseyNumber : Self.placeholderNumber(viewId) }
+    private var fill: Color {
+        switch mv.teamSide {
+        case "home": return Color.brandHomeTop
+        case "away": return Color(hex: "E9EDF1")
+        default:     return mv.toolColor.isEmpty ? Color.brandHomeTop : ColorProvider.fromColorName(colorName: mv.toolColor).colorValue
+        }
+    }
+    private var ink: Color { mv.teamSide == "away" ? Color(hex: "1D2632") : .white }
 
     public var body: some View {
         GeometryReader { geo in
@@ -38,27 +52,6 @@ public struct SoccerPlayerToolView: View {
             .frame(width: d, height: d)
             .position(x: geo.size.width / 2, y: geo.size.height / 2)
             .shadow(color: .black.opacity(0.42), radius: d * 0.05, y: d * 0.03)
-        }
-        .onAppear(perform: load)
-    }
-
-    private func load() {
-        let realm = newRealm()
-        guard let mv = realm.object(ofType: ManagedView.self, forPrimaryKey: viewId) else {
-            number = Self.placeholderNumber(viewId); return
-        }
-        // Real roster number when linked (RD-5), else a stable placeholder.
-        number = mv.jerseyNumber > 0 ? mv.jerseyNumber : Self.placeholderNumber(viewId)
-        switch mv.teamSide {
-        case "home":
-            fill = Color(hex: "4D8576"); ink = .white
-        case "away":
-            fill = Color(hex: "E9EDF1"); ink = Color(hex: "1D2632")   // light jersey, dark ink
-        default:
-            ink = .white
-            if !mv.toolColor.isEmpty {
-                fill = ColorProvider.fromColorName(colorName: mv.toolColor).colorValue
-            }
         }
     }
 

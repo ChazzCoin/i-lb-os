@@ -146,7 +146,6 @@ public struct GlobalPositioningZStack<Content: View>: View {
         .frame(width: gps.effectiveSize.width, height: gps.effectiveSize.height)
 //        .ignoresSafeArea(.all)
         .background(Color.clear)
-        .border(Color.AIMYellow, width: 10)
     }
 }
 public struct CanvasNode<Content: View>: View {

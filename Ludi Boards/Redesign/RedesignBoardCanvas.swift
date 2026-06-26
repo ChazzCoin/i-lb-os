@@ -28,6 +28,12 @@ struct RedesignBoardCanvas: View {
         .offset(x: self.BEO.canvasOffset.x, y: self.BEO.canvasOffset.y)
         .scaleEffect(self.BEO.canvasScale)
         .rotationEffect(Angle(degrees: self.BEO.canvasRotation))
+        // Fill the screen with a hittable surface so the pan/zoom gesture works
+        // from ANYWHERE — not just on the (mostly transparent) board content.
+        // Tool gestures still win on their own tools (they hit-test on top); the
+        // canvas pan is a low-priority `.gesture` that catches everything else.
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .contentShape(Rectangle())
         .gesture(dragAngleGestures.simultaneously(with: scaleGestures))
         .onAppear { self.lastOffset = self.BEO.canvasOffset }
     }

@@ -66,7 +66,7 @@ enum EditorMode: String, CaseIterable, Identifiable {
 // MARK: - Library tabs
 
 enum LibraryTab: String, CaseIterable, Identifiable {
-    case equipment = "Equipment", players = "Players", markers = "Markers"
+    case equipment = "Equipment", tactics = "Tactics", markers = "Markers"
     var id: String { rawValue }
 }
 
