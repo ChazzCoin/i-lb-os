@@ -84,7 +84,9 @@ struct EquipmentItem: Identifiable {
 
 struct BoardPreset: Identifiable {
     let id = UUID()
-    var name: String
+    var name: String          // display label in the picker
+    var sport: String         // sport pill it appears under
+    var registryName: String  // key into the `Sports` board registry
 }
 
 // MARK: - Sample data (mirrors the redesign mockups)
@@ -127,8 +129,14 @@ enum Sample {
 
     static let sports: [Sport] = [
         .init(name: "Soccer",     symbol: "soccerball"),
+        .init(name: "Futsal",     symbol: "soccerball.inverse"),
         .init(name: "Basketball", symbol: "basketball.fill"),
         .init(name: "Football",   symbol: "football.fill"),
+        .init(name: "Baseball",   symbol: "baseball.fill"),
+        .init(name: "Tennis",     symbol: "tennisball.fill"),
+        .init(name: "Volleyball", symbol: "volleyball.fill"),
+        .init(name: "Handball",   symbol: "figure.handball"),
+        .init(name: "Hockey",     symbol: "hockey.puck.fill"),
         .init(name: "Pool",       symbol: "circle.grid.cross.fill"),
     ]
 
@@ -141,10 +149,32 @@ enum Sample {
         .init(name: "Dummy",  symbol: "figure.stand"),
     ]
 
+    /// Board picker catalogue — `registryName` keys the `Sports` registry; the
+    /// grid filters to the selected sport pill. Order = display order per sport.
     static let boards: [BoardPreset] = [
-        .init(name: "Full pitch"),
-        .init(name: "Half pitch"),
-        .init(name: "Grid"),
-        .init(name: "Pool table"),
+        // Soccer
+        .init(name: "Redesign Full", sport: "Soccer",     registryName: "Soccer Redesign Full View"),
+        .init(name: "Redesign Half", sport: "Soccer",     registryName: "Soccer Redesign Half View"),
+        .init(name: "Classic Full",  sport: "Soccer",     registryName: "Soccer Field Full View"),
+        .init(name: "Markings",      sport: "Soccer",     registryName: "Soccer Markings Full View"),
+        // Futsal
+        .init(name: "Court",         sport: "Futsal",     registryName: "Futsal Court"),
+        // Basketball
+        .init(name: "Court",         sport: "Basketball", registryName: "Basketball Court Full View"),
+        // Football
+        .init(name: "Gridiron",      sport: "Football",   registryName: "Football Gridiron Full View"),
+        // Baseball
+        .init(name: "Diamond",       sport: "Baseball",   registryName: "Baseball Diamond"),
+        // Tennis
+        .init(name: "Court",         sport: "Tennis",     registryName: "Tennis Court"),
+        // Volleyball
+        .init(name: "Court",         sport: "Volleyball", registryName: "Volleyball Court"),
+        // Handball
+        .init(name: "Court",         sport: "Handball",   registryName: "Handball Court"),
+        // Hockey
+        .init(name: "Rink",          sport: "Hockey",     registryName: "Ice Hockey Rink"),
+        // Pool
+        .init(name: "Table",         sport: "Pool",       registryName: "Pool Table 1"),
+        .init(name: "Vector Table",  sport: "Pool",       registryName: "Pool Table Vector"),
     ]
 }

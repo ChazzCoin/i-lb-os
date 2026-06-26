@@ -48,7 +48,16 @@ struct BoardEngine: View {
             .background(
                 // Board-sized, center-aligned: the field background must share
                 // the tools' coordinate space or spawned tools miss the field.
-                FieldOverlayView(width: self.BEO.boardWidth, height: self.BEO.boardHeight, background: {self.BEO.boardBgColor},
+                FieldOverlayView(width: self.BEO.boardWidth, height: self.BEO.boardHeight,
+                    background: {
+                        // The legacy `boardBgColor` green backing only ever leaks
+                        // as strips: every redesign board (vector + image) draws
+                        // its own opaque surface, framed transposed + rounded, so
+                        // the board-sized backing shows above/below + at the
+                        // corners. Clear it on the redesign path (boardBgOverride
+                        // is always set there); keep it for the legacy board.
+                        (self.BEO.boardBgOverride?.isEmpty == false) ? Color.clear : self.BEO.boardBgColor
+                    },
                     overlay: {
                         if let CurrentBoardBackground = self.BEO.boards.getAllBoards()[self.BEO.boardBgName] {
                             CurrentBoardBackground()

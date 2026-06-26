@@ -480,7 +480,7 @@ private struct SliderRow: View {
 struct LibraryPanel: View {
     var onAddTool: (String) -> Void = { _ in }    // equipment item name → engine tool
     var onAddSmart: (String) -> Void = { _ in }   // smart-tool subToolType → engine tool
-    var onPickBoard: (Int) -> Void = { _ in }      // board preset index → background
+    var onPickBoard: (String) -> Void = { _ in }   // registry board name → background
     @State private var sport = 0
     @State private var tab: LibraryTab = {
         #if DEBUG
@@ -488,7 +488,7 @@ struct LibraryPanel: View {
         #endif
         return .equipment
     }()
-    @State private var board = 0
+    @State private var selectedBoard = "Soccer Redesign Full View"
 
     var body: some View {
         PanelShell(width: 288) {
@@ -513,13 +513,21 @@ struct LibraryPanel: View {
                             .onTapGesture { sport = i }
                     }
                 }
-                // Boards
+                // Boards — filtered to the selected sport pill.
+                let sportName = Sample.sports[sport].name
+                let sportBoards = Sample.boards.filter { $0.sport == sportName }
                 VStack(alignment: .leading, spacing: 11) {
                     SectionLabel(text: "BOARDS")
-                    LazyVGrid(columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible())], spacing: 10) {
-                        ForEach(Array(Sample.boards.enumerated()), id: \.offset) { i, b in
-                            BoardThumb(preset: b, selected: i == board)
-                                .onTapGesture { board = i; onPickBoard(i) }
+                    if sportBoards.isEmpty {
+                        Text("No boards for \(sportName) yet.")
+                            .font(AppFont.ui(12, .medium)).foregroundStyle(Brand.textMuted)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    } else {
+                        LazyVGrid(columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible())], spacing: 10) {
+                            ForEach(sportBoards) { b in
+                                BoardThumb(preset: b, selected: b.registryName == selectedBoard)
+                                    .onTapGesture { selectedBoard = b.registryName; onPickBoard(b.registryName) }
+                            }
                         }
                     }
                 }
@@ -569,12 +577,10 @@ enum RedesignToolCatalog {
         "Ladder": "tools_soccer_ladder",
         "Dummy":  "tools_soccer_dummy",
     ]
-    static let boardName: [Int: String] = [
-        0: "Soccer Redesign Full View",
-        1: "Soccer Redesign Half View",
-        2: "Soccer Field Full View",
-        3: "Pool Table 1",
-    ]
+    /// Registry board minis, cached for picker thumbnails (built once). The
+    /// catalogue board names live in `Sample.boards[*].registryName`.
+    static let boardMinis: [String: () -> AnyView] = Sports().getAllMinis()
+    static func boardMini(_ name: String) -> AnyView? { boardMinis[name].map { $0() } }
 
     /// Single source of default geometry/colour for a placed smart (tactic) tool
     /// (TASK-018) — used by tap-add, drag-drop and the DEBUG seed so they can't
@@ -635,8 +641,7 @@ struct EngineLibraryPanel: View {
         BEO.refreshBoard()
     }
 
-    private func pickBoard(_ i: Int) {
-        guard let name = RedesignToolCatalog.boardName[i] else { return }
+    private func pickBoard(_ name: String) {
         BEO.boardBgOverride = name
         BEO.boardBgName = name
     }
@@ -666,10 +671,22 @@ private struct BoardThumb: View {
         VStack(spacing: 0) {
             ZStack {
                 Brand.pitch
-                RoundedRectangle(cornerRadius: 3).strokeBorder(Brand.pitchLine.opacity(0.55))
-                    .padding(6)
+                // Real registry mini (100×100) scaled into the 56pt thumbnail —
+                // distinct turf colours make boards recognisable. Falls back to a
+                // generic pitch outline if the board has no mini.
+                if let mini = RedesignToolCatalog.boardMini(preset.registryName) {
+                    mini
+                        .frame(width: 100, height: 100)
+                        .scaleEffect(56.0 / 100.0)
+                        .frame(width: 56, height: 56)
+                } else {
+                    RoundedRectangle(cornerRadius: 3).strokeBorder(Brand.pitchLine.opacity(0.55))
+                        .padding(6)
+                }
             }
+            .frame(maxWidth: .infinity)
             .frame(height: 56)
+            .clipped()
             Text(preset.name)
                 .font(AppFont.ui(11, .semibold))
                 .foregroundStyle(selected ? Color(brandHex: "E6EBE9") : Brand.textMid)

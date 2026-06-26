@@ -80,6 +80,12 @@ struct RedesignRootView: View {
         guard engineConnected else { return }
         BEO.boardBgOverride = "Soccer Redesign Full View"
         #if DEBUG
+        // Render harness: point the board at any registry background by name,
+        // e.g. SIMCTL_CHILD_REDESIGN_BG="Ice Hockey Rink". Verifies imported
+        // catalogue boards render at board scale (can't tap the picker in simctl).
+        if let bg = ProcessInfo.processInfo.environment["REDESIGN_BG"], !bg.isEmpty {
+            BEO.boardBgOverride = bg
+        }
         // Verify the rail reflects draw state headlessly (can't tap in simctl).
         switch ProcessInfo.processInfo.environment["REDESIGN_DRAW"] {
         case "straight": BEO.enableDrawing(subType: "line_straight")
