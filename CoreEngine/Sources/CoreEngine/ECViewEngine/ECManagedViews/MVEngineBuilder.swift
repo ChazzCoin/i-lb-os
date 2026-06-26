@@ -203,13 +203,22 @@ public extension CoreName {
                 public func BuildIcon() -> AnyView {
                     AnyView(Image(self.name).resizable().frame(width: 30, height: 30))
                 }
+                // Player subtypes render as the redesign jersey disc (TASK-004);
+                // equipment subtypes keep their asset images.
+                static let playerSubtypes: Set<String> = [
+                    "tools_soccer_jersey", "tools_soccer_dummy",
+                    "tools_soccer_running", "tools_soccer_walking", "tools_soccer_steps"
+                ]
                 public func Build(viewId: String, activityId: String) -> AnyView {
-                    AnyView(ManagedViewTool(viewId: viewId, activityId: activityId) {
-                        Image(self.name).resizable()
-                    })
+                    SoccerTool.Build(name: self.name, viewId: viewId, activityId: activityId)
                 }
                 public static func Build(name: String, viewId: String, activityId: String, bounds: CGRect?=nil) -> AnyView {
-                    AnyView(ManagedViewTool(viewId: viewId, activityId: activityId, bounds: bounds) {
+                    if playerSubtypes.contains(name) {
+                        return AnyView(ManagedViewTool(viewId: viewId, activityId: activityId, bounds: bounds) {
+                            SoccerPlayerToolView(viewId: viewId)
+                        })
+                    }
+                    return AnyView(ManagedViewTool(viewId: viewId, activityId: activityId, bounds: bounds) {
                         Image(name).resizable()
                     })
                 }

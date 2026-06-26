@@ -4,5 +4,11 @@
 <dict>
 	<key>UIFileSharingEnabled</key>
 	<true/>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Archivo.ttf</string>
+		<string>HankenGrotesk.ttf</string>
+		<string>JetBrainsMono.ttf</string>
+	</array>
 </dict>
 </plist>

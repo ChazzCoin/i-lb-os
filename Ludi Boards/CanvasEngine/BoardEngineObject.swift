@@ -156,6 +156,9 @@ public class BoardEngineObject : ObservableObject {
     @Published var boardWidth: CGFloat = 5000.0
     @Published var boardHeight: CGFloat = 6000.0
     @Published var boardBgName: String = "Sol"
+    // When set, forces the board background after `loadBoardSettings` (used by
+    // the redesign board to pin the vector pitch regardless of the saved plan).
+    @Published var boardBgOverride: String? = nil
     @Published var boardBgRed: Double = 0.2
     @Published var boardBgGreen: Double = 0.78
     @Published var boardBgBlue: Double = 0.34
