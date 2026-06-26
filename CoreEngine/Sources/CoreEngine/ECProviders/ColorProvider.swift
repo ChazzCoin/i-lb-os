@@ -29,14 +29,26 @@ public extension UIColor {
 
 
 public func colorFromRGBA(red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat) -> Color {
-    return Color(red: red, green: green, blue: blue, opacity: alpha)
+    // Tolerate both 0–1 and legacy 0–255 inputs: model colour defaults are stored
+    // 0–255, but Color(red:…) expects 0–1, so a raw default would clamp to white.
+    func n(_ v: CGFloat) -> CGFloat { v > 1.0 ? v / 255.0 : v }
+    return Color(red: n(red), green: n(green), blue: n(blue), opacity: n(alpha))
 }
 
 
 public extension Color {
-    
+
     static let AOLGray = Color(red: 0.82, green: 0.84, blue: 0.86)
     static let AIMYellow = Color(red: 1.0, green: 0.71, blue: 0.0)
+
+    // Redesign brand tokens (mirror the app's `Brand` palette) — referenced by
+    // CoreEngine tool views so the hex isn't re-hardcoded per file (TASK-023).
+    static let brandLime    = Color(red: 203/255, green: 219/255, blue: 42/255)   // #CBDB2A
+    static let brandLimeInk = Color(red: 17/255,  green: 32/255,  blue: 10/255)   // #11200A
+    static let brandTeal    = Color(red: 62/255,  green: 113/255, blue: 103/255)  // #3E7167
+    static let brandDanger  = Color(red: 240/255, green: 114/255, blue: 107/255)  // #F0726B
+    static let brandHomeTop = Color(red: 77/255,  green: 133/255, blue: 118/255)  // #4D8576
+    static let brandHomeBot = Color(red: 55/255,  green: 100/255, blue: 90/255)   // #37645A
     
     var uiColor: UIColor {
         UIColor(self)

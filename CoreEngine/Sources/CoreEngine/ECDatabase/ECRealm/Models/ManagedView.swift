@@ -50,7 +50,13 @@ public class ManagedView: Object, ObjectKeyIdentifiable {
     @Persisted public var colorGreen: Double = 128.0
     @Persisted public var colorBlue: Double = 20.0
     @Persisted public var colorAlpha: Double = 0.75
-    
+
+    // Roster link (RD-5 / TASK-011). Denormalised so a player disc can show its
+    // number without a cross-module lookup. `playerId` references a RosterPlayer.
+    @Persisted public var playerId: String = ""
+    @Persisted public var jerseyNumber: Int = 0
+    @Persisted public var teamSide: String = ""   // "home" / "away"
+
     func areAllAttributesZero() -> Bool {
         return x == 0.0 &&
                y == 0.0 &&

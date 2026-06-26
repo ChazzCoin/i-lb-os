@@ -46,7 +46,12 @@ public struct CurvedLineDrawingManaged: View {
             path.addQuadCurve(to: CGPoint(x: MVO.lifeEndX, y: MVO.lifeEndY),
                               control: CGPoint(x: MVO.lifeCenterX, y: MVO.lifeCenterY))
         }
-        .stroke(MVO.lifeColor, style: StrokeStyle(lineWidth: MVO.lifeWidth.bound(to: 1...400), dash: [MVO.lifeLineDash]))
+        // Redesign curved line (TASK-005): rounded caps + colour glow.
+        .stroke(MVO.lifeColor,
+                style: StrokeStyle(lineWidth: MVO.lifeWidth.bound(to: 1...400),
+                                   lineCap: .round, lineJoin: .round,
+                                   dash: MVO.lifeLineDash > 1 ? [MVO.lifeLineDash * 3, MVO.lifeLineDash * 3] : []))
+        .shadow(color: MVO.lifeColor.opacity(0.45), radius: MVO.lifeWidth.bound(to: 1...400) * 0.35)
         .opacity(!MVO.isDisabledChecker() && !MVO.isDeletedChecker() ? 1 : 0.0)
         .overlay(
             Triangle()

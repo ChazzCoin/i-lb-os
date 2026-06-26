@@ -58,12 +58,18 @@ public class SolBoards: SportBoard {
 public class Soccer : SportBoard {
     public var sport: String = "Soccer"
     public var boards: [String: () -> AnyView] = [
+        // Redesign vector pitch (RD-2 / TASK-003). Becomes the redesign board's
+        // default at the RD-6 cutover; selectable now without changing shipping.
+        "Soccer Redesign Full View": { AnyView(RedesignSoccerBoardView(isMini: false, half: false)) },
+        "Soccer Redesign Half View": { AnyView(RedesignSoccerBoardView(isMini: false, half: true)) },
         "Soccer Field Full View": { AnyView(SoccerFieldFullView(isMini: false)) },
         "Soccer Field Half View": { AnyView(SoccerFieldHalfView(isMini: false)) },
         "Soccer Field 1": getImageBoard(imageName: "soccer_one", isMini: false),
         "Soccer Field 2": getImageBoard(imageName: "soccer_two", isMini: false)
     ]
     public var minis: [String: () -> AnyView] = [
+        "Soccer Redesign Full View": { AnyView(RedesignSoccerBoardView(isMini: true, half: false)) },
+        "Soccer Redesign Half View": { AnyView(RedesignSoccerBoardView(isMini: true, half: true)) },
         "Soccer Field Full View": { AnyView(SoccerFieldFullView(isMini: true)) },
         "Soccer Field Half View": { AnyView(SoccerFieldHalfView(isMini: true)) },
         "Soccer Field 1": getImageBoard(imageName: "soccer_one", isMini: true),

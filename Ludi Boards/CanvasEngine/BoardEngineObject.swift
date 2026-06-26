@@ -156,6 +156,9 @@ public class BoardEngineObject : ObservableObject {
     @Published var boardWidth: CGFloat = 5000.0
     @Published var boardHeight: CGFloat = 6000.0
     @Published var boardBgName: String = "Sol"
+    // When set, forces the board background after `loadBoardSettings` (used by
+    // the redesign board to pin the vector pitch regardless of the saved plan).
+    @Published var boardBgOverride: String? = nil
     @Published var boardBgRed: Double = 0.2
     @Published var boardBgGreen: Double = 0.78
     @Published var boardBgBlue: Double = 0.34
@@ -590,6 +593,7 @@ struct CustomDropDelegate: DropDelegate {
                 catalog += ViewEngine.Tool.SoccerTool.allCases.map { $0 as any ToolCategory }
                 catalog += ViewEngine.Tool.PoolBallTool.allCases.map { $0 as any ToolCategory }
                 catalog += ViewEngine.Tool.GeneralTool.allCases.map { $0 as any ToolCategory }
+                catalog += ViewEngine.Tool.SmartTool.allCases.map { $0 as any ToolCategory }
                 if let match = catalog.first(where: { $0.name == dropped }) {
                     newTool.sport = match.genre
                     newTool.toolType = match.type
@@ -600,6 +604,14 @@ struct CustomDropDelegate: DropDelegate {
                 newTool.boardId = BEO.currentActivityId
                 newTool.x = dropLocation.x
                 newTool.y = dropLocation.y
+                // Shared factory so drag/tap/seed defaults can't drift (TASK-018).
+                if newTool.toolType == "tactic" {
+                    RedesignToolCatalog.configureSmartTool(newTool, center: dropLocation)
+                } else if newTool.toolType == "soccer" && !newTool.subToolType.isEmpty {
+                    // Match the tap-add equipment size (was left at the model default 100).
+                    newTool.width = RedesignToolCatalog.equipmentSize
+                    newTool.height = RedesignToolCatalog.equipmentSize
+                }
                 BEO.realmInstance.safeWrite { r in
                     r.create(ManagedView.self, value: newTool, update: .all)
                 }

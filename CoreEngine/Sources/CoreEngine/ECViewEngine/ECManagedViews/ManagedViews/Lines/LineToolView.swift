@@ -27,7 +27,14 @@ public struct LineDrawingManaged: View {
             path.move(to: CGPoint(x: MVO.lifeStartX, y: MVO.lifeStartY))
             path.addLine(to: CGPoint(x: MVO.lifeEndX, y: MVO.lifeEndY))
         }
-        .stroke(MVO.lifeColor, style: StrokeStyle(lineWidth: MVO.lifeWidth, dash: [MVO.lifeLineDash]))
+        // Redesign line styling (TASK-005): rounded caps + a colour-matched glow
+        // so a drawn run reads like the mockup's passing arrows. `lifeLineDash > 1`
+        // → dashed build-up; otherwise a clean solid run.
+        .stroke(MVO.lifeColor,
+                style: StrokeStyle(lineWidth: MVO.lifeWidth,
+                                   lineCap: .round, lineJoin: .round,
+                                   dash: MVO.lifeLineDash > 1 ? [MVO.lifeLineDash * 3, MVO.lifeLineDash * 3] : []))
+        .shadow(color: MVO.lifeColor.opacity(0.45), radius: MVO.lifeWidth * 0.35)
         .opacity(!MVO.isDisabledChecker() && !MVO.isDeletedChecker() ? 1 : 0.0)
         .overlay(
             Triangle()

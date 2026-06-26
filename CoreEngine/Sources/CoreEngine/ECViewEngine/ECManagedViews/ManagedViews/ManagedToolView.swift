@@ -111,7 +111,24 @@ public struct enableManagedViewTool : ViewModifier {
         .zIndex(MVO.isDisabled || MVO.lifeIsLocked ? 3.0 : 5.0)
         .frame(width: MVO.lifeWidth * 2, height: MVO.lifeHeight * 2)
         .rotationEffect(MVO.lifeRotation)
-        .border(MVO.popUpIsVisible ? MVO.lifeBorderColor : Color.clear, width: 10) // Border modifier
+        // Redesign selection ring (TASK-004): a lime ring on the selected tool,
+        // replacing the legacy blue debug border. Keyed on the shared
+        // `selectedManagedViewId` so it tracks engine selection.
+        .overlay {
+            if MVO.selectedManagedViewId == viewId {
+                // Line widths are in the tool's local space (the board renders at
+                // ~0.1 scale), so they must be bold to read on screen.
+                Circle()
+                    .stroke(Color(hex: "CBDB2A"), lineWidth: max(24, MVO.lifeWidth * 0.22))
+                    .overlay(
+                        Circle()
+                            .stroke(Color(hex: "CBDB2A").opacity(0.22),
+                                    lineWidth: max(40, MVO.lifeWidth * 0.4))
+                            .padding(-max(20, MVO.lifeWidth * 0.2))
+                    )
+                    .allowsHitTesting(false)
+            }
+        }
         .position(x: MVO.position.x + (MVO.isDragging ? dragOffset.width : 0) + (MVO.lifeWidth),
                   y: MVO.position.y + (MVO.isDragging ? dragOffset.height : 0) + (MVO.lifeHeight))
         

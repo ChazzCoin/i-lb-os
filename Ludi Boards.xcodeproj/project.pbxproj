@@ -7,6 +7,20 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0719F7AB085DD37E89F0793B /* Archivo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 83AF5C0939B96052F635B1BB /* Archivo.ttf */; };
+		0CBDAACC83E98EE0A7ACFEA7 /* BoardScreenState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10339A36D055D3AF27A2B15 /* BoardScreenState.swift */; };
+		126E2490DAD02E67913FC140 /* TacticalBoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B894D3D2AE7AFEC4E6D907A1 /* TacticalBoardView.swift */; };
+		13C8BD15944F9475208F06AE /* Panels.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8AC3326A2BBA133EA54B880 /* Panels.swift */; };
+		2C39278A78BBF2F369AEE4C0 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B73054DE071E404FD01732F /* Theme.swift */; };
+		2DD225AAD0D57C4EF60208A0 /* JetBrainsMono.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8DC8592EF9EC8D22096F13BC /* JetBrainsMono.ttf */; };
+		4B2043D5F77FF17D3B5C473A /* RedesignPitchBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42908E7D0A10B7B13583184C /* RedesignPitchBackground.swift */; };
+		4E4C2E6737E185BD72327C47 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC81D1A1B43BE56402F73581 /* Models.swift */; };
+		53326E5F45D1886E289E7676 /* RedesignBoardCanvas.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABFEEFE9298247A5731E1FE /* RedesignBoardCanvas.swift */; };
+		791125989C4CC7642C20F5ED /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B256A378C65363115C48766 /* Components.swift */; };
+		9F9A98C5ECE42405966345D9 /* RosterPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F9E73CCE82C43B35E379A4 /* RosterPlayer.swift */; };
+		E0D5493928D7EAE3EE080E71 /* PitchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0397134B1EC0EC150E67C02 /* PitchView.swift */; };
+		E19E1EC6CA718C61F0450C0F /* HankenGrotesk.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3F15A98155E4DB036FF7DEAD /* HankenGrotesk.ttf */; };
+		EB9042BB8CABF678C52132F3 /* RedesignPreviewEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E607EFC3106300B38927CA0 /* RedesignPreviewEntry.swift */; };
 		FB0C196C2C0FA6D30036B4A0 /* NewProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB0C196B2C0FA6D30036B4A0 /* NewProfileView.swift */; };
 		FB10AE052B0DC8E600295F4B /* Tips.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB10AE042B0DC8E600295F4B /* Tips.swift */; };
 		FB10AE0B2B0F162F00295F4B /* ActivityPlanThumbView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB10AE0A2B0F162F00295F4B /* ActivityPlanThumbView.swift */; };
@@ -169,6 +183,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0ABFEEFE9298247A5731E1FE /* RedesignBoardCanvas.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RedesignBoardCanvas.swift; path = "Ludi Boards/Redesign/RedesignBoardCanvas.swift"; sourceTree = SOURCE_ROOT; };
+		3E607EFC3106300B38927CA0 /* RedesignPreviewEntry.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RedesignPreviewEntry.swift; sourceTree = "<group>"; };
+		3F15A98155E4DB036FF7DEAD /* HankenGrotesk.ttf */ = {isa = PBXFileReference; includeInIndex = 1; name = HankenGrotesk.ttf; path = "Ludi Boards/Fonts/HankenGrotesk.ttf"; sourceTree = SOURCE_ROOT; };
+		42908E7D0A10B7B13583184C /* RedesignPitchBackground.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RedesignPitchBackground.swift; path = "Ludi Boards/Redesign/RedesignPitchBackground.swift"; sourceTree = SOURCE_ROOT; };
+		5B256A378C65363115C48766 /* Components.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
+		6B73054DE071E404FD01732F /* Theme.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		83AF5C0939B96052F635B1BB /* Archivo.ttf */ = {isa = PBXFileReference; includeInIndex = 1; name = Archivo.ttf; path = "Ludi Boards/Fonts/Archivo.ttf"; sourceTree = SOURCE_ROOT; };
+		88F9E73CCE82C43B35E379A4 /* RosterPlayer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RosterPlayer.swift; path = "Ludi Boards/Redesign/RosterPlayer.swift"; sourceTree = SOURCE_ROOT; };
+		8DC8592EF9EC8D22096F13BC /* JetBrainsMono.ttf */ = {isa = PBXFileReference; includeInIndex = 1; name = JetBrainsMono.ttf; path = "Ludi Boards/Fonts/JetBrainsMono.ttf"; sourceTree = SOURCE_ROOT; };
+		A0397134B1EC0EC150E67C02 /* PitchView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PitchView.swift; sourceTree = "<group>"; };
+		B10339A36D055D3AF27A2B15 /* BoardScreenState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BoardScreenState.swift; path = "Ludi Boards/Redesign/BoardScreenState.swift"; sourceTree = SOURCE_ROOT; };
+		B894D3D2AE7AFEC4E6D907A1 /* TacticalBoardView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TacticalBoardView.swift; sourceTree = "<group>"; };
+		EC81D1A1B43BE56402F73581 /* Models.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		F8AC3326A2BBA133EA54B880 /* Panels.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Panels.swift; sourceTree = "<group>"; };
 		FB0C196B2C0FA6D30036B4A0 /* NewProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewProfileView.swift; sourceTree = "<group>"; };
 		FB10AE042B0DC8E600295F4B /* Tips.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tips.swift; sourceTree = "<group>"; };
 		FB10AE0A2B0F162F00295F4B /* ActivityPlanThumbView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityPlanThumbView.swift; sourceTree = "<group>"; };
@@ -363,6 +391,36 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		55CE83E6168F1400DE255476 /* Redesign */ = {
+			isa = PBXGroup;
+			children = (
+				6B73054DE071E404FD01732F /* Theme.swift */,
+				EC81D1A1B43BE56402F73581 /* Models.swift */,
+				A0397134B1EC0EC150E67C02 /* PitchView.swift */,
+				5B256A378C65363115C48766 /* Components.swift */,
+				F8AC3326A2BBA133EA54B880 /* Panels.swift */,
+				B894D3D2AE7AFEC4E6D907A1 /* TacticalBoardView.swift */,
+				3E607EFC3106300B38927CA0 /* RedesignPreviewEntry.swift */,
+				B10339A36D055D3AF27A2B15 /* BoardScreenState.swift */,
+				42908E7D0A10B7B13583184C /* RedesignPitchBackground.swift */,
+				0ABFEEFE9298247A5731E1FE /* RedesignBoardCanvas.swift */,
+				88F9E73CCE82C43B35E379A4 /* RosterPlayer.swift */,
+			);
+			name = Redesign;
+			path = Redesign;
+			sourceTree = "<group>";
+		};
+		DA93F16DD0B46973982EB385 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				83AF5C0939B96052F635B1BB /* Archivo.ttf */,
+				3F15A98155E4DB036FF7DEAD /* HankenGrotesk.ttf */,
+				8DC8592EF9EC8D22096F13BC /* JetBrainsMono.ttf */,
+			);
+			name = Fonts;
+			path = "Ludi Boards/Fonts";
+			sourceTree = SOURCE_ROOT;
+		};
 		FB15DD2B2B07448B00A21290 /* CanvasEngine */ = {
 			isa = PBXGroup;
 			children = (
@@ -629,6 +687,8 @@
 				FBD9AFB72AFF0253005F8620 /* GridLines.swift */,
 				FB87BE082B734425003B880D /* Michael.swift */,
 				FB0C196B2C0FA6D30036B4A0 /* NewProfileView.swift */,
+				55CE83E6168F1400DE255476 /* Redesign */,
+				DA93F16DD0B46973982EB385 /* Fonts */,
 			);
 			path = "Ludi Boards";
 			sourceTree = "<group>";
@@ -1011,6 +1071,9 @@
 				FBD9AFAF2AFF00BF005F8620 /* Preview Assets.xcassets in Resources */,
 				FBD9AFAC2AFF00BF005F8620 /* Assets.xcassets in Resources */,
 				FB93BB172B033E2000864CB2 /* GoogleService-Info.plist in Resources */,
+				0719F7AB085DD37E89F0793B /* Archivo.ttf in Resources */,
+				E19E1EC6CA718C61F0450C0F /* HankenGrotesk.ttf in Resources */,
+				2DD225AAD0D57C4EF60208A0 /* JetBrainsMono.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1179,6 +1242,17 @@
 				FB18F1872B6B10CE00D89F8D /* RecordingView.swift in Sources */,
 				FBE2C6142B1AC68D004C0116 /* SoccerFieldBG.swift in Sources */,
 				FB58E8802B02B26C00FD9E2E /* DragAndDrop.swift in Sources */,
+				2C39278A78BBF2F369AEE4C0 /* Theme.swift in Sources */,
+				4E4C2E6737E185BD72327C47 /* Models.swift in Sources */,
+				E0D5493928D7EAE3EE080E71 /* PitchView.swift in Sources */,
+				791125989C4CC7642C20F5ED /* Components.swift in Sources */,
+				13C8BD15944F9475208F06AE /* Panels.swift in Sources */,
+				126E2490DAD02E67913FC140 /* TacticalBoardView.swift in Sources */,
+				EB9042BB8CABF678C52132F3 /* RedesignPreviewEntry.swift in Sources */,
+				0CBDAACC83E98EE0A7ACFEA7 /* BoardScreenState.swift in Sources */,
+				4B2043D5F77FF17D3B5C473A /* RedesignPitchBackground.swift in Sources */,
+				53326E5F45D1886E289E7676 /* RedesignBoardCanvas.swift in Sources */,
+				9F9A98C5ECE42405966345D9 /* RosterPlayer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1394,7 +1468,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 11;
+				CURRENT_PROJECT_VERSION = 12;
 				DEVELOPMENT_ASSET_PATHS = "\"Ludi Boards/Preview Content\"";
 				DEVELOPMENT_TEAM = 248J2GKL56;
 				ENABLE_PREVIEWS = YES;
@@ -1413,7 +1487,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.11;
+				MARKETING_VERSION = 1.12;
 				PRODUCT_BUNDLE_IDENTIFIER = io.ludi.sol;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1430,7 +1504,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 11;
+				CURRENT_PROJECT_VERSION = 12;
 				DEVELOPMENT_ASSET_PATHS = "\"Ludi Boards/Preview Content\"";
 				DEVELOPMENT_TEAM = 248J2GKL56;
 				ENABLE_PREVIEWS = YES;
@@ -1449,7 +1523,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.11;
+				MARKETING_VERSION = 1.12;
 				PRODUCT_BUNDLE_IDENTIFIER = io.ludi.sol;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

@@ -42,6 +42,10 @@ public struct CanvasEngine: View {
     @GestureState private var dragOffset = CGSize.zero
     @State public var lastOffset = CGPoint.zero
 
+    // RD-1 scaffold (TASK-002): DEBUG-only entry to the redesigned board.
+    // Shipping launch stays on this CanvasEngine; removed at RD-6 cutover.
+    @State private var showRedesignBoard = false
+
     public var body: some View {
 
         GlobalPositioningZStack(coordinateSpace: .global) { windowGPS in
@@ -102,6 +106,19 @@ public struct CanvasEngine: View {
         .zIndex(1.0)
         .background(Color.black.opacity(0.0001))
         .gesture(dragAngleGestures.simultaneously(with: scaleGestures))
+        .overlay(alignment: .topTrailing) { redesignDebugButton }
+        .fullScreenCover(isPresented: $showRedesignBoard) {
+            RedesignRootView()
+                .overlay(alignment: .topLeading) {
+                    Button { showRedesignBoard = false } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 26))
+                            .symbolRenderingMode(.hierarchical)
+                            .foregroundStyle(.white)
+                            .padding(16)
+                    }
+                }
+        }
         .onAppear() {
             self.lastOffset = self.BEO.canvasOffset
             addViewsToNavStack()
@@ -131,6 +148,27 @@ public struct CanvasEngine: View {
                 }
             }.store(in: &storeInMenuBar)
         }
+    }
+
+    // DEBUG-only floating button that opens the redesigned board (RD-1
+    // scaffold). Renders nothing in release, so the redesign entry is
+    // unreachable in shipping builds until the RD-6 cutover.
+    @ViewBuilder private var redesignDebugButton: some View {
+        #if DEBUG
+        Button { showRedesignBoard = true } label: {
+            Image(systemName: "rectangle.on.rectangle.angled")
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundColor(.white)
+                .padding(11)
+                .background(.black.opacity(0.45), in: Circle())
+                .overlay(Circle().strokeBorder(.white.opacity(0.15)))
+        }
+        .padding(.top, 54)
+        .padding(.trailing, 18)
+        .zIndex(10)
+        #else
+        EmptyView()
+        #endif
     }
 
     func addViewsToNavStack() {

@@ -20,7 +20,12 @@ struct LudiBoardsApp: SwiftUI.App {
         // Bump schemaVersion whenever a @Persisted model changes; additive
         // changes migrate automatically. Never wipe user boards on update.
         let realmConfiguration = Realm.Configuration(
-            schemaVersion: 1,
+            // v2 (RD-5): additive — ManagedView gains playerId/jerseyNumber/
+            // teamSide + the new RosterPlayer model. Additive changes migrate
+            // automatically; a future NON-additive change (rename/remove/retype)
+            // must populate this block with explicit oldObject/newObject mapping
+            // or Realm throws at launch (TASK-024).
+            schemaVersion: 2,
             migrationBlock: { _, _ in }
         )
         Realm.Configuration.defaultConfiguration = realmConfiguration
@@ -29,7 +34,18 @@ struct LudiBoardsApp: SwiftUI.App {
     
     var body: some Scene {
         WindowGroup {
-            CanvasEngine()
+            // RD-6 cutover (TASK-012): the redesigned board is the live board.
+            // The legacy `CanvasEngine` stays in the codebase, reachable for QA
+            // via a DEBUG env var, until it's fully removed.
+            #if DEBUG
+            if ProcessInfo.processInfo.environment["LEGACY_BOARD"] == "1" {
+                CanvasEngine()
+            } else {
+                RedesignRootView()
+            }
+            #else
+            RedesignRootView()
+            #endif
 //            temp.onAppear() {
 //                
 //                delayThenMain(15, mainBlock: {
