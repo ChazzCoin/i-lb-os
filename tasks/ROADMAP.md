@@ -136,6 +136,96 @@ Tasks (in suggested ship order):
 
 ---
 
+## Phase SQ — Squad / Roster
+
+> **Scope.** Close the 2026-06-26 squad/add-player/side-drawer audit
+> (`docs/audits/2026-06-26-squad-add-player-drawer.md`). Make the squad
+> panel live, finish roster CRUD (away add / edit / delete), add an
+> empty state and a real production population path, turn placement into
+> a place/remove toggle, and stop the panel from lying about formation
+> and squad name. Keeps the board-scoped `RosterPlayer` model; the
+> team-entity question is a deferred decision (TASK-033). Order below =
+> suggested ship order (TASK-028 gates the rest).
+
+Tasks (in suggested ship order):
+
+- TASK-028 — Make the squad panel observe the roster live (`@ObservedResults`; Add-player redraw) — CRITICAL
+- TASK-029 — Roster CRUD: away-side add, edit (name/number/position), delete — HIGH
+- TASK-030 — Squad empty state + production population path — HIGH
+- TASK-031 — Place/remove toggle + dedup (one disc per roster player) — MEDIUM
+- TASK-032 — Derive or drop the fabricated formation labels — MEDIUM
+- TASK-033 — Squad/team identity (replace hardcoded "U-12 Squad"; team-entity decision) — LOW
+- TASK-034 — Schema migration discipline guard (RosterPlayer / ManagedView) — LOW
+- TASK-035 — Post-cutover hygiene (RedesignPreviewEntry framing + Library entry affordance) — LOW
+
+---
+
+## Phase FB — Functional board
+
+> **Scope.** Make the redesign board a fully functional product: fix
+> the interaction bugs and finish wiring the chrome and panels to the
+> live engine. From a batch of user requests (2026-06-26). Bugs first,
+> then panel/feature wiring. No Firebase wiring anywhere — Firebase-ready
+> only. The two larger workstreams these requests touched (recording and
+> universal linking) split into Phases AN and DM.
+
+Tasks (in suggested ship order):
+
+- TASK-036 — Fix the locked stroke slider in line Properties — HIGH
+- TASK-038 — Sync Properties close (X) with clearing the on-canvas anchors — HIGH
+- TASK-039 — Make all right-drawer panels full height (Add-to-board cut off) — HIGH
+- TASK-042 — Wire the board rotate-left / rotate-right controls — HIGH
+- TASK-048 — Rail squiggly draws curved lines; straight icon draws straight — MEDIUM
+- TASK-050 — Validate every tool is selectable / movable / deletable (spotlight stuck) — HIGH
+- TASK-040 — Restore the full tool catalog (legacy + current) and future-proof it — HIGH
+- TASK-044 — Wire the top-left board breadcrumb dropdown (list / load / create board) — MEDIUM
+- TASK-047 — Layer-list drawer of all tools on the board (Photoshop-style) — MEDIUM
+- TASK-045 — Investigate the board image aspect ratio (too wide / short) — MEDIUM
+- TASK-041 — Wire session presence (no fake data) + a generic guest user — MEDIUM
+- TASK-046 — Basic share wiring (free tier; deeper sharing later) — MEDIUM
+
+---
+
+## Phase AN — Animate & Record
+
+> **Scope.** Turn the placeholder Record button into a real
+> record/playback system: the Animate toggle switches the **entire
+> screen** into a record/playback/animation mode (Plan chrome hidden),
+> with a recordings drawer, transport controls, and a scrub slider. The
+> `Recording`/`RecordingAction` Realm models and the capture + replay
+> engine in `BoardEngineObject` already exist but are orphaned (the
+> redesign only toggles `isRecording`). Decomposed from the 2026-06-26
+> animate audit (`docs/audits/2026-06-26-animate-record-playback.md`).
+> Ship order: 051→052→053 (visible record/playback in Animate mode),
+> then 055/056/057 (engine fidelity, parallel), then 054 (scrub).
+
+Tasks (in suggested ship order):
+
+- TASK-051 — Animate mode switches the whole screen (gate Plan chrome, lock board) — HIGH
+- TASK-052 — Recordings drawer (list & load recordings for the board) — HIGH
+- TASK-053 — Playback transport controls (play / pause / restart) wired to the engine — HIGH
+- TASK-055 — Faithful replay — honor adds and deletes during playback — HIGH
+- TASK-056 — Move transient record/playback state out of `@AppStorage` — MEDIUM
+- TASK-057 — Capture fidelity — reliable add/delete/timed capture — MEDIUM
+- TASK-054 — Playback timeline + scrub slider (per-action timestamps) — MEDIUM
+- TASK-043 — *(epic, decomposed into TASK-051…057 — keep as the umbrella reference)* ✅ superseded
+
+---
+
+## Phase DM — Data model & linking
+
+> **Scope.** The data-architecture workstream: a general object-linking
+> model (players as anchors, tools attached in sequence, any object to
+> any object) and a coverage audit that everything is backed by Realm
+> and Firebase-ready. No Firebase wiring — readiness only.
+
+Tasks:
+
+- TASK-037 — Universal object linking (players as anchors; tools attach in sequence) — HIGH (epic)
+- TASK-049 — Realm-model coverage audit (everything persisted, Firebase-ready) — HIGH
+
+---
+
 ## Cross-cutting
 
 Tasks that don't fit a single phase — typically infrastructure that

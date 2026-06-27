@@ -2,6 +2,8 @@
 
 # Xcode derived data (local builds)
 .build-dd/
+build/
+build-device/
 .DS_Store
 
 # Redesign verification screenshots — large binaries, regeneratable headlessly (see tasks/done/*)
