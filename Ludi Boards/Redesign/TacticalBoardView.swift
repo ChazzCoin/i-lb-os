@@ -62,17 +62,23 @@ struct TacticalBoardView: View {
                     }
                 }
 
-                HStack {
+                // TASK-039: the row must FILL the vertical space (top-aligned) so
+                // the right panel's `maxHeight: .infinity` has room to expand — the
+                // PanelShell fix alone was inert because this HStack collapsed to
+                // content height and centered.
+                HStack(alignment: .top) {
                     Group {
                         if useEngineCanvas { EngineToolRail() } else { ToolRail() }
                     }
                     .padding(.leading, 16)
+                    .padding(.bottom, 80)        // rail stays clear of the bottom pill
                     Spacer()
                     rightPanel
                         .padding(.trailing, 16)
+                        .padding(.bottom, 16)    // TASK-039: the right panel extends near the bottom — the pill is centre-left, it never overlaps the panel, so it doesn't need the 80pt gap that was clipping the tool grid
                 }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .padding(.top, 74)
-                .padding(.bottom, 80)
 
                 VStack {
                     Spacer()
@@ -128,6 +134,7 @@ struct TacticalBoardView: View {
         case .squad:      if useEngineCanvas { EngineSquadPanel(state: state) } else { SquadPanel() }
         case .properties: if useEngineCanvas { EnginePropertiesPanel(state: state) } else { PropertiesPanel() }
         case .library:    if useEngineCanvas { EngineLibraryPanel() } else { LibraryPanel() }
+        case .layers:     if useEngineCanvas { EngineLayersPanel(state: state) } else { SquadPanel() }   // TASK-047
         }
     }
 

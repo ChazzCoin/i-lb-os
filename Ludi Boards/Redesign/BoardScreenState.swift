@@ -13,7 +13,7 @@
 import SwiftUI
 
 /// The right-hand panel currently resolved from board state.
-enum RightPanel: Equatable { case squad, properties, library }
+enum RightPanel: Equatable { case squad, properties, library, layers }
 
 final class BoardScreenState: ObservableObject {
 
@@ -24,21 +24,27 @@ final class BoardScreenState: ObservableObject {
     /// Library drawer open (toggled from the rail / a library affordance).
     @Published var libraryOpen: Bool
 
+    /// Layer-list drawer open (TASK-047): lists every tool on the board.
+    @Published var layersOpen: Bool
+
     /// Board editor mode (Plan / Animate / Present).
     @Published var mode: EditorMode
 
     init(selectedToolId: String? = nil,
          libraryOpen: Bool = false,
+         layersOpen: Bool = false,
          mode: EditorMode = .plan) {
         self.selectedToolId = selectedToolId
         self.libraryOpen = libraryOpen
+        self.layersOpen = layersOpen
         self.mode = mode
     }
 
-    /// Panel resolution: an open Library wins; otherwise a selection shows
-    /// Properties; otherwise the default Squad panel.
+    /// Panel resolution: Library wins, then the Layers list, then a selection
+    /// shows Properties, otherwise the default Squad panel (TASK-047).
     var panel: RightPanel {
         if libraryOpen { return .library }
+        if layersOpen { return .layers }
         if selectedToolId != nil { return .properties }
         return .squad
     }
@@ -49,6 +55,7 @@ final class BoardScreenState: ObservableObject {
 
     func select(_ id: String) {
         libraryOpen = false
+        layersOpen = false        // a layers-row tap hands off cleanly to Properties
         selectedToolId = id
     }
 
@@ -56,9 +63,19 @@ final class BoardScreenState: ObservableObject {
         selectedToolId = nil
     }
 
+    func openLayers() {
+        libraryOpen = false
+        selectedToolId = nil       // the list replaces a single-tool Properties view
+        layersOpen = true
+    }
+
+    func closeLayers() {
+        layersOpen = false
+    }
+
     func toggleLibrary() {
         libraryOpen.toggle()
-        if libraryOpen { selectedToolId = nil }
+        if libraryOpen { selectedToolId = nil; layersOpen = false }
     }
 
     /// Seed a state equivalent to a static demo screen (previews / render

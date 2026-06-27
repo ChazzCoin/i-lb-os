@@ -112,8 +112,12 @@ struct RedesignRootView: View {
     private var stateSwitcher: some View {
         HStack(spacing: 8) {
             #if DEBUG
-            Button("Clear") { state.clearSelection(); state.libraryOpen = false }
+            Button("Clear") { state.clearSelection(); state.libraryOpen = false; state.layersOpen = false }
             #endif
+            // TASK-047: open the layer list of every tool on the board.
+            Button(state.layersOpen ? "Done" : "Layers") {
+                if state.layersOpen { state.closeLayers() } else { state.openLayers() }
+            }
             Button(state.libraryOpen ? "Done" : "Library") { state.toggleLibrary() }
         }
         .font(.system(size: 13, weight: .semibold))

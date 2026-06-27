@@ -66,13 +66,23 @@ struct ModeSwitch: View {
 
 // MARK: - Top bar
 
+/// One board entry for the breadcrumb switcher (TASK-044).
+struct BoardMenuItem: Identifiable, Equatable { let id: String; let label: String }
+
 struct TopBar: View {
     @Binding var mode: EditorMode
     var title: String = "Activity 3 · Build-up"
     var squad: String = "U-12 Squad"
-    /// Free/local build has no collaborators — gate the presence avatars off.
-    var showPresence: Bool = true
-    var onShare: () -> Void = {}
+    /// Current user shown top-right (TASK-041). Empty = nothing to show.
+    var userInitials: String = "CR"
+    var userLive: Bool = true
+    /// Board switcher data (TASK-044). Empty `boards` = plain, non-tappable title.
+    var boards: [BoardMenuItem] = []
+    var currentBoardId: String = ""
+    var onSelectBoard: (String) -> Void = { _ in }
+    var onCreateBoard: () -> Void = {}
+    /// Text shared by the system sheet (TASK-046).
+    var shareItem: String = "Ludi Board"
 
     var body: some View {
         HStack(spacing: 14) {
@@ -87,7 +97,7 @@ struct TopBar: View {
                     Text(squad).foregroundStyle(Brand.textDim)
                     Image(systemName: "chevron.right").font(.system(size: 10, weight: .bold))
                         .foregroundStyle(Brand.textFaint)
-                    Text(title).foregroundStyle(Brand.textMid)
+                    boardBreadcrumb
                 }
                 .font(AppFont.ui(14, .semibold))
 
@@ -100,16 +110,12 @@ struct TopBar: View {
 
             // Presence + share
             HStack(spacing: 14) {
-                if showPresence {
-                    HStack(spacing: -9) {
-                        PresenceAvatar(initials: "CR", fill: .homeJersey, live: true)
-                        PresenceAvatar(initials: "JM",
-                                       fill: LinearGradient(colors: [Color(brandHex: "5B7491"), Color(brandHex: "3F5670")], startPoint: .top, endPoint: .bottom))
-                        PresenceAvatar(initials: "+3",
-                                       fill: LinearGradient(colors: [Color(brandHex: "8A6F4A"), Color(brandHex: "6A533A")], startPoint: .top, endPoint: .bottom))
-                    }
+                if !userInitials.isEmpty {
+                    PresenceAvatar(initials: userInitials, fill: .homeJersey, live: userLive)
                 }
-                ShareButton().onTapGesture(perform: onShare)
+                // TASK-046: real system share of the board (text MVP; image export later).
+                ShareLink(item: shareItem) { ShareButton() }
+                    .buttonStyle(.plain)
             }
         }
         .padding(.horizontal, 20)
@@ -120,10 +126,40 @@ struct TopBar: View {
         )
         .overlay(alignment: .bottom) { Rectangle().fill(Brand.hairline).frame(height: 1) }
     }
+
+    /// The board title — a dropdown when boards are supplied (TASK-044),
+    /// otherwise plain text (preview / no-engine path).
+    @ViewBuilder private var boardBreadcrumb: some View {
+        if boards.isEmpty {
+            Text(title).foregroundStyle(Brand.textMid)
+        } else {
+            Menu {
+                ForEach(boards) { b in
+                    Button {
+                        onSelectBoard(b.id)
+                    } label: {
+                        if b.id == currentBoardId {
+                            Label(b.label, systemImage: "checkmark")
+                        } else {
+                            Text(b.label)
+                        }
+                    }
+                }
+                Divider()
+                Button { onCreateBoard() } label: { Label("New board", systemImage: "plus") }
+            } label: {
+                HStack(spacing: 5) {
+                    Text(title).foregroundStyle(Brand.textMid)
+                    Image(systemName: "chevron.down").font(.system(size: 9, weight: .bold))
+                        .foregroundStyle(Brand.textFaint)
+                }
+            }
+        }
+    }
 }
 
-/// Engine-wired top bar: breadcrumb from the live activity, presence gated on
-/// login (free build → none). Mode binding drives Plan/Animate/Present.
+/// Engine-wired top bar: breadcrumb dropdown from the live activities (TASK-044),
+/// current-user presence + guest synthesis (TASK-041), real share (TASK-046).
 struct EngineTopBar: View {
     @EnvironmentObject var BEO: BoardEngineObject
     @ObservedObject var state: BoardScreenState
@@ -131,9 +167,15 @@ struct EngineTopBar: View {
     var body: some View {
         TopBar(mode: $state.mode,
                title: activityTitle,
-               squad: "U-12 Squad",          // roster name lands in RD-5
-               showPresence: BEO.isLoggedIn,
-               onShare: {})                   // export/share entry — RD-6
+               squad: "U-12 Squad",          // roster/team name lands in TASK-033
+               userInitials: initials(from: BEO.currentUserName),
+               userLive: BEO.isLoggedIn,
+               boards: boardItems,
+               currentBoardId: BEO.currentActivityId,
+               onSelectBoard: { BEO.changeActivity(activityId: $0) },
+               onCreateBoard: createBoard,
+               shareItem: "Check out my board: \(activityTitle)")
+            .onAppear(perform: ensureGuestIdentity)
     }
 
     private var activityTitle: String {
@@ -142,6 +184,45 @@ struct EngineTopBar: View {
             if !parts.isEmpty { return parts.joined(separator: " · ") }
         }
         return "Untitled Activity"
+    }
+
+    /// All boards for the switcher (TASK-044), newest-stable order by orderIndex.
+    private var boardItems: [BoardMenuItem] {
+        BEO.realmInstance.objects(ActivityPlan.self)
+            .sorted(byKeyPath: "orderIndex")
+            .map { plan in
+                let parts = [plan.title, plan.subTitle].filter { !$0.isEmpty }
+                return BoardMenuItem(id: plan.id, label: parts.isEmpty ? "Untitled" : parts.joined(separator: " · "))
+            }
+    }
+
+    /// Two-char initials from a name (matches the roster-editor logic, TASK-041).
+    private func initials(from name: String) -> String {
+        let chars = name.split(separator: " ").prefix(2).compactMap { $0.first }
+        let s = String(chars).uppercased()
+        return s.isEmpty ? "?" : s
+    }
+
+    /// Not-signed-up users still get a stable identity so the avatar shows a real
+    /// name (TASK-041). Reuses the engine's existing guest generators.
+    private func ensureGuestIdentity() {
+        if BEO.currentUserId.isEmpty { BEO.currentUserId = generateRandomUserId() }
+        if BEO.currentUserName.isEmpty { BEO.currentUserName = generateRandomName() }
+    }
+
+    /// Create a new board and switch to it (TASK-044).
+    private func createBoard() {
+        let count = BEO.realmInstance.objects(ActivityPlan.self).count
+        let newId = UUID().uuidString
+        BEO.realmInstance.safeWrite { r in
+            let plan = ActivityPlan()
+            plan.id = newId
+            plan.title = "New Board"
+            plan.subTitle = ""
+            plan.orderIndex = count
+            r.create(ActivityPlan.self, value: plan, update: .all)
+        }
+        BEO.changeActivity(activityId: newId)
     }
 }
 
@@ -273,6 +354,8 @@ struct ControlPill: View {
     var onZoomOut: () -> Void = {}
     var onZoomIn: () -> Void = {}
     var onScope: () -> Void = {}
+    var onRotateLeft: () -> Void = {}
+    var onRotateRight: () -> Void = {}
     var onRecord: () -> Void = {}
 
     var body: some View {
@@ -288,6 +371,10 @@ struct ControlPill: View {
                 .frame(minWidth: 46)
             PillIcon("plus.magnifyingglass", action: onZoomIn)
             PillIcon("scope", action: onScope)
+            divider
+            // TASK-042: rotate the canvas ±90° (wired to BEO.canvasRotation in EngineControlPill).
+            PillIcon("rotate.left", action: onRotateLeft)
+            PillIcon("rotate.right", action: onRotateRight)
             divider
             Button(action: onRecord) {
                 HStack(spacing: 7) {
@@ -326,6 +413,8 @@ struct EngineControlPill: View {
             onZoomOut: { BEO.zoomOut() },
             onZoomIn:  { BEO.zoomIn() },
             onScope:   { BEO.resetZoom() },
+            onRotateLeft:  { BEO.canvasRotation += -90.0 },   // TASK-042
+            onRotateRight: { BEO.canvasRotation +=  90.0 },
             onRecord:  { BEO.isRecording ? BEO.stopRecording() : BEO.startRecording() }
         )
     }

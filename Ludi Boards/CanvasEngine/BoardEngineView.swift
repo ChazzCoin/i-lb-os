@@ -32,12 +32,22 @@ struct BoardEngine: View {
                  // Board Tools
                 MVEngine.Display(reset: self.$resetTools)
 
-                 // Temporary line being drawn
+                 // Temporary line being drawn. TASK-048: match the preview to the
+                 // active draw tool — a curved tool drew a straight rubber-band
+                 // before. The curve's control point is the start/end midpoint,
+                 // matching the saved line's convention (so a fresh curve reads as
+                 // straight until its control anchor is bent — same as the result).
                  if self.BEO.isDraw {
                      if drawingStartPoint != .zero {
                          Path { path in
                              path.move(to: drawingStartPoint)
-                             path.addLine(to: drawingEndPoint)
+                             if self.BEO.shapeSubType == "line_curved" {
+                                 let mid = CGPoint(x: (drawingStartPoint.x + drawingEndPoint.x) / 2,
+                                                   y: (drawingStartPoint.y + drawingEndPoint.y) / 2)
+                                 path.addQuadCurve(to: drawingEndPoint, control: mid)
+                             } else {
+                                 path.addLine(to: drawingEndPoint)
+                             }
                          }
                          .stroke(Color.red, style: StrokeStyle(lineWidth: 10, dash: [1]))
                      }
