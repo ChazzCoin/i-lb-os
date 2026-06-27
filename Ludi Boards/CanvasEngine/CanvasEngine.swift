@@ -183,7 +183,7 @@ public struct CanvasEngine: View {
     var dragAngleGestures: some Gesture {
         DragGesture()
             .onChanged { gesture in
-                if self.BEO.gesturesAreLocked { return }
+                if self.BEO.gesturesAreLocked || self.BEO.isDraw { return }
 
                 // Counter-rotate the drag translation so panning tracks the
                 // finger even when the canvas is rotated.
@@ -209,7 +209,7 @@ public struct CanvasEngine: View {
     var scaleGestures: some Gesture {
         MagnificationGesture()
             .onChanged { value in
-                if self.BEO.gesturesAreLocked { return }
+                if self.BEO.gesturesAreLocked || self.BEO.isDraw { return }
                 let delta = value / self.BEO.lastScaleValue
                 self.BEO.canvasScale = min(max(self.BEO.canvasScale * delta,
                                                BoardEngineObject.minCanvasScale),

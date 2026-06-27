@@ -48,7 +48,7 @@ Tasks (in suggested ship order):
 
 Tasks:
 
-- TASK-006 — Left ToolRail wired (select / pan / draw / shape / marker / color) ✅
+- TASK-006 — Left ToolRail wired (select / draw-straight / draw-curved) ✅ — *recorded scope said "pan / shape / marker / color" too; those were never wired (pan duplicated select). Corrected + trimmed in TASK-025.*
 - TASK-007 — Bottom ControlPill wired (lock / undo / redo / zoom% / scope / record) ✅
 - TASK-008 — TopBar + EditorMode (Plan/Animate/Present) wired ✅
 
@@ -118,6 +118,21 @@ Tasks (in suggested ship order):
 - TASK-022 — Delete dead routes & duplicate views ✅
 - TASK-023 — Board-scale constants & shared CoreEngine tokens ✅
 - TASK-024 — Engine hygiene: extract DEBUG harness + model nits ✅
+
+---
+
+## Phase LR — Left tool rail
+
+> **Scope.** Close the 2026-06-26 left-rail audit
+> (`docs/audits/2026-06-26-left-tool-rail.md`). Trim the rail to the
+> controls that are actually wired, separate the draw-mode pan-lock
+> from the user's explicit canvas lock, and correct the recorded scope.
+
+Tasks (in suggested ship order):
+
+- TASK-025 — Trim the left rail to wired interaction modes (remove 5 dead buttons + vestigial pan; typed `RailTool`) ✅
+- TASK-026 — Separate draw-mode pan-suppression from the explicit canvas lock ✅
+- TASK-027 — Correct the TASK-006 recorded rail scope (doc drift) ✅
 
 ---
 

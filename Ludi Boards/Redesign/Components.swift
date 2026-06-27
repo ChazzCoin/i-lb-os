@@ -174,27 +174,35 @@ struct ShareButton: View {
 
 // MARK: - Left tool rail
 
-struct ToolRail: View {
-    /// Index of the active tool, and a tap handler. Pure visual — the engine
-    /// wiring lives in `EngineToolRail` (TASK-006) so the BEO-less preview path
-    /// can still render the rail.
-    var active: Int = 0
-    var onTap: (Int) -> Void = { _ in }
+/// The rail's tools, typed so render / tap / active-state can't drift from a
+/// positional index (TASK-025). Interaction modes only — add/colour tools live
+/// in the Library / Squad / Properties panels, not the rail.
+enum RailTool: String, CaseIterable, Identifiable {
+    case select, drawStraight, drawCurved
+    var id: String { rawValue }
 
-    /// (symbol, isDivider-after). Index order is the rail's tool identity —
-    /// `EngineToolRail` maps these to engine actions.
-    static let tools: [(String, Bool)] = [
-        ("cursorarrow", false), ("hand.draw", true),
-        ("pencil.tip", false), ("scribble.variable", false), ("photo", true),
-        ("person", false), ("triangle", false), ("flag", true),
-        ("paintbrush.pointed", false),
-    ]
+    var symbol: String {
+        switch self {
+        case .select:       return "cursorarrow"
+        case .drawStraight: return "pencil.tip"
+        case .drawCurved:   return "scribble.variable"
+        }
+    }
+    /// Divider drawn after this tool (separates select from the draw tools).
+    var dividerAfter: Bool { self == .select }
+}
+
+struct ToolRail: View {
+    /// Active tool + tap handler. Pure visual — the engine wiring lives in
+    /// `EngineToolRail` (TASK-006/025) so the BEO-less preview path renders.
+    var active: RailTool = .select
+    var onTap: (RailTool) -> Void = { _ in }
 
     var body: some View {
         VStack(spacing: 5) {
-            ForEach(Array(Self.tools.enumerated()), id: \.offset) { i, t in
-                RailButton(symbol: t.0, active: i == active) { onTap(i) }
-                if t.1 { Divider().overlay(Brand.hairline).frame(width: 28) }
+            ForEach(RailTool.allCases) { tool in
+                RailButton(symbol: tool.symbol, active: tool == active) { onTap(tool) }
+                if tool.dividerAfter { Divider().overlay(Brand.hairline).frame(width: 28) }
             }
         }
         .padding(8)
@@ -204,29 +212,24 @@ struct ToolRail: View {
 }
 
 /// Engine-wired rail: derives the active tool from the board's draw state and
-/// routes taps to engine actions (draw straight/curved, select, pan).
+/// routes taps to engine actions (select, draw straight/curved).
 struct EngineToolRail: View {
     @EnvironmentObject var BEO: BoardEngineObject
 
-    private var activeIndex: Int {
-        guard BEO.isDraw else { return 0 }                    // cursor
-        switch BEO.shapeSubType {
-        case "line_curved": return 3                          // scribble
-        default:            return 2                           // pencil (straight)
-        }
+    private var active: RailTool {
+        guard BEO.isDraw else { return .select }
+        return BEO.shapeSubType == "line_curved" ? .drawCurved : .drawStraight
     }
 
     var body: some View {
-        ToolRail(active: activeIndex, onTap: handleTap)
+        ToolRail(active: active, onTap: handleTap)
     }
 
-    private func handleTap(_ i: Int) {
-        switch i {
-        case 0:  BEO.disableDrawing()                                   // select / cursor
-        case 1:  BEO.disableDrawing(); BEO.gesturesAreLocked = false    // hand / pan
-        case 2:  BEO.toggleDrawingMode(subType: "line_straight")        // draw straight
-        case 3:  BEO.toggleDrawingMode(subType: "line_curved")          // draw curved
-        default: BEO.disableDrawing()  // photo/person/shape/marker/colour — wired in later tasks
+    private func handleTap(_ tool: RailTool) {
+        switch tool {
+        case .select:       BEO.disableDrawing()
+        case .drawStraight: BEO.toggleDrawingMode(subType: "line_straight")
+        case .drawCurved:   BEO.toggleDrawingMode(subType: "line_curved")
         }
     }
 }

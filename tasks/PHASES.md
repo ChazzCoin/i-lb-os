@@ -131,6 +131,22 @@ magic numbers / DEBUG scaffolding. No model rewrite — finishing wiring.
 
 ---
 
+## Phase LR — Left tool rail
+
+**Status:** ✅ Shipped (2026-06-26)
+
+**Scope.** Close the 2026-06-26 left-rail audit
+(`docs/audits/2026-06-26-left-tool-rail.md`). The rail shipped nine
+buttons but wired three: five were dead placeholders and pan duplicated
+select. Trim it to the real interaction modes (select / draw-straight /
+draw-curved) behind a typed `RailTool`, and untangle the overloaded
+`gesturesAreLocked` so the draw-mode pan-suppression (now derived from
+`isDraw`) no longer clobbers — or masquerades as — the user's explicit
+canvas lock. Add/colour stay in the Library / Squad / Properties panels.
+No new rail features; finishing and honesty.
+
+---
+
 *(Add phases as the project evolves. Use `/plan` to think through new
 phases conversationally; use `/task` to file tasks under existing
 phases.)*

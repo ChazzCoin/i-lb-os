@@ -43,7 +43,7 @@ struct RedesignBoardCanvas: View {
     private var dragAngleGestures: some Gesture {
         DragGesture()
             .onChanged { gesture in
-                if self.BEO.gesturesAreLocked { return }
+                if self.BEO.gesturesAreLocked || self.BEO.isDraw { return }
                 let translation = gesture.translation
                 let cosAngle = cos(Angle(degrees: self.BEO.canvasRotation).radians)
                 let sinAngle = sin(Angle(degrees: self.BEO.canvasRotation).radians)
@@ -61,7 +61,7 @@ struct RedesignBoardCanvas: View {
     private var scaleGestures: some Gesture {
         MagnificationGesture()
             .onChanged { value in
-                if self.BEO.gesturesAreLocked { return }
+                if self.BEO.gesturesAreLocked || self.BEO.isDraw { return }
                 let delta = value / self.BEO.lastScaleValue
                 self.BEO.canvasScale = min(max(self.BEO.canvasScale * delta,
                                                BoardEngineObject.minCanvasScale),

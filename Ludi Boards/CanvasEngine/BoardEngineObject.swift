@@ -94,17 +94,17 @@ public class BoardEngineObject : ObservableObject {
     @Published var shapeSubType: String = ViewEngine.Tool.ShapeTool.line_straight.rawValue
     @Published var isLoading: Bool = true
 
-    // Drawing mode: while drawing, canvas pan/zoom is locked so the
-    // drag gesture draws lines instead of moving the board.
+    // Drawing mode. While `isDraw`, the canvas pan/zoom gestures bail (they
+    // check `gesturesAreLocked || isDraw`), so a drag draws a line instead of
+    // moving the board — WITHOUT touching the user's explicit lock
+    // (`gesturesAreLocked`), which the pill owns (TASK-026).
     func enableDrawing(subType: String = ViewEngine.Tool.ShapeTool.line_straight.rawValue) {
         shapeSubType = subType
         isDraw = true
-        gesturesAreLocked = true
     }
 
     func disableDrawing() {
         isDraw = false
-        gesturesAreLocked = false
     }
 
     func toggleDrawingMode(subType: String = ViewEngine.Tool.ShapeTool.line_straight.rawValue) {
