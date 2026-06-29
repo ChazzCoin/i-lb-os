@@ -2,8 +2,11 @@
 
 # Xcode derived data (local builds)
 .build-dd/
+build/
+build-device/
 .DS_Store
 
 # Redesign verification screenshots — large binaries, regeneratable headlessly (see tasks/done/*)
 docs/design/canvas-board-redesign/renders/
 docs/design/smart-tools/renders/
+docs/design/sport-boards/renders/

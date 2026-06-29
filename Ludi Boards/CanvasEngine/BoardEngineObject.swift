@@ -94,17 +94,17 @@ public class BoardEngineObject : ObservableObject {
     @Published var shapeSubType: String = ViewEngine.Tool.ShapeTool.line_straight.rawValue
     @Published var isLoading: Bool = true
 
-    // Drawing mode: while drawing, canvas pan/zoom is locked so the
-    // drag gesture draws lines instead of moving the board.
+    // Drawing mode. While `isDraw`, the canvas pan/zoom gestures bail (they
+    // check `gesturesAreLocked || isDraw`), so a drag draws a line instead of
+    // moving the board — WITHOUT touching the user's explicit lock
+    // (`gesturesAreLocked`), which the pill owns (TASK-026).
     func enableDrawing(subType: String = ViewEngine.Tool.ShapeTool.line_straight.rawValue) {
         shapeSubType = subType
         isDraw = true
-        gesturesAreLocked = true
     }
 
     func disableDrawing() {
         isDraw = false
-        gesturesAreLocked = false
     }
 
     func toggleDrawingMode(subType: String = ViewEngine.Tool.ShapeTool.line_straight.rawValue) {
@@ -410,71 +410,197 @@ public class BoardEngineObject : ObservableObject {
     @Published var recordingNotificationToken: NotificationToken? = nil
 //    @Published var ignoreUpdates: Bool = false
     
-    func playAnimationRecording() {
-        isPlayingAnimation = true
-        runAnimation()
+    // MARK: Time-based playback (TASK-054)
+    //
+    // Single-clock design (rev after the AN engine review): ONE Timer is the
+    // sole time source. Each tick advances `playbackTime` by real wall-elapsed
+    // and applies every action whose time has passed via a monotonic cursor.
+    // No DispatchWorkItems (no drift, no in-flight cancel races), no rebuild on
+    // resume (cursor continues), and the gesture lock is set synchronously here
+    // (not via a coalescing onChange). Playback never touches `ignoreUpdates`:
+    // the recording observer only exists while `isRecording`, and recording is
+    // disabled during playback, so there is nothing to suppress.
+    @Published var playbackTime: Double = 0.0       // current scrub position (s)
+    @Published var playbackDuration: Double = 0.0   // total length (s)
+    private var playbackTimer: Timer?
+    private var playbackCursor: Int = 0
+    private var playbackAnchorDate: Date?
+    private var playbackAnchorOffset: Double = 0
+    private var cachedTimeline: [(action: RecordingAction, time: Double)] = []
+
+    // Playback scene (req: playback shows ONLY the recorded tools). Replay mutates
+    // real tools' geometry + isDeleted (both persisted), so we snapshot the live
+    // board when a scene starts and restore it when playback ends — playback is
+    // non-destructive, and tools that aren't part of the recording get hidden.
+    private var playbackSceneActive = false
+    private var playbackBackup: [String: RecordingAction] = [:]
+    private var playbackCreatedIds: Set<String> = []
+
+    /// Each recorded action paired with its effective playback time. New
+    /// recordings use the captured `timeOffset`; legacy recordings (all offsets
+    /// 0) fall back to even spacing by order (TASK-054 fallback).
+    private func playbackTimeline() -> [(action: RecordingAction, time: Double)] {
+        let seq = Array(recordingsByRecordingId)
+        let maxOff = seq.map { $0.timeOffset }.max() ?? 0
+        if maxOff > 0.01 { return seq.map { ($0, $0.timeOffset) } }
+        return seq.enumerated().map { (i, a) in (a, Double(i + 1) * 0.8) }
     }
+
+    /// Re-apply the recording's initial snapshot, then every action up to `t`.
+    private func rebuildState(at t: Double) {
+        for a in recordingsByRecordingIdInInitState { replayApply(a) }
+        for entry in cachedTimeline where entry.time <= t { replayApply(entry.action) }
+    }
+
+    /// Every tool id this recording touches (initial snapshot + every action).
+    private func recordedToolIds() -> Set<String> {
+        var ids = Set<String>()
+        for a in recordingsByRecordingIdInInitState { ids.insert(a.toolId) }
+        for a in recordingsByRecordingId { ids.insert(a.toolId) }
+        return ids
+    }
+
+    /// Enter a playback scene: snapshot every live tool (so we can restore the
+    /// real board later), then hide tools that aren't part of this recording —
+    /// "showing but shouldn't". Idempotent; recorded tools are reconstructed by
+    /// rebuildState / the timer.
+    private func beginPlaybackScene() {
+        guard !playbackSceneActive, !playbackRecordingId.isEmpty else { return }
+        guard let live = realmInstance.findAllByField(ManagedView.self, field: "boardId", value: currentActivityId) else { return }
+        playbackSceneActive = true
+        playbackBackup.removeAll()
+        playbackCreatedIds.removeAll()
+        for mv in live where !mv.isInvalidated {
+            let snap = RecordingAction()
+            snap.absorb(from: mv)            // unmanaged in-memory snapshot
+            playbackBackup[mv.id] = snap
+        }
+        let recorded = recordedToolIds()
+        realmInstance.safeWrite { _ in
+            for mv in live where !mv.isInvalidated {
+                if !recorded.contains(mv.id) && !mv.isDeleted { mv.isDeleted = true }
+            }
+        }
+        refreshBoard()
+    }
+
+    /// Leave the playback scene and restore the real board: drop tools that only
+    /// existed during playback, then restore every snapshotted tool's geometry +
+    /// visibility. Idempotent — safe to call on every exit path.
+    func endPlaybackScene() {
+        guard playbackSceneActive else { return }
+        playbackSceneActive = false
+        stopAnimationRecording()
+        realmInstance.safeWrite { r in
+            for id in self.playbackCreatedIds {
+                if let mv = self.realmInstance.object(ofType: ManagedView.self, forPrimaryKey: id), !mv.isInvalidated {
+                    r.delete(mv)
+                }
+            }
+        }
+        for (id, snap) in playbackBackup {
+            if let mv = realmInstance.object(ofType: ManagedView.self, forPrimaryKey: id), !mv.isInvalidated {
+                mv.absorbRecordingAction(from: snap, saveRealm: realmInstance)   // does its own write
+            }
+        }
+        playbackBackup.removeAll()
+        playbackCreatedIds.removeAll()
+        playbackRecordingId = ""
+        playbackTime = 0
+        refreshBoard()
+    }
+
+    /// Select a recording for playback: cache its timeline + length, reset to
+    /// the start and lay down its initial state (TASK-052/054).
+    func selectRecordingForPlayback(_ id: String) {
+        guard !isRecording else { return }
+        endPlaybackScene()                 // restore the board from any prior selection
+        playbackRecordingId = id
+        cachedTimeline = playbackTimeline()
+        playbackDuration = cachedTimeline.last?.time ?? 0
+        seekPlayback(to: 0)                // lays down the initial state + begins the scene
+    }
+
+    /// Scrub/seek: reconstruct the board state at time `t` (initial + all actions
+    /// at or before `t`). Pauses playback (TASK-054).
+    func seekPlayback(to t: Double) {
+        stopAnimationRecording()
+        let clamped = max(0, min(t, max(playbackDuration, 0)))
+        playbackTime = clamped
+        guard !playbackRecordingId.isEmpty else { return }
+        beginPlaybackScene()               // snapshot + hide non-recorded (idempotent)
+        rebuildState(at: clamped)
+    }
+
+    /// Play forward from the current scrub position. A single timer drives both
+    /// the readout and the action application (TASK-054).
+    func playAnimationRecording() {
+        guard !playbackRecordingId.isEmpty, !isRecording else { return }
+        stopAnimationRecording()                       // clean slate (timer off, unlocked)
+        beginPlaybackScene()                           // ensure the scene is set (idempotent)
+        if cachedTimeline.isEmpty {
+            cachedTimeline = playbackTimeline()
+            playbackDuration = cachedTimeline.last?.time ?? 0
+        }
+        if playbackTime >= playbackDuration {          // restart from the top at end
+            playbackTime = 0
+            rebuildState(at: 0)
+        }
+        playbackCursor = cachedTimeline.firstIndex(where: { $0.time > playbackTime }) ?? cachedTimeline.count
+        isPlayingAnimation = true
+        gesturesAreLocked = true                       // set synchronously (not via onChange)
+        playbackAnchorDate = Date()
+        playbackAnchorOffset = playbackTime
+        playbackTimer = Timer.scheduledTimer(withTimeInterval: 0.03, repeats: true) { [weak self] timer in
+            guard let self = self, self.isPlayingAnimation, let anchor = self.playbackAnchorDate else {
+                timer.invalidate(); return
+            }
+            let t = self.playbackAnchorOffset + Date().timeIntervalSince(anchor)
+            while self.playbackCursor < self.cachedTimeline.count,
+                  self.cachedTimeline[self.playbackCursor].time <= t {
+                self.replayApply(self.cachedTimeline[self.playbackCursor].action)
+                self.playbackCursor += 1
+            }
+            if t >= self.playbackDuration {
+                self.playbackTime = self.playbackDuration
+                self.finishPlayback()
+            } else {
+                self.playbackTime = t
+            }
+        }
+    }
+
+    /// Stop/pause playback: keeps `playbackTime` (resume continues from here).
     func stopAnimationRecording() {
         isPlayingAnimation = false
+        gesturesAreLocked = false
+        playbackTimer?.invalidate(); playbackTimer = nil
+        playbackAnchorDate = nil
     }
-    
-    private func runAnimation() {
-        guard !recordingsByRecordingId.isEmpty else { return }
-        let dispatchGroup = DispatchGroup()
-        let initialDelay = 1.0 // Start with a delay of 1 second
-        var currentDelay = initialDelay
-        if !self.isPlayingAnimation { return }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-            for item in self.recordingsByRecordingIdInInitState {
-                if !self.isPlayingAnimation { return }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    if !self.isPlayingAnimation { return }
-                    dispatchGroup.enter()  // Enter the group for each async task
 
-                    self.realmInstance.safeFindByField(ManagedView.self, value: item.toolId) { obj in
-                        obj.absorbRecordingAction(from: item, saveRealm: self.realmInstance)
-                        dispatchGroup.leave()  // Leave the group when the task is done
-                    }
-                }
-                currentDelay += 1.0 // Increase the delay for the next task
-            }
-            
-            // Notify when all tasks in the first loop are done
-            if !self.isPlayingAnimation { return }
-            dispatchGroup.notify(queue: .main) {
-                var nextDelay = initialDelay
+    private func finishPlayback() { stopAnimationRecording() }
 
-                // Now start the second loop
-                var count = 0
-                var total = self.recordingsByRecordingId.count
-                for item in self.recordingsByRecordingId {
-                    if !self.isPlayingAnimation { return }
-                    if item.orderIndex == 0 { continue }
-                    count = count + 1
-                    DispatchQueue.main.asyncAfter(deadline: .now() + nextDelay) {
-                        if !self.isPlayingAnimation { return }
-                        self.realmInstance.safeFindByField(ManagedView.self, value: item.toolId) { obj in
-                            obj.absorbRecordingAction(from: item, saveRealm: self.realmInstance)
-                        }
-                        
-                        if count >= total {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + nextDelay + 3.0) {
-                                self.isPlayingAnimation = false
-                            }
-                        }
-                    }
-                    nextDelay += 1.0 // Increase the delay for the next task
-                }
-                
-            }
-            
+    deinit { playbackTimer?.invalidate() }
+
+    /// One-time heal for tools the old `isLocked = isDragging ? true` save path left
+    /// permanently locked (a locked tool's drags all bail on `lifeIsLocked`, so it
+    /// can't be moved/reshaped — e.g. curved lines). The redesign has no intentional
+    /// per-tool lock, so any locked NON-deleted tool is that bug. Deleted tools keep
+    /// isLocked (softDelete sets it), so we leave those alone.
+    func healStuckLocks() {
+        let stuck = realmInstance.objects(ManagedView.self)
+            .filter("boardId == %@ AND isDeleted == false AND isLocked == true", currentActivityId)
+        if stuck.isEmpty { return }
+        realmInstance.safeWrite { _ in
+            for mv in stuck where !mv.isInvalidated { mv.isLocked = false }
         }
-        
+        refreshBoard()
     }
 
 
     func startRecording() {
         print("Starting Recording")
+        endPlaybackScene()                 // record from the real board, not a playback scene
         let newRecording = Recording()
         self.currentRecordingId = newRecording.id
         newRecording.boardId = self.currentActivityId
@@ -517,6 +643,42 @@ public class BoardEngineObject : ObservableObject {
         self.recordingNotificationToken?.invalidate()
         self.recordingNotificationToken = nil
     }
+
+    // Seconds since recording began (TASK-057 time axis).
+    private func recordingElapsed() -> Double {
+        guard let s = startTime else { return 0 }
+        return Double(DispatchTime.now().uptimeNanoseconds - s.uptimeNanoseconds) / 1_000_000_000
+    }
+
+    // Write one captured action (add / move / delete) with a monotonic index and
+    // a time offset (TASK-057).
+    private func captureRecordingAction(_ mv: ManagedView, type: String, at t: Double) {
+        self.currentRecordingIndex += 1
+        let a = RecordingAction()
+        a.recordingId = self.currentRecordingId
+        a.isInitialState = false
+        a.actionType = type
+        a.orderIndex = self.currentRecordingIndex
+        a.timeOffset = t
+        a.absorb(from: mv)
+        self.realmInstance.safeWrite { r in
+            r.create(RecordingAction.self, value: a, update: .all)
+        }
+    }
+
+    // Apply one recorded action to the live board during replay (TASK-055):
+    // move an existing tool, or materialize a tool that was added mid-recording.
+    // A recorded delete (isDeleted == true) is honored by absorb copying the
+    // flag — the canvas filters isDeleted tools out.
+    func replayApply(_ item: RecordingAction) {
+        if let obj = self.realmInstance.object(ofType: ManagedView.self, forPrimaryKey: item.toolId) {
+            obj.absorbRecordingAction(from: item, saveRealm: self.realmInstance)
+        } else if !item.isDeleted {
+            ManagedView.create(from: item, boardId: self.currentActivityId, saveRealm: self.realmInstance)
+            // Materialised only for playback — remove it when the scene ends.
+            if playbackSceneActive { playbackCreatedIds.insert(item.toolId) }
+        }
+    }
     
     private func startRecordingObserver() {
         if self.currentActivityId.isEmpty { return }
@@ -525,37 +687,43 @@ public class BoardEngineObject : ObservableObject {
         
         self.realmInstance.executeWithRetry {
             print("Starting Recording Listener")
-            self.recordingNotificationToken = umvs?.observe { (changes: RealmCollectionChange) in
+            self.recordingNotificationToken = umvs?.observe { [weak self] (changes: RealmCollectionChange) in
+                guard let self = self else { return }
                 DispatchQueue.main.async {
                     switch changes {
                         case .initial(let results):
                             print("Recording Listener: initial")
                             for i in results {
                                 if i.isInvalidated {continue}
-                                // Initial State
+                                // Initial State (TASK-057): the snapshot baseline.
                                 let newAction = RecordingAction()
                                 newAction.recordingId = self.currentRecordingId
                                 newAction.isInitialState = true
+                                newAction.actionType = "initial"
+                                newAction.orderIndex = 0
+                                newAction.timeOffset = 0
                                 newAction.absorb(from: i)
                                 self.realmInstance.safeWrite { r in
                                     r.create(RecordingAction.self, value: newAction, update: .all)
                                 }
                             }
-                        case .update(let results, _, _, let modifications):
+                        case .update(let results, _, let insertions, let modifications):
                             if self.ignoreUpdates { return }
                             print("Recording Listener: update")
+                            let t = self.recordingElapsed()
+                            // TASK-057: capture adds (insertions) + moves/deletes
+                            // (modifications), each stamped with a time offset and
+                            // a monotonic orderIndex so replay can create / move /
+                            // hide faithfully and TASK-054 can scrub on real time.
+                            for index in insertions {
+                                let obj = results[index]
+                                if obj.isInvalidated { continue }
+                                self.captureRecordingAction(obj, type: "add", at: t)
+                            }
                             for index in modifications {
-                                let modifiedObject = results[index]
-                                self.currentRecordingIndex = self.currentRecordingIndex + 1
-                                print("NEW ACTION: \(modifiedObject): \(self.currentRecordingIndex)")
-                                let newAction = RecordingAction()
-                                newAction.recordingId = self.currentRecordingId
-                                newAction.isInitialState = false
-                                newAction.orderIndex = self.currentRecordingIndex
-                                newAction.absorb(from: modifiedObject)
-                                self.realmInstance.safeWrite { r in
-                                    r.create(RecordingAction.self, value: newAction, update: .all)
-                                }
+                                let obj = results[index]
+                                if obj.isInvalidated { continue }
+                                self.captureRecordingAction(obj, type: obj.isDeleted ? "delete" : "move", at: t)
                             }
                         case .error(let error):
                             print("Recording Listener: \(error)")
@@ -607,6 +775,11 @@ struct CustomDropDelegate: DropDelegate {
                 // Shared factory so drag/tap/seed defaults can't drift (TASK-018).
                 if newTool.toolType == "tactic" {
                     RedesignToolCatalog.configureSmartTool(newTool, center: dropLocation)
+                } else if newTool.toolType == "shape" {
+                    // TASK-058: shapes need a stroke width + (circle) radius, same
+                    // as tap-add — without this they came in at the 100pt model
+                    // default stroke (and 100×100 vs the tap's size).
+                    RedesignToolCatalog.configureShapeTool(newTool, subType: newTool.subToolType, center: dropLocation)
                 } else if newTool.toolType == "soccer" && !newTool.subToolType.isEmpty {
                     // Match the tap-add equipment size (was left at the model default 100).
                     newTool.width = RedesignToolCatalog.equipmentSize

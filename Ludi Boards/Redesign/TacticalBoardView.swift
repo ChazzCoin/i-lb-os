@@ -20,6 +20,7 @@ enum BoardScreen: String, CaseIterable, Identifiable {
 
 struct TacticalBoardView: View {
     @ObservedObject var state: BoardScreenState
+    @EnvironmentObject var BEO: BoardEngineObject
 
     /// When true, the board layer hosts the LIVE engine canvas
     /// (`RedesignBoardCanvas` → real `ManagedView` tools). When false (previews
@@ -44,7 +45,10 @@ struct TacticalBoardView: View {
         ZStack {
             // Floating chrome. Present mode goes full-screen: only the top bar
             // stays (to switch back); rail / pill / panels / context bar hide.
+            // Animate mode (TASK-051) swaps the Plan chrome for the record/
+            // playback surface: a recordings drawer + a transport pill.
             let presenting = state.mode == .present
+            let animating = state.mode == .animate
 
             VStack(spacing: 0) {
                 Group {
@@ -53,7 +57,28 @@ struct TacticalBoardView: View {
                 Spacer()
             }
 
-            if !presenting {
+            if animating {
+                // Animate surface: recordings drawer (right) + transport (bottom).
+                // No rail / library / squad / draw — only animation options.
+                HStack(alignment: .top) {
+                    Spacer()
+                    Group {
+                        if useEngineCanvas { EngineAnimatePanel(state: state) } else { SquadPanel() }
+                    }
+                    .padding(.trailing, 16).padding(.bottom, 16)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .padding(.top, 74)
+
+                VStack {
+                    Spacer()
+                    Group {
+                        if useEngineCanvas { EngineAnimateControlPill(state: state) } else { ControlPill() }
+                    }
+                    .padding(.bottom, 24)
+                    .padding(.trailing, 300)
+                }
+            } else if !presenting {
                 // Context toolbar on the selected engine tool (duplicate / delete).
                 if useEngineCanvas, state.hasSelection {
                     VStack {
@@ -62,17 +87,32 @@ struct TacticalBoardView: View {
                     }
                 }
 
-                HStack {
+                // TASK-039: the row must FILL the vertical space (top-aligned) so
+                // the right panel's `maxHeight: .infinity` has room to expand — the
+                // PanelShell fix alone was inert because this HStack collapsed to
+                // content height and centered.
+                HStack(alignment: .top, spacing: 10) {
                     Group {
                         if useEngineCanvas { EngineToolRail() } else { ToolRail() }
                     }
                     .padding(.leading, 16)
+                    .padding(.bottom, 80)        // rail stays clear of the bottom pill
                     Spacer()
-                    rightPanel
-                        .padding(.trailing, 16)
+                    // req 4/5: the drawer slides off-screen when closed; the
+                    // switcher rail stays so you can pick a drawer / reopen.
+                    if state.drawerOpen {
+                        rightPanel
+                            .padding(.bottom, 16)
+                            .transition(.move(edge: .trailing).combined(with: .opacity))
+                    }
+                    if useEngineCanvas {
+                        EngineDrawerRail(state: state).padding(.trailing, 16)
+                    }
                 }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .padding(.top, 74)
-                .padding(.bottom, 80)
+                .animation(.easeInOut(duration: 0.2), value: state.drawerOpen)
+                .animation(.easeInOut(duration: 0.2), value: state.activeDrawer)
 
                 VStack {
                     Spacer()
@@ -96,6 +136,10 @@ struct TacticalBoardView: View {
         }
         .preferredColorScheme(.dark)
         .animation(.easeInOut(duration: 0.18), value: state.panel)
+        .onChange(of: state.mode, perform: { newMode in
+            // Leaving Animate restores the real board — playback is non-destructive.
+            if useEngineCanvas, newMode != .animate { BEO.endPlaybackScene() }
+        })
     }
 
     @ViewBuilder private var boardLayer: some View {
@@ -128,6 +172,8 @@ struct TacticalBoardView: View {
         case .squad:      if useEngineCanvas { EngineSquadPanel(state: state) } else { SquadPanel() }
         case .properties: if useEngineCanvas { EnginePropertiesPanel(state: state) } else { PropertiesPanel() }
         case .library:    if useEngineCanvas { EngineLibraryPanel() } else { LibraryPanel() }
+        case .layers:     if useEngineCanvas { EngineLayersPanel(state: state) } else { SquadPanel() }   // TASK-047
+        case .boards:     if useEngineCanvas { EngineBoardsPanel(state: state) } else { SquadPanel() }   // req 4
         }
     }
 

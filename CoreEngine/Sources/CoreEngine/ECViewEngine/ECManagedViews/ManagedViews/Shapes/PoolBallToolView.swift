@@ -48,6 +48,51 @@ public enum PoolBallType: Int, CaseIterable {
     }
 }
 
+/// Frame-filling pool ball for the BOARD (req: pool render fix). Scales the
+/// circle, stripe band, and number to whatever size the engine frames it to —
+/// unlike PoolBallIcon, which is a fixed 30pt PICKER icon (kept for the Library).
+public struct PoolBallView: View {
+    public let ball: ViewEngine.Tool.PoolBallTool
+    public init(ball: ViewEngine.Tool.PoolBallTool) { self.ball = ball }
+
+    private var isStripe: Bool { ball.number > 8 }
+    private var isCue: Bool { ball == .que }
+
+    public var body: some View {
+        GeometryReader { geo in
+            let d = min(geo.size.width, geo.size.height)
+            ZStack {
+                // Base: stripes + cue are white; solids/8-ball are the ball colour.
+                Circle().fill(isStripe || isCue ? Color.white : ball.color)
+                // Stripe band across the white ball.
+                if isStripe {
+                    Rectangle().fill(ball.color)
+                        .frame(width: d, height: d * 0.6)
+                        .mask(Circle().frame(width: d, height: d))
+                }
+                // Number bubble (every ball except the cue).
+                if !isCue {
+                    Circle().fill(.white).frame(width: d * 0.5, height: d * 0.5)
+                        .overlay(
+                            Text("\(ball.number)")
+                                .font(.system(size: d * 0.26, weight: .bold))
+                                .foregroundColor(.black)
+                                .minimumScaleFactor(0.5)
+                        )
+                }
+                Circle().strokeBorder(.black.opacity(0.18), lineWidth: max(1, d * 0.02))
+                // Soft highlight for a little dimensionality.
+                Circle().fill(
+                    RadialGradient(colors: [.white.opacity(0.4), .clear],
+                                   center: .topLeading, startRadius: 0, endRadius: d * 0.55)
+                )
+            }
+            .frame(width: d, height: d)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)   // centre in the frame
+        }
+    }
+}
+
 public struct PoolBallIcon: View {
     @State public var ballType: ViewEngine.Tool.PoolBallTool
     

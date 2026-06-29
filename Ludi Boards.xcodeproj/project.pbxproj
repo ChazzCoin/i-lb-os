@@ -16,6 +16,7 @@
 		4B2043D5F77FF17D3B5C473A /* RedesignPitchBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42908E7D0A10B7B13583184C /* RedesignPitchBackground.swift */; };
 		4E4C2E6737E185BD72327C47 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC81D1A1B43BE56402F73581 /* Models.swift */; };
 		53326E5F45D1886E289E7676 /* RedesignBoardCanvas.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABFEEFE9298247A5731E1FE /* RedesignBoardCanvas.swift */; };
+		65DDB6994A7ED3149316CAB5 /* SportBoardBackgrounds.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC8C630E03095042820C395D /* SportBoardBackgrounds.swift */; };
 		791125989C4CC7642C20F5ED /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B256A378C65363115C48766 /* Components.swift */; };
 		9F9A98C5ECE42405966345D9 /* RosterPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F9E73CCE82C43B35E379A4 /* RosterPlayer.swift */; };
 		E0D5493928D7EAE3EE080E71 /* PitchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0397134B1EC0EC150E67C02 /* PitchView.swift */; };
@@ -88,6 +89,7 @@
 		FB881A442B48C61400C16198 /* _BuddyRequestListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB881A432B48C61400C16198 /* _BuddyRequestListView.swift */; };
 		FB93BB172B033E2000864CB2 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FB93BB162B033E2000864CB2 /* GoogleService-Info.plist */; };
 		FB94E3942E20FD4D0088E277 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FB94E3932E20FD4D0088E277 /* GoogleService-Info.plist */; };
+		FBDDCAFE000000000000DA02 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = FBDDCAFE000000000000DA01 /* PrivacyInfo.xcprivacy */; };
 		FB94E3962E238AEC0088E277 /* DocumentPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB94E3952E238AEC0088E277 /* DocumentPicker.swift */; };
 		FB94E3982E23938A0088E277 /* GridLines.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB94E3972E23938A0088E277 /* GridLines.swift */; };
 		FB982F912B19D1B900C0DA03 /* _FirebaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB982F902B19D1B900C0DA03 /* _FirebaseService.swift */; };
@@ -195,6 +197,7 @@
 		A0397134B1EC0EC150E67C02 /* PitchView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PitchView.swift; sourceTree = "<group>"; };
 		B10339A36D055D3AF27A2B15 /* BoardScreenState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BoardScreenState.swift; path = "Ludi Boards/Redesign/BoardScreenState.swift"; sourceTree = SOURCE_ROOT; };
 		B894D3D2AE7AFEC4E6D907A1 /* TacticalBoardView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TacticalBoardView.swift; sourceTree = "<group>"; };
+		DC8C630E03095042820C395D /* SportBoardBackgrounds.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SportBoardBackgrounds.swift; path = "Ludi Boards/views/Backgrounds/SportBoardBackgrounds.swift"; sourceTree = "<group>"; };
 		EC81D1A1B43BE56402F73581 /* Models.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		F8AC3326A2BBA133EA54B880 /* Panels.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Panels.swift; sourceTree = "<group>"; };
 		FB0C196B2C0FA6D30036B4A0 /* NewProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewProfileView.swift; sourceTree = "<group>"; };
@@ -267,6 +270,7 @@
 		FB881A432B48C61400C16198 /* _BuddyRequestListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _BuddyRequestListView.swift; sourceTree = "<group>"; };
 		FB93BB162B033E2000864CB2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
 		FB94E3932E20FD4D0088E277 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		FBDDCAFE000000000000DA01 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		FB94E3952E238AEC0088E277 /* DocumentPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentPicker.swift; sourceTree = "<group>"; };
 		FB94E3972E23938A0088E277 /* GridLines.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridLines.swift; sourceTree = "<group>"; };
 		FB982F902B19D1B900C0DA03 /* _FirebaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _FirebaseService.swift; sourceTree = "<group>"; };
@@ -655,6 +659,7 @@
 				FBFF5CD32BCDFBF900149A31 /* Packages */,
 				FBD9AFA52AFF00BF005F8620 /* Products */,
 				FB8819D62B464AD500C16198 /* Frameworks */,
+				DC8C630E03095042820C395D /* SportBoardBackgrounds.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -673,6 +678,7 @@
 			children = (
 				FBFF5CF02BCE4D0400149A31 /* holding */,
 				FB18F17F2B6AC49600D89F8D /* Ludi-Boards-Info.plist */,
+				FBDDCAFE000000000000DA01 /* PrivacyInfo.xcprivacy */,
 				FBEBEF902B494DA600B8BA32 /* DB */,
 				FB829F152B3D4DE100FAC6E0 /* Extensions */,
 				FB15DD2B2B07448B00A21290 /* CanvasEngine */,
@@ -1071,6 +1077,7 @@
 				FBD9AFAF2AFF00BF005F8620 /* Preview Assets.xcassets in Resources */,
 				FBD9AFAC2AFF00BF005F8620 /* Assets.xcassets in Resources */,
 				FB93BB172B033E2000864CB2 /* GoogleService-Info.plist in Resources */,
+				FBDDCAFE000000000000DA02 /* PrivacyInfo.xcprivacy in Resources */,
 				0719F7AB085DD37E89F0793B /* Archivo.ttf in Resources */,
 				E19E1EC6CA718C61F0450C0F /* HankenGrotesk.ttf in Resources */,
 				2DD225AAD0D57C4EF60208A0 /* JetBrainsMono.ttf in Resources */,
@@ -1253,6 +1260,7 @@
 				4B2043D5F77FF17D3B5C473A /* RedesignPitchBackground.swift in Sources */,
 				53326E5F45D1886E289E7676 /* RedesignBoardCanvas.swift in Sources */,
 				9F9A98C5ECE42405966345D9 /* RosterPlayer.swift in Sources */,
+				65DDB6994A7ED3149316CAB5 /* SportBoardBackgrounds.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1468,7 +1476,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 14;
 				DEVELOPMENT_ASSET_PATHS = "\"Ludi Boards/Preview Content\"";
 				DEVELOPMENT_TEAM = 248J2GKL56;
 				ENABLE_PREVIEWS = YES;
@@ -1477,7 +1485,6 @@
 				INFOPLIST_KEY_CFBundleDisplayName = SOL;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.sports";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
-				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "SOL will save screenshots of Activity Plans.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -1487,7 +1494,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.12;
+				MARKETING_VERSION = 1.14;
 				PRODUCT_BUNDLE_IDENTIFIER = io.ludi.sol;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1504,7 +1511,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 14;
 				DEVELOPMENT_ASSET_PATHS = "\"Ludi Boards/Preview Content\"";
 				DEVELOPMENT_TEAM = 248J2GKL56;
 				ENABLE_PREVIEWS = YES;
@@ -1513,7 +1520,6 @@
 				INFOPLIST_KEY_CFBundleDisplayName = SOL;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.sports";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
-				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "SOL will save screenshots of Activity Plans.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -1523,7 +1529,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.12;
+				MARKETING_VERSION = 1.14;
 				PRODUCT_BUNDLE_IDENTIFIER = io.ludi.sol;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

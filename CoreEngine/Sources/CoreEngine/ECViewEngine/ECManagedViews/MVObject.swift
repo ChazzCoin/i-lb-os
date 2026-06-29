@@ -552,7 +552,12 @@ public class ManagedViewObject: ObservableObject {
                     mv.colorBlue = lc.blue
                     mv.colorAlpha = lc.alpha
                 }
-                mv.isLocked = self.isDragging ? true : self.lifeIsLocked
+                // Persist ONLY the real lock state — never the transient `isDragging`
+                // flag. Writing `isDragging ? true` poisoned the durable isLocked: a
+                // tool saved mid-drag (e.g. the curved line, which saved before
+                // clearing isDragging) stayed isLocked=true forever, so every later
+                // drag bailed on `lifeIsLocked` and the tool became unmovable.
+                mv.isLocked = self.lifeIsLocked
                 mv.isDeleted = self.isDeleted
                 mv.toolType = self.lifeToolType
                 mv.toolSize = String(self.lifeToolSize)

@@ -66,13 +66,23 @@ struct ModeSwitch: View {
 
 // MARK: - Top bar
 
+/// One board entry for the breadcrumb switcher (TASK-044).
+struct BoardMenuItem: Identifiable, Equatable { let id: String; let label: String }
+
 struct TopBar: View {
     @Binding var mode: EditorMode
     var title: String = "Activity 3 · Build-up"
     var squad: String = "U-12 Squad"
-    /// Free/local build has no collaborators — gate the presence avatars off.
-    var showPresence: Bool = true
-    var onShare: () -> Void = {}
+    /// Current user shown top-right (TASK-041). Empty = nothing to show.
+    var userInitials: String = "CR"
+    var userLive: Bool = true
+    /// Board switcher data (TASK-044). Empty `boards` = plain, non-tappable title.
+    var boards: [BoardMenuItem] = []
+    var currentBoardId: String = ""
+    var onSelectBoard: (String) -> Void = { _ in }
+    var onCreateBoard: () -> Void = {}
+    /// Text shared by the system sheet (TASK-046).
+    var shareItem: String = "Ludi Board"
 
     var body: some View {
         HStack(spacing: 14) {
@@ -87,7 +97,7 @@ struct TopBar: View {
                     Text(squad).foregroundStyle(Brand.textDim)
                     Image(systemName: "chevron.right").font(.system(size: 10, weight: .bold))
                         .foregroundStyle(Brand.textFaint)
-                    Text(title).foregroundStyle(Brand.textMid)
+                    boardBreadcrumb
                 }
                 .font(AppFont.ui(14, .semibold))
 
@@ -100,16 +110,12 @@ struct TopBar: View {
 
             // Presence + share
             HStack(spacing: 14) {
-                if showPresence {
-                    HStack(spacing: -9) {
-                        PresenceAvatar(initials: "CR", fill: .homeJersey, live: true)
-                        PresenceAvatar(initials: "JM",
-                                       fill: LinearGradient(colors: [Color(brandHex: "5B7491"), Color(brandHex: "3F5670")], startPoint: .top, endPoint: .bottom))
-                        PresenceAvatar(initials: "+3",
-                                       fill: LinearGradient(colors: [Color(brandHex: "8A6F4A"), Color(brandHex: "6A533A")], startPoint: .top, endPoint: .bottom))
-                    }
+                if !userInitials.isEmpty {
+                    PresenceAvatar(initials: userInitials, fill: .homeJersey, live: userLive)
                 }
-                ShareButton().onTapGesture(perform: onShare)
+                // TASK-046: real system share of the board (text MVP; image export later).
+                ShareLink(item: shareItem) { ShareButton() }
+                    .buttonStyle(.plain)
             }
         }
         .padding(.horizontal, 20)
@@ -120,10 +126,40 @@ struct TopBar: View {
         )
         .overlay(alignment: .bottom) { Rectangle().fill(Brand.hairline).frame(height: 1) }
     }
+
+    /// The board title — a dropdown when boards are supplied (TASK-044),
+    /// otherwise plain text (preview / no-engine path).
+    @ViewBuilder private var boardBreadcrumb: some View {
+        if boards.isEmpty {
+            Text(title).foregroundStyle(Brand.textMid)
+        } else {
+            Menu {
+                ForEach(boards) { b in
+                    Button {
+                        onSelectBoard(b.id)
+                    } label: {
+                        if b.id == currentBoardId {
+                            Label(b.label, systemImage: "checkmark")
+                        } else {
+                            Text(b.label)
+                        }
+                    }
+                }
+                Divider()
+                Button { onCreateBoard() } label: { Label("New board", systemImage: "plus") }
+            } label: {
+                HStack(spacing: 5) {
+                    Text(title).foregroundStyle(Brand.textMid)
+                    Image(systemName: "chevron.down").font(.system(size: 9, weight: .bold))
+                        .foregroundStyle(Brand.textFaint)
+                }
+            }
+        }
+    }
 }
 
-/// Engine-wired top bar: breadcrumb from the live activity, presence gated on
-/// login (free build → none). Mode binding drives Plan/Animate/Present.
+/// Engine-wired top bar: breadcrumb dropdown from the live activities (TASK-044),
+/// current-user presence + guest synthesis (TASK-041), real share (TASK-046).
 struct EngineTopBar: View {
     @EnvironmentObject var BEO: BoardEngineObject
     @ObservedObject var state: BoardScreenState
@@ -131,9 +167,15 @@ struct EngineTopBar: View {
     var body: some View {
         TopBar(mode: $state.mode,
                title: activityTitle,
-               squad: "U-12 Squad",          // roster name lands in RD-5
-               showPresence: BEO.isLoggedIn,
-               onShare: {})                   // export/share entry — RD-6
+               squad: "U-12 Squad",          // roster/team name lands in TASK-033
+               userInitials: initials(from: BEO.currentUserName),
+               userLive: BEO.isLoggedIn,
+               boards: boardItems,
+               currentBoardId: BEO.currentActivityId,
+               onSelectBoard: { BEO.changeActivity(activityId: $0) },
+               onCreateBoard: createBoard,
+               shareItem: "Check out my board: \(activityTitle)")
+            .onAppear(perform: ensureGuestIdentity)
     }
 
     private var activityTitle: String {
@@ -142,6 +184,45 @@ struct EngineTopBar: View {
             if !parts.isEmpty { return parts.joined(separator: " · ") }
         }
         return "Untitled Activity"
+    }
+
+    /// All boards for the switcher (TASK-044), newest-stable order by orderIndex.
+    private var boardItems: [BoardMenuItem] {
+        BEO.realmInstance.objects(ActivityPlan.self)
+            .sorted(byKeyPath: "orderIndex")
+            .map { plan in
+                let parts = [plan.title, plan.subTitle].filter { !$0.isEmpty }
+                return BoardMenuItem(id: plan.id, label: parts.isEmpty ? "Untitled" : parts.joined(separator: " · "))
+            }
+    }
+
+    /// Two-char initials from a name (matches the roster-editor logic, TASK-041).
+    private func initials(from name: String) -> String {
+        let chars = name.split(separator: " ").prefix(2).compactMap { $0.first }
+        let s = String(chars).uppercased()
+        return s.isEmpty ? "?" : s
+    }
+
+    /// Not-signed-up users still get a stable identity so the avatar shows a real
+    /// name (TASK-041). Reuses the engine's existing guest generators.
+    private func ensureGuestIdentity() {
+        if BEO.currentUserId.isEmpty { BEO.currentUserId = generateRandomUserId() }
+        if BEO.currentUserName.isEmpty { BEO.currentUserName = generateRandomName() }
+    }
+
+    /// Create a new board and switch to it (TASK-044).
+    private func createBoard() {
+        let count = BEO.realmInstance.objects(ActivityPlan.self).count
+        let newId = UUID().uuidString
+        BEO.realmInstance.safeWrite { r in
+            let plan = ActivityPlan()
+            plan.id = newId
+            plan.title = "New Board"
+            plan.subTitle = ""
+            plan.orderIndex = count
+            r.create(ActivityPlan.self, value: plan, update: .all)
+        }
+        BEO.changeActivity(activityId: newId)
     }
 }
 
@@ -174,27 +255,35 @@ struct ShareButton: View {
 
 // MARK: - Left tool rail
 
-struct ToolRail: View {
-    /// Index of the active tool, and a tap handler. Pure visual — the engine
-    /// wiring lives in `EngineToolRail` (TASK-006) so the BEO-less preview path
-    /// can still render the rail.
-    var active: Int = 0
-    var onTap: (Int) -> Void = { _ in }
+/// The rail's tools, typed so render / tap / active-state can't drift from a
+/// positional index (TASK-025). Interaction modes only — add/colour tools live
+/// in the Library / Squad / Properties panels, not the rail.
+enum RailTool: String, CaseIterable, Identifiable {
+    case select, drawStraight, drawCurved
+    var id: String { rawValue }
 
-    /// (symbol, isDivider-after). Index order is the rail's tool identity —
-    /// `EngineToolRail` maps these to engine actions.
-    static let tools: [(String, Bool)] = [
-        ("cursorarrow", false), ("hand.draw", true),
-        ("pencil.tip", false), ("scribble.variable", false), ("photo", true),
-        ("person", false), ("triangle", false), ("flag", true),
-        ("paintbrush.pointed", false),
-    ]
+    var symbol: String {
+        switch self {
+        case .select:       return "cursorarrow"
+        case .drawStraight: return "pencil.tip"
+        case .drawCurved:   return "scribble.variable"
+        }
+    }
+    /// Divider drawn after this tool (separates select from the draw tools).
+    var dividerAfter: Bool { self == .select }
+}
+
+struct ToolRail: View {
+    /// Active tool + tap handler. Pure visual — the engine wiring lives in
+    /// `EngineToolRail` (TASK-006/025) so the BEO-less preview path renders.
+    var active: RailTool = .select
+    var onTap: (RailTool) -> Void = { _ in }
 
     var body: some View {
         VStack(spacing: 5) {
-            ForEach(Array(Self.tools.enumerated()), id: \.offset) { i, t in
-                RailButton(symbol: t.0, active: i == active) { onTap(i) }
-                if t.1 { Divider().overlay(Brand.hairline).frame(width: 28) }
+            ForEach(RailTool.allCases) { tool in
+                RailButton(symbol: tool.symbol, active: tool == active) { onTap(tool) }
+                if tool.dividerAfter { Divider().overlay(Brand.hairline).frame(width: 28) }
             }
         }
         .padding(8)
@@ -204,29 +293,24 @@ struct ToolRail: View {
 }
 
 /// Engine-wired rail: derives the active tool from the board's draw state and
-/// routes taps to engine actions (draw straight/curved, select, pan).
+/// routes taps to engine actions (select, draw straight/curved).
 struct EngineToolRail: View {
     @EnvironmentObject var BEO: BoardEngineObject
 
-    private var activeIndex: Int {
-        guard BEO.isDraw else { return 0 }                    // cursor
-        switch BEO.shapeSubType {
-        case "line_curved": return 3                          // scribble
-        default:            return 2                           // pencil (straight)
-        }
+    private var active: RailTool {
+        guard BEO.isDraw else { return .select }
+        return BEO.shapeSubType == "line_curved" ? .drawCurved : .drawStraight
     }
 
     var body: some View {
-        ToolRail(active: activeIndex, onTap: handleTap)
+        ToolRail(active: active, onTap: handleTap)
     }
 
-    private func handleTap(_ i: Int) {
-        switch i {
-        case 0:  BEO.disableDrawing()                                   // select / cursor
-        case 1:  BEO.disableDrawing(); BEO.gesturesAreLocked = false    // hand / pan
-        case 2:  BEO.toggleDrawingMode(subType: "line_straight")        // draw straight
-        case 3:  BEO.toggleDrawingMode(subType: "line_curved")          // draw curved
-        default: BEO.disableDrawing()  // photo/person/shape/marker/colour — wired in later tasks
+    private func handleTap(_ tool: RailTool) {
+        switch tool {
+        case .select:       BEO.disableDrawing()
+        case .drawStraight: BEO.toggleDrawingMode(subType: "line_straight")
+        case .drawCurved:   BEO.toggleDrawingMode(subType: "line_curved")
         }
     }
 }
@@ -257,6 +341,32 @@ private struct RailButton: View {
     }
 }
 
+// MARK: - Right drawer switcher rail (req 4/5)
+
+/// Vertical rail on the right edge: a global on/off toggle (req 5) + one button
+/// per dedicated drawer (req 4). Tapping a drawer's button shows it (or closes
+/// the drawer if it's already the open one).
+struct EngineDrawerRail: View {
+    @ObservedObject var state: BoardScreenState
+    var body: some View {
+        VStack(spacing: 5) {
+            // Global show/hide — slides the whole drawer off-screen.
+            RailButton(symbol: state.drawerOpen ? "chevron.right" : "chevron.left",
+                       active: false) { withAnimation(.easeInOut(duration: 0.2)) { state.toggleDrawer() } }
+            Divider().overlay(Brand.hairline).frame(width: 28)
+            ForEach(RightPanel.railDrawers) { d in
+                RailButton(symbol: d.icon,
+                           active: state.drawerOpen && state.activeDrawer == d) {
+                    withAnimation(.easeInOut(duration: 0.2)) { state.showDrawer(d) }
+                }
+            }
+        }
+        .padding(8)
+        .glassPanel(fill: 0.78)
+        .frame(width: 56)
+    }
+}
+
 // MARK: - Bottom control pill
 
 struct ControlPill: View {
@@ -270,13 +380,15 @@ struct ControlPill: View {
     var onZoomOut: () -> Void = {}
     var onZoomIn: () -> Void = {}
     var onScope: () -> Void = {}
+    var onRotateLeft: () -> Void = {}
+    var onRotateRight: () -> Void = {}
     var onRecord: () -> Void = {}
+    var showRecord: Bool = true     // TASK-051: record lives in Animate mode now, not Plan
 
     var body: some View {
         HStack(spacing: 3) {
             PillIcon(locked ? "lock.fill" : "lock", tint: locked ? Brand.lime : nil, action: onLock)
-            PillIcon("arrow.uturn.backward", action: onUndo)
-            PillIcon("arrow.uturn.forward", action: onRedo)
+            // Far-left curved-arrow (undo/redo) buttons removed per request.
             divider
             PillIcon("minus.magnifyingglass", action: onZoomOut)
             Text("\(zoom)%")
@@ -285,6 +397,11 @@ struct ControlPill: View {
                 .frame(minWidth: 46)
             PillIcon("plus.magnifyingglass", action: onZoomIn)
             PillIcon("scope", action: onScope)
+            divider
+            // Rotate buttons restored on the RIGHT (the far-right pair to keep).
+            PillIcon("rotate.left", action: onRotateLeft)
+            PillIcon("rotate.right", action: onRotateRight)
+            if showRecord {
             divider
             Button(action: onRecord) {
                 HStack(spacing: 7) {
@@ -297,6 +414,7 @@ struct ControlPill: View {
                 .background(Brand.danger.opacity(recording ? 0.28 : 0.14), in: RoundedRectangle(cornerRadius: 9, style: .continuous))
             }
             .buttonStyle(.plain)
+            }
         }
         .padding(.horizontal, 9).padding(.vertical, 7)
         .glassPanel(radius: 14, fill: 0.86)
@@ -323,8 +441,89 @@ struct EngineControlPill: View {
             onZoomOut: { BEO.zoomOut() },
             onZoomIn:  { BEO.zoomIn() },
             onScope:   { BEO.resetZoom() },
-            onRecord:  { BEO.isRecording ? BEO.stopRecording() : BEO.startRecording() }
+            onRotateLeft:  { BEO.canvasRotation += -90.0 },
+            onRotateRight: { BEO.canvasRotation +=  90.0 },
+            showRecord: false   // TASK-051: record/playback live in Animate mode
         )
+    }
+}
+
+/// Bottom transport for Animate mode (TASK-053): record + play/pause/restart of
+/// the selected recording, wired to the existing engine record/replay path.
+struct EngineAnimateControlPill: View {
+    @EnvironmentObject var BEO: BoardEngineObject
+    @ObservedObject var state: BoardScreenState
+
+    var body: some View {
+        let playing = BEO.isPlayingAnimation
+        let hasSelection = !BEO.playbackRecordingId.isEmpty
+        VStack(spacing: 8) {
+            // TASK-054: scrub slider + elapsed/total readout (only with a selection).
+            if hasSelection {
+                HStack(spacing: 9) {
+                    Text(timeLabel(BEO.playbackTime)).font(AppFont.mono(11)).foregroundStyle(Brand.textMid)
+                        .frame(width: 34, alignment: .trailing)
+                    Slider(value: Binding(get: { BEO.playbackTime },
+                                          set: { BEO.seekPlayback(to: $0) }),
+                           in: 0...max(BEO.playbackDuration, 0.1))
+                        .tint(Brand.lime)
+                        .frame(minWidth: 180)
+                        .disabled(BEO.isRecording)
+                    Text(timeLabel(BEO.playbackDuration)).font(AppFont.mono(11)).foregroundStyle(Brand.textDim)
+                        .frame(width: 34, alignment: .leading)
+                }
+            }
+            HStack(spacing: 3) {
+                // Record toggle (capture moves/adds/deletes into a RecordingAction log)
+                Button { BEO.isRecording ? BEO.stopRecording() : BEO.startRecording() } label: {
+                    HStack(spacing: 7) {
+                        Image(systemName: BEO.isRecording ? "stop.fill" : "circle.fill").font(.system(size: 13))
+                        Text(BEO.isRecording ? "Stop" : "Record").font(AppFont.ui(12, .semibold))
+                    }
+                    .foregroundStyle(Brand.danger)
+                    .padding(.leading, 9).padding(.trailing, 12).frame(height: 34)
+                    .background(Brand.danger.opacity(BEO.isRecording ? 0.28 : 0.14), in: RoundedRectangle(cornerRadius: 9, style: .continuous))
+                }
+                .buttonStyle(.plain)
+                .disabled(playing)
+
+                divider
+
+                // Stop: halt playback and reset to the start (TASK / req #3).
+                PillIcon("stop.fill") { BEO.seekPlayback(to: 0) }
+                    .disabled(!hasSelection)
+                // Play / pause toggle (req #2): pause keeps position; play resumes.
+                Button { playing ? BEO.stopAnimationRecording() : play() } label: {
+                    Image(systemName: playing ? "pause.fill" : "play.fill")
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundStyle(hasSelection || playing ? Brand.limeInk : Brand.textMuted)
+                        .frame(width: 40, height: 34)
+                        .background((hasSelection || playing) ? Brand.lime : .white.opacity(0.05),
+                                    in: RoundedRectangle(cornerRadius: 9, style: .continuous))
+                }
+                .buttonStyle(.plain)
+                .disabled(!hasSelection && !playing)
+                .disabled(BEO.isRecording)
+            }
+        }
+        .padding(.horizontal, 9).padding(.vertical, 7)
+        .glassPanel(radius: 14, fill: 0.86)
+        // The board lock during playback is set synchronously inside the engine
+        // (play/stop), not via onChange here — SwiftUI can coalesce rapid flips.
+    }
+
+    private var divider: some View {
+        Rectangle().fill(.white.opacity(0.1)).frame(width: 1, height: 22).padding(.horizontal, 5)
+    }
+
+    private func timeLabel(_ t: Double) -> String {
+        let s = Int(t.rounded())
+        return String(format: "%d:%02d", s / 60, s % 60)
+    }
+
+    private func play() {
+        guard !BEO.playbackRecordingId.isEmpty else { return }
+        BEO.playAnimationRecording()
     }
 }
 

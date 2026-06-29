@@ -32,12 +32,22 @@ struct BoardEngine: View {
                  // Board Tools
                 MVEngine.Display(reset: self.$resetTools)
 
-                 // Temporary line being drawn
+                 // Temporary line being drawn. TASK-048: match the preview to the
+                 // active draw tool — a curved tool drew a straight rubber-band
+                 // before. The curve's control point is the start/end midpoint,
+                 // matching the saved line's convention (so a fresh curve reads as
+                 // straight until its control anchor is bent — same as the result).
                  if self.BEO.isDraw {
                      if drawingStartPoint != .zero {
                          Path { path in
                              path.move(to: drawingStartPoint)
-                             path.addLine(to: drawingEndPoint)
+                             if self.BEO.shapeSubType == "line_curved" {
+                                 let mid = CGPoint(x: (drawingStartPoint.x + drawingEndPoint.x) / 2,
+                                                   y: (drawingStartPoint.y + drawingEndPoint.y) / 2)
+                                 path.addQuadCurve(to: drawingEndPoint, control: mid)
+                             } else {
+                                 path.addLine(to: drawingEndPoint)
+                             }
                          }
                          .stroke(Color.red, style: StrokeStyle(lineWidth: 10, dash: [1]))
                      }
@@ -48,7 +58,16 @@ struct BoardEngine: View {
             .background(
                 // Board-sized, center-aligned: the field background must share
                 // the tools' coordinate space or spawned tools miss the field.
-                FieldOverlayView(width: self.BEO.boardWidth, height: self.BEO.boardHeight, background: {self.BEO.boardBgColor},
+                FieldOverlayView(width: self.BEO.boardWidth, height: self.BEO.boardHeight,
+                    background: {
+                        // The legacy `boardBgColor` green backing only ever leaks
+                        // as strips: every redesign board (vector + image) draws
+                        // its own opaque surface, framed transposed + rounded, so
+                        // the board-sized backing shows above/below + at the
+                        // corners. Clear it on the redesign path (boardBgOverride
+                        // is always set there); keep it for the legacy board.
+                        (self.BEO.boardBgOverride?.isEmpty == false) ? Color.clear : self.BEO.boardBgColor
+                    },
                     overlay: {
                         if let CurrentBoardBackground = self.BEO.boards.getAllBoards()[self.BEO.boardBgName] {
                             CurrentBoardBackground()
@@ -85,6 +104,7 @@ struct BoardEngine: View {
             #endif
             self.BEO.ensureDefaultActivityPlan()
             self.BEO.loadBoardSettings()
+            self.BEO.healStuckLocks()   // clear tools the old drag-lock save left permanently locked
             // RD-2 / TASK-003: DEBUG hook to preview a registry board background
             // headlessly (e.g. REDESIGN_BG="Soccer Redesign Full View"). No-op
             // in release and when unset.
@@ -309,7 +329,9 @@ struct BoardEngine: View {
             line.sport = ViewEngine.Tool.ShapeTool.line_straight.genre
             line.toolType = ViewEngine.Tool.ShapeTool.line_straight.type
             line.subToolType = self.BEO.shapeSubType
-            line.lineDash = 1
+            // TASK-062: dotted lines need lineDash > 1 to render dashed
+            // (LineDrawingManaged dashes only when lifeLineDash > 1).
+            line.lineDash = (self.BEO.shapeSubType == "line_dotted") ? 5 : 1
             line.dateUpdated = Int(Date().timeIntervalSince1970)
 
             // History

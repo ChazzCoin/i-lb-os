@@ -170,13 +170,43 @@ authoritative list. Note any that are required vs optional.}}
 
 ## Test infrastructure
 
-{{IF THE PROJECT HAS NON-OBVIOUS TEST SETUP — test accounts, fixture
-data, emulator vs production targets, etc. — document it here. The
-test-pairing convention also lives here:}}
+### Verifying in the simulator — background only
 
-**Test/task pairing:** {{e.g. "every E2E spec is paired 1:1 with a
-task. Filename `e2e/tests/TASK-XXX-slug.spec.js` matches the task ID
-and slug. The first line of the spec links back to the task file."}}
+Verify iOS changes by driving the Simulator **headlessly in the
+background** with `xcrun simctl`. Never take over the GUI with
+foreground computer-use control of the Simulator (the user has
+declined that — it's disruptive).
+
+The loop:
+
+```bash
+# build (resolves SPM deps on first run; incremental after)
+xcodebuild -workspace "Ludi Boards.xcworkspace" -scheme "Ludi Boards" \
+  -destination 'platform=iOS Simulator,id=<UDID>' -derivedDataPath build build
+
+# boot + install + launch (bundle id: io.ludi.sol)
+xcrun simctl boot <UDID>; open -a Simulator
+xcrun simctl install <UDID> "build/Build/Products/Debug-iphonesimulator/Ludi Boards.app"
+xcrun simctl launch --terminate-running-process <UDID> io.ludi.sol SIMCTL_CHILD_REDESIGN_SEED=1
+
+# observe state in the background
+xcrun simctl io <UDID> screenshot /tmp/shot.png   # then rotate/zoom the PNG to read it
+xcrun simctl spawn <UDID> log show --last 60s --predicate 'processImagePath CONTAINS "Ludi"'
+```
+
+Useful `SIMCTL_CHILD_*` env seeds (DEBUG builds): `REDESIGN_SEED=1`
+(seed a home+away roster + tools), `REDESIGN_SMART=1`, `REDESIGN_BG`,
+`REDESIGN_SCREEN`, `REDESIGN_MODE`, `LEGACY_BOARD=1`. Defined in
+`RedesignPreviewEntry.swift` / `BoardEngineView.swift`.
+
+For interaction-dependent checks a screenshot can't cover, prefer an
+env-var/headless hook or an XCUITest over GUI clicking.
+
+### Test/task pairing
+
+{{e.g. "every E2E spec is paired 1:1 with a task." — not yet
+established for this project; tasks live under `tasks/` and are
+verified via the simulator loop above.}}
 
 ## Deploy
 

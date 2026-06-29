@@ -210,6 +210,21 @@ public struct SmartToolManaged: View {
                     .position(start)
             }
             shape
+            // TASK-050: overlay / single-point tools (spotlight, focus ring,
+            // offside line, ladder, stat badge) have a non-hittable or thin body
+            // — the spotlight's dim overlay is `.allowsHitTesting(false)` — so
+            // taps, the whole-tool move gesture, and long-press-to-delete never
+            // land and the tool gets stuck on the board, unselectable. Give them
+            // an always-hittable handle at their anchor so they can be selected,
+            // moved, and deleted like any other tool. (2-point tools already have
+            // draggable anchors + a hittable stroked body.)
+            if !twoPoint {
+                Circle()
+                    .fill(Color.white.opacity(0.02))
+                    .frame(width: w * 5, height: w * 5)
+                    .contentShape(Circle())
+                    .position(start)
+            }
             if selected { anchors }
         }
         .opacity(MVO.isDeletedChecker() ? 0 : 1)
