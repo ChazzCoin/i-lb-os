@@ -26,10 +26,20 @@ public class RecordingAction: Object, ObjectKeyIdentifiable {
     @Persisted public var isInitialState: Bool = false
     @Persisted public var orderIndex: Int = 0
     @Persisted public var dateCreated: String = TimeProvider.getCurrentTimestamp()
-    
+    // TASK-054/057: seconds from recording start — the real time axis for scrub/seek.
+    @Persisted public var timeOffset: Double = 0.0
+    // TASK-055/057: "initial" / "add" / "move" / "delete" so replay can create,
+    // move, or hide a tool. Default "move" keeps legacy rows working.
+    @Persisted public var actionType: String = "move"
+
     // Managed View Attributes
     @Persisted public var sport: String = "pool"
     @Persisted public var toolType: String = "8BALL"
+    // TASK-055: re-create a tool added mid-recording (kind + roster link).
+    @Persisted public var subToolType: String = ""
+    @Persisted public var playerId: String = ""
+    @Persisted public var jerseyNumber: Int = 0
+    @Persisted public var teamSide: String = ""
     @Persisted public var toolColor: String = "TOOLCOLOR.BLACK.name"  // Assuming it's a string representation
     @Persisted public var toolSize: String = "TOOLSIZE.MEDIUM.name"  // Assuming it's a string representation
     @Persisted public var x: Double = 0.0
@@ -66,6 +76,10 @@ public extension RecordingAction {
         self.toolId = managedView.id
         self.sport = managedView.sport
         self.toolType = managedView.toolType
+        self.subToolType = managedView.subToolType
+        self.playerId = managedView.playerId
+        self.jerseyNumber = managedView.jerseyNumber
+        self.teamSide = managedView.teamSide
         self.toolColor = managedView.toolColor
         self.toolSize = managedView.toolSize
         self.x = managedView.x

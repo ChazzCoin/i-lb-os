@@ -25,7 +25,10 @@ struct LudiBoardsApp: SwiftUI.App {
             // automatically; a future NON-additive change (rename/remove/retype)
             // must populate this block with explicit oldObject/newObject mapping
             // or Realm throws at launch (TASK-024).
-            schemaVersion: 2,
+            // v3 (AN phase): additive — RecordingAction gains timeOffset,
+            // actionType, subToolType, playerId, jerseyNumber, teamSide for
+            // faithful, timed, seek-able replay. Additive migrates automatically.
+            schemaVersion: 3,
             migrationBlock: { _, _ in }
         )
         Realm.Configuration.defaultConfiguration = realmConfiguration

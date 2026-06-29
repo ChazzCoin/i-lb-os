@@ -89,6 +89,7 @@
 		FB881A442B48C61400C16198 /* _BuddyRequestListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB881A432B48C61400C16198 /* _BuddyRequestListView.swift */; };
 		FB93BB172B033E2000864CB2 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FB93BB162B033E2000864CB2 /* GoogleService-Info.plist */; };
 		FB94E3942E20FD4D0088E277 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FB94E3932E20FD4D0088E277 /* GoogleService-Info.plist */; };
+		FBDDCAFE000000000000DA02 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = FBDDCAFE000000000000DA01 /* PrivacyInfo.xcprivacy */; };
 		FB94E3962E238AEC0088E277 /* DocumentPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB94E3952E238AEC0088E277 /* DocumentPicker.swift */; };
 		FB94E3982E23938A0088E277 /* GridLines.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB94E3972E23938A0088E277 /* GridLines.swift */; };
 		FB982F912B19D1B900C0DA03 /* _FirebaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB982F902B19D1B900C0DA03 /* _FirebaseService.swift */; };
@@ -269,6 +270,7 @@
 		FB881A432B48C61400C16198 /* _BuddyRequestListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _BuddyRequestListView.swift; sourceTree = "<group>"; };
 		FB93BB162B033E2000864CB2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
 		FB94E3932E20FD4D0088E277 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		FBDDCAFE000000000000DA01 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		FB94E3952E238AEC0088E277 /* DocumentPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentPicker.swift; sourceTree = "<group>"; };
 		FB94E3972E23938A0088E277 /* GridLines.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridLines.swift; sourceTree = "<group>"; };
 		FB982F902B19D1B900C0DA03 /* _FirebaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _FirebaseService.swift; sourceTree = "<group>"; };
@@ -676,6 +678,7 @@
 			children = (
 				FBFF5CF02BCE4D0400149A31 /* holding */,
 				FB18F17F2B6AC49600D89F8D /* Ludi-Boards-Info.plist */,
+				FBDDCAFE000000000000DA01 /* PrivacyInfo.xcprivacy */,
 				FBEBEF902B494DA600B8BA32 /* DB */,
 				FB829F152B3D4DE100FAC6E0 /* Extensions */,
 				FB15DD2B2B07448B00A21290 /* CanvasEngine */,
@@ -1074,6 +1077,7 @@
 				FBD9AFAF2AFF00BF005F8620 /* Preview Assets.xcassets in Resources */,
 				FBD9AFAC2AFF00BF005F8620 /* Assets.xcassets in Resources */,
 				FB93BB172B033E2000864CB2 /* GoogleService-Info.plist in Resources */,
+				FBDDCAFE000000000000DA02 /* PrivacyInfo.xcprivacy in Resources */,
 				0719F7AB085DD37E89F0793B /* Archivo.ttf in Resources */,
 				E19E1EC6CA718C61F0450C0F /* HankenGrotesk.ttf in Resources */,
 				2DD225AAD0D57C4EF60208A0 /* JetBrainsMono.ttf in Resources */,
@@ -1481,7 +1485,6 @@
 				INFOPLIST_KEY_CFBundleDisplayName = SOL;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.sports";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
-				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "SOL will save screenshots of Activity Plans.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -1517,7 +1520,6 @@
 				INFOPLIST_KEY_CFBundleDisplayName = SOL;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.sports";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
-				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "SOL will save screenshots of Activity Plans.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

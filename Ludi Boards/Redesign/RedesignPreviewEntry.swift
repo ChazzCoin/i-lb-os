@@ -78,6 +78,14 @@ struct RedesignRootView: View {
     /// overwritten — `boardBgOverride` wins.
     private func configureRedesignBoard() {
         guard engineConnected else { return }
+        // TASK-056: clear any record/playback state left persisted by a prior
+        // crash/quit so the board never opens mid-"playing" or mid-"recording".
+        // (isPlayingAnimation is @AppStorage — load-bearing for the cross-module
+        // MVObject read — so reset it here rather than changing its storage.)
+        if BEO.isRecording { BEO.stopRecording() }
+        BEO.isPlayingAnimation = false
+        BEO.gesturesAreLocked = false
+        BEO.ignoreUpdates = false   // a crash mid-playback/drag could leave this true, silently dropping all recording (review CRITICAL)
         BEO.boardBgOverride = "Soccer Redesign Full View"
         #if DEBUG
         // Render harness: point the board at any registry background by name,
@@ -106,26 +114,21 @@ struct RedesignRootView: View {
         #endif
     }
 
-    /// Bottom-right affordance. Production: a single Library toggle (the way to
-    /// open the Add-to-board panel). DEBUG adds a Clear button for testing the
-    /// panel state machine.
-    private var stateSwitcher: some View {
-        HStack(spacing: 8) {
-            #if DEBUG
-            Button("Clear") { state.clearSelection(); state.libraryOpen = false; state.layersOpen = false }
-            #endif
-            // TASK-047: open the layer list of every tool on the board.
-            Button(state.layersOpen ? "Done" : "Layers") {
-                if state.layersOpen { state.closeLayers() } else { state.openLayers() }
-            }
-            Button(state.libraryOpen ? "Done" : "Library") { state.toggleLibrary() }
+    /// Drawer selection + toggle now live in the right-side switcher rail
+    /// (EngineDrawerRail, req 4/5). The only leftover is a DEBUG Clear for the
+    /// render harness; production shows nothing here.
+    @ViewBuilder private var stateSwitcher: some View {
+        #if DEBUG
+        if state.mode != .animate {
+            Button("Clear") { state.clearSelection() }
+                .font(.system(size: 13, weight: .semibold))
+                .buttonStyle(.bordered)
+                .tint(Brand.lime)
+                .padding(8)
+                .background(.ultraThinMaterial, in: Capsule())
+                .padding(18)
         }
-        .font(.system(size: 13, weight: .semibold))
-        .buttonStyle(.bordered)
-        .tint(Brand.lime)
-        .padding(8)
-        .background(.ultraThinMaterial, in: Capsule())
-        .padding(18)
+        #endif
     }
 
     /// Best-effort landscape on iPad (the design is landscape-first). No-ops

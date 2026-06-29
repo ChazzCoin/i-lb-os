@@ -226,6 +226,27 @@ Tasks:
 
 ---
 
+## Phase TC — Tool catalog
+
+> **Scope.** Close the 2026-06-27 full tool-catalog audit
+> (`docs/audits/2026-06-27-tool-catalog.md`). SoccerTool (13) and
+> SmartTool (13) are solid; the breakage is concentrated — circle/
+> square/triangle render wrong from the redesign create path (the only
+> surfaced bug), PoolBall (16) + General (71) are unsurfaced/invisible,
+> and shapes drag in at the wrong size. Make the surfaced shapes work,
+> decide on Pool/General, and stop mis-wired tools from vanishing
+> silently. No Firebase. Don't re-touch the working Soccer/Smart families.
+
+Tasks (in suggested ship order):
+
+- TASK-058 — Fix circle/square/triangle geometry on create (tap + drag) — HIGH
+- TASK-059 — Surface (or cut) PoolBall + General tools in the Library — MEDIUM
+- TASK-060 — PoolBall renders invisible — missing ball image assets — MEDIUM
+- TASK-061 — Visible unknown-tool placeholder instead of silent `EmptyText()` — LOW
+- TASK-062 — Verify `line_dotted` renders dashed (not identical to straight) — LOW
+
+---
+
 ## Cross-cutting
 
 Tasks that don't fit a single phase — typically infrastructure that

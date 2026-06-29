@@ -109,9 +109,47 @@ public class ManagedViewAction: Object, ObjectKeyIdentifiable {
 }
 
 public extension ManagedView {
+    /// Materialize a tool from a recorded snapshot — used by faithful replay
+    /// (TASK-055) when a recorded action references a tool not on the board yet
+    /// (added mid-recording). Board-scoped, Firebase-ready, keeps the recorded id.
+    static func create(from action: RecordingAction, boardId: String, saveRealm: Realm) {
+        saveRealm.safeWrite { r in
+            let mv = ManagedView()
+            mv.id = action.toolId
+            mv.boardId = boardId
+            mv.sport = action.sport
+            mv.toolType = action.toolType
+            mv.toolSize = action.toolSize
+            mv.subToolType = action.subToolType
+            mv.playerId = action.playerId
+            mv.jerseyNumber = action.jerseyNumber
+            mv.teamSide = action.teamSide
+            mv.x = action.x; mv.y = action.y
+            mv.startX = action.startX; mv.startY = action.startY
+            mv.centerX = action.centerX; mv.centerY = action.centerY
+            mv.endX = action.endX; mv.endY = action.endY
+            mv.translationX = action.translationX; mv.translationY = action.translationY
+            mv.width = action.width; mv.height = action.height
+            mv.rotation = action.rotation; mv.lineDash = action.lineDash
+            mv.toolColor = action.toolColor
+            mv.colorRed = action.colorRed; mv.colorGreen = action.colorGreen
+            mv.colorBlue = action.colorBlue; mv.colorAlpha = action.colorAlpha
+            mv.isLocked = action.isLocked
+            mv.isDeleted = action.isDeleted
+            mv.headIsEnabled = action.headIsEnabled
+            mv.lastUserId = "recorder"        // don't re-record this create
+            mv.dateUpdated = Int(Date().timeIntervalSince1970)
+            r.create(ManagedView.self, value: mv, update: .all)
+        }
+    }
+
     func absorbRecordingAction(from managedView: RecordingAction, saveRealm: Realm) {
         saveRealm.safeWrite { _ in
             self.toolType = managedView.toolType
+            self.subToolType = managedView.subToolType
+            self.playerId = managedView.playerId
+            self.jerseyNumber = managedView.jerseyNumber
+            self.teamSide = managedView.teamSide
             self.toolColor = managedView.toolColor
             self.toolSize = managedView.toolSize
             self.x = managedView.x

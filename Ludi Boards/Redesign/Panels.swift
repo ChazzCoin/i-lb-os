@@ -447,6 +447,207 @@ private struct LayerRow: View {
     }
 }
 
+// MARK: - 1c. Animate panel (recordings list — TASK-052)
+
+/// Recordings list shown in Animate mode. Lists the board's `Recording`s; tap
+/// to select one for playback (the transport pill plays `playbackRecordingId`).
+struct EngineAnimatePanel: View {
+    @EnvironmentObject var BEO: BoardEngineObject
+    @ObservedObject var state: BoardScreenState
+    @ObservedResults(Recording.self) private var allRecordings
+
+    private var recordings: [Recording] {
+        allRecordings
+            .filter { $0.boardId == BEO.currentActivityId }
+            .sorted { $0.dateCreated > $1.dateCreated }
+    }
+    private func actionCount(_ rec: Recording) -> Int {
+        BEO.realmInstance.objects(RecordingAction.self).filter("recordingId == %@", rec.id).count
+    }
+
+    var body: some View {
+        let recs = recordings
+        PanelShell {
+            HStack {
+                Text("Recordings").font(AppFont.display(15, .bold)).foregroundStyle(Brand.textHi)
+                Spacer()
+                Text("\(recs.count)").font(AppFont.mono(11)).foregroundStyle(Brand.textFaint)
+            }
+        } content: {
+            VStack(spacing: 3) {
+                if recs.isEmpty {
+                    Text("No recordings yet — tap Record below, move your tools, then Stop.")
+                        .font(AppFont.ui(12, .medium)).foregroundStyle(Brand.textMuted)
+                        .frame(maxWidth: .infinity, alignment: .leading).padding(.vertical, 6)
+                } else {
+                    ForEach(recs) { rec in
+                        RecordingRow(name: rec.name,
+                                     meta: "\(actionCount(rec)) actions · \(String(format: "%.1fs", rec.duration))",
+                                     selected: BEO.playbackRecordingId == rec.id,
+                                     playing: BEO.playbackRecordingId == rec.id && BEO.isPlayingAnimation)
+                            .contentShape(Rectangle())
+                            .onTapGesture { if !BEO.isPlayingAnimation && !BEO.isRecording { BEO.selectRecordingForPlayback(rec.id) } }
+                    }
+                }
+            }
+        } footer: { EmptyView() }
+    }
+}
+
+private struct RecordingRow: View {
+    var name: String
+    var meta: String
+    var selected: Bool
+    var playing: Bool
+    var body: some View {
+        HStack(spacing: 11) {
+            Image(systemName: playing ? "waveform" : "film")
+                .font(.system(size: 14, weight: .medium))
+                .foregroundStyle(selected ? Brand.lime : Brand.textMuted)
+                .frame(width: 26, height: 26)
+                .background(.white.opacity(0.04), in: RoundedRectangle(cornerRadius: 7, style: .continuous))
+            VStack(alignment: .leading, spacing: 1) {
+                Text(name).font(AppFont.ui(13, .semibold)).lineLimit(1)
+                    .foregroundStyle(selected ? Color(brandHex: "E6EBE9") : Brand.textMid)
+                Text(meta).font(AppFont.ui(11, .medium)).foregroundStyle(Brand.textDim)
+            }
+            Spacer()
+            if selected {
+                Image(systemName: "checkmark.circle.fill").font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(Brand.lime)
+            }
+        }
+        .padding(.horizontal, 9).padding(.vertical, 8)
+        .background {
+            if selected {
+                RoundedRectangle(cornerRadius: 10, style: .continuous).fill(Brand.lime.opacity(0.08))
+                    .overlay(RoundedRectangle(cornerRadius: 10).strokeBorder(Brand.lime.opacity(0.16)))
+            }
+        }
+    }
+}
+
+// MARK: - 1d. Boards panel (board switcher in a drawer — req 4)
+
+/// Lists the activity boards; tap to load, or create a new one. Mirrors the
+/// top-bar dropdown's data, surfaced as a dedicated drawer.
+struct EngineBoardsPanel: View {
+    @EnvironmentObject var BEO: BoardEngineObject
+    @ObservedObject var state: BoardScreenState
+    @ObservedResults(ActivityPlan.self) private var allPlans
+    @State private var sport = 0
+    @State private var selectedField = "Soccer Redesign Full View"
+
+    private var boards: [ActivityPlan] { allPlans.sorted { $0.orderIndex < $1.orderIndex } }
+    private func label(_ p: ActivityPlan) -> String {
+        let parts = [p.title, p.subTitle].filter { !$0.isEmpty }
+        return parts.isEmpty ? "Untitled" : parts.joined(separator: " · ")
+    }
+
+    var body: some View {
+        let boards = self.boards
+        PanelShell(width: 288) {
+            HStack {
+                Text("Boards").font(AppFont.display(15, .bold)).foregroundStyle(Brand.textHi)
+                Spacer()
+                Text("\(boards.count)").font(AppFont.mono(11)).foregroundStyle(Brand.textFaint)
+            }
+        } content: {
+            VStack(alignment: .leading, spacing: 18) {
+                // SPORT + FIELD picker (moved out of the Tools drawer per request).
+                VStack(alignment: .leading, spacing: 11) {
+                    SectionLabel(text: "SPORT")
+                    FlowChips(items: Sample.sports.indices.map { $0 }, selected: sport) { i in
+                        SportPill(sport: Sample.sports[i], selected: i == sport).onTapGesture { sport = i }
+                    }
+                }
+                let sportName = Sample.sports[sport].name
+                let sportFields = Sample.boards.filter { $0.sport == sportName }
+                VStack(alignment: .leading, spacing: 11) {
+                    SectionLabel(text: "FIELD")
+                    if sportFields.isEmpty {
+                        Text("No fields for \(sportName) yet.")
+                            .font(AppFont.ui(12, .medium)).foregroundStyle(Brand.textMuted)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    } else {
+                        LazyVGrid(columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible())], spacing: 10) {
+                            ForEach(sportFields) { b in
+                                BoardThumb(preset: b, selected: b.registryName == selectedField)
+                                    .onTapGesture { selectedField = b.registryName; pickField(b.registryName) }
+                            }
+                        }
+                    }
+                }
+                // The activity boards (switch / create).
+                VStack(alignment: .leading, spacing: 8) {
+                    SectionLabel(text: "MY BOARDS")
+                    if boards.isEmpty {
+                        Text("No boards yet — tap New board.")
+                            .font(AppFont.ui(12, .medium)).foregroundStyle(Brand.textMuted)
+                            .frame(maxWidth: .infinity, alignment: .leading).padding(.vertical, 6)
+                    } else {
+                        VStack(spacing: 3) {
+                            ForEach(boards) { plan in
+                                BoardRow(title: label(plan), current: plan.id == BEO.currentActivityId)
+                                    .contentShape(Rectangle())
+                                    .onTapGesture { BEO.changeActivity(activityId: plan.id) }
+                            }
+                        }
+                    }
+                }
+            }
+        } footer: {
+            PanelFooter {
+                Button(action: createBoard) { FooterButton(symbol: "plus", label: "New board") }
+                    .buttonStyle(.plain)
+            }
+        }
+    }
+
+    private func pickField(_ name: String) {
+        BEO.boardBgOverride = name
+        BEO.boardBgName = name
+    }
+
+    private func createBoard() {
+        let count = BEO.realmInstance.objects(ActivityPlan.self).count
+        let newId = UUID().uuidString
+        BEO.realmInstance.safeWrite { r in
+            let plan = ActivityPlan()
+            plan.id = newId; plan.title = "New Board"; plan.subTitle = ""; plan.orderIndex = count
+            r.create(ActivityPlan.self, value: plan, update: .all)
+        }
+        BEO.changeActivity(activityId: newId)
+    }
+}
+
+private struct BoardRow: View {
+    var title: String
+    var current: Bool
+    var body: some View {
+        HStack(spacing: 11) {
+            Image(systemName: "square.grid.2x2").font(.system(size: 14, weight: .medium))
+                .foregroundStyle(current ? Brand.lime : Brand.textMuted)
+                .frame(width: 26, height: 26)
+                .background(.white.opacity(0.04), in: RoundedRectangle(cornerRadius: 7, style: .continuous))
+            Text(title).font(AppFont.ui(13, .semibold)).lineLimit(1)
+                .foregroundStyle(current ? Color(brandHex: "E6EBE9") : Brand.textMid)
+            Spacer()
+            if current {
+                Image(systemName: "checkmark.circle.fill").font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(Brand.lime)
+            }
+        }
+        .padding(.horizontal, 9).padding(.vertical, 8)
+        .background {
+            if current {
+                RoundedRectangle(cornerRadius: 10, style: .continuous).fill(Brand.lime.opacity(0.08))
+                    .overlay(RoundedRectangle(cornerRadius: 10).strokeBorder(Brand.lime.opacity(0.16)))
+            }
+        }
+    }
+}
+
 // MARK: - 2. Properties panel (node selected)
 
 struct PropertiesPanel: View {
@@ -465,6 +666,7 @@ struct PropertiesPanel: View {
     var onDelete: () -> Void = {}
     var onClose: () -> Void = {}
     var onBack: (() -> Void)? = nil       // TASK-047: return to the layer list
+    var onEditPlayer: (() -> Void)? = nil // req 2: edit the player's number + name
 
     @Binding var size: Double
     @Binding var rotation: Double
@@ -477,13 +679,14 @@ struct PropertiesPanel: View {
          size: Binding<Double>, rotation: Binding<Double>,
          onPickColor: @escaping (Int) -> Void, onDuplicate: @escaping () -> Void,
          onDelete: @escaping () -> Void, onClose: @escaping () -> Void,
-         onBack: (() -> Void)? = nil) {
+         onBack: (() -> Void)? = nil, onEditPlayer: (() -> Void)? = nil) {
         self.number = number; self.name = name; self.subtitle = subtitle
         self.sizeReadout = sizeReadout; self.rotationReadout = rotationReadout
         self.sizeLabel = sizeLabel; self.showRotation = showRotation
         self.teamColor = teamColor; self.showLinkedPlayer = showLinkedPlayer
         self.onPickColor = onPickColor; self.onDuplicate = onDuplicate
         self.onDelete = onDelete; self.onClose = onClose; self.onBack = onBack
+        self.onEditPlayer = onEditPlayer
         _size = size; _rotation = rotation
     }
 
@@ -560,14 +763,16 @@ struct PropertiesPanel: View {
                                 .frame(width: 34, height: 34).background(.homeJersey, in: Circle())
                             VStack(alignment: .leading, spacing: 1) {
                                 Text(name).font(AppFont.ui(13, .semibold)).foregroundStyle(Color(brandHex: "E6EBE9"))
-                                Text("Stats synced").font(AppFont.ui(11, .medium)).foregroundStyle(Color(brandHex: "7FC4B3"))
+                                Text("Tap to edit number / name").font(AppFont.ui(11, .medium)).foregroundStyle(Color(brandHex: "7FC4B3"))
                             }
                             Spacer()
-                            Image(systemName: "chevron.right").font(.system(size: 13, weight: .semibold)).foregroundStyle(Brand.textFaint)
+                            Image(systemName: "pencil").font(.system(size: 13, weight: .semibold)).foregroundStyle(Brand.textFaint)
                         }
                         .padding(.horizontal, 12).padding(.vertical, 10)
                         .background(.white.opacity(0.04), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
                         .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(Brand.panelLine))
+                        .contentShape(Rectangle())
+                        .onTapGesture { onEditPlayer?() }   // req 2
                     }
                 }
             }
@@ -598,6 +803,8 @@ struct EnginePropertiesPanel: View {
     @State private var subtitle: String = "Soccer"
     @State private var linked: Bool = false
     @State private var isLine: Bool = false   // line/smart family: width = stroke, no rotation
+    @State private var isPlayer: Bool = false // req 2: jersey/disc → show editable player section
+    @State private var editTarget: RosterEditTarget?
 
     // Engine selection key — the on-canvas lime ring renders while this equals a
     // tool id (ManagedToolView). Closing Properties must clear it directly so the
@@ -627,17 +834,51 @@ struct EnginePropertiesPanel: View {
             sizeLabel: isLine ? "STROKE" : "SIZE",
             showRotation: !isLine,
             teamColor: teamColor,
-            showLinkedPlayer: linked,                // real when the tool is roster-linked
+            showLinkedPlayer: isPlayer,              // req 2: jersey tools show the editable player section
             size: Binding(get: { size }, set: { size = $0; writeSize($0) }),
             rotation: Binding(get: { rotation }, set: { rotation = $0; writeRotation($0) }),
             onPickColor: pickColor,
             onDuplicate: duplicate,
             onDelete: delete,
             onClose: { engineSelectedId = ""; state.clearSelection() },   // TASK-038: clear ring + panel together
-            onBack: { engineSelectedId = ""; state.openLayers() }         // TASK-047: back to the layer list
+            onBack: { engineSelectedId = ""; state.openLayers() },        // TASK-047: back to the layer list
+            onEditPlayer: editPlayer                                      // req 2
         )
         .onAppear(perform: loadFromTool)
         .onChange(of: state.selectedToolId) { _, _ in loadFromTool() }
+        .sheet(item: $editTarget, onDismiss: loadFromTool) { t in
+            RosterPlayerEditor(playerId: t.id).environmentObject(BEO)
+        }
+    }
+
+    /// req 2: edit the selected player tool's number + name. Ensures the disc is
+    /// linked to a RosterPlayer (creating one if needed), then opens the editor;
+    /// number edits cascade back to the disc (RosterPlayerEditor handles that).
+    private func editPlayer() {
+        guard let mv = tool() else { return }
+        var playerId = mv.playerId
+        if playerId.isEmpty {
+            let newId = UUID().uuidString
+            let n = Int(number) ?? mv.jerseyNumber
+            BEO.realmInstance.safeWrite { r in
+                let p = RosterPlayer()
+                p.id = newId
+                p.boardId = BEO.currentActivityId
+                p.teamSide = mv.teamSide.isEmpty ? "home" : mv.teamSide
+                p.number = n
+                p.name = "Player \(n)"
+                p.position = "—"
+                p.orderIndex = BEO.realmInstance.objects(RosterPlayer.self)
+                    .filter("boardId == %@", BEO.currentActivityId).count
+                r.create(RosterPlayer.self, value: p, update: .all)
+                if let live = r.object(ofType: ManagedView.self, forPrimaryKey: mv.id) {
+                    live.playerId = newId
+                    if live.jerseyNumber <= 0 { live.jerseyNumber = n }
+                }
+            }
+            playerId = newId
+        }
+        editTarget = RosterEditTarget(id: playerId)
     }
 
     private var currentWidth: Double { minW + size * (maxW - minW) }
@@ -650,6 +891,9 @@ struct EnginePropertiesPanel: View {
     private func loadFromTool() {
         guard let mv = tool() else { return }
         isLine = (mv.toolType == "shape" || mv.toolType == "tactic")
+        // req 2: a jersey/disc player tool — show the editable player section.
+        isPlayer = mv.toolType == "soccer" &&
+            (mv.subToolType.contains("jersey") || mv.jerseyNumber > 0 || !mv.playerId.isEmpty)
         size = max(0, min(1, (Double(mv.width) - minW) / (maxW - minW)))
         let f = (mv.rotation / 360).truncatingRemainder(dividingBy: 1)
         rotation = f < 0 ? f + 1 : f   // normalise negative angles (TASK-016)
@@ -771,11 +1015,14 @@ private struct SliderRow: View {
 struct LibraryPanel: View {
     var onAddTool: (String) -> Void = { _ in }    // equipment item name → engine tool
     var onAddSmart: (String) -> Void = { _ in }   // smart-tool subToolType → engine tool
+    var onAddGeneral: (String) -> Void = { _ in } // TASK-059: general marker (SF symbol) → engine tool
+    var onAddPool: (String) -> Void = { _ in }    // TASK-059: pool ball → engine tool
     var onPickBoard: (String) -> Void = { _ in }   // registry board name → background
     @State private var sport = 0
     @State private var tab: LibraryTab = {
         #if DEBUG
-        if ProcessInfo.processInfo.environment["REDESIGN_LIBTAB"] == "tactics" { return .tactics }
+        if let t = ProcessInfo.processInfo.environment["REDESIGN_LIBTAB"],
+           let tab = LibraryTab(rawValue: t.capitalized) { return tab }   // e.g. REDESIGN_LIBTAB=pool
         #endif
         return .equipment
     }()
@@ -784,7 +1031,7 @@ struct LibraryPanel: View {
     var body: some View {
         PanelShell(width: 288) {
             HStack {
-                Text("Add to board").font(AppFont.display(15, .bold)).foregroundStyle(Brand.textHi)
+                Text("Tools").font(AppFont.display(15, .bold)).foregroundStyle(Brand.textHi)
                 Spacer()
                 HStack(spacing: 7) {
                     Image(systemName: "magnifyingglass").font(.system(size: 12, weight: .semibold))
@@ -796,32 +1043,8 @@ struct LibraryPanel: View {
             }
         } content: {
             VStack(alignment: .leading, spacing: 18) {
-                // Sport
-                VStack(alignment: .leading, spacing: 11) {
-                    SectionLabel(text: "SPORT")
-                    FlowChips(items: Sample.sports.indices.map { $0 }, selected: sport) { i in
-                        SportPill(sport: Sample.sports[i], selected: i == sport)
-                            .onTapGesture { sport = i }
-                    }
-                }
-                // Boards — filtered to the selected sport pill.
-                let sportName = Sample.sports[sport].name
-                let sportBoards = Sample.boards.filter { $0.sport == sportName }
-                VStack(alignment: .leading, spacing: 11) {
-                    SectionLabel(text: "BOARDS")
-                    if sportBoards.isEmpty {
-                        Text("No boards for \(sportName) yet.")
-                            .font(AppFont.ui(12, .medium)).foregroundStyle(Brand.textMuted)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    } else {
-                        LazyVGrid(columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible())], spacing: 10) {
-                            ForEach(sportBoards) { b in
-                                BoardThumb(preset: b, selected: b.registryName == selectedBoard)
-                                    .onTapGesture { selectedBoard = b.registryName; onPickBoard(b.registryName) }
-                            }
-                        }
-                    }
-                }
+                // Sport + board-preset picking moved to the Boards drawer — this
+                // drawer is TOOLS ONLY now (per request).
                 // Tools
                 VStack(alignment: .leading, spacing: 12) {
                     HStack(spacing: 12) {
@@ -861,6 +1084,21 @@ struct LibraryPanel: View {
                                          label: RedesignToolCatalog.toolLabel(tool.name))
                                     .onTapGesture { onAddTool(tool.name) }
                                     .draggable(tool.name)
+                            }
+                        case .markers:
+                            // TASK-059: GeneralTool — the subtype rawValue IS an SF symbol name.
+                            ForEach(ViewEngine.Tool.GeneralTool.allCases, id: \.self) { g in
+                                ToolCell(symbol: g.name, label: g.displayName)
+                                    .onTapGesture { onAddGeneral(g.name) }
+                                    .draggable(g.name)
+                            }
+                        case .pool:
+                            // TASK-059/060: pool balls (drawn via PoolBallIcon on the board).
+                            // NB: ball.displayName is broken for short rawValues — use a safe label.
+                            ForEach(ViewEngine.Tool.PoolBallTool.allCases, id: \.self) { ball in
+                                ToolCell(symbol: "circle.fill", label: ball.name == "0" ? "Cue" : ball.name)
+                                    .onTapGesture { onAddPool(ball.name) }
+                                    .draggable(ball.name)
                             }
                         }
                     }
@@ -954,6 +1192,21 @@ enum RedesignToolCatalog {
     /// Default equipment tool size, shared by tap-add and drag-drop (TASK-018)
     /// so the same item isn't 200 via tap but 100 via drop.
     static let equipmentSize = 200
+
+    /// Shared shape (circle/square/triangle) defaults for tap-add AND drag-drop
+    /// (TASK-058). For shapes, `width` is the STROKE — the redesign was setting
+    /// it to 200 (a grotesque stroke); shapes are ~12. Square/triangle corner
+    /// geometry is synthesized by MVObject.loadFromRealm's geometryIsUnset
+    /// fallback at x/y; circle needs an explicit radius (its field defaults to 0).
+    static func configureShapeTool(_ mv: ManagedView, subType: String, center: CGPoint) {
+        mv.sport = "tool"; mv.toolType = "shape"; mv.subToolType = subType
+        mv.x = center.x; mv.y = center.y
+        mv.width = 12; mv.height = 12               // stroke, not size
+        if subType == "circle" { mv.radius = 400 }  // diameter the circle view frames to
+        mv.toolColor = "Lime"
+        mv.colorRed = 0.796; mv.colorGreen = 0.859; mv.colorBlue = 0.165; mv.colorAlpha = 1
+        mv.dateUpdated = Int(Date().timeIntervalSince1970)
+    }
 }
 
 /// Engine-wired Library: equipment tap adds the tool at board centre (and is
@@ -962,7 +1215,8 @@ struct EngineLibraryPanel: View {
     @EnvironmentObject var BEO: BoardEngineObject
 
     var body: some View {
-        LibraryPanel(onAddTool: addTool, onAddSmart: addSmartTool, onPickBoard: pickBoard)
+        LibraryPanel(onAddTool: addTool, onAddSmart: addSmartTool,
+                     onAddGeneral: addGeneral, onAddPool: addPool, onPickBoard: pickBoard)
     }
 
     private func addSmartTool(_ subType: String) {
@@ -972,24 +1226,52 @@ struct EngineLibraryPanel: View {
         BEO.refreshBoard()
     }
 
+    // TASK-059: place a general marker (SF symbol) or a pool ball at board centre.
+    private func addGeneral(_ subType: String) { addSimpleTool(subType, toolType: "general") }
+    private func addPool(_ subType: String)    { addSimpleTool(subType, toolType: "pool") }
+    private func addSimpleTool(_ subType: String, toolType: String) {
+        BEO.realmInstance.safeWrite { r in
+            let mv = ManagedView()
+            mv.boardId = BEO.currentActivityId
+            mv.sport = "tool"; mv.toolType = toolType; mv.subToolType = subType
+            mv.x = 2500; mv.y = 3000
+            mv.width = 150; mv.height = 150
+            if toolType == "general" {
+                // req 3: visible white default; the colour picker (0–1 RGBA) overrides.
+                mv.colorRed = 1; mv.colorGreen = 1; mv.colorBlue = 1; mv.colorAlpha = 1
+            }
+            mv.dateUpdated = Int(Date().timeIntervalSince1970)
+            r.create(ManagedView.self, value: mv, update: .all)
+        }
+        BEO.refreshBoard()
+    }
+
     // TASK-040: `subType` is now the engine subToolType directly (from the enum),
     // not a display name. Lines are *drawn* (enter draw mode); circle/square/
     // triangle are placed as "shape" tools; everything else is a "soccer" tool.
     private func addTool(_ subType: String) {
         if RedesignToolCatalog.drawnShapeSubtypes.contains(subType) {
-            BEO.enableDrawing(subType: subType == "line_curved" ? "line_curved" : "line_straight")
+            // TASK-062: pass the real line subtype (was collapsing line_dotted →
+            // line_straight, silently losing the dotted variant).
+            BEO.enableDrawing(subType: subType)
             return
         }
         let isShape = RedesignToolCatalog.placedShapeSubtypes.contains(subType)
         BEO.realmInstance.safeWrite { r in
             let mv = ManagedView()
             mv.boardId = BEO.currentActivityId
-            mv.sport = "tool"
-            mv.toolType = isShape ? "shape" : "soccer"
-            mv.subToolType = subType
-            mv.x = 2500; mv.y = 3000
-            mv.width = RedesignToolCatalog.equipmentSize; mv.height = RedesignToolCatalog.equipmentSize
-            mv.dateUpdated = Int(Date().timeIntervalSince1970)
+            if isShape {
+                // TASK-058: shapes use a stroke width + (circle) radius, not the
+                // equipment size, so they don't render as a 200pt-stroke blob.
+                RedesignToolCatalog.configureShapeTool(mv, subType: subType, center: CGPoint(x: 2500, y: 3000))
+            } else {
+                mv.sport = "tool"
+                mv.toolType = "soccer"
+                mv.subToolType = subType
+                mv.x = 2500; mv.y = 3000
+                mv.width = RedesignToolCatalog.equipmentSize; mv.height = RedesignToolCatalog.equipmentSize
+                mv.dateUpdated = Int(Date().timeIntervalSince1970)
+            }
             r.create(ManagedView.self, value: mv, update: .all)
         }
         BEO.refreshBoard()

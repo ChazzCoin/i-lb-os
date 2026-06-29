@@ -24,6 +24,11 @@ struct RedesignBoardCanvas: View {
                                 width: 20000, height: 20000) { _ in
             BoardEngine()
                 .environmentObject(self.BEO)
+                // Lock ALL tool gestures during playback (move/select/edit) — the
+                // per-tool drags only check lifeIsLocked, so disable hit-testing on
+                // the whole tool layer instead of gating ~12 sites. Canvas pan is
+                // separately blocked by gesturesAreLocked during playback.
+                .allowsHitTesting(!self.BEO.isPlayingAnimation)
         }
         .offset(x: self.BEO.canvasOffset.x, y: self.BEO.canvasOffset.y)
         .scaleEffect(self.BEO.canvasScale)

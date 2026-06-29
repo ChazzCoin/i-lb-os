@@ -57,3 +57,6 @@ Capture is "best effort," not guaranteed. `startRecordingObserver()` attaches a 
 - **Timestamp source.** `startRecording()` uses `DispatchTime.now()` for duration (`:501`). Reuse that clock for per-action offsets so timestamps and `recordingDuration` share a basis; mixing `Date()` and `DispatchTime` will drift.
 - **Migration.** Adding fields to `RecordingAction` is a Realm schema change — coordinate with TASK-034 (schema migration guard). Old recordings will have nil/zero timestamps; decide whether TASK-054 falls back to `orderIndex` spacing for legacy rows.
 - **Initial-snapshot dedup.** Closing the race may mean snapshotting synchronously inside `startRecording()` before the token attaches, then having the observer skip the `.initial` pass — needs care so the two paths don't both write the same tool.
+
+## Outcome (2026-06-27) — DONE (build verified; review pending)
+Capture observer (.update) now records insertions (actionType "add") + modifications (actionType "move" or "delete" by isDeleted), via captureRecordingAction with a monotonic orderIndex and a timeOffset (recordingElapsed() from startTime). Initial snapshot stamped actionType "initial", offset 0. Adversarial review running for the double-count (.initial vs .insertions) and sequencing questions.

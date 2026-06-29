@@ -104,6 +104,7 @@ struct BoardEngine: View {
             #endif
             self.BEO.ensureDefaultActivityPlan()
             self.BEO.loadBoardSettings()
+            self.BEO.healStuckLocks()   // clear tools the old drag-lock save left permanently locked
             // RD-2 / TASK-003: DEBUG hook to preview a registry board background
             // headlessly (e.g. REDESIGN_BG="Soccer Redesign Full View"). No-op
             // in release and when unset.
@@ -328,7 +329,9 @@ struct BoardEngine: View {
             line.sport = ViewEngine.Tool.ShapeTool.line_straight.genre
             line.toolType = ViewEngine.Tool.ShapeTool.line_straight.type
             line.subToolType = self.BEO.shapeSubType
-            line.lineDash = 1
+            // TASK-062: dotted lines need lineDash > 1 to render dashed
+            // (LineDrawingManaged dashes only when lifeLineDash > 1).
+            line.lineDash = (self.BEO.shapeSubType == "line_dotted") ? 5 : 1
             line.dateUpdated = Int(Date().timeIntervalSince1970)
 
             // History

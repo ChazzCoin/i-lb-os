@@ -65,3 +65,6 @@ The engine already captures recordings (`startRecording`/`stopRecording` write `
 - **Header vs action stream:** `recordingsByActivity` returns `RecordingAction` rows, not `Recording` headers. The drawer needs a board-scoped `Recording` query that doesn't exist yet — confirm whether to add it to BEO or query Realm directly in the panel, and how to count actions per recording without an N+1 query per row.
 - **Duration trustworthiness:** `Recording.duration` is a stored field; if `stopRecording` doesn't populate it reliably (the model has no per-action timestamps to derive it), the displayed duration may be 0/stale. Decide whether to show it as-is or derive from action count for now.
 - **Panel coupling to TASK-051:** the `.animate` chrome gate is TASK-051's deliverable. If TASK-051 hasn't merged, this task can build the panel view + selection in isolation but cannot fully verify the "Squad hidden, drawer shown" criterion until the gate exists — sequence accordingly.
+
+## Outcome (2026-06-27) — DONE (build + render verified)
+New EngineAnimatePanel (Panels.swift) lists the board's Recording rows via @ObservedResults (name, action count, duration), tap selects (sets BEO.playbackRecordingId, highlighted + checkmark), with an empty state. Shown as the right drawer in Animate mode. Verified on sim (empty-state renders). Selection-while-playing is blocked.

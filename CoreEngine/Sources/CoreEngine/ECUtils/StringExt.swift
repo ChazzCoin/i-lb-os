@@ -79,9 +79,12 @@ public extension String {
        return String(self.prefix(index))
     }
 
-    /// Returns a substring from the given index to the end.
+    /// Returns a substring from the given index to the end. Clamps the index so
+    /// a value past the string length returns "" instead of trapping (e.g.
+    /// PoolBallTool.displayName called substring(from: 5) on a 1-char rawValue).
     func substring(from index: Int) -> String {
-       return String(self.suffix(from: self.index(self.startIndex, offsetBy: index)))
+       let clamped = Swift.max(0, Swift.min(index, self.count))
+       return String(self.suffix(from: self.index(self.startIndex, offsetBy: clamped)))
     }
 
     // MARK: - Character Removal

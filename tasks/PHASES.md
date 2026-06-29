@@ -215,6 +215,25 @@ underpins the Animate phase (linked objects move together).
 
 ---
 
+## Phase TC — Tool catalog
+
+**Status:** 📋 Queued
+
+**Scope.** Close the 2026-06-27 full tool-catalog audit
+(`docs/audits/2026-06-27-tool-catalog.md`). An every-tool sweep found
+the breakage is concentrated, not everywhere: SoccerTool (13) and
+SmartTool (13) are solid end-to-end. The redesign's circle/square/
+triangle render wrong (the views read point/radius geometry the tap-add
+create path never sets — the only *surfaced* bug); PoolBall (16) is
+invisible (missing ball assets) and GeneralTool (71) is unreachable,
+both unsurfaced in the Library; dragged shapes come in the wrong size;
+and every render switch defaults to a silent `EmptyText()` that hides
+mis-wiring. Fix the surfaced shapes, decide whether to surface or cut
+Pool/General, and add a visible unknown-tool placeholder. No Firebase;
+leave the working Soccer/Smart families alone.
+
+---
+
 *(Add phases as the project evolves. Use `/plan` to think through new
 phases conversationally; use `/task` to file tasks under existing
 phases.)*

@@ -18,12 +18,17 @@ public struct MatchedShape: View {
     public var controlPoint1: CGPoint
     
     public var body: some View {
+        // Solid hit band that follows the curve. WAS a `dash: [1]` stroke — a dotted
+        // 1pt-on/1pt-off line that is almost entirely GAPS, so touches on the curve
+        // landed on nothing and the line was uninteractable ("nothing happens").
+        // strokedPath gives a fillable outline; a near-clear FILL hit-tests its whole
+        // area, exactly like the straight line's filled-rectangle hit target.
         Path { path in
             path.move(to: startPoint)
-            path.addQuadCurve(to: endPoint,
-                              control: controlPoint1)
+            path.addQuadCurve(to: endPoint, control: controlPoint1)
         }
-        .stroke(Color.black.opacity(0.01), style: StrokeStyle(lineWidth: 300.0, dash: [1]))
+        .strokedPath(StrokeStyle(lineWidth: 220, lineCap: .round, lineJoin: .round))
+        .fill(Color.black.opacity(0.01))
     }
 }
 
@@ -53,6 +58,25 @@ public struct CurvedLineDrawingManaged: View {
                                    dash: MVO.lifeLineDash > 1 ? [MVO.lifeLineDash * 3, MVO.lifeLineDash * 3] : []))
         .shadow(color: MVO.lifeColor.opacity(0.45), radius: MVO.lifeWidth.bound(to: 1...400) * 0.35)
         .opacity(!MVO.isDisabledChecker() && !MVO.isDeletedChecker() ? 1 : 0.0)
+        // BODY HIT-BAND — must be the LOWEST overlay so the anchor handles below
+        // (added after, i.e. on top) win the touch when visible. This previously
+        // sat on TOP and ate every anchor touch (the whole-line drag fired instead
+        // of the anchor drag), so handles "did nothing". Whole-line move (always on,
+        // bails only on lifeIsLocked) + double-tap toggle + long-press delete.
+        .overlay(
+            MatchedShape(
+                startPoint: CGPoint(x: MVO.lifeStartX, y: MVO.lifeStartY),
+                endPoint: CGPoint(x: MVO.lifeEndX, y: MVO.lifeEndY),
+                controlPoint1: CGPoint(x: MVO.lifeCenterX, y: MVO.lifeCenterY)
+            )
+            .gesture(fullCurvedLineDragGesture())
+            .simultaneousGesture(doubleTapForSettingsAndAnchors())
+            .simultaneousGesture(longPressGesture())
+        )
+        // ANCHOR HANDLES — stacked ABOVE the body band. When visible: reshape
+        // (highPriority) and NO move drag, so a handle grab is unambiguous. When
+        // hidden: carry the move drag so the invisible 300pt disc doesn't block the
+        // body band beneath it.
         .overlay(
             Triangle()
                 .fill(MVO.anchorsAreVisible ? Color.AIMYellow : MVO.lifeColor)
@@ -60,7 +84,7 @@ public struct CurvedLineDrawingManaged: View {
                 .opacity(MVO.lifeHeadIsEnabled ? 1 : 0) // Invisible
                 .rotationEffect(Angle(degrees: MVO.calculateAngleAtEndPointOfQuadCurve()))
                 .position(x: MVO.lifeEndX, y: MVO.lifeEndY)
-                .gesture(!MVO.anchorsAreVisible ? nil : dragSingleAnchor(isStart: false))
+                .highPriorityGesture(!MVO.anchorsAreVisible ? nil : dragSingleAnchor(isStart: false))
                 .gesture(MVO.anchorsAreVisible ? nil : fullCurvedLineDragGesture())
                 .simultaneousGesture(!MVO.anchorsAreVisible ? nil : doubleTapForSettingsAndAnchors())
                 .simultaneousGesture(!MVO.anchorsAreVisible ? nil : longPressGesture())
@@ -71,7 +95,7 @@ public struct CurvedLineDrawingManaged: View {
                 .frame(width: 300, height: 300) // Adjust size for easier tapping
                 .opacity(MVO.anchorsAreVisible ? 1 : 0) // Invisible
                 .position(x: MVO.lifeStartX, y: MVO.lifeStartY)
-                .gesture(!MVO.anchorsAreVisible ? nil : dragSingleAnchor(isStart: true))
+                .highPriorityGesture(!MVO.anchorsAreVisible ? nil : dragSingleAnchor(isStart: true))
                 .gesture(MVO.anchorsAreVisible ? nil : fullCurvedLineDragGesture())
                 .simultaneousGesture(!MVO.anchorsAreVisible ? nil : doubleTapForSettingsAndAnchors())
                 .simultaneousGesture(!MVO.anchorsAreVisible ? nil : longPressGesture())
@@ -82,7 +106,7 @@ public struct CurvedLineDrawingManaged: View {
                 .frame(width: 300, height: 300) // Increase size for finger tapping
                 .opacity(MVO.anchorsAreVisible ? 1 : 0) // Invisible
                 .position(x: MVO.lifeEndX, y: MVO.lifeEndY)
-                .gesture(!MVO.anchorsAreVisible ? nil : dragSingleAnchor(isStart: false))
+                .highPriorityGesture(!MVO.anchorsAreVisible ? nil : dragSingleAnchor(isStart: false))
                 .gesture(MVO.anchorsAreVisible ? nil : fullCurvedLineDragGesture())
                 .simultaneousGesture(!MVO.anchorsAreVisible ? nil : doubleTapForSettingsAndAnchors())
                 .simultaneousGesture(!MVO.anchorsAreVisible ? nil : longPressGesture())
@@ -93,20 +117,10 @@ public struct CurvedLineDrawingManaged: View {
                 .frame(width: 300, height: 300) // Adjust size as needed
                 .opacity(MVO.anchorsAreVisible ? 1 : 0)
                 .position(quadBezierPoint(start: CGPoint(x: MVO.lifeStartX, y: MVO.lifeStartY), end: CGPoint(x: MVO.lifeEndX, y: MVO.lifeEndY), control: CGPoint(x: MVO.lifeCenterX, y: MVO.lifeCenterY)))
-                .gesture(!MVO.anchorsAreVisible ? nil : dragCurvedCenterAnchor())
+                .highPriorityGesture(!MVO.anchorsAreVisible ? nil : dragCurvedCenterAnchor())
                 .gesture(MVO.anchorsAreVisible ? nil : fullCurvedLineDragGesture())
                 .simultaneousGesture(!MVO.anchorsAreVisible ? nil : doubleTapForSettingsAndAnchors())
                 .simultaneousGesture(!MVO.anchorsAreVisible ? nil : longPressGesture())
-        )
-        .overlay(
-            MatchedShape(
-                startPoint: CGPoint(x: MVO.lifeStartX, y: MVO.lifeStartY),
-                endPoint: CGPoint(x: MVO.lifeEndX, y: MVO.lifeEndY),
-                controlPoint1: CGPoint(x: MVO.lifeCenterX, y: MVO.lifeCenterY)
-            )
-            .gesture(fullCurvedLineDragGesture())
-            .simultaneousGesture(doubleTapForSettingsAndAnchors())
-            .simultaneousGesture(longPressGesture())
         )
         .gesture(fullCurvedLineDragGesture())
         .onChange(of: self.MVO.toolBarCurrentViewId, perform: { _ in
@@ -134,7 +148,7 @@ public struct CurvedLineDrawingManaged: View {
         DragGesture()
             .onChanged { value in
                 main {
-                    if MVO.lifeIsLocked || MVO.anchorsAreVisible { return }
+                    if MVO.lifeIsLocked { return }   // movable in any anchor state (matches straight line)
                     self.MVO.isDragging = true
                     self.MVO.ignoreUpdates = true
                     if MVO.originalLifeStart == .zero {
@@ -148,7 +162,7 @@ public struct CurvedLineDrawingManaged: View {
             }
             .onEnded { value in
                 main {
-                    if MVO.lifeIsLocked || MVO.anchorsAreVisible { return }
+                    if MVO.lifeIsLocked { return }   // movable in any anchor state (matches straight line)
                     self.MVO.ignoreUpdates = false
                     handleFullDragTranslation(value: value)
                     self.MVO.isDragging = false
@@ -179,26 +193,23 @@ public struct CurvedLineDrawingManaged: View {
     public func dragCurvedCenterAnchor() -> some Gesture {
         DragGesture()
             .onChanged { value in
-                main {
-                    if MVO.lifeIsLocked || !MVO.anchorsAreVisible {return}
-                    MVO.isDragging = true
-                    self.MVO.ignoreUpdates = true
-                    if self.dragOffset == .zero {
-                        self.dragOffset = CGSize(width: (MVO.lifeCenterX - value.startLocation.x),
-                                                 height: (MVO.lifeCenterY - value.startLocation.y))
-                    }
-                    MVO.lifeCenterX = (value.location.x + dragOffset.width)
-                    MVO.lifeCenterY = (value.location.y + dragOffset.height)
-                }
+                // The handle sits on the curve (the apex, t=0.5). Make the apex
+                // follow the finger 1:1 by solving for the control point:
+                //   apex = 0.25*start + 0.5*control + 0.25*end
+                //   => control = 2*finger - (start + end)/2
+                // (Previously it dragged the control directly while drawing the
+                //  handle at the apex, which moves at half-speed — felt "stuck".)
+                if MVO.lifeIsLocked || !MVO.anchorsAreVisible { return }
+                MVO.isDragging = true
+                MVO.ignoreUpdates = true
+                MVO.lifeCenterX = 2 * value.location.x - (MVO.lifeStartX + MVO.lifeEndX) / 2
+                MVO.lifeCenterY = 2 * value.location.y - (MVO.lifeStartY + MVO.lifeEndY) / 2
             }
             .onEnded { _ in
-                main {
-                    if MVO.lifeIsLocked || !MVO.anchorsAreVisible { return }
-                    self.dragOffset = .zero
-                    MVO.isDragging = false
-                    self.MVO.ignoreUpdates = false
-                    MVO.updateRealm()
-                }
+                if MVO.lifeIsLocked || !MVO.anchorsAreVisible { return }
+                MVO.isDragging = false
+                MVO.ignoreUpdates = false
+                MVO.updateRealm()
             }
     }
 

@@ -1,90 +1,113 @@
 //
 //  BoardScreenState.swift
-//  Ludi Boards — tactical board redesign (RD-1 scaffold)
+//  Ludi Boards — tactical board redesign
 //
-//  Drives which right-hand panel the redesigned board shows, plus the
-//  editor mode. This is the seam later phases wire to the live engine:
-//  `selectedToolId` becomes the engine's real selection (TASK-004),
-//  `libraryOpen` is toggled by the rail/library affordance (TASK-010),
-//  and `mode` drives Plan/Animate/Present (TASK-008). For the scaffold
-//  it's a self-contained, observable state machine with no engine deps.
+//  Drives the right-hand drawer + editor mode. Reworked (req 4/5) to an
+//  EXPLICIT drawer model: a switcher rail picks `activeDrawer`, and a single
+//  `drawerOpen` slides the whole drawer on/off screen regardless of which view
+//  is loaded. Properties is the one auto-routed view (a tool tap opens it).
 //
 
 import SwiftUI
 
-/// The right-hand panel currently resolved from board state.
-enum RightPanel: Equatable { case squad, properties, library, layers }
+/// The dedicated right-hand drawer views. The switcher rail offers squad /
+/// boards / library / layers; `properties` is opened by selecting a tool.
+enum RightPanel: String, Equatable, CaseIterable, Identifiable {
+    case squad, boards, library, layers, properties
+    var id: String { rawValue }
+
+    /// Rail entries (properties is selection-driven, not a rail button).
+    static var railDrawers: [RightPanel] { [.squad, .boards, .library, .layers] }
+
+    var icon: String {
+        switch self {
+        case .squad:      return "person.2.fill"
+        case .boards:     return "square.grid.2x2"
+        case .library:    return "plus.square.on.square"
+        case .layers:     return "square.3.layers.3d"
+        case .properties: return "slider.horizontal.3"
+        }
+    }
+    var title: String {
+        switch self {
+        case .squad: return "Squad"; case .boards: return "Boards"
+        case .library: return "Library"; case .layers: return "Layers"
+        case .properties: return "Properties"
+        }
+    }
+}
 
 final class BoardScreenState: ObservableObject {
 
     /// id of the selected board tool; `nil` = nothing selected.
-    /// Placeholder until wired to the engine's selection in TASK-004.
     @Published var selectedToolId: String?
 
-    /// Library drawer open (toggled from the rail / a library affordance).
-    @Published var libraryOpen: Bool
+    /// Which dedicated drawer is loaded (req 4).
+    @Published var activeDrawer: RightPanel = .squad
 
-    /// Layer-list drawer open (TASK-047): lists every tool on the board.
-    @Published var layersOpen: Bool
+    /// Global drawer visibility — slides the drawer on/off screen (req 5),
+    /// regardless of which view is in it.
+    @Published var drawerOpen: Bool = true
 
     /// Board editor mode (Plan / Animate / Present).
     @Published var mode: EditorMode
 
     init(selectedToolId: String? = nil,
-         libraryOpen: Bool = false,
-         layersOpen: Bool = false,
+         activeDrawer: RightPanel = .squad,
+         drawerOpen: Bool = true,
          mode: EditorMode = .plan) {
         self.selectedToolId = selectedToolId
-        self.libraryOpen = libraryOpen
-        self.layersOpen = layersOpen
+        self.activeDrawer = activeDrawer
+        self.drawerOpen = drawerOpen
         self.mode = mode
     }
 
-    /// Panel resolution: Library wins, then the Layers list, then a selection
-    /// shows Properties, otherwise the default Squad panel (TASK-047).
-    var panel: RightPanel {
-        if libraryOpen { return .library }
-        if layersOpen { return .layers }
-        if selectedToolId != nil { return .properties }
-        return .squad
-    }
-
+    /// The drawer view to render (back-compat name used by the host).
+    var panel: RightPanel { activeDrawer }
     var hasSelection: Bool { selectedToolId != nil }
 
     // MARK: Transitions
 
+    /// Switcher-rail tap: show that drawer, or close the drawer if it's already
+    /// the open one (so the rail icon toggles its own drawer).
+    func showDrawer(_ d: RightPanel) {
+        if activeDrawer == d && drawerOpen {
+            drawerOpen = false
+        } else {
+            activeDrawer = d
+            drawerOpen = true
+        }
+    }
+
+    /// Global on/off toggle (req 5) — works for whatever view is loaded.
+    func toggleDrawer() { drawerOpen.toggle() }
+
     func select(_ id: String) {
-        libraryOpen = false
-        layersOpen = false        // a layers-row tap hands off cleanly to Properties
         selectedToolId = id
+        activeDrawer = .properties
+        drawerOpen = true
     }
 
     func clearSelection() {
         selectedToolId = nil
+        if activeDrawer == .properties { activeDrawer = .squad }
     }
 
     func openLayers() {
-        libraryOpen = false
-        selectedToolId = nil       // the list replaces a single-tool Properties view
-        layersOpen = true
+        selectedToolId = nil
+        activeDrawer = .layers
+        drawerOpen = true
     }
+    func closeLayers() { if activeDrawer == .layers { drawerOpen = false } }
 
-    func closeLayers() {
-        layersOpen = false
-    }
+    func toggleLibrary() { showDrawer(.library) }
 
-    func toggleLibrary() {
-        libraryOpen.toggle()
-        if libraryOpen { selectedToolId = nil; layersOpen = false }
-    }
-
-    /// Seed a state equivalent to a static demo screen (previews / render
-    /// harness). Lets the three handoff screens render without interaction.
+    /// Seed a state equivalent to a static demo screen (previews / render harness).
     convenience init(demo: BoardScreen) {
         switch demo {
         case .board:    self.init()
-        case .selected: self.init(selectedToolId: "9")
-        case .library:  self.init(libraryOpen: true)
+        case .selected: self.init(selectedToolId: "9", activeDrawer: .properties)
+        case .library:  self.init(activeDrawer: .library)
         }
     }
 }

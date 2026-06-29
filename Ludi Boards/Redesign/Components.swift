@@ -341,6 +341,32 @@ private struct RailButton: View {
     }
 }
 
+// MARK: - Right drawer switcher rail (req 4/5)
+
+/// Vertical rail on the right edge: a global on/off toggle (req 5) + one button
+/// per dedicated drawer (req 4). Tapping a drawer's button shows it (or closes
+/// the drawer if it's already the open one).
+struct EngineDrawerRail: View {
+    @ObservedObject var state: BoardScreenState
+    var body: some View {
+        VStack(spacing: 5) {
+            // Global show/hide — slides the whole drawer off-screen.
+            RailButton(symbol: state.drawerOpen ? "chevron.right" : "chevron.left",
+                       active: false) { withAnimation(.easeInOut(duration: 0.2)) { state.toggleDrawer() } }
+            Divider().overlay(Brand.hairline).frame(width: 28)
+            ForEach(RightPanel.railDrawers) { d in
+                RailButton(symbol: d.icon,
+                           active: state.drawerOpen && state.activeDrawer == d) {
+                    withAnimation(.easeInOut(duration: 0.2)) { state.showDrawer(d) }
+                }
+            }
+        }
+        .padding(8)
+        .glassPanel(fill: 0.78)
+        .frame(width: 56)
+    }
+}
+
 // MARK: - Bottom control pill
 
 struct ControlPill: View {
@@ -357,12 +383,12 @@ struct ControlPill: View {
     var onRotateLeft: () -> Void = {}
     var onRotateRight: () -> Void = {}
     var onRecord: () -> Void = {}
+    var showRecord: Bool = true     // TASK-051: record lives in Animate mode now, not Plan
 
     var body: some View {
         HStack(spacing: 3) {
             PillIcon(locked ? "lock.fill" : "lock", tint: locked ? Brand.lime : nil, action: onLock)
-            PillIcon("arrow.uturn.backward", action: onUndo)
-            PillIcon("arrow.uturn.forward", action: onRedo)
+            // Far-left curved-arrow (undo/redo) buttons removed per request.
             divider
             PillIcon("minus.magnifyingglass", action: onZoomOut)
             Text("\(zoom)%")
@@ -372,9 +398,10 @@ struct ControlPill: View {
             PillIcon("plus.magnifyingglass", action: onZoomIn)
             PillIcon("scope", action: onScope)
             divider
-            // TASK-042: rotate the canvas ±90° (wired to BEO.canvasRotation in EngineControlPill).
+            // Rotate buttons restored on the RIGHT (the far-right pair to keep).
             PillIcon("rotate.left", action: onRotateLeft)
             PillIcon("rotate.right", action: onRotateRight)
+            if showRecord {
             divider
             Button(action: onRecord) {
                 HStack(spacing: 7) {
@@ -387,6 +414,7 @@ struct ControlPill: View {
                 .background(Brand.danger.opacity(recording ? 0.28 : 0.14), in: RoundedRectangle(cornerRadius: 9, style: .continuous))
             }
             .buttonStyle(.plain)
+            }
         }
         .padding(.horizontal, 9).padding(.vertical, 7)
         .glassPanel(radius: 14, fill: 0.86)
@@ -413,10 +441,89 @@ struct EngineControlPill: View {
             onZoomOut: { BEO.zoomOut() },
             onZoomIn:  { BEO.zoomIn() },
             onScope:   { BEO.resetZoom() },
-            onRotateLeft:  { BEO.canvasRotation += -90.0 },   // TASK-042
+            onRotateLeft:  { BEO.canvasRotation += -90.0 },
             onRotateRight: { BEO.canvasRotation +=  90.0 },
-            onRecord:  { BEO.isRecording ? BEO.stopRecording() : BEO.startRecording() }
+            showRecord: false   // TASK-051: record/playback live in Animate mode
         )
+    }
+}
+
+/// Bottom transport for Animate mode (TASK-053): record + play/pause/restart of
+/// the selected recording, wired to the existing engine record/replay path.
+struct EngineAnimateControlPill: View {
+    @EnvironmentObject var BEO: BoardEngineObject
+    @ObservedObject var state: BoardScreenState
+
+    var body: some View {
+        let playing = BEO.isPlayingAnimation
+        let hasSelection = !BEO.playbackRecordingId.isEmpty
+        VStack(spacing: 8) {
+            // TASK-054: scrub slider + elapsed/total readout (only with a selection).
+            if hasSelection {
+                HStack(spacing: 9) {
+                    Text(timeLabel(BEO.playbackTime)).font(AppFont.mono(11)).foregroundStyle(Brand.textMid)
+                        .frame(width: 34, alignment: .trailing)
+                    Slider(value: Binding(get: { BEO.playbackTime },
+                                          set: { BEO.seekPlayback(to: $0) }),
+                           in: 0...max(BEO.playbackDuration, 0.1))
+                        .tint(Brand.lime)
+                        .frame(minWidth: 180)
+                        .disabled(BEO.isRecording)
+                    Text(timeLabel(BEO.playbackDuration)).font(AppFont.mono(11)).foregroundStyle(Brand.textDim)
+                        .frame(width: 34, alignment: .leading)
+                }
+            }
+            HStack(spacing: 3) {
+                // Record toggle (capture moves/adds/deletes into a RecordingAction log)
+                Button { BEO.isRecording ? BEO.stopRecording() : BEO.startRecording() } label: {
+                    HStack(spacing: 7) {
+                        Image(systemName: BEO.isRecording ? "stop.fill" : "circle.fill").font(.system(size: 13))
+                        Text(BEO.isRecording ? "Stop" : "Record").font(AppFont.ui(12, .semibold))
+                    }
+                    .foregroundStyle(Brand.danger)
+                    .padding(.leading, 9).padding(.trailing, 12).frame(height: 34)
+                    .background(Brand.danger.opacity(BEO.isRecording ? 0.28 : 0.14), in: RoundedRectangle(cornerRadius: 9, style: .continuous))
+                }
+                .buttonStyle(.plain)
+                .disabled(playing)
+
+                divider
+
+                // Stop: halt playback and reset to the start (TASK / req #3).
+                PillIcon("stop.fill") { BEO.seekPlayback(to: 0) }
+                    .disabled(!hasSelection)
+                // Play / pause toggle (req #2): pause keeps position; play resumes.
+                Button { playing ? BEO.stopAnimationRecording() : play() } label: {
+                    Image(systemName: playing ? "pause.fill" : "play.fill")
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundStyle(hasSelection || playing ? Brand.limeInk : Brand.textMuted)
+                        .frame(width: 40, height: 34)
+                        .background((hasSelection || playing) ? Brand.lime : .white.opacity(0.05),
+                                    in: RoundedRectangle(cornerRadius: 9, style: .continuous))
+                }
+                .buttonStyle(.plain)
+                .disabled(!hasSelection && !playing)
+                .disabled(BEO.isRecording)
+            }
+        }
+        .padding(.horizontal, 9).padding(.vertical, 7)
+        .glassPanel(radius: 14, fill: 0.86)
+        // The board lock during playback is set synchronously inside the engine
+        // (play/stop), not via onChange here — SwiftUI can coalesce rapid flips.
+    }
+
+    private var divider: some View {
+        Rectangle().fill(.white.opacity(0.1)).frame(width: 1, height: 22).padding(.horizontal, 5)
+    }
+
+    private func timeLabel(_ t: Double) -> String {
+        let s = Int(t.rounded())
+        return String(format: "%d:%02d", s / 60, s % 60)
+    }
+
+    private func play() {
+        guard !BEO.playbackRecordingId.isEmpty else { return }
+        BEO.playAnimationRecording()
     }
 }
 

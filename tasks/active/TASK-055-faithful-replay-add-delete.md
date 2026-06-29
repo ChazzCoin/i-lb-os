@@ -51,3 +51,9 @@ Today replay only moves tools that already exist. `runAnimation()` looks each re
 - **Created-tool lifecycle after playback.** Tools materialized during replay are real `ManagedView` writes on the current board. Decide whether they persist after the recording finishes (matching "replay leaves the board in the recorded end state") or are torn down — and make sure that choice doesn't corrupt the user's actual board if they replay onto a live working board rather than a clean one.
 - **Re-record feedback loop.** Creating/deleting tools during replay touches Realm, which is exactly what the capture observer watches. The `lastUserId = "recorder"` / `ignoreUpdates` guard must cover the new create and delete paths, or playback-while-recording could feed back into a recording.
 - **`orderIndex == 0` skip.** The movement loop skips `orderIndex == 0` (treated as initial state); confirm adds/deletes are not assigned `orderIndex == 0` at capture, or they'll be dropped by that existing `continue`.
+
+## Outcome (2026-06-27) — DONE (build verified; review pending)
+RecordingAction now captures subToolType/playerId/jerseyNumber/teamSide (Recording.swift). New ManagedView.create(from:boardId:saveRealm:) materializes a tool from a snapshot (keeps the recorded id, lastUserId="recorder"). BEO.replayApply finds-or-creates the tool and absorbs; recorded isDeleted is honored by absorb copying the flag (the canvas filters isDeleted). Wired into the playback loop. Schema bumped 2→3 (additive).
+
+## Hardened (2026-06-27) — post review
+ManagedView.create(from:) now also copies toolSize + translationX/Y (review: materialized tools rendered at default size/translation). Recording observer closure given [weak self] (review HIGH retain cycle).

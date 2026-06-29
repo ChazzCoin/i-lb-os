@@ -27,10 +27,14 @@ public struct SoccerPlayerToolView: View {
 
     private var number: Int { mv.jerseyNumber > 0 ? mv.jerseyNumber : Self.placeholderNumber(viewId) }
     private var fill: Color {
+        // A picked colour (Properties colour picker writes toolColor) wins over
+        // the default team colour, so the disc responds to the picker (req 3).
+        if !mv.toolColor.isEmpty {
+            return ColorProvider.fromColorName(colorName: mv.toolColor).colorValue
+        }
         switch mv.teamSide {
-        case "home": return Color.brandHomeTop
         case "away": return Color(hex: "E9EDF1")
-        default:     return mv.toolColor.isEmpty ? Color.brandHomeTop : ColorProvider.fromColorName(colorName: mv.toolColor).colorValue
+        default:     return Color.brandHomeTop
         }
     }
     private var ink: Color { mv.teamSide == "away" ? Color(hex: "1D2632") : .white }

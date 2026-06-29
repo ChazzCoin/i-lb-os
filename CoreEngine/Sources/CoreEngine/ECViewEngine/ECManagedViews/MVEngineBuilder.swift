@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import RealmSwift
 
 
 public extension CoreName {
@@ -97,7 +98,15 @@ public extension CoreName {
                 case "soccer": ViewEngine.Tool.SoccerTool.Build(name: subtype, viewId: viewId, activityId: activityId, bounds: bounds)
                 case "pool": ViewEngine.Tool.PoolBallTool.Build(name: subtype, viewId: viewId, activityId: activityId, bounds: bounds)
                 case "tactic": ViewEngine.Tool.SmartTool.Build(name: subtype, viewId: viewId, activityId: activityId, bounds: bounds)
-                default: EmptyText()
+                default:
+                    // TASK-061: a mis-wired tool (unknown toolType) rendered as a
+                    // silent EmptyText() — invisible, no signal. In DEBUG show a
+                    // visible "?" badge with the type/subtype so mis-wiring surfaces.
+                    #if DEBUG
+                    UnknownToolBadge(type: type, subtype: subtype)
+                    #else
+                    EmptyText()
+                    #endif
             }
         }
         
@@ -204,12 +213,12 @@ public extension CoreName {
                 public func BuildIcon() -> AnyView {
                     AnyView(Image(self.name).resizable().frame(width: 30, height: 30))
                 }
-                // Player subtypes render as the redesign jersey disc (TASK-004);
-                // equipment subtypes keep their asset images.
-                static let playerSubtypes: Set<String> = [
-                    "tools_soccer_jersey", "tools_soccer_dummy",
-                    "tools_soccer_running", "tools_soccer_walking", "tools_soccer_steps"
-                ]
+                // No soccer subtype renders as the numbered disc anymore — the
+                // jersey is the actual shirt SVG, and dummy/running/walking/steps
+                // are their own figures. Everything renders via Image(name).
+                // (The numbered "circle player" disc, if wanted, becomes a separate
+                // dedicated tool — SoccerPlayerToolView is kept for that.)
+                static let playerSubtypes: Set<String> = []
                 public func Build(viewId: String, activityId: String) -> AnyView {
                     SoccerTool.Build(name: self.name, viewId: viewId, activityId: activityId)
                 }
@@ -253,19 +262,26 @@ public extension CoreName {
                 public var type: String { "pool" }
                 
                 public var displayName: String {
-                    self.rawValue.split(separator: "_").map { "\($0)".capitalized }.joined(separator: " ").substring(from: 5)
+                    switch self {
+                    case .que: return "Cue"
+                    case .eightBall: return "8-Ball"
+                    default: return "Ball \(self.rawValue)"
+                    }
                 }
                 public func BuildIcon() -> AnyView {
-                    AnyView(PoolBallIcon(ballType: self))//.frame(width: 30, height: 30)
+                    AnyView(PoolBallIcon(ballType: self))   // 30pt picker icon (Library cell)
                 }
                 public func Build(viewId: String, activityId: String) -> AnyView {
+                    // Frame-filling board ball — PoolBallIcon was a fixed 30pt icon
+                    // so placed balls rendered as tiny dots (pool-tools audit HIGH).
                     AnyView(ManagedViewTool(viewId: viewId, activityId: activityId) {
-                        Image(self.name).resizable()
+                        PoolBallView(ball: self)
                     })
                 }
                 public static func Build(name: String, viewId: String, activityId: String, bounds: CGRect?=nil) -> AnyView {
-                    AnyView(ManagedViewTool(viewId: viewId, activityId: activityId, bounds: bounds) {
-                        Image(name).resizable()
+                    let ball = PoolBallTool(rawValue: name) ?? .que
+                    return AnyView(ManagedViewTool(viewId: viewId, activityId: activityId, bounds: bounds) {
+                        PoolBallView(ball: ball)   // frame-filling, scales to the tool size
                     })
                 }
                 public func toArray() -> [any ToolCategory] {
@@ -481,13 +497,15 @@ public extension CoreName {
                     AnyView(Image(systemName: self.name).resizable().frame(width: 30, height: 30))
                 }
                 public func Build(viewId: String, activityId: String) -> AnyView {
+                    // req 3: GeneralToolView observes the row and tints the symbol
+                    // with the picked colour (Image(systemName:) alone ignored it).
                     AnyView(ManagedViewTool(viewId: viewId, activityId: activityId) {
-                        Image(systemName: self.name).resizable()
+                        GeneralToolView(viewId: viewId)
                     })
                 }
                 public static func Build(name: String, viewId: String, activityId: String, bounds: CGRect?=nil) -> AnyView {
                     AnyView(ManagedViewTool(viewId: viewId, activityId: activityId, bounds: bounds) {
-                        Image(systemName: name).resizable()
+                        GeneralToolView(viewId: viewId)
                     })
                 }
                 public func toArray() -> [any ToolCategory] {
@@ -499,4 +517,42 @@ public extension CoreName {
     }
     
     
+}
+
+#if DEBUG
+/// TASK-061: visible placeholder for an unknown/mis-wired tool (DEBUG only) so
+/// silent EmptyText() vanishing surfaces during development.
+struct UnknownToolBadge: View {
+    let type: String
+    let subtype: String
+    var body: some View {
+        VStack(spacing: 2) {
+            Image(systemName: "questionmark.diamond.fill").font(.system(size: 28))
+            Text(type.isEmpty ? "?" : type).font(.system(size: 9, weight: .bold))
+            Text(subtype).font(.system(size: 8)).lineLimit(1)
+        }
+        .foregroundStyle(.white)
+        .padding(8)
+        .background(Color.red.opacity(0.85), in: RoundedRectangle(cornerRadius: 8))
+        .frame(width: 120, height: 120)
+    }
+}
+#endif
+
+/// req 3: general SF-symbol marker that tints with the picked colour (observes
+/// the row so the Properties colour picker updates it live, like the disc/lines).
+public struct GeneralToolView: View {
+    @ObservedRealmObject var mv: ManagedView
+    public init(viewId: String) {
+        let obj = newRealm().object(ofType: ManagedView.self, forPrimaryKey: viewId)
+        _mv = ObservedRealmObject(wrappedValue: obj ?? ManagedView())
+    }
+    private var tint: Color {
+        colorFromRGBA(red: mv.colorRed, green: mv.colorGreen, blue: mv.colorBlue, alpha: mv.colorAlpha)
+    }
+    public var body: some View {
+        Image(systemName: mv.subToolType.isEmpty ? "questionmark" : mv.subToolType)
+            .resizable().aspectRatio(contentMode: .fit)
+            .foregroundStyle(tint)
+    }
 }

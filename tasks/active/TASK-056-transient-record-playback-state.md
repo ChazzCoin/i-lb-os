@@ -59,3 +59,9 @@ Desired: playback/record flags are in-memory only (or are force-reset when a boa
 - **The `"worlds"` suite copy** (`UserToolsObservable.swift:34`) suggests this flag was historically shared cross-process or cross-target. Confirm nothing outside this app relies on reading `isPlayingAnimation` from the `"worlds"` suite before deleting that persistence — low risk, but it's a different backing store than the other two.
 - **Board-load reset site:** the redesign's exact board-open/swap entry point needs to be located; the reset must fire on every path that lands a coach on a board, not just first launch.
 - **Someone already tried this** (commented `@Published` at `BoardEngineObject.swift:403`) and backed out. Worth a quick check of why — if `@Published` caused a publish-during-view-update warning or a retain issue, the reset-on-load approach may be the safer half of the fix.
+
+## Outcome (2026-06-27) — DONE (build verified) — with a deviation
+Kept isPlayingAnimation as @AppStorage (it's load-bearing — MVObject in CoreEngine reads the same key cross-module; converting to @Published would desync the playback animation). Instead, RedesignPreviewEntry.configureRedesignBoard resets isRecording/isPlayingAnimation/gesturesAreLocked on board load so a prior crash leaves no residue. Playback gesture-lock is wired in the transport via onChange(isPlayingAnimation) — board locks during playback, stays editable while recording.
+
+## Hardened (2026-06-27) — post review
+Review flagged ignoreUpdates (@AppStorage) could persist `true` after a crash mid-playback/drag, silently dropping ALL future recording. Fix: playback no longer touches ignoreUpdates at all (the recording observer only exists while isRecording, which is disabled during playback), and configureRedesignBoard resets ignoreUpdates=false on board load as a backstop. Gesture lock now set synchronously in the engine.
